@@ -62,3 +62,8 @@ Currently we are updating meta files in batch mode on a per-placetype basis. We 
 ### Relevant bits
 
 * https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/blob/master/scripts/wof-placetype-to-csv
+
+### Related bits
+
+* https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/issues/5
+* https://github.com/whosonfirst/py-mapzen-whosonfirst-utils/issues/4
