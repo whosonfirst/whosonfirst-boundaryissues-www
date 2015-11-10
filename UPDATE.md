@@ -55,6 +55,10 @@ The language bindings for `libgit2` make it seem like we ought to be able to do 
 
 * Network ACLs because ES has no security
 
+### Possible solutions
+
+* Configure a webhook in the GitHub repository to poke an HTTP pony (with access to the ES machine) which then schedules/performs a task to use the [commit API](https://developer.github.com/v3/repos/commits/#get-a-single-commit) to retrieve the files to index
+
 ## Update meta files (in the `whosonfirst-data` respository)
 
 Currently we are updating meta files in batch mode on a per-placetype basis. We should add functionality to update (n) individual rows in an existing CSV meta file.
