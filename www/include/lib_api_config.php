@@ -13,7 +13,6 @@
 			$GLOBALS['cfg']['api_server_name'] .= ':' . $GLOBALS['cfg']['api_server_port'];
 		}
 
-
 		# If I have an API specific subdomain/prefix then check to see if I am already
 		# running on that host; if not then update the 'api_server_name' config
 
