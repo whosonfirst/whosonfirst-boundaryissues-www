@@ -8,4 +8,4 @@ There is no application yet. We'll get there.
 
 ## Shout-outs
 
-* [Ingrid Burrington](http://lifewinning.com/)
+* [Ingrid Burrington](http://lifewinning.com/)\n
