@@ -20,11 +20,11 @@
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="{$cfg.abs_root}javascript/html5.js"></script>
+      <script src="{$cfg.abs_root_url}javascript/html5.js"></script>
     <![endif]-->
 
   </head>
 
-  <body>
+  <body data-abs-root-url="{$cfg.abs_root_url}" {if "api"|@features_is_enabled}data-api-endpoint="{$cfg.api_abs_root_url}"{if "api_site_tokens"|@features_is_enabled} data-api-site-token="{$site_token|@escape}"{/if}>
 
   {include file="inc_head_navi.txt"}
