@@ -1,0 +1,9 @@
+<p>JSONP (JSON with Padding) is a technique for passing the results of a server request back to the client as a JavaScript function containing JSON data. To use JSONP with the Cooper Hewitt API, you must pass a <code>callback</code> paramater that refers to a function in the <code>window</code> scope of the calling page.</p>
+
+<h4>Example request</h4>
+<pre class="api-example-request">curl -X GET '{$cfg.api_abs_root_url}rest/?method=cooperhewitt.labs.whatWouldMicahSay&access_token=****&format=jsonp&callback=myCallbackFunction'</pre>
+
+<h4>Example response</h4>
+{literal}
+<pre class="api-example-response">myCallbackFunction({"micah":{"says":"Always have 8-12 projects on the go."},"stat":"ok"})</pre>
+{/literal}

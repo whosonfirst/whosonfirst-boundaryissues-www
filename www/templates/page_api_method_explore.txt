@@ -1,0 +1,220 @@
+{capture assign="page_title"}{$method} | Explorer | API{/capture}
+{include file="inc_head.txt"}
+
+<div class="container api-method">
+
+{include file="inc_api_header.txt" title=$method}
+
+<div style="margin-top:2em;text-align:right;"><a href="{$cfg.abs_root_url}api/methods/{$method|escape}">return to method documentation</a></div>
+
+<div id="query">
+<form class="form" id="explore-form" x-data-method="{$method|escape}" x-http-method="{if $cfg.api_auth_type=='oauth2' and !$cfg.api_oauth2_allow_get_parameters}POST{elseif $details.request_method}{$details.request_method|escape}{else}GET{/if}">
+
+<h3>Parameters</h3>
+
+{if $details.parameters|@count or $details.paginated}
+{foreach from=$details.parameters item="param"}
+{if $param.documented}
+
+<div class="form-group">
+<label for="{$param.name|escape}">{$param.name|escape} {if $param.required} <span class="text-danger">(required)</span>{/if}</label>
+<input type="text" name="{$param.name|escape}" class="form-control" placeholder="{$param.description|truncate:80:"..."|escape}" />
+</div>
+
+{/if}
+{/foreach}
+
+{if $details.paginated}
+
+<div class="form-group">
+<label for="page">Page</label>
+<input type="text" name="page" class="form-control" value="1" />
+</div>
+
+<div class="form-group">
+<label for="per_page">Per page</label>
+<input type="text" name="per_page" class="form-control" value="100" />
+</div>
+
+{/if}
+
+{else}
+<p>This method does not take any parameters.</p>
+{/if}
+
+{if $details.notes|@count}
+<h3>Notes</h3>
+{foreach from=$details.notes item="note"}
+<p>{$note|escape}</p>
+{/foreach}
+{/if}
+
+<h3>Authentication</h3>
+
+<div class="form-group">
+<select name="access_token"{if $details.requires_blessing} disabled="disabled"{/if}>
+<option x-data-perms="0" value="{$logged_out_token.access_token|escape}"{if !$cfg.user or !$details.requires_perms} selected="selected"{/if}>Logged out</option>
+{if $cfg.user}
+<option x-data-perms="1" value="{$read_only_token.access_token|escape}"{if $cfg.user and $details.requires_perms==1} selected="selected"{/if}>As you, with read permissions</option>
+<option x-data-perms="2" value=""{if $cfg.user and $details.requires_perms>1} selected="selected"{/if}>As you, with write permissions</option>
+
+{/if}
+</select>
+</div>
+
+<h3>
+	<button id="explore" type="submit" class="btn btn-default"{if $details.requires_blessing} disabled="disabled"{/if}>Make it so</button>
+	{if $details.requires_blessing} <small>This API method requires extra-special permissions and so it is easiest to imagine that it won't work in the API explorer</small>{/if}
+</h3>
+
+</form>
+</div>
+
+<div id="results" style="margin-top:2em;display:none;">
+
+<h3>Request <button class="pull-right" id="do-it-again">Modify this request</button></h3>
+<pre id="api-req"></pre>
+
+<small style="display:block; margin-top:1em; margin-bottom:1em;">
+<span class="caveat" id="caveat-write" style="display:none;">See the <code>access token</code> in the request above and see the way it's called <code>S33KR3T</code>? First, that is <em>not</em> a real access token. Second, it's called that because this API method requires permissions to write or modify data and so it is using the a special time-sensitive token that it will expire. The request is included as a reference but if you are going to copy-paste it you should make sure to use <a href="{$cfg.abs_root_url}api/oauth2/tokens/">one of your own access tokens</a> when calling it.</span>
+<span class="caveat" id="caveat-code" style="display:none;">See the <code>access token</code> in the request above? It is a time-sensitive token for the purposes of the API Explorer and for copy-pasting example requests <em>in the moment</em> but be aware that it will expire.</span>
+</small>
+
+<h3>Response</h3>
+<pre id="api-res"></pre>
+</div>
+
+<div>
+
+<script type="text/javascript">
+{literal}
+
+$(document).ready(function(){
+
+	var show_query = function(){
+		$("#query").show();
+		$("#results").hide();
+		$("api-req").html("");
+		$("api-res").html("");
+		$(".caveat").hide();
+	};
+
+	var show_results = function(){
+		$("#query").hide();
+		$("#results").show();
+	};
+
+	var show_caveat = function(){
+
+		var sel = $(":selected");
+		var perms = sel.attr("x-data-perms");
+
+		if (perms == 2){
+			$("#caveat-write").show();
+		}
+
+		else {
+			$("#caveat-code").show();			
+		}
+	};
+
+	$("#do-it-again").click(function(){
+		show_query();
+		return false;
+	});
+
+	$("#explore").click(function(){
+
+		var params = $("#explore-form");
+
+		var method = params.attr("x-data-method");
+		var http_method = params.attr("x-http-method");
+
+		var req_args = {
+			'method': method,
+			'access_token': 'S33KR3T',
+		};
+
+		params = params.serializeArray();
+		var count = params.length;		
+
+		var args = {};
+
+		for (var i=0; i < count; i++){
+			var p = params[i];
+
+			if (! p['value']){
+				continue;
+			}
+
+			args[p['name']] = p['value'];
+			req_args[p['name']] = p['value'];
+		}
+
+		var endpoint = flamework_api_endpoint();
+
+		var req = "curl -X " + http_method;
+		req += " ";
+
+		if (http_method == 'GET'){
+
+			var q = new Array();
+
+			for (k in req_args){
+				q.push(k + "=" + req_args[k]);
+			}
+
+			req += "'";
+			req += endpoint;
+			req += "?" + q.join("&");
+			req += "'";
+		}
+
+		else {
+
+			var q = new Array();
+
+			for (k in req_args){
+				q.push("-F " + k + "=" + req_args[k]);
+			}
+
+			req += q.join(" ");
+			req += " ";
+			req += endpoint;
+		}
+
+		$("#api-req").html(htmlspecialchars(req));
+
+		var on_success = function(rsp){
+
+			var json = JSON.stringify(rsp, null, '\t');
+			var html = htmlspecialchars(json);
+
+			$("#api-res").html(html);
+			
+			show_results();
+			show_caveat();
+		};
+
+		var on_error = function(rsp){
+
+			var json = JSON.stringify(rsp, null, '\t');
+			var html = htmlspecialchars(json);
+
+			$("#api-res").html(html);
+
+			show_results();
+			show_caveat();
+		};
+
+		flamework_api_call(method, args, on_success, on_error);
+		return false;
+	});
+
+
+});
+
+{/literal}
+</script>
+
+{include file="inc_foot.txt"}

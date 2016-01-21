@@ -1,0 +1,17 @@
+{capture assign="page_title"}Response formats | API{/capture}
+{include file="inc_head.txt"}
+
+<div class="container">
+{include file="inc_api_header.txt" title="API response formats" subtitle=$subtitle subtitle_isescaped=1}
+
+<div class="row">
+<p class="lead">The default API response format is <span class="hey-look"><a href="{$cfg.abs_root_url}api/formats/{$default|escape}/">{$default|escape}</a>.</p>
+</div>
+</div>
+
+{foreach from=$formats item="format"}
+<a name="{$format|escape}"></a>
+{include file="inc_api_format_description.txt" format=$format}
+{/foreach}
+
+{include file="inc_foot.txt"}

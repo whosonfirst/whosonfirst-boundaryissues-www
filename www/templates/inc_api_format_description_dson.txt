@@ -1,0 +1,7 @@
+<p>DSON (Doge Serialized Object Notation) is a data-interchange format that is easy to read and write for Shiba Inu dogs. For more details, consult <a href="http://dogeon.org/">http://dogeon.org/</a>. <span style="font-style:italic;">As of this writing our DSON serialization is not <a href="https://github.com/xfix/Acme-DSON">as pretty as some</a> but we hope to remedy that soon.</span></p>
+
+<h4>Example request</h4>
+<pre class="api-example-request">curl -X GET '{$cfg.api_abs_root_url}rest/?method=cooperhewitt.labs.whatWouldMicahSay&access_token=****&format=dson'</pre>
+
+<h4>Example response</h4>
+<pre class="api-example-response">such "micah" is such "says" is "Now I'm just like: Wow, we have a lot to do!" wow ? "stat" is "ok" wow</pre>

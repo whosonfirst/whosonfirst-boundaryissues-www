@@ -1,0 +1,9 @@
+<p>JSON (JavaScript Object Notation) is a data-interchange format based on JavaScript. For more details, consult <a href="http://json.org/">http://json.org/</a>.</p>
+
+<h4>Example request</h4>
+<pre class="api-example-request">curl -X GET '{$cfg.api_abs_root_url}rest/?method=cooperhewitt.labs.whatWouldMicahSay&access_token=****&format=json'</pre>
+
+<h4>Example response</h4>
+{literal}
+<pre class="api-example-response">{"micah":{"says":"I do them when my boss is on leave."},"stat":"ok"}</pre>
+{/literal}

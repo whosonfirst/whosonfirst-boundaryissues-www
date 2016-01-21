@@ -1,0 +1,141 @@
+#
+# Hey! Everything in here is better suited to httpd.conf, since
+# we get a performance boost if we can turn off AllowOverride and
+# not have to stat the webroot for every request. On the other
+# hand, this means we never have to touch apache once it's up.
+# Flexibility over performance.
+#
+# In an ideal world, you'd stick it in here on dev and your build
+# system would bundle the changes into (a file included in) httpd.conf
+# for your production deployment, perhaps wrapped in a <VirtualHost>
+# block.
+#
+
+# ETags are a bad idea if you have multiple web servers. We'll do
+# more explicit caching with Expires headers anyway.
+FileETag none
+
+# The base set of sensible PHP options. You could put these in your
+# php.ini file too, but having them in your Apache config puts
+# everything in one place. Magic quotes off because they are stupid.
+# Register globals off for the same reason. Track errors is so that
+# we can at least get at the error messages we hide using @func().
+# last_modified is a bad idea if we have any dynamic content. Short
+# tags make for a few saved bytes of cruft and are fine unless you're
+# running another XML preprocessor over your code (wtf?).
+php_value magic_quotes_gpc 0
+php_value register_globals 0
+php_value magic_quotes_runtime 0
+php_value track_errors 1
+php_value last_modified off
+php_value short_open_tag on
+
+# This value is very useful for development, but should be disabled
+# on production deployments (by setting the value to 'off')
+php_flag display_errors on
+
+# this sets all current and future error flags on, except for E_NOTICE
+# which can go fuck itself. we have some separate code for checking the
+# one notice we do care about.
+php_value error_reporting 2147483639
+
+# Some basic pointers to php files
+DirectoryIndex index.php
+ErrorDocument 404 /404.php
+ErrorDocument 403 /403.php
+
+# Get mod_rewrite fired up
+RewriteEngine on
+
+# Login stuff
+
+RewriteRule  ^signup/?$			signup.php		[L]
+RewriteRule  ^signin/?$			signin.php		[L]
+RewriteRule  ^signout/?$		signout.php		[L]
+RewriteRule  ^checkcookie/?$		checkcookie.php	[L]
+
+# Password retrieval stuff
+
+RewriteRule ^forgot/?$			forgot.php		[L]
+RewriteRule ^reset/([a-zA-Z0-9]+)/?$	reset.php?reset=$1	[L,QSA]
+
+# Account stuff
+
+RewriteRule  ^account/?$		account.php		[L]
+RewriteRule  ^account/password/?$	account_password.php	[L]
+RewriteRule  ^account/delete/?$		account_delete.php	[L]
+
+# General pages
+
+RewriteRule ^about/?$			about.php 		[L,QSA]
+RewriteRule ^contact/?$			contact.php 		[L,QSA]
+
+# Test pages
+
+RewriteRule ^paging/?$			paging.php		[L]
+RewriteRule ^paging/page(\d+)/?$	paging.php?page=$1	[L,QSA]
+
+# See all this stuff that's been commented out? It's a lot of hoop-jumping
+# to separate API calls (api.example.com/rest) from all the other user-level
+# administrative pages (example.com/api/methods) and to make sure things that
+# need to be done over SSL are (like OAuth2). By default it's all commented out
+# because what do I know about your webserver is configured. So spend a
+# couple minutes looking at all this stuff and thinking about it and adjusting
+# accordingly. Also: remember all the security around OAuth2 is predicated
+# around the use of SSL. (20121103/straup)
+
+# The API (as in both api.example.com and example.com/api)
+# Ensure that all traffic to the API proper is over HTTPS
+# Note that this is a api.example.com host not example.com
+# (20121025/straup)
+
+# RewriteCond %{HTTP_HOST} 	^api.(.*)$
+# RewriteCond %{HTTPS} off
+# RewriteRule (.*) https://%{HTTP_HOST}/$1?%{QUERY_STRING}	[R,L]
+
+# The most basic rewrite, as this is the actual API
+
+# RewriteCond %{HTTP_HOST} 	^api.(.*)$
+# RewriteRule  ^rest/?$		api_rest.php?%{QUERY_STRING}  [L]
+
+# This one says: If we're the API and we're not hanging off /rest
+# redirect to the site itself – note the %1% for capturing the domain
+# sans 'api.' (20121025/straup)
+
+# RewriteCond %{REQUEST_URI}	!rest(.*)
+# RewriteCond %{HTTP_HOST} 	^api.(.*)$	[NC]
+# RewriteRule  .?		http://%1%{REQUEST_URI}  [R,L]
+
+# RewriteCond %{HTTP_HOST} 	!^api.(.*)$
+# RewriteRule  ^api/rest/(.*)/?$	https://api.%{HTTP_HOST}/rest/?method=$1&%{QUERY_STRING}  [R,L]
+
+# RewriteCond %{HTTP_HOST} 	!^api.(.*)$
+# RewriteRule  ^rest/(.*)/?$	https://api.%{HTTP_HOST}/rest/?method=$1&%{QUERY_STRING}  [R,L]
+
+# The rest of the user/admin interfaces for doing API stuff
+# This all (especially the oauth2 auth/token stuff) relies on the
+# HTTPS rules for logged in users (20121024/straup)
+
+RewriteRule  ^api/?$				api.php		[L]
+RewriteRule  ^api/methods/?$			api_methods.php	[L]
+RewriteRule  ^api/methods/print/?$		api_methods.php?print=1	[L]
+RewriteRule  ^api/methods/explore/?$		api_methods.php	[L]
+RewriteRule  ^api/methods/(.*)/explore/?$	api_method_explore.php?method=$1&%{QUERY_STRING}	[L]
+RewriteRule  ^api/methods/(.*)/?$		api_method.php?method=$1&%{QUERY_STRING}		[L]
+
+RewriteRule  ^api/keys/?$						api_keys.php?%{QUERY_STRING} [L]
+RewriteRule  ^api/keys/register/?$					api_keys_register.php?%{QUERY_STRING} [L]
+RewriteRule  ^api/keys/([a-zA-Z0-9]+)/?$				api_key.php?api_key=$1&%{QUERY_STRING} [L]
+RewriteRule  ^api/keys/([a-zA-Z0-9]+)/tokens(/page([0-9]+))?/?$		api_key_tokens.php?api_key=$1&page=$3&%{QUERY_STRING} [L]
+
+RewriteRule  ^api/oauth2/?$						api_oauth2.php?%{QUERY_STRING} [L]
+RewriteRule  ^api/oauth2/howto/?$						api_oauth2_howto.php?%{QUERY_STRING} [L]
+RewriteRule  ^api/oauth2/authenticate/?$				api_oauth2_authenticate.php?%{QUERY_STRING} [L]
+RewriteRule  ^api/oauth2/authenticate/like-magic/?$			api_oauth2_authenticate_like_magic.php?%{QUERY_STRING} [L]
+RewriteRule  ^api/oauth2/access_token/?$				api_oauth2_access_token.php?%{QUERY_STRING} [L]
+
+RewriteRule  ^api/oauth2/tokens(/page([0-9]+))?/?$			api_oauth2_tokens.php?page=$2&%{QUERY_STRING} [L]
+RewriteRule  ^api/oauth2/tokens/([a-zA-Z0-9]+)/?$			api_oauth2_token.php?api_key=$1&%{QUERY_STRING} [L]
+
+RewriteRule  ^api/rest/?$						api_rest.php?%{QUERY_STRING}  [L]
+

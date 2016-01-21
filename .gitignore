@@ -1,0 +1,6 @@
+*~
+.vagrant
+www/include/secrets*.php
+tests/coverage.state
+coverage/
+*~

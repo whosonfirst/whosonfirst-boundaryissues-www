@@ -1,0 +1,13 @@
+<div id="api-header" class="row" style="margin-bottom:1em;">
+<h1>{$title|escape}</h1>
+{if "api"|@features_is_enabled}
+<ul class="list-inline">
+<li><a href="{$cfg.abs_root_url}api/">API documentation</a></li>
+<li><a href="{$cfg.abs_root_url}api/methods/">API methods</a></li>
+<li><a href="{$cfg.abs_root_url}api/formats/">API formats</a></li>
+<li><a href="{$cfg.abs_root_url}api/keys/register/">Create a new API key</a></li>
+<li><a href="{$cfg.abs_root_url}api/keys/">Your API keys</a></li>
+<li><a href="{$cfg.abs_root_url}api/oauth2/tokens/">Your access tokens</a></li>
+</ul>
+{/if}
+</div>

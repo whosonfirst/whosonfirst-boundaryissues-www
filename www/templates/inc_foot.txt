@@ -1,0 +1,18 @@
+
+    <div class="container">
+      <hr>
+
+      <footer>
+        <p>&copy; Company {$smarty.now|date_format:"%Y"}</p>
+      </footer>
+
+{if "staff"|@auth_has_role}
+      	{timings}
+{/if}
+
+    </div> <!-- /container -->
+
+    {pagination_footer}
+
+  </body>
+</html>

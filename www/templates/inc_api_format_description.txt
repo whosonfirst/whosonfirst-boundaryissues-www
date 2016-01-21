@@ -1,0 +1,10 @@
+<div class="container">
+<div class="row" style="margin-bottom:3em;">
+
+<h2 id="data-format-{$format|escape}"><a href="{$cfg.abs_root_url}api/formats/{$format|escape}/">{$format|escape}</a>{if $format==$default} <small>this is the <span class="hey-look">default</span> response format</small>{/if}</h2>
+
+{capture assign="template"}inc_api_format_description_{$format|escape}.txt{/capture}
+{include file=$template}
+
+</div>
+</div>
