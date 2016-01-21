@@ -479,4 +479,30 @@
 
 	$GLOBALS['timings']['init_end'] = microtime_ms();
 
-	# the end
+	# the end of default flamwork stuff
+
+	# start of flamework-api stuff for API site keys
+
+	if ($this_is_webpage){
+
+	   	# we assume login_check_login has been called above already
+		# (20160121/thisisaaronland)
+	   	
+	        # API site key/token stuff
+
+		if (features_is_enabled("api")){
+
+                        loadlib("api");
+
+		        if (features_is_enabled(array("api_site_keys", "api_site_tokens"))){
+
+				loadlib("api_keys");
+				loadlib("api_oauth2_access_tokens");
+
+				$token = api_oauth2_access_tokens_fetch_site_token($GLOBALS['cfg']['user']);
+				$GLOBALS['smarty']->assign_by_ref("site_token", $token['access_token']);
+			}
+		}
+	}
+
+	# end of flamework-api stuff for API site keys
