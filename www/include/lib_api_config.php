@@ -5,7 +5,14 @@
 	function api_config_init(){
 
 		$GLOBALS['cfg']['api_server_scheme'] = ($GLOBALS['cfg']['api_require_ssl']) ? 'https' : 'http';
-		$GLOBALS['cfg']['api_server_name'] =  parse_url($GLOBALS['cfg']['abs_root_url'], 1);
+		$GLOBALS['cfg']['api_server_name'] = parse_url($GLOBALS['cfg']['abs_root_url'], PHP_URL_HOST);
+		$GLOBALS['cfg']['api_server_port'] = parse_url($GLOBALS['cfg']['abs_root_url'], PHP_URL_PORT);
+
+		if ($GLOBALS['cfg']['api_server_scheme'] == 'http' && $GLOBALS['cfg']['api_server_port'] != 80 ||
+			$GLOBALS['cfg']['api_server_scheme'] == 'https' && $GLOBALS['cfg']['api_server_port'] != 443) {
+			$GLOBALS['cfg']['api_server_name'] .= ':' . $GLOBALS['cfg']['api_server_port'];
+		}
+
 
 		# If I have an API specific subdomain/prefix then check to see if I am already
 		# running on that host; if not then update the 'api_server_name' config
@@ -325,7 +332,7 @@
 		$GLOBALS['smarty']->assign_by_ref("site_token", $token['access_token']);
 
 		$end = microtime_ms();
-		$time = $end - $start; 
+		$time = $end - $start;
 
 		$GLOBALS['timing_keys']['user_init'] = 'WWW setup';
 		$GLOBALS['timings']['user_init_count'] = 1;
