@@ -4,6 +4,17 @@
 
 	$GLOBALS['cfg']['api']['methods'] = array_merge(array(
 
+		"wof.upload" => array (
+			"description" => "Upload a GeoJSON file.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof_upload",
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
+			)
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,
@@ -30,13 +41,6 @@
 			"documented" => 1,
 			"enabled" => 1,
 			"library" => "api_test"
-		),
-
-		"api.dan.hello" => array (
-			"description" => "Return hello.",
-			"documented" => 1,
-			"enabled" => 0,
-			"library" => "api_dan"
 		),
 
 	), $GLOBALS['cfg']['api']['methods']);
