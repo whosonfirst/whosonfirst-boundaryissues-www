@@ -1,5 +1,6 @@
 <?php
 	loadlib('wof_data');
+	loadlib('artisanal_integers');
 
 	function wof_upsert($input_path){
 
@@ -11,7 +12,6 @@
 				'error' => "$filename not found."
 			);
 		}
-		error_log('File exists');
 
 		// This is a kludgy way to handle the incoming data. We will improve it.
 		$geojson = file_get_contents($input_path);
@@ -22,10 +22,9 @@
 				'error' => "Could not parse $filename; invalid GeoJSON."
 			);
 		}
-		error_log('Parsed GeoJSON data');
 
 		if (!$geojson_data['properties']){
-			!$geojson_data['properties'] = array();
+			$geojson_data['properties'] = array();
 		}
 
 		if (!$geojson_data['properties']['wof:id']){
@@ -36,29 +35,27 @@
 			}
 
 			$geojson_data['properties']['wof:id'] = $rsp['integer'];
-			error_log('Assigned new artisanal integer');
+
+			// This should use an API to validate & pretty print GeoJSON properties
+			$geojson = json_encode($geojson_data);
 		}
 
 		// Figure out where we're going to put the incoming file
 		$geojson_path = wof_data_getpath($geojson_data['properties']['wof:id']);
 		$geojson_dir = dirname($geojson_path);
-		error_log("Saving to $geojson_path");
 
 		// Create the directory structure, if it doesn't exist
 		if (!file_exists($geojson_dir)){
 			mkdir($geojson_dir, 0775, true);
-			error_log('Created directory');
 		}
 
 		// Write the file
-		$geojson_content = json_encode($geojson_data);
-		file_put_contents($geojson_path, $geojson_content);
+		file_put_contents($geojson_path, $geojson);
 		error_log('Saved the file');
 
 		// Clean up the uploaded tmp file
 		if (is_uploaded_file($input_path)) {
 			unlink($input_path);
-			error_log('Deleted the uploaded tmp file');
 		}
 
 		// It worked \o/

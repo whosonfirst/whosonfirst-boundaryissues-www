@@ -12,7 +12,7 @@ mapzen.whosonfirst.boundaryissues.ui = (function(){
 	var self = {};
 
 	function setup_upload(){
-		var files;
+		var upload_file;
 		var f = $(".upload-form");
 		f.submit(function(e){
 
@@ -24,14 +24,18 @@ mapzen.whosonfirst.boundaryissues.ui = (function(){
 			var crumb = f.data("crumb-upload");
 			var data = new FormData();
 			data.append('crumb', crumb);
-			$.each(files, function(key, value){
-				data.append('upload_file', value);
-			});
+			data.append('upload_file', upload_file);
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.upload", data, onsuccess, onerror);
 		});
 
-		$(".upload-form input[type=file]").on('change', function(e) {
-			files = e.target.files;
+		$(".upload-form input[name=upload_file]").on('change', function(e) {
+			upload_file = e.target.files[0];
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				var preview = JSON.parse(reader.result);
+				console.log(preview);
+			}
+			reader.readAsText(upload_file);
 		});
 	}
 
