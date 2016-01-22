@@ -70,6 +70,9 @@ RewriteRule  ^account/delete/?$		account_delete.php	[L]
 RewriteRule ^about/?$			about.php 		[L,QSA]
 RewriteRule ^contact/?$			contact.php 		[L,QSA]
 
+# WOF pages
+RewriteRule ^upload/?$			upload.php 		[L,QSA]
+
 # Test pages
 
 RewriteRule ^paging/?$			paging.php		[L]
@@ -138,4 +141,3 @@ RewriteRule  ^api/oauth2/tokens(/page([0-9]+))?/?$			api_oauth2_tokens.php?page=
 RewriteRule  ^api/oauth2/tokens/([a-zA-Z0-9]+)/?$			api_oauth2_token.php?api_key=$1&%{QUERY_STRING} [L]
 
 RewriteRule  ^api/rest/?$						api_rest.php?%{QUERY_STRING}  [L]
-

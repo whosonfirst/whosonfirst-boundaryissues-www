@@ -152,7 +152,7 @@
 
 		api_config_ensure_blessing($method_row, $key_row, $token_row);
 
-		# Finally, crumbs - because they are tastey
+		# Finally, crumbs - because they are tasty
 
 		if ($method_row['requires_crumb']){
 			api_auth_ensure_crumb($method_row);

@@ -26,6 +26,7 @@
     {if "api"|@features_is_enabled}
     <script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.api.js"></script>
     {/if}
+	<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.ui.js"></script>
 
   </head>
 

@@ -8,7 +8,8 @@
 			"description" => "Upload a GeoJSON file.",
 			"documented" => 1,
 			"enabled" => 1,
-			"library" => "api_wof_upload",
+			"library" => "api_wof",
+			"requires_crumb" => 1,
 			"request_method" => "POST",
 			"parameters" => array(
 				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
