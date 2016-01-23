@@ -3,7 +3,7 @@
       <hr>
 
       <footer>
-        <p>&copy; Company {$smarty.now|date_format:"%Y"}</p>
+        <p>🔥 Made with Flamework</p>
       </footer>
 
 {if "staff"|@auth_has_role}
