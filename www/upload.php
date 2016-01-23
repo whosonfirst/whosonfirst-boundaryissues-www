@@ -15,5 +15,6 @@
 	$crumb_upload = crumb_generate('api', 'wof.upload');
 	$GLOBALS['smarty']->assign("crumb_upload", $crumb_upload);
 
+	$GLOBALS['smarty']->assign("javascript_lib", glob('javascript/lib/*.js'));
 	$GLOBALS['smarty']->display('page_upload.txt');
 	exit();

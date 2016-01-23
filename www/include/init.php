@@ -103,7 +103,7 @@
 			return $lib;
 		}
 
-		return FLAMEWORK_INCLUDE_DIR . $lib;		
+		return FLAMEWORK_INCLUDE_DIR . $lib;
 	}
 
 	#
@@ -196,7 +196,7 @@
 		$time = $end - $start;
 
 		$GLOBALS['timings']['config_count'] += 1;
-		$GLOBALS['timings']['config_time'] += $time;		
+		$GLOBALS['timings']['config_time'] += $time;
 	}
 
 	# Fucking search engines...
@@ -236,7 +236,7 @@
 			$server_url = "{$scheme}://{$_SERVER['SERVER_NAME']}:{$server_port}";
 		}
 	}
-	
+
 	if (! $server_url){
 		$scheme = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ? 'https' : 'http';
 		$server_url = "{$scheme}://{$_SERVER['SERVER_NAME']}";
@@ -252,7 +252,7 @@
 	# at some point or another. So we choose trailing slashes.
 
 	$GLOBALS['cfg']['abs_root_url'] = rtrim($server_url, '/') . "/";
-	
+
 	if ($cwd){
 		$GLOBALS['cfg']['abs_root_url'] .= $cwd . "/";
 	}
@@ -452,13 +452,13 @@
 	# (unless you've disable the 'auto_connect' flag) and
 	# will blow its brains out if there's a problem.
 	#
-	
+
 	$start = microtime_ms();
 
 	db_init();
 
 	$end = microtime_ms();
-	$time = $end - $start; 
+	$time = $end - $start;
 
 	$GLOBALS['timings']['db_init_time'] = $time;
 
@@ -485,16 +485,16 @@
 
 	if ($this_is_webpage){
 
-	   	# we assume login_check_login has been called above already
+		# we assume login_check_login has been called above already
 		# (20160121/thisisaaronland)
-	   	
-	        # API site key/token stuff
+
+		# API site key/token stuff
 
 		if (features_is_enabled("api")){
 
-                        loadlib("api");
+			loadlib("api");
 
-		        if (features_is_enabled(array("api_site_keys", "api_site_tokens"))){
+			if (features_is_enabled(array("api_site_keys", "api_site_tokens"))){
 
 				loadlib("api_keys");
 				loadlib("api_oauth2_access_tokens");

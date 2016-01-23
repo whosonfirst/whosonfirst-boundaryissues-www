@@ -51,7 +51,6 @@
 
 		// Write the file
 		file_put_contents($geojson_path, $geojson);
-		error_log('Saved the file');
 
 		// Clean up the uploaded tmp file
 		if (is_uploaded_file($input_path)) {
