@@ -9,7 +9,7 @@
 			<label>
 				{$name}
 				{if $field.type eq 'text' or $field.type eq 'number'}
-					<input type="{$field.type}" name="{$name}"{if isset($field.default)} value="{$field.default}"{/if}>
+					<input type="{$field.type}" name="{$name}"{if isset($field.default)} value="{$field.default|@escape}"{/if}>
 				{elseif $field.type eq 'list'}
 				<div class="field-list">
 					<div class="field-list-row hidden">
