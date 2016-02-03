@@ -19,3 +19,7 @@ label input {
 	border: 2px solid #999;
 	padding: 5px;
 }
+
+.field-dictionary input {
+	display: inline-block;
+}

@@ -18,21 +18,51 @@
 
 	$GLOBALS['smarty']->assign('fields', array(
 		//'wof:id' => 'number',
-		'wof:parent_id' => 'number',
-		'wof:name' => 'text',
-		'wof:placetype' => 'text',
-		'wof:country' => 'text',
-		'wof:concordances' => 'dictionary',
-		'wof:hierarchy' => 'list',
-		'wof:belongsto' => 'list',
-		'wof:supersedes' => 'list',
-		'wof:superseded_by' => 'list',
-		'wof:breaches' => 'list',
-		'wof:tags' => 'list',
-		'iso:country' => 'text',
-		'src:geom' => 'text',
-		'edtf:inception' => 'text',
-		'edtf:cessation' => 'text',
+		'wof:parent_id' => array(
+			'type' => 'number', 'default' => '-1'
+		),
+		'wof:name' => array(
+			'type' => 'text'
+		),
+		'wof:placetype' => array(
+			'type' => 'text'
+		),
+		'wof:country' => array(
+			'type' => 'text'
+		),
+		'wof:concordances' => array(
+			'type' => 'dictionary'
+		),
+		'wof:hierarchy' => array(
+			'type' => 'list'
+		),
+		'wof:belongsto' => array(
+			'type' => 'list'
+		),
+		'wof:supersedes' => array(
+			'type' => 'list'
+		),
+		'wof:superseded_by' => array(
+			'type' => 'list'
+		),
+		'wof:breaches' => array(
+			'type' => 'list'
+		),
+		'wof:tags' => array(
+			'type' => 'list'
+		),
+		'iso:country' => array(
+			'type' => 'text'
+		),
+		'src:geom' => array(
+			'type' => 'text'
+		),
+		'edtf:inception' => array(
+			'type' => 'text', 'default' => 'uuuu'
+		),
+		'edtf:cessation' => array(
+			'type' => 'text', 'default' => 'uuuu'
+		)
 	));
 
 	$GLOBALS['smarty']->assign("javascript_lib", glob('javascript/lib/*.js'));

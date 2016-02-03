@@ -5,11 +5,26 @@
 	  {$crumb_upload_fallback|crumb_input}
 	  <input type="hidden" name="method" value="wof.venue.create">
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
-		{foreach from=$fields key=name item=type}
+		{foreach from=$fields key=name item=field}
 			<label>
 				{$name}
-				{if $type eq 'text' or $type eq 'number'}
-					<input type="text" name="{$name}">
+				{if $field.type eq 'text' or $field.type eq 'number'}
+					<input type="{$field.type}" name="{$name}"{if isset($field.default)} value="{$field.default}"{/if}>
+				{elseif $field.type eq 'list'}
+				<div class="field-list">
+					<div class="field-list-row hidden">
+						<input type="text" name="{$name}_value" placeholder="List value">
+					</div>
+					<button>Add value</button>
+				</div>
+				{elseif $field.type eq 'dictionary'}
+					<div class="field-dictionary">
+						<div class="field-dictionary-row hidden">
+							<input type="text" name="{$name}_key" placeholder="Dictionary key">:
+							<input type="text" name="{$name}_value" placeholder="Dictionary value">
+						</div>
+						<button>Add key/value</button>
+					</div>
 				{else}
 					<p><i>(A {$type} UI goes here)</i></p>
 				{/if}
