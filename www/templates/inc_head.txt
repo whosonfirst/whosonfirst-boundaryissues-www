@@ -34,7 +34,7 @@
 			<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.api.js"></script>
 		{/if}
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.enmapify.js"></script>
-		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.ui.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.upload.js"></script>
 
 	</head>
 

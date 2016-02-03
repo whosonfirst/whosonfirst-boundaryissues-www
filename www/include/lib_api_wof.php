@@ -1,5 +1,6 @@
 <?php
 	loadlib('wof_upsert');
+	loadlib('wof_venue');
 
 	function api_wof_upload(){
 

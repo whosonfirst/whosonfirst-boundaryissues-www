@@ -38,10 +38,7 @@ mapzen.whosonfirst.boundaryissues.enmapify = (function(){
 
 			var props = feature['properties'];
 
-			var child_id = props['wof:id'];
 			var parent_id = props['wof:parent_id'];
-
-			var child_url = mapzen.whosonfirst.data.id2abspath(child_id);
 			var parent_url = mapzen.whosonfirst.data.id2abspath(parent_id);
 
 			var on_parent = function(parent_feature){
@@ -53,10 +50,10 @@ mapzen.whosonfirst.boundaryissues.enmapify = (function(){
 
 				var on_fail = function(){
 					mapzen.whosonfirst.log.error("failed to render " + parent_url);
-					on_child();
+					on_child(feature);
 				};
 
-				mapzen.whosonfirst.net.fetch(child_url, on_child, on_fail);
+				on_child(feature);
 			};
 
 			var on_child = function(child_feature){
@@ -203,7 +200,7 @@ mapzen.whosonfirst.boundaryissues.enmapify = (function(){
 			}
 
 			else {
-				mapzen.whosonfirst.net.fetch(parent_url, on_parent, function(){ on_child() });
+				mapzen.whosonfirst.net.fetch(parent_url, on_parent, function(){ on_child(feature) });
 			}
 		},
 

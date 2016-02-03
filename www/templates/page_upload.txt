@@ -1,17 +1,16 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
 <div class="container">
-	<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" class="upload-form" data-crumb-upload="{$crumb_upload|@escape}">
+	<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload="{$crumb_upload|@escape}">
 	  {$crumb_upload_fallback|crumb_input}
-
 	  <input type="hidden" name="method" value="wof.upload">
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
 	  <label for="upload_file">Upload a GeoJSON file</label>
-	  <input type="file" name="upload_file" id="upload_file">
-
+	  <input type="file" name="geojson_file">
 	  <input type="submit" value="Upload">
 	</form>
-	<div id="map" class="hidden"></div>
+	<div id="upload-result"></div>
+	<div id="upload-preview-map" class="hidden"></div>
 </div>
 
 {include file='inc_foot.txt'}

@@ -1,0 +1,24 @@
+{include file='inc_head.txt' nav_tab='upload'}
+
+<div class="container">
+	<form action="{$cfg.abs_root_url}venue/" method="post" id="venue-form" data-crumb-upload="{$crumb_upload|@escape}">
+	  {$crumb_upload_fallback|crumb_input}
+	  <input type="hidden" name="method" value="wof.venue.create">
+	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
+		{foreach from=$fields key=name item=type}
+			<label>
+				{$name}
+				{if $type eq 'text' or $type eq 'number'}
+					<input type="text" name="{$name}">
+				{else}
+					<p><i>(A {$type} UI goes here)</i></p>
+				{/if}
+			</label>
+		{/foreach}
+	  <input type="submit" value="Create venue">
+	</form>
+	<div id="upload-result"></div>
+	<div id="upload-preview-map" class="hidden"></div>
+</div>
+
+{include file='inc_foot.txt'}

@@ -39,7 +39,7 @@
 		),
 	);
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data';
 
 	# hard coding this URL will ensure it works in cron mode too
 

@@ -72,6 +72,7 @@ RewriteRule ^contact/?$			contact.php 		[L,QSA]
 
 # WOF pages
 RewriteRule ^upload/?$			upload.php 		[L,QSA]
+RewriteRule ^venue/?$			venue.php 		[L,QSA]
 
 # Test pages
 
