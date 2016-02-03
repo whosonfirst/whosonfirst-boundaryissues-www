@@ -26,15 +26,24 @@
 			<script src="{$cfg.abs_root_url}javascript/html5.js"></script>
 		<![endif]-->
 
-		{foreach from=$javascript_lib item=src}
-			<script src="{$cfg.abs_root_url}{$src}"></script>
-		{/foreach}
+		{assign var=lib_date_time value='20160122160855'}
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.data-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.geojson-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet.handlers-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet.styles-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet.tangram-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.log-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.net-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.php-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.placetypes-{$lib_date_time}.js"></script>
 
 		{if "api"|@features_is_enabled}
 			<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.api.js"></script>
 		{/if}
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.enmapify.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.upload.js"></script>
+
 
 	</head>
 

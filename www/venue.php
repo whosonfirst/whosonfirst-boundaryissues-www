@@ -65,6 +65,5 @@
 		)
 	));
 
-	$GLOBALS['smarty']->assign("javascript_lib", glob('javascript/lib/*.js'));
 	$GLOBALS['smarty']->display('page_venue.txt');
 	exit();
