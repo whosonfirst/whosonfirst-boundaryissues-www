@@ -21,10 +21,12 @@ git clone git@github.com:whosonfirst/vagrant-whosonfirst-www-boundaryissues.git
 
 ## Get the data
 
-This next one is going to take some time and disk space (22 GB presently). Prepare yourself.
+Before you clone the data repository, you'll need to install [git-lfs](https://git-lfs.github.com/). On my machine, this was just a matter of typing `brew install git-lfs`.
+
+This next repo is going to take some time and disk space (22 GB presently). Prepare yourself.
 
 ```
-git@github.com:whosonfirst/whosonfirst-data.git
+git clone git@github.com:whosonfirst/whosonfirst-data.git
 ```
 
 Just a note here to mention these repository URLs are all in the SSH flavor, since I intend to commit back to them at some point. You may find the HTTPS ones more to your liking. It's up to you, just thought I'd mention it.
@@ -192,4 +194,28 @@ Now we need to set the actual database up, logging in with the MySQL root user, 
 mysql -u root -p
 ```
 
-Create the database, and the account that will login to it:
+Create the database, and the account that will login to it (make up a good password here):
+
+```
+CREATE DATABASE boundaryissues;
+CREATE USER 'boundaryissues'@'localhost' IDENTIFIED BY '...';
+GRANT ALL ON boundaryissues.* TO 'boundaryissues'@'localhost';
+```
+
+## Day two
+
+So we made some progress, but things are still not quite fully installed yet. Between the time that I wrote up the preceding, I committed it to GitHub and then came back to work the next day, @thisisaaronland wrote me an email pointing to some helpful setup scripts (that I am now adding to this repository):
+
+* [setup.sh](https://github.com/whosonfirst/flamework-tools/blob/master/ubuntu/setup.sh)
+* [setup-apache.sh](https://github.com/whosonfirst/flamework-tools/blob/master/ubuntu/setup-apache.sh)
+* [setup-db.sh](https://github.com/whosonfirst/flamework-tools/blob/master/ubuntu/setup-db.sh)
+
+So I'm going to start over with a fresh VM, reduce the number of things the Vagrantfile does during its provision stage, and see how far those scripts can get me. A couple things worth noting before I move along:
+
+The order you execute those setup scripts matters. Without the `short_open_tag` configuration from setup.sh, you can't expect the PHP scripts to run in setup-db.sh. I think we should rename `ubuntu/setup.sh` to something more descriptive and create a top-level `setup.sh` that calls the individual steps in the `ubuntu` folder. (A solution to that particular `short_open_tag` problem is to just *remove all the open short tags*, which seems like a good choice for being compatible with PHP default settings.)
+
+Also, I've imposed some weirdness with how I'm doing Vagrant folder syncing, relating to file permissions. There's a conflict between wanting to be able to execute shell scripts in the `ubuntu` folder and being able to write to `templates_c` by the `www-data` user. Due to how Vagrant handles folder sync mount points, the `whosonfirst-www-boundaryissues` ownership is either owned by the `vagrant` user (and allows for executable shell scripts) *or* it's owned by `www-data` (and allows for writing to the `templates_c` folder).
+
+At the core of this issue is that I use a native OS X editor instead of emacs or vim. This means folder syncing is essential for me doing development in a familiar Mac GUI, and also having my files saved to the OS X file system getting sync'd up with the ones in my Ubuntu VM. If you're not doing development, it's kind of a non-issue, so maybe we should default to settings that work for *users* of the VM and be aware that the Vagrantfile needs to be adjusted if you plan on tweaking the code.
+
+For now the workaround is to boot with a `vagrant` style mount point during installation, then change the Vagrantfile to `www-data` mount point for ongoing development. It's not ideal, but at least I think I've identified the core issues.
