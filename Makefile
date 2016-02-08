@@ -20,8 +20,11 @@ TODO.txt:
 	@-grep -n -r -e "TODO" bin >> TODO.txt
 
 setup:
-	./ubuntu/setup.sh
 	./ubuntu/setup-ubuntu.sh
+	./ubuntu/setup-certified.sh
+	sudo ./ubuntu/setup-certified-ca.sh
+	sudo ./ubuntu/setup-certified-certs.sh
+	./ubuntu/setup.sh
 	./ubuntu/setup-apache.sh
 	./bin/configure_secrets.php .
 	./ubuntu/setup-db.sh boundaryissues boundaryissues
