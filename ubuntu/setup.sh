@@ -11,7 +11,7 @@ sudo apt-get -y upgrade
 sudo apt-get -y install apache2 mysql-server memcache
 sudo apt-get -y install php5 php5-cli php5-curl php5-mcrypt php5-memcache php5-mysql
 
-for mod in rewrite.load proxy.load proxy.conf proxy_http.load ssl.conf ssl.load socache_shmcb.load headers.load
+for mod in proxy_wstunnel.load rewrite.load proxy.load proxy.conf proxy_http.load ssl.conf ssl.load socache_shmcb.load headers.load
 do
     
     if [ -L /etc/apache2/mods-enabled/${mod} ]
