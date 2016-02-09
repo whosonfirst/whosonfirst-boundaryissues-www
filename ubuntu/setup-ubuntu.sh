@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Testing
-ls -la /usr/local/mapzen/whosonfirst-www-boundaryissues
-
 sudo apt-get update
 sudo apt-get upgrade -y
 

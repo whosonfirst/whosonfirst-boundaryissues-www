@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Testing
-ls -la /usr/local/mapzen/whosonfirst-www-boundaryissues
-
 WHOAMI=`python -c 'import os, sys; print os.path.realpath(sys.argv[1])' $0`
 
 UBUNTU=`dirname $WHOAMI`
