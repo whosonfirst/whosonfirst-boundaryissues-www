@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Testing
+ls -la /usr/local/mapzen/whosonfirst-www-boundaryissues
+
 WHOAMI=`python -c 'import os, sys; print os.path.realpath(sys.argv[1])' $0`
 
 UBUNTU=`dirname $WHOAMI`
@@ -14,7 +17,7 @@ if [ ! -f ${CONF}.example ]
 then
     echo "missing example ${CONF}"
     exit 1
-fi 
+fi
 
 if [ -f ${CONF} ]
 then
@@ -36,6 +39,6 @@ then
     sudo rm /etc/apache2/sites-enabled/${PROJECT_NAME}.conf
 fi
 
-sudo ln -s ${CONF} /etc/apache2/sites-enabled/${PROJECT_NAME}.conf 
+sudo ln -s ${CONF} /etc/apache2/sites-enabled/${PROJECT_NAME}.conf
 
 sudo /etc/init.d/apache2 restart

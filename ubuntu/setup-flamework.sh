@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Testing
+ls -la /usr/local/mapzen/whosonfirst-www-boundaryissues
+
 WHOAMI=`python -c 'import os, sys; print os.path.realpath(sys.argv[1])' $0`
 
 UBUNTU=`dirname $WHOAMI`
@@ -13,7 +16,7 @@ sudo apt-get -y install php5 php5-cli php5-curl php5-mcrypt php5-memcache php5-m
 
 for mod in proxy_wstunnel.load rewrite.load proxy.load proxy.conf proxy_http.load ssl.conf ssl.load socache_shmcb.load headers.load
 do
-    
+
     if [ -L /etc/apache2/mods-enabled/${mod} ]
     then
 	sudo rm /etc/apache2/mods-enabled/${mod}

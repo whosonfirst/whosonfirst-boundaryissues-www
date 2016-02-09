@@ -42,7 +42,7 @@ fi
 if [ -f ${PROJECT_CRT}.txt ]
 then
     rm ${PROJECT_CRT}.txt
-fi 
+fi
 
 # See this? This assumes we're running in AWS or on localhost... which is
 # inevitably going to be wrong one day (20160131/thisisaaronland)

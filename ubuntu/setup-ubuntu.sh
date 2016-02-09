@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Testing
+ls -la /usr/local/mapzen/whosonfirst-www-boundaryissues
+
 sudo apt-get update
 sudo apt-get upgrade -y
 
@@ -41,21 +44,6 @@ fi
 
 sudo chown vagrant /usr/local/mapzen
 
-if [ ! -d /usr/local/mapzen/lockedbox ]
-then
-    sudo mkdir /usr/local/mapzen/lockedbox
-    sudo chown root /usr/local/mapzen/lockedbox
-    sudo chmod 700 /usr/local/mapzen/lockedbox
-fi
-
-if [ ! -d /usr/local/mapzen/certified ]
-then
-    git clone https://github.com/rcrowley/certified.git /usr/local/mapzen/certified
-    cd /usr/local/mapzen/certified
-    sudo make install
-    cd -
-fi
-
 # index all the data - this takes a while
 # /usr/local/bin/wof-es-index -s /usr/local/mapzen/whosonfirst-data/data -b -v
 
@@ -81,20 +69,4 @@ else
 	cd /usr/local/mapzen/py-mapzen-whosonfirst
 	sudo python ./setup.py install
 	cd -
-fi
-
-if [ ! -d /usr/local/mapzen/whosonfirst-www-boundaryissues ]
-then
-	# git clone git@github.com:whosonfirst/whosonfirst-www-boundaryissues.git /usr/local/mapzen/whosonfirst-www-boundaryissues
-	git clone https://github.com/whosonfirst/whosonfirst-www-boundaryissues.git /usr/local/mapzen/whosonfirst-www-boundaryissues
-
-	sudo chown -R vagrant.vagrant /usr/local/mapzen/whosonfirst-www-boundaryissues
-	cd /usr/local/mapzen/whosonfirst-www-boundaryissues
-	git remote rm origin
-	git remote add origin git@github.com:whosonfirst/whosonfirst-www-boundaryissues.git
-else
-	cd /usr/local/mapzen/whosonfirst-www-boundaryissues
-
-	# See above
-	# git pull origin master
 fi
