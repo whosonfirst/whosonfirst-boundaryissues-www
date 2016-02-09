@@ -20,14 +20,14 @@ TODO.txt:
 	@-grep -n -r -e "TODO" bin >> TODO.txt
 
 setup:
-	./ubuntu/setup-ubuntu.sh
-	./ubuntu/setup-flamework.sh
-	./ubuntu/setup-certified.sh
-	sudo ./ubuntu/setup-certified-ca.sh
-	sudo ./ubuntu/setup-certified-certs.sh
-	./ubuntu/setup-apache.sh
-	./bin/configure_secrets.php .
-	./ubuntu/setup-db.sh boundaryissues boundaryissues
+	ubuntu/setup-ubuntu.sh
+	ubuntu/setup-flamework.sh
+	ubuntu/setup-certified.sh
+	sudo ubuntu/setup-certified-ca.sh
+	sudo ubuntu/setup-certified-certs.sh
+	ubuntu/setup-apache.sh
+	bin/configure_secrets.php .
+	ubuntu/setup-db.sh boundaryissues boundaryissues
 
 templates:
 	php -q ./bin/compile-templates.php
