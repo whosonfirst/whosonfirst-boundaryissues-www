@@ -15,8 +15,7 @@
 		Options FollowSymLinks Indexes
 		# AllowOverride FileInfo Limit
 		AllowOverride All
-		Order allow,deny
-		allow from all
+		Require all granted
 	</Directory>
 
 	ErrorLog ${APACHE_LOG_DIR}/error.log
@@ -39,12 +38,12 @@
 		SSLProtocol             all -SSLv2 -SSLv3
 		SSLCipherSuite          CDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK
 		SSLHonorCipherOrder     on
-	     	SSLCompression          off
+		SSLCompression          off
 
 		SSLUseStapling          on
 		SSLStaplingResponderTimeout 5
 		SSLStaplingReturnResponderErrors off
- 
+
 		Header add Strict-Transport-Security "max-age=15768000"
 
 		DocumentRoot __PROJECT_ROOT__/www
@@ -70,7 +69,7 @@
 		#
 		# ProxyRequests Off
 		# ProxyPass "/ws/"  "ws://localhost:8080/"
- 
+
 		ErrorLog ${APACHE_LOG_DIR}/error.log
 		CustomLog ${APACHE_LOG_DIR}/access.log combined
 		LogLevel warn
