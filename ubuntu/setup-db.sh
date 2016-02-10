@@ -44,7 +44,7 @@ fi
 
 echo "DROP DATABASE IF EXISTS ${DBNAME};" >> /tmp/${DBNAME}.sql;
 echo "CREATE DATABASE ${DBNAME};" >> /tmp/${DBNAME}.sql
-echo "DROP user IF EXISTS '${USERNAME}'@'localhost';" >> /tmp/${DBNAME}.sql
+#echo "DROP user '${USERNAME}'@'localhost';" >> /tmp/${DBNAME}.sql
 echo "CREATE user '${USERNAME}'@'localhost' IDENTIFIED BY '${PASSWORD}';" >> /tmp/${DBNAME}.sql
 echo "GRANT SELECT,UPDATE,DELETE,INSERT ON ${DBNAME}.* TO '${USERNAME}'@'localhost' IDENTIFIED BY '${PASSWORD}';" >> /tmp/${DBNAME}.sql
 echo "FLUSH PRIVILEGES;" >> /tmp/${DBNAME}.sql
