@@ -216,7 +216,7 @@
 	$GLOBALS['cfg']['api_subdomain'] = '';
 	$GLOBALS['cfg']['api_endpoint'] = 'api/rest/';
 
-	$GLOBALS['cfg']['api_require_ssl'] = 0;
+	$GLOBALS['cfg']['api_require_ssl'] = 1;
 
 	$GLOBALS['cfg']['api_auth_type'] = 'oauth2';
 	$GLOBALS['cfg']['api_oauth2_require_authentication_header'] = 0;

@@ -95,13 +95,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		show_result: function(rsp){
-			if (rsp.ok) {
-				var what_happened = rsp.result == 'update' ? 'Updated ' : 'Created ';
-				var geojson_link = '<a href="' + rsp.geojson_url + '">' + rsp.id + '.geojson</a>';
+			if (rsp.result && rsp.result.ok) {
+				var what_happened = rsp.result.result == 'update' ? 'Updated ' : 'Created ';
+				var geojson_link = '<a href="' + rsp.result.geojson_url + '">' + rsp.result.id + '.geojson</a>';
 				$result.html('Success! ' + what_happened + geojson_link);
 				mapzen.whosonfirst.log.debug(rsp);
-			} else if (rsp.error_msg) {
-				$result.html('Error: ' + rsp.error_msg);
+			} else if (rsp.result.error_msg) {
+				$result.html('Error: ' + rsp.result.error_msg);
 				mapzen.whosonfirst.log.error(rsp);
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
