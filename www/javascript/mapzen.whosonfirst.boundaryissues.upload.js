@@ -62,6 +62,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Load up the file to kick off the preview
 			if (geojson_file){
 				reader.readAsText(geojson_file);
+				$result.html('Here is a preview before you upload the file.');
 			} else {
 				mapzen.whosonfirst.log.error('No geojson_file to preview.');
 			}
@@ -95,13 +96,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		show_result: function(rsp){
-			if (rsp.result && rsp.result.ok) {
-				var what_happened = rsp.result.result == 'update' ? 'Updated ' : 'Created ';
-				var geojson_link = '<a href="' + rsp.result.geojson_url + '">' + rsp.result.id + '.geojson</a>';
+			if (rsp.ok && rsp.stat == 'ok') {
+				var what_happened = rsp.is_update ? 'Updated ' : 'Created ';
+				var geojson_link = '<a href="' + rsp.geojson_url + '">' + rsp.id + '.geojson</a>';
 				$result.html('Success! ' + what_happened + geojson_link);
 				mapzen.whosonfirst.log.debug(rsp);
-			} else if (rsp.result.error_msg) {
-				$result.html('Error: ' + rsp.result.error_msg);
+			} else if (rsp.error_msg) {
+				$result.html('Error: ' + rsp.error_msg);
 				mapzen.whosonfirst.log.error(rsp);
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');

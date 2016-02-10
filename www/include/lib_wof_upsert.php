@@ -78,14 +78,13 @@
 			unlink($input_path);
 		}
 
-		$geojson_url = wof_utils_id2relpath($geojson_data['id']);
-		$result = $is_update ? 'update' : 'insert';
+		$geojson_url = '/data/' . wof_utils_id2relpath($geojson_data['id']);
 
 		// It worked \o/
 		return array(
 			'ok' => 1,
 			'id' => $geojson_data['id'],
-			'result' => $result,
+			'is_update' => $is_update,
 			'geojson_url' => $geojson_url
 		);
 

@@ -1,6 +1,7 @@
 *~
 .vagrant
 www/include/secrets*.php
+www/data
 tests/coverage.state
 coverage/
 *~

@@ -9,12 +9,10 @@
 		}
 
 		$rsp = wof_upsert($_FILES["upload_file"]["tmp_name"]);
-		if (!$rsp['ok']){
+		if (!$rsp['ok'] ||
+		    !$rsp['geojson_url']){
 			$error = $rsp['error'] || 'Upload failed for some reason.';
 			api_output_error(400, $error);
 		}
-		$out = array(
-			'result' => $rsp
-		);
-		api_output_ok($out);
+		api_output_ok($rsp);
 	}
