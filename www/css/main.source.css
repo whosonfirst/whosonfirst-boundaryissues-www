@@ -34,3 +34,18 @@ button.marker-option {
 	background: #fff;
 	border-radius: 5px;
 }
+
+td, th {
+	vertical-align: top;
+}
+
+th {
+	background: #ededed;
+	border-right: 0.75em solid #fff;
+	padding: 4px 0.5em;
+}
+
+input {
+	border: 1px solid #ccc;
+	padding: 3px 6px;
+}
