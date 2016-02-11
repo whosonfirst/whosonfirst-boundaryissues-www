@@ -22,16 +22,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function(){
 			);
 
 			var drawnItems = new L.FeatureGroup();
+			var markerLayer;
 			map.addLayer(drawnItems);
-
 
 			var VenueMarker = L.Icon.extend({
 				options: {
 					iconUrl: '/images/marker-icon.png',
 					iconRetinaUrl: '/images/marker-icon-2x.png',
 					shadowUrl: null,
-					iconAnchor: new L.Point(13, 41),
-					iconSize: new L.Point(25, 41)
+					iconAnchor: new L.Point(13, 42),
+					iconSize: new L.Point(25, 42),
+					popupAnchor: new L.Point(0, -42)
 				}
 			});
 			var drawControl = new L.Control.Draw({
@@ -52,16 +53,28 @@ mapzen.whosonfirst.boundaryissues.venue = (function(){
 			});
 			map.addControl(drawControl);
 
-			map.on('draw:created', function (e) {
-				var type = e.layerType,
-				layer = e.layer;
-
-				if (type === 'marker') {
-					layer.bindPopup('A popup!');
+			map.on('draw:drawstart', function(e){
+				if (markerLayer){
+					drawnItems.removeLayer(markerLayer);
+					markerLayer = null;
 				}
-
-				drawnItems.addLayer(layer);
 			});
+
+			map.on('draw:created', function(e){
+				markerLayer = e.layer;
+				drawnItems.addLayer(markerLayer);
+
+				// We should do something with this lat/lng!
+				var ll = markerLayer.getLatLng();
+				console.log(ll);
+
+				// Clicking on the marker lets you reset the location
+				markerLayer.on('click', function(e){
+					drawnItems.removeLayer(markerLayer);
+					markerLayer = null;
+				});
+			});
+
 		}
 	};
 

@@ -24,3 +24,13 @@ label input {
 .field-dictionary input {
 	display: inline-block;
 }
+
+button.marker-option {
+	display: block;
+	width: 200px;
+	padding: 10px;
+	border: 2px solid #ccc;
+	margin-bottom: 2px;
+	background: #fff;
+	border-radius: 5px;
+}
