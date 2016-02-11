@@ -62,7 +62,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Load up the file to kick off the preview
 			if (geojson_file){
 				reader.readAsText(geojson_file);
-				$result.html('Here is a preview before you upload the file.');
+				$result.html('This is just a preview. You still have to hit the upload button.');
 			} else {
 				mapzen.whosonfirst.log.error('No geojson_file to preview.');
 			}
