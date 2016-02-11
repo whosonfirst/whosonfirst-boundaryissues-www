@@ -1,0 +1,7 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "https://whosonfirst.mapzen.com/schema/bbox.json#",
+	"description": "A bounding box as defined by GeoJSON",
+	"type": "array",
+	"items": { "type": "number" }
+}

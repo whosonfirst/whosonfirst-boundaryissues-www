@@ -1,5 +1,6 @@
 TIMESTAMP = $(shell date +%Y%m%d%H%M%S)
 JS_GITHUB = https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master
+JSON_SCHEMA_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-json-schema/master
 
 all: clean todo
 
@@ -56,3 +57,10 @@ update_js:
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.net-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.net.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.php-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.php.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.placetypes-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.placetypes.js
+
+update_json_schema:
+	rm -rf ./schema/json/*
+	curl -s -o ./schema/json/whosonfirst.schema $(JSON_SCHEMA_GITHUB)/schema/whosonfirst.schema
+	curl -s -o ./schema/json/geojson.schema $(JSON_SCHEMA_GITHUB)/schema/geojson.schema
+	curl -s -o ./schema/json/bbox.schema $(JSON_SCHEMA_GITHUB)/schema/bbox.schema
+	curl -s -o ./schema/json/geometry.schema $(JSON_SCHEMA_GITHUB)/schema/geometry.schema

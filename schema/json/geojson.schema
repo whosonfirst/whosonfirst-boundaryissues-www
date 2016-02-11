@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "https://whosonfirst.mapzen.com/schema/geojson.schema#",
+	"title": "Who's On First subset of the GeoJSON object schema",
+	"description": "Based on https://github.com/fge/sample-json-schemas/tree/master/geojson",
+	"type": "object",
+	"required": [ "type", "geometry", "properties" ],
+	"properties": {
+		"type": { "enum": [ "Feature" ] },
+		"bbox": { "$ref": "http://json-schema.org/geojson/bbox.json#" },
+		"geometry": {
+			"$ref": "http://json-schema.org/geojson/geometry.json#"
+		}
+	}
+}

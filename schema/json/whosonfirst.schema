@@ -1,0 +1,93 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"id": "https://whosonfirst.mapzen.com/schema/whosonfirst.schema#",
+	"title": "Who's On First (WOF) document schema",
+	"description": "What is the Minimal Viable WOF document?",
+	"type": "object",
+	"allOf": [
+		{ "$ref": "https://whosonfirst.mapzen.com/schema/geojson.schema#" },
+		{
+			"properties": {
+				"id": {
+					"type": "integer"
+				},
+				"properties": {
+					"type": "object",
+					"properties": {
+						"wof:id": {
+							"type": "integer"
+						},
+						"wof:parent_id": {
+							"type": "integer",
+							"default": -1
+						},
+						"wof:name": {
+							"type": "string"
+						},
+						"wof:placetype": {
+							"type": "string"
+						},
+						"wof:country": {
+							"type": "string"
+						},
+						"wof:concordances": {
+							"type": "object"
+						},
+						"wof:hierarchy": {
+							"type": "array"
+						},
+						"wof:belongsto": {
+							"type": "array"
+						},
+						"wof:supersedes": {
+							"type": "array"
+						},
+						"wof:superseded_by": {
+							"type": "array"
+						},
+						"wof:breaches": {
+							"type": "array"
+						},
+						"wof:tags": {
+							"type": "array"
+						},
+						"iso:country": {
+							"type": "string"
+						},
+						"src:geom": {
+							"type": "string"
+						},
+						"edtf:inception": {
+							"type": "string"
+						},
+						"edtf:cessation": {
+							"type": "string"
+						}
+					},
+					"required": [
+						"wof:id",
+						"wof:parent_id",
+						"wof:name",
+						"wof:placetype",
+						"wof:country",
+						"wof:concordances",
+						"wof:hierarchy",
+						"wof:belongsto",
+						"wof:supersedes",
+						"wof:superseded_by",
+						"wof:breaches",
+						"wof:tags",
+						"iso:country",
+						"src:geom",
+						"edtf:inception",
+						"edtf:cessation"
+					]
+				}
+			},
+			"required": [
+				"id",
+				"properties"
+			]
+		}
+	]
+}
