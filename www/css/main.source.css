@@ -17,12 +17,6 @@ label {
 
 label input {
 	display: block;
-	border: 2px solid #999;
-	padding: 5px;
-}
-
-.field-dictionary input {
-	display: inline-block;
 }
 
 button.marker-option {
@@ -47,5 +41,17 @@ th {
 
 input {
 	border: 1px solid #ccc;
-	padding: 3px 6px;
+	padding: 5px;
+}
+
+input.add-item, input.add-key, input.add-value {
+	display: inline-block;
+}
+
+.json-schema-array > ul {
+	margin-bottom: 0;
+}
+
+#venue-form .btn {
+	margin-top: 10px;
 }
