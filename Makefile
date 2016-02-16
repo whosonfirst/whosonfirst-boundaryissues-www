@@ -64,3 +64,13 @@ update_json_schema:
 	curl -s -o ./schema/json/geojson.schema $(JSON_SCHEMA_GITHUB)/schema/geojson.schema
 	curl -s -o ./schema/json/bbox.schema $(JSON_SCHEMA_GITHUB)/schema/bbox.schema
 	curl -s -o ./schema/json/geometry.schema $(JSON_SCHEMA_GITHUB)/schema/geometry.schema
+
+tangram:
+	if test -e www/javascript/tangram.js; then cp www/javascript/tangram.js www/javascript/tangram.js.bak; fi
+	curl -s -o www/javascript/tangram.js https://mapzen.com/tangram/tangram.debug.js
+	if test -e www/javascript/tangram.min.js; then cp www/javascript/tangram.min.js www/javascript/tangram.min.js.bak; fi
+	curl -s -o www/javascript/tangram.min.js https://mapzen.com/tangram/tangram.min.js
+
+refill:
+	if test -e www/tangram/refill.yaml; then cp www/tangram/refill.yaml www/tangram/refill.yaml.bak; fi
+	curl -s -o www/tangram/refill.yaml https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml
