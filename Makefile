@@ -74,3 +74,9 @@ tangram:
 refill:
 	if test -e www/tangram/refill.yaml; then cp www/tangram/refill.yaml www/tangram/refill.yaml.bak; fi
 	curl -s -o www/tangram/refill.yaml https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml
+
+pip-server:
+	ubuntu/setup-golang.sh
+	if test ! -d /usr/local/mapzen/go-whosonfirst-pip; then git clone git@github.com:whosonfirst/go-whosonfirst-pip.git /usr/local/mapzen/go-whosonfirst-pip; fi
+	cd /usr/local/mapzen/go-whosonfirst-pip; git pull origin master; make build
+	cp /usr/local/mapzen/go-whosonfirst-pip/bin/wof-pip-server services/pip-server/wof-pip-server

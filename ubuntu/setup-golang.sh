@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION='1.5.3'
+VERSION='1.6'
 DIST="go${VERSION}.linux-amd64.tar.gz"
 
 SOURCE="https://storage.googleapis.com/golang/${DIST}"
