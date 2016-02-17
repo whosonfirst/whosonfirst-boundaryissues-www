@@ -40,3 +40,16 @@ fi
 
 sudo ln -s ${PIP_INITD} /etc/init.d/wof-pip-server.sh
 
+sudo update-rc.d wof-pip-server.sh defaults
+
+# See the way we're assuming names of files here? Yeah, that's not awesome
+# but it will have to do for now... (20160217/thisisaaronland)
+
+if [ -f /var/run/wof-pip-server.sh.pid ]
+then
+    sudo /etc/init.d/wof-pip-server.sh stop
+fi
+
+sudo /etc/init.d/wof-pip-server.sh start
+
+exit 0
