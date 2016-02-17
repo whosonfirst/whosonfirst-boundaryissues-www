@@ -24,10 +24,9 @@ fi
 cp ${PIP_INITD}.example ${PIP_INITD}
 
 # THIS WILL BREAK WITH MULTIPLE REPOSITORIES... (20160217/thisisaaronland)
-${PERL} -p -i -e "s!__WHOSONFIRST_DATA__!/usr/local/mapzen/whosonfirst-data/data!g" ${PIP_INITD}
+${PERL} -p -i -e "s!__WHOSONFIRST_DATA__!/usr/local/mapzen/whosonfirst-data/!g" ${PIP_INITD}
 
-# UHHHHHHH... (20160217/thisisaaronland)
-${PERL} -p -i -e "s!__WHOSONFIRST_METAFILES__!!g" ${PIP_INITD}
+${PERL} -p -i -e "s!__WHOSONFIRST_METAFILES__!/usr/local/mapzen/whosonfirst-meta/!g" ${PIP_INITD}
 
 ${PERL} -p -i -e "s!__PIPSERVER_USER__!www-data!g" ${PIP_INITD}
 ${PERL} -p -i -e "s!__PIPSERVER_DAEMON__!${PIP_SERVER}!g" ${PIP_INITD}
