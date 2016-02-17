@@ -1,0 +1,16 @@
+<div class="json-schema-object">
+	<table>
+		{foreach from=$schema.properties key=name item=property}
+			<tr>
+				<th>{$name}</th>
+				<td>
+					{include file="inc_json_schema_field.txt" name=$name property=$property}
+				</td>
+			</tr>
+		{/foreach}
+		<tr>
+			<th><input type="text" class="add-key" placeholder="Key"></th>
+			<td><input type="text" class="add-value" placeholder="Value"></td>
+		</tr>
+	</table>
+</div>

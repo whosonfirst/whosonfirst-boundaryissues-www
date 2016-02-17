@@ -7,9 +7,9 @@
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
 		<div id="map"></div>
 		<div class="row">
-			<div class="col-md-6 col">
-				{$fields}
-				<input type="submit" value="Create venue">
+			<div class="col-md-8 col">
+				{include file="inc_json_schema_object.txt" schema=$schema_fields}
+				<button type="submit" class="btn btn-primary">Create Venue</button>
 			</div>
 		</div>
 	</form>

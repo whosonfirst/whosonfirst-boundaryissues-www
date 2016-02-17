@@ -1,0 +1,5 @@
+<div class="json-schema-array">
+	<ul>
+	</ul>
+	<input type="text" class="add-item" placeholder="Add an item">
+</div>

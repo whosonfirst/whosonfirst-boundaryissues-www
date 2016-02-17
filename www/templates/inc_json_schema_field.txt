@@ -1,0 +1,17 @@
+<div class="json-schema-field">
+	{if $property.type == 'string'}
+		<input type="text" name="{$name}">
+	{elseif $property.type == 'integer'}
+		<input type="number" name="{$name}">
+	{elseif isset($property.enum) }
+		<select name="$name">
+			{foreach from=$property.enum item=option}
+				<option>{$option}</option>
+			{/foreach}
+		</select>
+	{elseif $property.type == 'object'}
+		{include file="inc_json_schema_object.txt" schema=$property}
+	{elseif $property.type == 'array'}
+		{include file="inc_json_schema_array.txt" schema=$property}
+	{/if}
+</div>

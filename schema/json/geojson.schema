@@ -7,9 +7,9 @@
 	"required": [ "type", "geometry", "properties" ],
 	"properties": {
 		"type": { "enum": [ "Feature" ] },
-		"bbox": { "$ref": "http://json-schema.org/geojson/bbox.json#" },
+		"bbox": { "$ref": "https://whosonfirst.mapzen.com/schema/bbox.json#" },
 		"geometry": {
-			"$ref": "http://json-schema.org/geojson/geometry.json#"
+			"$ref": "https://whosonfirst.mapzen.com/schema/geometry.json#"
 		}
 	}
 }

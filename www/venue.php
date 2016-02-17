@@ -14,10 +14,18 @@
 	$crumb_venue_fallback = crumb_generate('wof.venue');
 	$GLOBALS['smarty']->assign("crumb_venue_fallback", $crumb_venue_fallback);
 
-	$crumb_venue = crumb_generate('api', 'wof.venue');
-	$GLOBALS['smarty']->assign("crumb_venue", $crumb_venue);
+	$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
+	$ignore_fields = array(
+		'id',
+		'properties' => array(
+			'wof:id'
+		)
+	);
+	$schema_fields = wof_schema_fields($ref, $ignore_fields);
 
-	$GLOBALS['smarty']->assign('fields', wof_venue_fields());
+	$crumb_venue = crumb_generate('api', 'wof.venue');
+	$GLOBALS['smarty']->assign('crumb_venue', $crumb_venue);
+	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 
 	$GLOBALS['smarty']->display('page_venue.txt');
 	exit();
