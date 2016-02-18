@@ -5,7 +5,10 @@
 	  {$crumb_upload_fallback|crumb_input}
 	  <input type="hidden" name="method" value="wof.venue.create">
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
-		<div id="map"></div>
+		<input type="hidden" name="geom:latitude" value="">
+		<input type="hidden" name="geom:longitude" value="">
+		<div id="venue-map"></div>
+		<div id="venue-coordinates"></div>
 		<div class="row">
 			<div class="col-md-8 col">
 				{include file="inc_json_schema_object.txt" schema=$schema_fields}

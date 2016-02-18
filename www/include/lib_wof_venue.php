@@ -6,7 +6,7 @@
 
 	}
 
-	function wof_schema_fields($ref, $ignore_fields = null) {
+	function wof_schema_fields($ref, $ignore_fields = null, $values = null) {
 		global $wof_schema_lookup;
 		if (empty($wof_schema_lookup)) {
 			$wof_schema_lookup = wof_load_schemas(array(
@@ -16,7 +16,7 @@
 				'bbox.schema'
 			));
 		}
-		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields);
+		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields, $values);
 		return $schema_fields;
 	}
 
@@ -32,7 +32,7 @@
 		return $schemas;
 	}
 
-	function wof_schema_filter($schema, $ignore_fields = null) {
+	function wof_schema_filter($schema, $ignore_fields = null, $values = null) {
 		if ($schema['allOf']) {
 			foreach ($schema['allOf'] as $part_of) {
 				if ($part_of['$ref']) {
@@ -47,6 +47,10 @@
 			// We don't always want to show all the fields all the time
 			$schema = wof_schema_remove_ignored($schema, $ignore_fields);
 		}
+		if ($values) {
+			// Insert values into the field definitions
+			$schema = wof_schema_insert_values($schema, $values);
+		}
 		return $schema;
 	}
 
@@ -56,6 +60,19 @@
 				unset($schema['properties'][$field]);
 			} else if ($schema['properties'][$key]) {
 				$schema['properties'][$key] = wof_schema_remove_ignored($schema['properties'][$key], $field);
+			}
+		}
+		return $schema;
+	}
+
+	function wof_schema_insert_values($schema, $values) {
+		if (is_array($values)) {
+			foreach ($values as $key => $value) {
+				if (is_scalar($value)) {
+					$schema['properties'][$key]['value'] = $value;
+				} else if ($schema['properties'][$key]) {
+					$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
+				}
 			}
 		}
 		return $schema;

@@ -17,7 +17,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function(){
 
 			mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
 			var map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
-				'map',
+				'venue-map',
 				swlat, swlon, nelat, nelon
 			);
 
@@ -64,9 +64,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function(){
 				markerLayer = e.layer;
 				drawnItems.addLayer(markerLayer);
 
-				// We should do something with this lat/lng!
 				var ll = markerLayer.getLatLng();
-				console.log(ll);
+				$('#venue-coordinates').html('Venue coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>');
+				$('input[name="geom:latitude"]').val(ll.lat);
+				$('input[name="geom:longitude"]').val(ll.lng);
 
 				// Clicking on the marker lets you reset the location
 				markerLayer.on('click', function(e){

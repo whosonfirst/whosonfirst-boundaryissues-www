@@ -1,8 +1,8 @@
 <div class="json-schema-field">
 	{if $property.type == 'string'}
-		<input type="text" name="{$name}">
+		<input type="text" name="{$name}" value="{$property.value|@escape}">
 	{elseif $property.type == 'integer'}
-		<input type="number" name="{$name}">
+		<input type="number" name="{$name}" value="{$property.value|@escape}">
 	{elseif isset($property.enum) }
 		<select name="$name">
 			{foreach from=$property.enum item=option}
