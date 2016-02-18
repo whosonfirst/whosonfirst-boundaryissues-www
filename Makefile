@@ -64,3 +64,24 @@ update_json_schema:
 	curl -s -o ./schema/json/geojson.schema $(JSON_SCHEMA_GITHUB)/schema/geojson.schema
 	curl -s -o ./schema/json/bbox.schema $(JSON_SCHEMA_GITHUB)/schema/bbox.schema
 	curl -s -o ./schema/json/geometry.schema $(JSON_SCHEMA_GITHUB)/schema/geometry.schema
+
+styleguide:
+	if test -e www/css/mapzen.styleguide.css; then cp www/css/mapzen.styleguide.css www/css/mapzen.styleguide.css.bak; fi
+	curl -s -o www/css/mapzen.styleguide.css https://mapzen.com/common/styleguide/styles/styleguide.css
+	curl -s -o www/javascript/mapzen.styleguide.min.js https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js 
+
+tangram:
+	if test -e www/javascript/tangram.js; then cp www/javascript/tangram.js www/javascript/tangram.js.bak; fi
+	curl -s -o www/javascript/tangram.js https://mapzen.com/tangram/tangram.debug.js
+	if test -e www/javascript/tangram.min.js; then cp www/javascript/tangram.min.js www/javascript/tangram.min.js.bak; fi
+	curl -s -o www/javascript/tangram.min.js https://mapzen.com/tangram/tangram.min.js
+
+refill:
+	if test -e www/tangram/refill.yaml; then cp www/tangram/refill.yaml www/tangram/refill.yaml.bak; fi
+	curl -s -o www/tangram/refill.yaml https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml
+
+pip-server:
+	ubuntu/setup-golang.sh
+	if test ! -d /usr/local/mapzen/go-whosonfirst-pip; then git clone git@github.com:whosonfirst/go-whosonfirst-pip.git /usr/local/mapzen/go-whosonfirst-pip; fi
+	cd /usr/local/mapzen/go-whosonfirst-pip; git pull origin master; make build
+	cp /usr/local/mapzen/go-whosonfirst-pip/bin/wof-pip-server services/pip-server/wof-pip-server

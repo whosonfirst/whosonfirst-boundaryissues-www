@@ -13,6 +13,8 @@
 		<link href="{$cfg.abs_root_url}css/leaflet.draw.css" rel="stylesheet">
 		<link href="{$cfg.abs_root_url}css/main.source.css" rel="stylesheet">
 
+		<link href="{$cfg.abs_root_url}css/mapzen.styleguide.css" rel="stylesheet">
+
 		{if "staff"|@auth_has_role}
 			<link href="{$cfg.abs_root_url}css/admin.source.css" rel="stylesheet">
 		{/if}
