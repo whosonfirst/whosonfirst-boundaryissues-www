@@ -42,7 +42,7 @@
 	);
 	$schema_fields = wof_schema_fields($ref, $ignore_fields, $defaults);
 
-	$crumb_venue = crumb_generate('api', 'wof.venue');
+	$crumb_venue = crumb_generate('api', 'wof.venue.create');
 	$GLOBALS['smarty']->assign('crumb_venue', $crumb_venue);
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 

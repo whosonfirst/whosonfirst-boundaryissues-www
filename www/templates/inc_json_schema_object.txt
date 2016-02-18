@@ -1,10 +1,10 @@
-<div class="json-schema-object">
+<div class="json-schema-object" data-context="{$context}">
 	<table>
 		{foreach from=$schema.properties key=name item=property}
 			<tr>
 				<th>{$name}</th>
 				<td>
-					{include file="inc_json_schema_field.txt" name=$name property=$property}
+					{include file="inc_json_schema_field.txt" name=$name property=$property context=$context}
 				</td>
 			</tr>
 		{/foreach}

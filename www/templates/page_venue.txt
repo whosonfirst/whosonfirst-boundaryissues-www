@@ -1,7 +1,7 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
 <div class="container">
-	<form action="{$cfg.abs_root_url}venue/" method="post" id="venue-form" data-crumb-upload="{$crumb_upload|@escape}">
+	<form action="{$cfg.abs_root_url}venue/" method="post" id="venue-form" data-crumb-venue="{$crumb_venue|@escape}">
 	  {$crumb_upload_fallback|crumb_input}
 	  <input type="hidden" name="method" value="wof.venue.create">
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
@@ -11,13 +11,12 @@
 		<div id="venue-coordinates"></div>
 		<div class="row">
 			<div class="col-md-8 col">
-				{include file="inc_json_schema_object.txt" schema=$schema_fields}
+				{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
 				<button type="submit" class="btn btn-primary">Create Venue</button>
 			</div>
 		</div>
 	</form>
-	<div id="upload-result"></div>
-	<div id="upload-preview-map" class="hidden"></div>
+	<div id="venue-result"></div>
 </div>
 
 {include file='inc_foot.txt'}

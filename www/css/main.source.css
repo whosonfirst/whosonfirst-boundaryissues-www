@@ -78,3 +78,7 @@ th:hover .remove-row {
 #venue-form .btn {
 	margin-top: 10px;
 }
+
+#venue-result {
+	margin-top: 1em;
+}

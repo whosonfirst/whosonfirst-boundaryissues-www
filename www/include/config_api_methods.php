@@ -16,6 +16,18 @@
 			)
 		),
 
+		"wof.venue.create" => array (
+			"description" => "Create a new venue.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof_venue",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "venue", "description" => "A GeoJSON string", "required" => 1)
+			)
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,
