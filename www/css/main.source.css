@@ -42,6 +42,7 @@ td, th {
 }
 
 th {
+	position: relative;
 	background: #ededed;
 	border-right: 0.75em solid #fff;
 	padding: 4px 0.5em;
@@ -58,6 +59,20 @@ input.add-item, input.add-key, input.add-value {
 
 .json-schema-array > ul {
 	margin-bottom: 0;
+}
+
+.remove-row {
+	position: absolute;
+	right: 0;
+	top: 0;
+	visibility: hidden;
+	color: #808080;
+	line-height: 32px;
+	cursor: pointer;
+}
+
+th:hover .remove-row {
+	visibility: visible;
 }
 
 #venue-form .btn {

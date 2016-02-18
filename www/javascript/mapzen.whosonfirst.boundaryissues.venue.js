@@ -76,6 +76,35 @@ mapzen.whosonfirst.boundaryissues.venue = (function(){
 				});
 			});
 
+			// Add new properties to the object by changing the 'Value' field
+			$('input.add-value').change(function(e) {
+				if ($(e.target).val()) {
+					var $rel = $(e.target).closest('.json-schema-object');
+					var $row = $rel.find('> table > tbody > .add-row');
+					var $key = $row.find('.add-key');
+					var $value = $row.find('.add-value');
+					var key = $key.val();
+					var value = $value.val();
+					var remove = '<span class="remove-row">&times;</span>';
+					var $newRow = $(
+						'<tr>' +
+							'<th>' + key + remove + '</th>' +
+							'<td><input name="' + key + '"></td>' +
+						'</tr>'
+					).insertBefore($row);
+					$newRow.find('.remove-row').click(function(e) {
+						$newRow.remove();
+					});
+
+					$rel.find('input[name="' + key + '"]').val(value);
+					$key.val('');
+					$value.val('');
+
+					// Focus the 'Key' field to make multiple additions easier
+					$key.focus();
+				}
+			});
+
 		}
 	};
 
