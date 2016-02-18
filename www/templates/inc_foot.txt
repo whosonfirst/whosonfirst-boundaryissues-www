@@ -3,7 +3,7 @@
       <hr>
 
       <footer>
-        <p>🔥 Made with Flamework</p>
+        <p>Boundary Issues is sponsored by <a href="https://mapzen.com/">Mapzen</a></p>
       </footer>
 
 {if "staff"|@auth_has_role}
