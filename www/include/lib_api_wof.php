@@ -23,7 +23,10 @@
 			api_output_error(400, "Please include a 'latitude' and 'longitude'.");
 		}
 
-		$rsp = http_get("http://localhost:8080/?latitude={$_POST['latitude']}&longitude={$_POST['longitude']}");
+		$latitude = post_float('latitude');
+		$longitude = post_float('longitude');
+
+		$rsp = http_get("http://localhost:8080/?latitude=$latitude&longitude=$longitude");
 		if (! $rsp['ok']) {
 			$rsp['error_msg'] = 'Error finding point in polygon.';
 			return $rsp;
