@@ -64,6 +64,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					drawnItems.removeLayer(markerLayer);
 					markerLayer = null;
 				}
+				self.reset_coordinates();
 			});
 
 			map.on('draw:created', function(e){
@@ -79,6 +80,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					markerLayer.on('click', function(e){
 						drawnItems.removeLayer(markerLayer);
 						markerLayer = null;
+						self.reset_coordinates();
 					});
 				}, 0);
 				
@@ -217,6 +219,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				mapzen.whosonfirst.log.error('Error looking up parent_id.');
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.pip", data, onsuccess, onerror);
+		},
+		
+		reset_coordinates: function() {
+			$('#venue-coordinates').html('');
+			$('input[name="geom:latitude"]').val('');
+			$('input[name="geom:longitude"]').val('');
 		}
 
 	};
