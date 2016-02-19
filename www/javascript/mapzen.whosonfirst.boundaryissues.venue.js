@@ -71,14 +71,27 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				drawnItems.addLayer(markerLayer);
 
 				var ll = markerLayer.getLatLng();
-				$('#venue-coordinates').html('Venue coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>');
 				$('input[name="geom:latitude"]').val(ll.lat);
 				$('input[name="geom:longitude"]').val(ll.lng);
 
-				// Clicking on the marker lets you reset the location
-				markerLayer.on('click', function(e){
-					drawnItems.removeLayer(markerLayer);
-					markerLayer = null;
+				setTimeout(function() {
+					// Clicking on the marker lets you reset the location
+					markerLayer.on('click', function(e){
+						drawnItems.removeLayer(markerLayer);
+						markerLayer = null;
+					});
+				}, 0);
+				
+				self.lookup_parent_id(ll.lat, ll.lng, function(results) {
+					try {
+						var parent_id = results[0].Id;
+						var html = 'Venue coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>' +
+						           ' in <strong>' + results[0].Name + '</strong> (' + results[0].Placetype + ')';
+						$('input[name="geojson.properties.wof:parent_id"]').val(parent_id);
+						$('#venue-coordinates').html(html);
+					} catch(e) {
+						mapzen.whosonfirst.log.error('Error looking up parent_id.');
+					}
 				});
 			});
 		},
@@ -131,7 +144,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					crumb: $(this).data("crumb-venue"),
 					venue: JSON.stringify(venue)
 				};
-				console.log(data);
 				mapzen.whosonfirst.boundaryissues.api.api_call("wof.venue.create", data, onsuccess, onerror);
 
 				$result.html('Loading...');
@@ -190,6 +202,21 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
 				mapzen.whosonfirst.log.error(rsp);
 			}
+		},
+		
+		lookup_parent_id: function(lat, lng, callback) {
+			var data = {
+				latitude: lat,
+				longitude: lng
+			};
+			
+			var onsuccess = function(rsp) {
+				callback(rsp.results);
+			};
+			var onerror = function(rsp) {
+				mapzen.whosonfirst.log.error('Error looking up parent_id.');
+			};
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.pip", data, onsuccess, onerror);
 		}
 
 	};

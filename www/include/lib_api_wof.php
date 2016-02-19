@@ -15,3 +15,21 @@
 		}
 		api_output_ok($rsp);
 	}
+	
+	function api_wof_pip() {
+
+		if (! isset($_POST['latitude']) ||
+		    ! isset($_POST['longitude'])) {
+			api_output_error(400, "Please include a 'latitude' and 'longitude'.");
+		}
+
+		$rsp = http_get("http://localhost:8080/?latitude={$_POST['latitude']}&longitude={$_POST['longitude']}");
+		if (! $rsp['ok']) {
+			$rsp['error_msg'] = 'Error finding point in polygon.';
+			return $rsp;
+		}
+		$results = json_decode($rsp['body']);
+		api_output_ok(array(
+			'results' => $results
+		));
+	}

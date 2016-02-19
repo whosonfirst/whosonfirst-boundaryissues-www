@@ -15,6 +15,19 @@
 				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
 			)
 		),
+		
+		"wof.pip" => array (
+			"description" => ".",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "latitude", "description" => "Coordinate latitude", "required" => 1),
+				array("name" => "longitude", "description" => "Coordinate longitude", "required" => 1)
+			)
+		),
 
 		"wof.venue.create" => array (
 			"description" => "Create a new venue.",
