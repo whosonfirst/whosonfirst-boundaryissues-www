@@ -21,6 +21,17 @@ then
     mv ${PIP_INITD} ${PIP_INITD}.bak
 fi
 
+# TO DO ... TBD
+#
+# Read in keys to build bundle URLs
+# Fetch bundle(s)
+# Expand in to ... always just assume /usr/local/mapzen/whosonfirst-data ?
+# Build METAFILES (below) accordingly
+#
+# See also:
+# https://whosonfirst.mapzen.com/bundles/#working-with
+# https://github.com/whosonfirst/fuse-whosonfirst-fs/blob/master/README.md
+
 METAFILES=`ls -a /usr/local/mapzen/whosonfirst-meta/*-latest.csv | grep -v concordances | tr '\n' ' '`
 # METAFILES="/usr/local/whosonfirst-meta/wof-country-latest.csv"
 
