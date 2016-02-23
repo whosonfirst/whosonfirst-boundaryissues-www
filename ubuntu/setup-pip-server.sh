@@ -51,6 +51,10 @@ do
     fi
 done
 
+chgrp -R www-data ${DATA}
+chmod -R g+w ${DATA}
+chmod -R g+s www-data
+
 for PT in $@
 do
 
