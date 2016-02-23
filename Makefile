@@ -2,24 +2,6 @@ TIMESTAMP = $(shell date +%Y%m%d%H%M%S)
 JS_GITHUB = https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master
 JSON_SCHEMA_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-json-schema/master
 
-all: clean todo
-
-clean:
-	rm -f ./TODO.txt
-
-todo: TODO.txt
-
-TODO.txt:
-	@echo "Generating TODO.txt file"
-	@echo "# This file was generated automatically by grep-ing for 'TO DO' in the source code." > ./TODO.txt
-	@echo "# This file is meant as a pointer to the actual details in the files themselves." >> TODO.txt
-	@echo "# This file was created "`date` >> TODO.txt
-	@echo "" >> TODO.txt
-	@-grep -n -r -e "TO DO" www >> TODO.txt
-	@-grep -n -r -e "TO DO" bin >> TODO.txt
-	@-grep -n -r -e "TODO" www >> TODO.txt
-	@-grep -n -r -e "TODO" bin >> TODO.txt
-
 setup:
 	ubuntu/setup-ubuntu.sh
 	ubuntu/setup-flamework.sh

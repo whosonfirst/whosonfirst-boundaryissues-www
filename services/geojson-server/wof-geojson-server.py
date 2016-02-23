@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import StringIO
 import sys
 from flask import Flask, request
