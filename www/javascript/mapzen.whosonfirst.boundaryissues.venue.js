@@ -147,6 +147,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				};
 
 				var venue = self.encode_venue();
+				if (!venue) {
+					return;
+				}
+				
 				var data = {
 					crumb: $(this).data("crumb-venue"),
 					venue: JSON.stringify(venue)
@@ -176,8 +180,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		encode_venue: function() {
-			var lat = parseFloat($('input[name="geom:latitude"]').val());
-			var lng = parseFloat($('input[name="geom:longitude"]').val());
+			var lat = $('input[name="geojson.properties.geom:latitude"]').val();
+			var lng = $('input[name="geojson.properties.geom:longitude"]').val();
+
+			if (! lat || ! lng) {
+				$result.html('Please set the latitude and longitude before saving.');
+				return null;
+			}
+			lat = parseFloat(lat);
+			lng = parseFloat(lng);
 			var venue = {
 				type: 'Feature',
 				bbox: [lng, lat, lng, lat],
@@ -247,14 +258,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		
 		reset_coordinates: function() {
 			$('#where').html('');
-			$('input[name="geom:latitude"]').val('');
-			$('input[name="geom:longitude"]').val('');
+			$('input[name="geojson.properties.geom:latitude"]').val('');
+			$('input[name="geojson.properties.geom:longitude"]').val('');
 		}
 
 	};
 
 	$(document).ready(function() {
-		$result = $('#venue-result');
+		$result = $('#result');
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_properties();

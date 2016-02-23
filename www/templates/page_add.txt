@@ -14,7 +14,7 @@
 			</div>
 		</div>
 	</form>
-	<div id="venue-result"></div>
+	<div id="result"></div>
 </div>
 
 {include file='inc_foot.txt'}
