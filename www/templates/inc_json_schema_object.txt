@@ -1,4 +1,4 @@
-<div class="json-schema-object" data-context="{$context}">
+<div id="json-schema-object-{$context|replace:'.':'-'}" class="json-schema-object" data-context="{$context}">
 	<table>
 		{foreach from=$schema.properties key=name item=property}
 			<tr>

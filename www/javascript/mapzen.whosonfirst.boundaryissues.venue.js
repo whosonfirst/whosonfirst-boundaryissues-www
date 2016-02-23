@@ -21,9 +21,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 			mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
 			map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
-				'venue-map',
+				'map',
 				swlat, swlon, nelat, nelon
 			);
+			
+			self.map = map;
 		},
 
 		setup_drawing: function() {
@@ -72,8 +74,20 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				drawnItems.addLayer(markerLayer);
 
 				var ll = markerLayer.getLatLng();
-				$('input[name="geom:latitude"]').val(ll.lat);
-				$('input[name="geom:longitude"]').val(ll.lng);
+				
+				if ($('input[name="geojson.properties.geom:latitude"]').length == 0) {
+					var $rel = $('#json-schema-object-geojson-properties');
+					self.add_row($rel, 'geom:latitude', ll.lat);
+				} else {
+					$('input[name="geojson.properties.geom:latitude"]').val(ll.lat);
+				}
+				
+				if ($('input[name="geojson.properties.geom:longitude"]').length == 0) {
+					var $rel = $('#json-schema-object-geojson-properties');
+					self.add_row($rel, 'geom:longitude', ll.lng);
+				} else {
+					$('input[name="geojson.properties.geom:longitude"]').val(ll.lng);
+				}
 
 				setTimeout(function() {
 					// Clicking on the marker lets you reset the location
@@ -84,13 +98,16 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					});
 				}, 0);
 				
+				var html = 'Coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>' +
+				           '<span id="where-parent"></span>';
+				$('#where').html(html);
+				
 				self.lookup_parent_id(ll.lat, ll.lng, function(results) {
 					try {
 						var parent_id = results[0].Id;
-						var html = 'Venue coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>' +
-						           ' in <strong>' + results[0].Name + '</strong> (' + results[0].Placetype + ')';
+						var html = ' in <strong>' + results[0].Name + '</strong> (' + results[0].Placetype + ')';
 						$('input[name="geojson.properties.wof:parent_id"]').val(parent_id);
-						$('#venue-coordinates').html(html);
+						$('#where-parent').html(html);
 					} catch(e) {
 						mapzen.whosonfirst.log.error('Error looking up parent_id.');
 					}
@@ -106,24 +123,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					var $row = $rel.find('> table > tbody > .add-row');
 					var $key = $row.find('.add-key');
 					var $value = $row.find('.add-value');
-					var context = $rel.data('context');
 					var key = $key.val();
 					var value = $value.val();
-					var remove = '<span class="remove-row">&times;</span>';
-					var $newRow = $(
-						'<tr>' +
-							'<th>' + key + remove + '</th>' +
-							'<td><input name="' + context + '.' + key + '" class="venue-property"></td>' +
-						'</tr>'
-					).insertBefore($row);
-					$newRow.find('.remove-row').click(function(e) {
-						$newRow.remove();
-					});
-
-					$rel.find('input[name="' + context + '.' + key + '"]').val(value);
+					self.add_row($rel, key, value);
 					$key.val('');
 					$value.val('');
-
+					
 					// Focus the 'Key' field to make multiple additions easier
 					$key.focus();
 				}
@@ -150,6 +155,24 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 				$result.html('Loading...');
 			});
+		},
+		
+		add_row: function($rel, key, value) {
+			console.log('add_row:', $rel, key, value);
+			var $row = $rel.find('> table > tbody > .add-row');
+			var context = $rel.data('context');
+			var remove = '<span class="remove-row">&times;</span>';
+			var $newRow = $(
+				'<tr>' +
+					'<th>' + key + remove + '</th>' +
+					'<td><input name="' + context + '.' + key + '" class="venue-property"></td>' +
+				'</tr>'
+			).insertBefore($row);
+			$newRow.find('.remove-row').click(function(e) {
+				$newRow.remove();
+			});
+
+			$rel.find('input[name="' + context + '.' + key + '"]').val(value);
 		},
 
 		encode_venue: function() {
@@ -194,7 +217,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		show_result: function(rsp) {
 			if (rsp.ok && rsp.stat == 'ok') {
-				var edit_link = '<a href="/id/' + rsp.id + '">' + rsp.id + '</a>';
+				var edit_link = '<a href="/id/' + rsp.id + '/">' + rsp.id + '</a>';
 				var geojson_link = '(<a href="' + rsp.geojson_url + '">raw GeoJSON</a>)';
 				$result.html('Success! Created ' + edit_link + ' ' + geojson_link);
 				mapzen.whosonfirst.log.debug(rsp);
@@ -223,7 +246,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 		
 		reset_coordinates: function() {
-			$('#venue-coordinates').html('');
+			$('#where').html('');
 			$('input[name="geom:latitude"]').val('');
 			$('input[name="geom:longitude"]').val('');
 		}
