@@ -71,8 +71,9 @@ RewriteRule ^about/?$			about.php 		[L,QSA]
 RewriteRule ^contact/?$			contact.php 		[L,QSA]
 
 # WOF pages
-RewriteRule ^upload/?$			upload.php 		[L,QSA]
-RewriteRule ^venue/?$			venue.php 		[L,QSA]
+RewriteRule ^upload/?$			upload.php 			[L,QSA]
+RewriteRule ^add/?$					add.php 				[L,QSA]
+RewriteRule ^id/(\d+)/?$		edit.php?id=$1	[L,QSA]
 
 # Test pages
 

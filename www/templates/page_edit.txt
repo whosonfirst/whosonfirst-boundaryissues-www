@@ -1,0 +1,22 @@
+{include file='inc_head.txt' nav_tab='edit'}
+
+<div class="container">
+	<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-venue="{$crumb_venue|@escape}">
+	  {$crumb_upload_fallback|crumb_input}
+	  <input type="hidden" name="method" value="wof.save">
+	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
+		<input type="hidden" name="geom:latitude" value="">
+		<input type="hidden" name="geom:longitude" value="">
+		<div id="map"></div>
+		<div id="coordinates"></div>
+		<div class="row">
+			<div class="col-md-8 col">
+				{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
+				<button type="submit" class="btn btn-primary">Save</button>
+			</div>
+		</div>
+	</form>
+	<div id="result"></div>
+</div>
+
+{include file='inc_foot.txt'}

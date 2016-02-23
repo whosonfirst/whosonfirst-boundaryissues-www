@@ -194,8 +194,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		show_result: function(rsp) {
 			if (rsp.ok && rsp.stat == 'ok') {
-				var geojson_link = '<a href="' + rsp.geojson_url + '">' + rsp.id + '.geojson</a>';
-				$result.html('Success! Created ' + geojson_link);
+				var edit_link = '<a href="/id/' + rsp.id + '">' + rsp.id + '</a>';
+				var geojson_link = '(<a href="' + rsp.geojson_url + '">raw GeoJSON</a>)';
+				$result.html('Success! Created ' + edit_link + ' ' + geojson_link);
 				mapzen.whosonfirst.log.debug(rsp);
 			} else if (rsp.error_msg) {
 				$result.html('Error: ' + rsp.error_msg);

@@ -1,7 +1,7 @@
-{include file='inc_head.txt' nav_tab='upload'}
+{include file='inc_head.txt' nav_tab='add'}
 
 <div class="container">
-	<form action="{$cfg.abs_root_url}venue/" method="post" id="venue-form" data-crumb-venue="{$crumb_venue|@escape}">
+	<form action="{$cfg.abs_root_url}add/" method="post" id="venue-form" data-crumb-venue="{$crumb_venue|@escape}">
 	  {$crumb_upload_fallback|crumb_input}
 	  <input type="hidden" name="method" value="wof.venue.create">
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">

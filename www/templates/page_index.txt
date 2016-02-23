@@ -6,7 +6,8 @@
 	</div>
 	<ul>
 		<li><a href="/upload/">Upload a GeoJSON file</a></li>
-		<li><a href="/venue/">Create a venue</a></li>
+		<li><a href="/add/">Add a place</a> (venues only for now)</li>
+		<li><a href="/id/136253057/">Edit a place</a> (switch the ID in the URL to edit other places)
 	</ul>
 </div>
 

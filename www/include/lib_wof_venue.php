@@ -35,7 +35,7 @@
 
 		// Figure out where we're going to put the incoming file
 		$geojson_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_venue_dir'],
+			$GLOBALS['cfg']['wof_data_dir'],
 			$geojson_data['properties']['wof:id']
 		);
 		$geojson_dir = dirname($geojson_path);
@@ -48,7 +48,7 @@
 		// Write the file
 		file_put_contents($geojson_path, $geojson);
 
-		$geojson_url = '/venue/' . wof_utils_id2relpath($geojson_data['id']);
+		$geojson_url = '/data/' . wof_utils_id2relpath($geojson_data['id']);
 
 		// It worked \o/
 		return array(
