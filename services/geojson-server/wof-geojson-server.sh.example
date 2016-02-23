@@ -19,7 +19,7 @@ GEOJSON_ARGS="__GEOJSON_SERVER_ARGS__"
 
 # Okay - you shouldn't need to edit anything after this
 
-GEOJSON_ARGS="-data ${WOF_DATA} ${GEOJSON_ARGS} ${WOF_META}"
+GEOJSON_ARGS="${GEOJSON_ARGS}"
 
 PID_PATH=/var/run/
 PID_NAME=`basename ${GEOJSON_DAEMON}`

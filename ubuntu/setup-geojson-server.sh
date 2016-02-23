@@ -12,7 +12,7 @@ PROJECT_NAME=`basename ${PROJECT}`
 SERVICES="${PROJECT}/services"
 
 GEOJSON_SERVICE="${SERVICES}/geojson-server"
-GEOJSON_SERVER="${GEOJSON_SERVICE}/wof-geojson-server"
+GEOJSON_SERVER="${GEOJSON_SERVICE}/wof-geojson-server.py"
 GEOJSON_INITD="${GEOJSON_SERVICE}/wof-geojson-server.sh"
 
 sudo apt-get install python-flask python-requests
