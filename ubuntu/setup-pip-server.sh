@@ -47,13 +47,13 @@ do
 
     if [ ! -d ${DEST} ]
     then
-	mkdir -p ${DEST}
+        mkdir -p ${DEST}
     fi
 done
 
 for PT in $@
 do
-    
+
     BUNDLE="wof-${PT}-latest-bundle"
     COMPRESSED="${BUNDLE}.tar.bz2"
 
@@ -77,7 +77,7 @@ do
 
     echo "sync ${BUNDLE}"
     rsync -av ${BUNDLE}/data/ ${DATA}/
-    
+
     cp ${BUNDLE}/wof-${PT}-latest.csv ${META}/wof-${PT}-latest.csv
 
     rm -rf ${BUNDLE}
@@ -91,7 +91,7 @@ PIP_ARGS="-cache_size 20000"
 cp ${PIP_INITD}.example ${PIP_INITD}
 chmod 755 ${PIP_INITD}
 
-${PERL} -p -i -e "s!__WHOSONFIRST_DATA__!/usr/local/mapzen/whosonfirst-data/!g" ${PIP_INITD}
+${PERL} -p -i -e "s!__WHOSONFIRST_DATA__!/${DATA}/!g" ${PIP_INITD}
 ${PERL} -p -i -e "s!__WHOSONFIRST_METAFILES__!${METAFILES}!g" ${PIP_INITD}
 
 ${PERL} -p -i -e "s!__PIPSERVER_USER__!www-data!g" ${PIP_INITD}

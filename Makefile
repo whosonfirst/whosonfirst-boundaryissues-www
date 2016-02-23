@@ -11,6 +11,8 @@ setup:
 	ubuntu/setup-apache.sh
 	bin/configure_secrets.php .
 	ubuntu/setup-db.sh boundaryissues boundaryissues
+	ubuntu/setup-pip-server.sh microhood neighbourhood locality
+	ubuntu/setup-geojson-server.sh
 
 templates:
 	php -q ./bin/compile-templates.php
@@ -50,7 +52,7 @@ update_json_schema:
 styleguide:
 	if test -e www/css/mapzen.styleguide.css; then cp www/css/mapzen.styleguide.css www/css/mapzen.styleguide.css.bak; fi
 	curl -s -o www/css/mapzen.styleguide.css https://mapzen.com/common/styleguide/styles/styleguide.css
-	curl -s -o www/javascript/mapzen.styleguide.min.js https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js 
+	curl -s -o www/javascript/mapzen.styleguide.min.js https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js
 
 tangram:
 	if test -e www/javascript/tangram.js; then cp www/javascript/tangram.js www/javascript/tangram.js.bak; fi
