@@ -7,6 +7,9 @@ PROJECT=`dirname $UBUNTU`
 
 PROJECT_NAME=`basename ${PROJECT}`
 
+sudo apt-get update
+sudo apt-get upgrade -y
+
 sudo apt-get install npm
 
 if [ ! -x /usr/bin/node ]
