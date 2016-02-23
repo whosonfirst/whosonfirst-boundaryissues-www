@@ -43,7 +43,7 @@ sudo update-rc.d wof-geojson-server.sh defaults
 # See the way we're assuming names of files here? Yeah, that's not awesome
 # but it will have to do for now... (20160217/thisisaaronland)
 
-if [ -f /var/run/wof-geojson-server.sh.pid ]
+if [ -f /var/run/wof-geojson-server.pid ]
 then
     sudo /etc/init.d/wof-geojson-server.sh stop
 fi

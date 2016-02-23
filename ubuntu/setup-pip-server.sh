@@ -21,19 +21,70 @@ then
     mv ${PIP_INITD} ${PIP_INITD}.bak
 fi
 
-# TO DO ... TBD
+# METAFILES=`ls -a /usr/local/mapzen/whosonfirst-meta/*-latest.csv | grep -v concordances | tr '\n' ' '`
+# METAFILES="/usr/local/whosonfirst-meta/wof-country-latest.csv"
+
+# So here's a thing we're trying out...
 #
 # Read in keys to build bundle URLs
 # Fetch bundle(s)
 # Expand in to ... always just assume /usr/local/mapzen/whosonfirst-data ?
-# Build METAFILES (below) accordingly
+# Build METAFILES accordingly
+#
+# As in:
+# ./ubuntu/setup-pip-server.sh microhood neighbourhood locality
 #
 # See also:
 # https://whosonfirst.mapzen.com/bundles/#working-with
 # https://github.com/whosonfirst/fuse-whosonfirst-fs/blob/master/README.md
 
-METAFILES=`ls -a /usr/local/mapzen/whosonfirst-meta/*-latest.csv | grep -v concordances | tr '\n' ' '`
-# METAFILES="/usr/local/whosonfirst-meta/wof-country-latest.csv"
+WOF_DATA=/usr/local/mapzen/whosonfirst-data
+DATA=${WOF_DATA}/data
+META=${WOF_DATA}/meta
+
+for DEST in ${DATA} ${META}
+do
+
+    if [ ! -d ${DEST} ]
+    then
+	mkdir -p ${DEST}
+    fi
+done
+
+for PT in $@
+do
+    
+    BUNDLE="wof-${PT}-latest-bundle"
+    COMPRESSED="${BUNDLE}.tar.bz2"
+
+    if [ -e ${COMPRESSED} ]
+    then
+        echo "remove ${COMPRESSED}"
+        rm -f ${COMPRESSED}
+    fi
+
+    if [ -d ${BUNDLE} ]
+    then
+        echo "remove ${BUNDLE}"
+        rm -rf ${BUNDLE}
+    fi
+
+    echo "fetch ${COMPRESSED}"
+    curl -o ${COMPRESSED} https://whosonfirst.mapzen.com/bundles/${COMPRESSED}
+
+    echo "expand ${COMPRESSED}"
+    tar -xvjf ${COMPRESSED}
+
+    echo "sync ${BUNDLE}"
+    rsync -av ${BUNDLE}/data/ ${DATA}/
+    
+    cp ${BUNDLE}/wof-${PT}-latest.csv ${META}/wof-${PT}-latest.csv
+
+    rm -rf ${BUNDLE}
+    rm -f ${COMPRESSED}
+done
+
+METAFILES=`ls -a ${META}/*-latest.csv | grep -v concordances | tr '\n' ' '`
 
 PIP_ARGS="-cache_size 20000"
 
@@ -59,7 +110,7 @@ sudo update-rc.d wof-pip-server.sh defaults
 # See the way we're assuming names of files here? Yeah, that's not awesome
 # but it will have to do for now... (20160217/thisisaaronland)
 
-if [ -f /var/run/wof-pip-server.sh.pid ]
+if [ -f /var/run/wof-pip-server.pid ]
 then
     sudo /etc/init.d/wof-pip-server.sh stop
 fi
