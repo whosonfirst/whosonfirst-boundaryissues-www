@@ -24,7 +24,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				'map',
 				swlat, swlon, nelat, nelon
 			);
-			
+
 			self.map = map;
 		},
 
@@ -33,7 +33,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var markerLayer;
 			map.addLayer(drawnItems);
 
-			var VenueMarker = L.Icon.extend({
+			var VenueIcon = L.Icon.extend({
 				options: {
 					iconUrl: '/images/marker-icon.png',
 					iconRetinaUrl: '/images/marker-icon-2x.png',
@@ -50,13 +50,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					rectangle: false,
 					circle: false,
 					marker: {
-						icon: new VenueMarker()
+						icon: new VenueIcon(),
+						draggable: true
 					}
 				},
 				edit: {
 					featureGroup: drawnItems,
-					edit: false,
-					remove: false
+					edit: true,
+					remove: true
 				}
 			});
 			map.addControl(drawControl);
@@ -74,14 +75,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				drawnItems.addLayer(markerLayer);
 
 				var ll = markerLayer.getLatLng();
-				
+
 				if ($('input[name="geojson.properties.geom:latitude"]').length == 0) {
 					var $rel = $('#json-schema-object-geojson-properties');
 					self.add_row($rel, 'geom:latitude', ll.lat);
 				} else {
 					$('input[name="geojson.properties.geom:latitude"]').val(ll.lat);
 				}
-				
+
 				if ($('input[name="geojson.properties.geom:longitude"]').length == 0) {
 					var $rel = $('#json-schema-object-geojson-properties');
 					self.add_row($rel, 'geom:longitude', ll.lng);
@@ -89,19 +90,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					$('input[name="geojson.properties.geom:longitude"]').val(ll.lng);
 				}
 
-				setTimeout(function() {
-					// Clicking on the marker lets you reset the location
-					markerLayer.on('click', function(e){
-						drawnItems.removeLayer(markerLayer);
-						markerLayer = null;
-						self.reset_coordinates();
-					});
-				}, 0);
-				
 				var html = 'Coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>' +
 				           '<span id="where-parent"></span>';
 				$('#where').html(html);
-				
+
 				self.lookup_parent_id(ll.lat, ll.lng, function(results) {
 					try {
 						var parent_id = results[0].Id;
@@ -128,7 +120,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.add_row($rel, key, value);
 					$key.val('');
 					$value.val('');
-					
+
 					// Focus the 'Key' field to make multiple additions easier
 					$key.focus();
 				}
@@ -150,7 +142,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				if (!venue) {
 					return;
 				}
-				
+
 				var data = {
 					crumb: $(this).data("crumb-venue"),
 					venue: JSON.stringify(venue)
@@ -160,7 +152,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$result.html('Loading...');
 			});
 		},
-		
+
 		add_row: function($rel, key, value) {
 			console.log('add_row:', $rel, key, value);
 			var $row = $rel.find('> table > tbody > .add-row');
@@ -240,13 +232,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				mapzen.whosonfirst.log.error(rsp);
 			}
 		},
-		
+
 		lookup_parent_id: function(lat, lng, callback) {
 			var data = {
 				latitude: lat,
 				longitude: lng
 			};
-			
+
 			var onsuccess = function(rsp) {
 				callback(rsp.results);
 			};
@@ -255,7 +247,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.pip", data, onsuccess, onerror);
 		},
-		
+
 		reset_coordinates: function() {
 			$('#where').html('');
 			$('input[name="geojson.properties.geom:latitude"]').val('');

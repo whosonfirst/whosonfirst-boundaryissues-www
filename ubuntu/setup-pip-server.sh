@@ -91,7 +91,7 @@ PIP_ARGS="-cache_size 20000"
 cp ${PIP_INITD}.example ${PIP_INITD}
 chmod 755 ${PIP_INITD}
 
-${PERL} -p -i -e "s!__WHOSONFIRST_DATA__!/${DATA}/!g" ${PIP_INITD}
+${PERL} -p -i -e "s!__WHOSONFIRST_DATA__!${DATA}!g" ${PIP_INITD}
 ${PERL} -p -i -e "s!__WHOSONFIRST_METAFILES__!${METAFILES}!g" ${PIP_INITD}
 
 ${PERL} -p -i -e "s!__PIPSERVER_USER__!www-data!g" ${PIP_INITD}
