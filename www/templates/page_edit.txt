@@ -5,10 +5,9 @@
 	  {$crumb_upload_fallback|crumb_input}
 	  <input type="hidden" name="method" value="wof.save">
 	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
-		<input type="hidden" name="geom:latitude" value="">
-		<input type="hidden" name="geom:longitude" value="">
+		<input type="hidden" name="wof_id" value="{$wof_id|@escape}">
 		<div id="map"></div>
-		<div id="coordinates"></div>
+		<div id="where"></div>
 		<div class="row">
 			<div class="col-md-8 col">
 				{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}

@@ -1,6 +1,7 @@
 <?php
 	include('include/init.php');
-	loadlib('wof_venue');
+	loadlib('wof_schema');
+	loadlib('wof_utils');
 
 	login_ensure_loggedin();
 
@@ -32,9 +33,10 @@
 		)
 	);
 	
+	$wof_id = get_int64('id');
 	$path = wof_utils_id2abspath(
 		$GLOBALS['cfg']['wof_data_dir'],
-		get_int64('id')
+		$wof_id
 	);
 	if (!file_exists($path)) {
 		// TODO: Do this the proper Flamework way
@@ -47,8 +49,9 @@
 	
 	$schema_fields = wof_schema_fields($ref, $ignore_fields, $values);
 
-	$crumb_venue = crumb_generate('api', 'wof.save');
-	$GLOBALS['smarty']->assign('crumb_venue', $crumb_venue);
+	$crumb_save = crumb_generate('api', 'wof.save');
+	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
+	$GLOBALS['smarty']->assign('wof_id', $wof_id);
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 
 	$GLOBALS['smarty']->display('page_edit.txt');
