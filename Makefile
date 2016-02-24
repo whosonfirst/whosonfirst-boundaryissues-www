@@ -13,6 +13,7 @@ setup:
 	ubuntu/setup-db.sh boundaryissues boundaryissues
 	ubuntu/setup-pip-server.sh microhood neighbourhood locality
 	ubuntu/setup-geojson-server.sh
+	ubuntu/setup-mapshaper.sh
 
 templates:
 	php -q ./bin/compile-templates.php

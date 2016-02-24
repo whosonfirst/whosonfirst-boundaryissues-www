@@ -83,6 +83,7 @@ do
     rsync -av ${BUNDLE}/data/ ${DATA}/
 
     cp ${BUNDLE}/wof-${PT}-latest.csv ${META}/wof-${PT}-latest.csv
+    chmod 644 ${META}/wof-${PT}-latest.csv
 
     rm -rf ${BUNDLE}
     rm -f ${COMPRESSED}
