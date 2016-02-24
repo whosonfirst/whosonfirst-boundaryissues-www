@@ -6,7 +6,7 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 // that decision may change some day but not today
 // (20160121/thisisaaronland)
 
-mapzen.whosonfirst.boundaryissues.venue = (function() {
+mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	var map,
 	    marker,
@@ -121,7 +121,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		setup_form: function() {
-			$('#venue-form').submit(function(e) {
+			$('#edit-form').submit(function(e) {
 				e.preventDefault();
 
 				var onsuccess = function(rsp){
@@ -131,18 +131,18 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.show_result(rsp);
 				};
 
-				var venue = self.encode_venue();
-				if (!venue) {
+				var place = self.encode_properties();
+				if (!place) {
 					return;
 				}
 
 				var data = {
-					crumb: $(this).data("crumb-venue"),
-					venue: JSON.stringify(venue)
+					crumb: $(this).data("crumb-save"),
+					geojson: JSON.stringify(place)
 				};
-				mapzen.whosonfirst.boundaryissues.api.api_call("wof.venue.create", data, onsuccess, onerror);
 
-				$result.html('Loading...');
+				mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, onerror);
+				$result.html('Saving...');
 			});
 		},
 
@@ -154,7 +154,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var $newRow = $(
 				'<tr>' +
 					'<th>' + key + remove + '</th>' +
-					'<td><input name="' + context + '.' + key + '" class="venue-property"></td>' +
+					'<td><input name="' + context + '.' + key + '" class="property"></td>' +
 				'</tr>'
 			).insertBefore($row);
 			$newRow.find('.remove-row').click(function(e) {
@@ -199,7 +199,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			});
 		},
 
-		encode_venue: function() {
+		encode_properties: function() {
 			var lat = $('input[name="geojson.properties.geom:latitude"]').val();
 			var lng = $('input[name="geojson.properties.geom:longitude"]').val();
 
@@ -209,7 +209,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 			lat = parseFloat(lat);
 			lng = parseFloat(lng);
-			var venue = {
+			var place = {
 				type: 'Feature',
 				bbox: [lng, lat, lng, lat],
 				geometry: {
@@ -221,14 +221,22 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					"geom:longitude": lng
 				}
 			};
-			$('#venue-form').find('input.property').each(function(i, input) {
+
+			if ($('input[name="wof_id"]').length > 0) {
+				var id = $('input[name="wof_id"]').val();
+				id = parseInt(id);
+				place.id = id;
+				place.properties['wof:id'] = id;
+			}
+
+			$('#edit-form').find('input.property').each(function(i, input) {
 				var name = $(input).attr('name');
 				var value = $(input).val();
 				// Ignore initial 'geojson.' in name (e.g., "geojson.properties.wof:concordances.id")
 				name = name.replace(/^geojson\./, '');
-				self.assign_property(venue, name, value);
+				self.assign_property(place, name, value);
 			});
-			return venue;
+			return place;
 		},
 
 		assign_property: function(context, name, value) {
@@ -248,10 +256,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		show_result: function(rsp) {
 			if (rsp.ok && rsp.stat == 'ok') {
-				var edit_link = '<a href="/id/' + rsp.id + '/">' + rsp.id + '</a>';
-				var geojson_link = '(<a href="' + rsp.geojson_url + '">raw GeoJSON</a>)';
-				$result.html('Success! Created ' + edit_link + ' ' + geojson_link);
-				mapzen.whosonfirst.log.debug(rsp);
+				if ($('input[name="wof_id"]').length > 0) {
+					var wof_name = $('input[name="geojson.properties.wof:name"]').val();
+					$('#wof_name').text(wof_name);
+					$result.html('Saved!');
+				} else {
+					location.href = '/id/' + rsp.id + '/';
+				}
 			} else if (rsp.error_msg) {
 				$result.html('Error: ' + rsp.error_msg);
 				mapzen.whosonfirst.log.error(rsp);

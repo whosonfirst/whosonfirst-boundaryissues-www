@@ -5,7 +5,7 @@
 	$GLOBALS['cfg']['api']['methods'] = array_merge(array(
 
 		"wof.upload" => array (
-			"description" => "Upload a GeoJSON file.",
+			"description" => "Upload a file to create a WOF record.",
 			"documented" => 1,
 			"enabled" => 1,
 			"library" => "api_wof",
@@ -15,7 +15,19 @@
 				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
 			)
 		),
-		
+
+		"wof.save" => array (
+			"description" => "Save a WOF record.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "geojson", "description" => "A GeoJSON string.", "required" => 1)
+			)
+		),
+
 		"wof.pip" => array (
 			"description" => ".",
 			"documented" => 1,
@@ -26,18 +38,6 @@
 			"parameters" => array(
 				array("name" => "latitude", "description" => "Coordinate latitude", "required" => 1),
 				array("name" => "longitude", "description" => "Coordinate longitude", "required" => 1)
-			)
-		),
-
-		"wof.venue.create" => array (
-			"description" => "Create a new venue.",
-			"documented" => 1,
-			"enabled" => 1,
-			"library" => "api_wof_venue",
-			"requires_crumb" => 1,
-			"request_method" => "POST",
-			"parameters" => array(
-				array("name" => "venue", "description" => "A GeoJSON string", "required" => 1)
 			)
 		),
 

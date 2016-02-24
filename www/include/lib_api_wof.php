@@ -1,5 +1,5 @@
 <?php
-	loadlib('wof_upsert');
+	loadlib('wof_save');
 
 	function api_wof_upload() {
 
@@ -7,7 +7,7 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$rsp = wof_upsert($_FILES["upload_file"]["tmp_name"]);
+		$rsp = wof_save($_FILES["upload_file"]["tmp_name"]);
 		if (! $rsp['ok'] ||
 		    ! $rsp['geojson_url']) {
 			$error = $rsp['error'] || 'Upload failed for some reason.';
@@ -15,7 +15,22 @@
 		}
 		api_output_ok($rsp);
 	}
-	
+
+	function api_wof_save() {
+
+		if (! $_POST['geojson']) {
+			api_output_error(400, "Please include a 'geojson' parameter.");
+		}
+
+		$rsp = wof_save_string($_POST['geojson']);
+		if (! $rsp['ok'] ||
+				! $rsp['geojson_url']) {
+			$error = $rsp['error'] || 'Saving failed for some reason.';
+			api_output_error(400, $error);
+		}
+		api_output_ok($rsp);
+	}
+
 	function api_wof_pip() {
 
 		if (! isset($_POST['latitude']) ||

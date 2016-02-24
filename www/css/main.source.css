@@ -1,6 +1,14 @@
 body { padding-bottom: 40px; }
 .navbar-static-top { margin-bottom: 20px; }
 
+nav#header {
+	width: auto;
+}
+
+.dropdown-menu li {
+	text-align: left;
+}
+
 #upload-preview-map,
 #map {
 	width: 100%;
@@ -37,20 +45,26 @@ button.marker-option {
 	border-radius: 5px;
 }
 
-td, th {
+.json-schema-object td,
+.json-schema-object th {
 	vertical-align: top;
+	font-family: menlo, monospace;
+	font-size: 14px;
 }
 
-th {
+.json-schema-object th {
+	font-weight: normal;
 	position: relative;
 	background: #ededed;
 	border-right: 0.75em solid #fff;
 	padding: 4px 0.5em;
 }
 
-input {
-	border: 1px solid #ccc;
-	padding: 5px;
+#edit-form input {
+	border: none;
+	border-bottom: 1px solid #999;
+	padding: 5px 0;
+	background: transparent;
 }
 
 input.add-item, input.add-key, input.add-value {
@@ -75,10 +89,10 @@ th:hover .remove-row {
 	visibility: visible;
 }
 
-#venue-form .btn {
+#edit-form .btn {
 	margin-top: 10px;
 }
 
-#venue-result {
+#result {
 	margin-top: 1em;
 }

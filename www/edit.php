@@ -5,15 +5,8 @@
 
 	login_ensure_loggedin();
 
-	if (post_isset('lat') &&
-	    post_isset('lon')) {
-		loadlib('api_wof');
-		api_wof_venue();
-		exit;
-	}
-
 	$crumb_venue_fallback = crumb_generate('wof.save');
-	$GLOBALS['smarty']->assign("crumb_venue_fallback", $crumb_venue_fallback);
+	$GLOBALS['smarty']->assign("crumb_save_fallback", $crumb_venue_fallback);
 
 	$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
 	$ignore_fields = array(
@@ -32,7 +25,7 @@
 			'iso:country'
 		)
 	);
-	
+
 	$wof_id = get_int64('id');
 	$path = wof_utils_id2abspath(
 		$GLOBALS['cfg']['wof_data_dir'],
@@ -46,12 +39,13 @@
 	}
 	$geojson = file_get_contents($path);
 	$values = json_decode($geojson, true);
-	
+
 	$schema_fields = wof_schema_fields($ref, $ignore_fields, $values);
 
 	$crumb_save = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);
+	$GLOBALS['smarty']->assign('wof_name', $values['properties']['wof:name']);
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 
 	$GLOBALS['smarty']->display('page_edit.txt');

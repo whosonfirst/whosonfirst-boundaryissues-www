@@ -1,18 +1,20 @@
 
-    <div class="container">
-      <hr>
+		<div class="container">
+			<div class="row">
+				<hr>
 
-      <footer>
-        <p>Boundary Issues is sponsored by <a href="https://mapzen.com/">Mapzen</a></p>
-      </footer>
+				<footer>
+					<p>Boundary Issues is sponsored by <a href="https://mapzen.com/">Mapzen</a></p>
+				</footer>
 
-{if "staff"|@auth_has_role}
-      	{timings}
-{/if}
+				{if "staff"|@auth_has_role}
+					{timings}
+				{/if}
 
-    </div> <!-- /container -->
+			</div> <!-- /row -->
+		</div> <!-- /container -->
 
-    {pagination_footer}
+		{pagination_footer}
 
-  </body>
+	</body>
 </html>

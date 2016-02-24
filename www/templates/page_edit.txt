@@ -1,21 +1,26 @@
 {include file='inc_head.txt' nav_tab='edit'}
 
 <div class="container">
-	<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-venue="{$crumb_venue|@escape}">
-	  {$crumb_upload_fallback|crumb_input}
-	  <input type="hidden" name="method" value="wof.save">
-	  <input type="hidden" name="access_token" value="{$site_token|@escape}">
-		<input type="hidden" name="wof_id" value="{$wof_id|@escape}">
-		<div id="map"></div>
-		<div id="where"></div>
-		<div class="row">
-			<div class="col-md-8 col">
-				{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
-				<button type="submit" class="btn btn-primary">Save</button>
+	<div class="row">
+		<h2>Edit <span id="wof_name">{$wof_name|@escape}</span></h2>
+	</div>
+	<div class="row">
+		<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}">
+		  {$crumb_save_fallback|crumb_input}
+		  <input type="hidden" name="method" value="wof.save">
+		  <input type="hidden" name="access_token" value="{$site_token|@escape}">
+			<input type="hidden" name="wof_id" value="{$wof_id|@escape}">
+			<div id="map"></div>
+			<div id="where"></div>
+			<div class="row">
+				<div class="col-md-8 col">
+					{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
+					<button type="submit" class="btn btn-primary">Save</button>
+				</div>
 			</div>
-		</div>
-	</form>
-	<div id="result"></div>
+		</form>
+		<div id="result"></div>
+	</div>
 </div>
 
 {include file='inc_foot.txt'}
