@@ -73,6 +73,12 @@ input.add-item, input.add-key, input.add-value {
 
 .json-schema-array > ul {
 	margin-bottom: 0;
+	padding-left: 0;
+}
+
+.json-schema-array > ul > li {
+	margin-left: 0;
+	list-style: none;
 }
 
 .remove-row {
