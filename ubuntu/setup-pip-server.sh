@@ -51,9 +51,9 @@ do
     fi
 done
 
-chgrp -R www-data ${DATA}
-chmod -R g+w ${DATA}
-chmod -R g+s www-data
+sudo chgrp -R www-data ${DATA}
+sudo chmod -R g+w ${DATA}
+sudo chmod -R g+s www-data
 
 for PT in $@
 do
