@@ -61,7 +61,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					swlat, swlon, nelat, nelon
 				);
 			}
-			L.control.geocoder('search-o3YYmTI').addTo(map);
+			L.control.geocoder('search-o3YYmTI', {
+				markers: {
+					icon: new VenueIcon()
+				}
+			}).addTo(map);
 
 			self.map = map;
 		},
