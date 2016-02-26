@@ -8,6 +8,12 @@ ROOT=`dirname $UBUNTU`
 sudo apt-get update
 sudo apt-get -y upgrade
 
+# RDISCOUNT=`gem list | grep rdiscount | wc -l`
+# guh.... dunno why this is necessary but it seems to be
+# (20160226/thisisaaronland)
+
+sudo gem install rdiscount
+
 if [ ! -d ${ROOT}/certified ]
 then
 
