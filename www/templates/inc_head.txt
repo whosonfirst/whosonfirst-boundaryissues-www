@@ -51,4 +51,5 @@
 
 	<body data-abs-root-url="{$cfg.abs_root_url}" {if "api"|@features_is_enabled}data-api-endpoint="{$cfg.api_abs_root_url}{$cfg.api_endpoint}"{/if}{if "api_site_tokens"|@features_is_enabled} data-api-site-token="{$site_token|@escape}"{/if}>
 
+	{if $cfg.display_message}<div id="site-message">{$cfg.display_message_text|@escape}</div>{/if}
 	{include file="inc_head_navi.txt"}

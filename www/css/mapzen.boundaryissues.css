@@ -107,3 +107,18 @@ th:hover .remove-row {
     font-style:italic;
     color:#D4645C;
 }
+
+#site-message {
+    border-bottom: solid thin;
+    position: fixed;
+    top: 0;
+    z-index: 3000;
+    background-color: #fff;
+    background: url(/images/stripes_bg.gif);
+    font-family: monospace;
+    width: 100%;
+    padding: .75em;
+    color: darkslategray;
+    text-align:center;
+    font-size:small;
+}
