@@ -102,3 +102,8 @@ th:hover .remove-row {
 #result {
 	margin-top: 1em;
 }
+
+.caveat {
+    font-style:italic;
+    color:#D4645C;
+}

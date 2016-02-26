@@ -2,6 +2,9 @@ TIMESTAMP = $(shell date +%Y%m%d%H%M%S)
 JS_GITHUB = https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master
 JSON_SCHEMA_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-json-schema/master
 
+htusers:
+	htpasswd -c -B apache/.htusers mapzen
+
 setup:
 	ubuntu/setup-ubuntu.sh
 	ubuntu/setup-flamework.sh
@@ -64,6 +67,12 @@ tangram:
 refill:
 	if test -e www/tangram/refill.yaml; then cp www/tangram/refill.yaml www/tangram/refill.yaml.bak; fi
 	curl -s -o www/tangram/refill.yaml https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml
+
+leaflet-geocoder:
+	if test -e www/css/leaflet-geocoder-mapzen.css; then cp www/css/leaflet-geocoder-mapzen.css www/css/leaflet-geocoder-mapzen.css.bak; fi
+	curl -s -o www/css/leaflet-geocoder-mapzen.css https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.css
+	if test -e www/javascript/leaflet-geocoder-mapzen.js; then cp www/javascript/leaflet-geocoder-mapzen.js www/javascript/leaflet-geocoder-mapzen.js.bak; fi
+	curl -s -o www/javascript/leaflet-geocoder-mapzen.js https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.js
 
 pip-server:
 	ubuntu/setup-golang.sh

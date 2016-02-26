@@ -61,6 +61,14 @@
 			Options FollowSymLinks Indexes
 			AllowOverride All
 			Require all granted
+
+			# https://httpd.apache.org/docs/current/howto/auth.html
+			# AuthType Basic
+			# AuthName "__PROJECT_NAME__"
+			# AuthBasicProvider file
+			# AuthUserFile "__PROJECT_ROOT__/apache/.htusers"
+			# Require user mapzen
+
 		</Directory>
 
 		<Directory __PROJECT_ROOT__/www/templates_c>
