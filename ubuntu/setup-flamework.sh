@@ -16,15 +16,28 @@ do
 
     if [ -L /etc/apache2/mods-enabled/${mod} ]
     then
-	sudo rm /etc/apache2/mods-enabled/${mod}
+        sudo rm /etc/apache2/mods-enabled/${mod}
     fi
 
     if [ -f /etc/apache2/mods-enabled/${mod} ]
     then
-	sudo mv /etc/apache2/mods-enabled/${mod} /etc/apache2/mods-enabled/${mod}.bak
+        sudo mv /etc/apache2/mods-enabled/${mod} /etc/apache2/mods-enabled/${mod}.bak
     fi
 
     sudo ln -s /etc/apache2/mods-available/${mod} /etc/apache2/mods-enabled/${mod}
+done
+
+for conf_disable in javascript-common
+do
+    if [ -L /etc/apache2/conf-enabled/${conf_disable} ]
+    then
+        sudo rm /etc/apache2/conf-enabled/${conf_disable}
+    fi
+
+    if [ -f /etc/apache2/conf-enabled/${conf_disable} ]
+    then
+        sudo mv /etc/apache2/conf-enabled/${conf_disable} /etc/apache2/conf-enabled/${conf_disable}.disabled
+    fi
 done
 
 for ctx in apache2 cli
@@ -33,17 +46,17 @@ do
     for mod in mcrypt.ini
     do
 
-	if [ -L /etc/php5/${ctx}/conf.d/${mod} ]
-	then
-	    sudo rm /etc/php5/${ctx}/conf.d/${mod}
-	fi
+        if [ -L /etc/php5/${ctx}/conf.d/${mod} ]
+        then
+            sudo rm /etc/php5/${ctx}/conf.d/${mod}
+        fi
 
-	if [ -f /etc/php5/${ctx}/conf.d/${mod} ]
-	then
-	    sudo mv /etc/php5/${ctx}/conf.d/${mod} /etc/php5/${ctx}/conf.d/${mod}.bak
-	fi
+        if [ -f /etc/php5/${ctx}/conf.d/${mod} ]
+        then
+            sudo mv /etc/php5/${ctx}/conf.d/${mod} /etc/php5/${ctx}/conf.d/${mod}.bak
+        fi
 
-	sudo ln -s /etc/php5/mods-available/${mod} /etc/php5/${ctx}/conf.d/${mod}
+        sudo ln -s /etc/php5/mods-available/${mod} /etc/php5/${ctx}/conf.d/${mod}
     done
 
     sudo perl -p -i -e "s/short_open_tag = Off/short_open_tag = On/" /etc/php5/${ctx}/php.ini;
