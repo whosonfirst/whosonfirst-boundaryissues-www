@@ -288,7 +288,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		show_result: function(rsp) {
-			if (rsp.ok && rsp.stat == 'ok') {
+
+		        if (! rsp){
+				$result.html('Argh, it\'s all gone pear-shaped! Check the JavaScript console?');
+				mapzen.whosonfirst.log.error(rsp);
+			} else if (rsp.ok && rsp.stat == 'ok') {
 				if ($('input[name="wof_id"]').length > 0) {
 					var wof_name = $('input[name="geojson.properties.wof:name"]').val();
 					$('#wof_name').text(wof_name);
@@ -334,6 +338,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		self.setup_drawing();
 		self.setup_properties();
 		self.setup_form();
+
 	});
 
 	return self;

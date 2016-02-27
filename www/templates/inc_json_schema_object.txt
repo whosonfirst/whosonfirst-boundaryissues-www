@@ -8,9 +8,11 @@
 				</td>
 			</tr>
 		{/foreach}
+
 		<tr class="add-row">
 			<th><input type="text" class="add-key" placeholder="Key"></th>
 			<td><input type="text" class="add-value" placeholder="Value"></td>
 		</tr>
+
 	</table>
 </div>
