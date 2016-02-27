@@ -122,3 +122,8 @@ th:hover .remove-row {
     text-align:center;
     font-size:small;
 }
+
+#wof_name {
+    font-weight: 700;
+    color:#D4645C;
+}
