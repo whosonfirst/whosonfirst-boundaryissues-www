@@ -66,21 +66,39 @@
 		$geojson = $rsp['body'];
 
 		// Figure out where we're going to put the incoming file
+
 		$geojson_path = wof_utils_id2abspath(
 			$GLOBALS['cfg']['wof_data_dir'],
 			$geojson_data['properties']['wof:id']
 		);
+
 		$geojson_dir = dirname($geojson_path);
+
+		# Because the following emit E_WARNINGS when things don't
+		# work and that makes the JSON returned to the server sad
+		# (20160226/thisisaaronland)
+
+		$reporting_level = error_reporting();
+		error_reporting(E_ERROR);
 
 		// Create the directory structure, if it doesn't exist
 		if (! file_exists($geojson_dir)){
-			mkdir($geojson_dir, 0775, true);
+
+			if (! mkdir($geojson_dir, 0775, true)){
+				error_log("failed to mkdir {$geojson_dir}");
+				api_output_error(500, "Argh! The server was unable to create your GeoJSON file");
+			}		    
 		}
 
 		$is_update = file_exists($geojson_path);
 
 		// Write the file
-		file_put_contents($geojson_path, $geojson);
+
+		if (! file_put_contents($geojson_path, $geojson)){
+			api_output_error(500, "Argh! The server was unable to create your GeoJSON file");
+		}
+
+		error_reporting($reporting_level);
 
 		$geojson_url = '/data/' . wof_utils_id2relpath($geojson_data['id']);
 
