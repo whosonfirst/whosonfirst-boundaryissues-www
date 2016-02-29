@@ -53,7 +53,7 @@ done
 
 sudo chgrp -R www-data ${DATA}
 sudo chmod -R g+w ${DATA}
-sudo chmod -R g+s www-data
+sudo chmod -R g+s ${DATA}
 
 for PT in $@
 do
