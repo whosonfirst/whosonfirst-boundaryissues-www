@@ -12,7 +12,7 @@ sudo apt-get -y upgrade
 # guh.... dunno why this is necessary but it seems to be
 # (20160226/thisisaaronland)
 
-sudo gem install rdiscount
+sudo gem install ruby-dev rdiscount
 
 if [ ! -d ${ROOT}/certified ]
 then
