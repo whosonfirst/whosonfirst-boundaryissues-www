@@ -5,10 +5,9 @@
 		<h1>Boundary Issues</h1>
 	</div>
 	<ul>
-		<li>Upload a GeoJSON file: <a href="/admin/upload/">Administrative</a> / <a href="/venue/upload/">Venue</a></li>
-		<li>Add a place: <a href="/admin/add/">Administrative</a> / <a href="/venue/add/">Venue</a></li>
-		<li><a href="/admin/136253057/">Edit an administrative place</a> (switch the ID in the URL to edit other places)
-		<li><a href="/venue/420571601/">Edit a venue</a> (switch the ID in the URL to edit other places)
+		<li><a href="/upload/">Upload a GeoJSON file</a></li>
+		<li><a href="/add/">Add a place</a> (venues only for now)</li>
+		<li><a href="/id/136253057/">Edit a place</a> (switch the ID in the URL to edit other places)
 	</ul>
 </div>
 

@@ -47,7 +47,6 @@
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);
 	$GLOBALS['smarty']->assign('wof_name', $values['properties']['wof:name']);
-	$GLOBALS['smarty']->assign('repo', get_str('repo'));
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 
 	$GLOBALS['smarty']->display('page_edit.txt');
