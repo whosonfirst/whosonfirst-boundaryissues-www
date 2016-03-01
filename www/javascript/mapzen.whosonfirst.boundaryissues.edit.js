@@ -52,13 +52,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			} else {
 				// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
-				var swlat = 37.70120736474139;
-				var swlon = -122.68707275390624;
-				var nelat = 37.80924146650164;
-				var nelon = -122.21912384033203;
-				map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
+				var lat = 40.73581157695217;
+				var lon = -73.9815902709961;
+				var zoom = 12;
+				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
 					'map',
-					swlat, swlon, nelat, nelon
+					lat, lon, zoom
 				);
 			}
 			L.control.geocoder('search-o3YYmTI', {
