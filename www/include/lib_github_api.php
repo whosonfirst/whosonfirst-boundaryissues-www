@@ -50,12 +50,17 @@
 		parse_str($rsp['body'], $data);
 
 		if ((! $data) || (! $data['access_token'])){
-			return not_okay("failed to parse response");
+
+			return array(
+				'rsp' => 0,
+				'error' => 'failed to parse response'
+			);
 		}
 
-		return okay(array(
+		return array(
+			'rsp' => 1,
 			'oauth_token' => $data['access_token']
-		));
+		);
 	}
 
 	#################################################################
