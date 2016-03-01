@@ -29,7 +29,7 @@
 
 	$wof_id = get_int64('id');
 	$path = wof_utils_id2abspath(
-		$GLOBALS['cfg']['wof_venue_dir'],
+		$GLOBALS['cfg']['wof_data_dir'],
 		$wof_id
 	);
 	if (!file_exists($path)) {

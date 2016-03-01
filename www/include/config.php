@@ -39,8 +39,7 @@
 		),
 	);
 
-	$GLOBALS['cfg']['wof_admin_dir'] = '/usr/local/mapzen/whosonfirst-data/data';
-	$GLOBALS['cfg']['wof_venue_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data';
 
 	# hard coding this URL will ensure it works in cron mode too
 
@@ -71,8 +70,8 @@
 
 	# Caching stuff
 
-        $GLOBALS['cfg']['enable_feature_cache_prefixes'] = 1;
-        $GLOBALS['cfg']['cache_prefix'] = $GLOBALS['cfg']['environment'];
+	$GLOBALS['cfg']['enable_feature_cache_prefixes'] = 1;
+	$GLOBALS['cfg']['cache_prefix'] = $GLOBALS['cfg']['environment'];
 
 	# Note: memcache stuff is not enabled by default but is
 	# available in the 'extras' directory
