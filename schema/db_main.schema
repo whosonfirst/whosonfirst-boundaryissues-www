@@ -1,83 +1,141 @@
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `deleted` int(10) unsigned NOT NULL,
-  `created` int(10) unsigned NOT NULL,
-  `password` char(64) DEFAULT NULL,
-  `conf_code` char(24) DEFAULT NULL,
-  `confirmed` int(10) unsigned NOT NULL,
-  `cluster_id` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `by_email` (`email`),
-  UNIQUE KEY `by_username` (`username`,`deleted`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+	`id`
+	int(11) unsigned NOT NULL AUTO_INCREMENT,
+	`username`
+	varchar(255) DEFAULT NULL,
+	`email`
+	varchar(255) DEFAULT NULL,
+	`deleted`
+	int(10) unsigned NOT NULL,
+	`created`
+	int(10) unsigned NOT NULL,
+	`password`
+	char(64) DEFAULT NULL,
+	`conf_code`
+	char(24) DEFAULT NULL,
+	`confirmed`
+	int(10) unsigned NOT NULL,
+	`cluster_id`
+	tinyint(3) unsigned NOT NULL,
+	PRIMARY KEY(`id`),
+	UNIQUE KEY `by_email` (`email`),
+	UNIQUE KEY `by_username` (`username`, `deleted`)
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 
 DROP TABLE IF EXISTS `users_password_reset`;
 
 CREATE TABLE `users_password_reset` (
-  `user_id` int(10) unsigned NOT NULL,
-  `reset_code` char(32) DEFAULT NULL,
-  `created` int(10) unsigned NOT NULL,
-  UNIQUE KEY `by_code` (`reset_code`),
-  KEY `by_user` (`user_id`),
-  KEY `by_timestamp` (`created`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	`user_id`
+	int(10) unsigned NOT NULL,
+	`reset_code`
+	char(32) DEFAULT NULL,
+	`created`
+	int(10) unsigned NOT NULL,
+	UNIQUE KEY `by_code` (`reset_code`),
+	KEY `by_user` (`user_id`),
+	KEY `by_timestamp` (`created`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 DROP TABLE IF EXISTS `ApiKeys`;
 
 CREATE TABLE `ApiKeys` (
-  `id` bigint(20) unsigned NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
-  `role_id` tinyint(3) unsigned NOT NULL,
-  `api_key` varchar(40) NOT NULL,
-  `app_secret` varchar(64) NOT NULL,
-  `app_callback` varchar(255) NOT NULL,
-  `created` int(11) unsigned NOT NULL,
-  `created_by` int(11) unsigned NOT NULL,
-  `expires` int(11) unsigned NOT NULL,
-  `app_title` varchar(255) NOT NULL,
-  `app_description` text NOT NULL,
-  `deleted` int(11) unsigned NOT NULL,
-  `disabled` int(11) unsigned NOT NULL,
-  `last_modified` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `by_key` (`api_key`),
-  KEY `by_user` (`user_id`,`deleted`,`created`),
-  KEY `by_role` (`role_id`,`deleted`,`created`),
-  KEY `by_role_created` (`role_id`,`created`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	`id`
+	bigint(20) unsigned NOT NULL,
+	`user_id`
+	int(11) unsigned NOT NULL,
+	`role_id`
+	tinyint(3) unsigned NOT NULL,
+	`api_key`
+	varchar(40) NOT NULL,
+	`app_secret`
+	varchar(64) NOT NULL,
+	`app_callback`
+	varchar(255) NOT NULL,
+	`created`
+	int(11) unsigned NOT NULL,
+	`created_by`
+	int(11) unsigned NOT NULL,
+	`expires`
+	int(11) unsigned NOT NULL,
+	`app_title`
+	varchar(255) NOT NULL,
+	`app_description`
+	text NOT NULL,
+	`deleted`
+	int(11) unsigned NOT NULL,
+	`disabled`
+	int(11) unsigned NOT NULL,
+	`last_modified`
+	int(11) unsigned NOT NULL,
+	PRIMARY KEY(`id`),
+	UNIQUE KEY `by_key` (`api_key`),
+	KEY `by_user` (`user_id`, `deleted`, `created`),
+	KEY `by_role` (`role_id`, `deleted`, `created`),
+	KEY `by_role_created` (`role_id`, `created`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 CREATE TABLE `OAuth2AccessTokens` (
-  `id` bigint(20) unsigned NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
-  `api_key_id` bigint(20) unsigned NOT NULL,
-  `api_key_role_id` tinyint(3) unsigned NOT NULL,
-  `access_token` varchar(64) NOT NULL,
-  `created` int(11) unsigned NOT NULL,
-  `perms` tinyint(3) unsigned NOT NULL,
-  `access_token_secret` varchar(64) NOT NULL,
-  `last_modified` int(11) unsigned NOT NULL,
-  `expires` int(11) unsigned NOT NULL,
-  `disabled` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `by_api_key` (`api_key_id`,`expires`,`created`),
-  KEY `by_user_key` (`user_id`,`api_key_id`,`expires`, `api_key_role_id`),
-  KEY `by_user` (`user_id`,`expires`, `api_key_role_id`),
-  KEY `by_token` (`access_token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	`id`
+	bigint(20) unsigned NOT NULL,
+	`user_id`
+	int(11) unsigned NOT NULL,
+	`api_key_id`
+	bigint(20) unsigned NOT NULL,
+	`api_key_role_id`
+	tinyint(3) unsigned NOT NULL,
+	`access_token`
+	varchar(64) NOT NULL,
+	`created`
+	int(11) unsigned NOT NULL,
+	`perms`
+	tinyint(3) unsigned NOT NULL,
+	`access_token_secret`
+	varchar(64) NOT NULL,
+	`last_modified`
+	int(11) unsigned NOT NULL,
+	`expires`
+	int(11) unsigned NOT NULL,
+	`disabled`
+	int(11) unsigned NOT NULL,
+	PRIMARY KEY(`id`),
+	KEY `by_api_key` (`api_key_id`, `expires`, `created`),
+	KEY `by_user_key` (`user_id`, `api_key_id`, `expires`, `api_key_role_id`),
+	KEY `by_user` (`user_id`, `expires`, `api_key_role_id`),
+	KEY `by_token` (`access_token`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 DROP TABLE IF EXISTS `OAuth2GrantTokens`;
 
 CREATE TABLE `OAuth2GrantTokens` (
-  `code` varchar(40) NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
-  `api_key_id` varchar(40) NOT NULL,
-  `created` int(11) unsigned NOT NULL,
-  `perms` tinyint(3) unsigned NOT NULL,
-  `ttl` int(11) unsigned NOT NULL,
-  PRIMARY KEY (`code`),
-  KEY `by_user_key` (`user_id`,`api_key_id`),
-  KEY `by_created` (`created`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	`code`
+	varchar(40) NOT NULL,
+	`user_id`
+	int(11) unsigned NOT NULL,
+	`api_key_id`
+	varchar(40) NOT NULL,
+	`created`
+	int(11) unsigned NOT NULL,
+	`perms`
+	tinyint(3) unsigned NOT NULL,
+	`ttl`
+	int(11) unsigned NOT NULL,
+	PRIMARY KEY(`code`),
+	KEY `by_user_key` (`user_id`, `api_key_id`),
+	KEY `by_created` (`created`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+
+DROP TABLE IF EXISTS `GithubUsers`;
+
+CREATE TABLE `GithubUsers` (
+	`user_id`
+	int(11) UNSIGNED NOT NULL,
+	`github_id`
+	varchar(20) NOT NULL,
+	`oauth_token`
+	char(34) NOT NULL,
+	`oauth_secret`
+	char(34) NOT NULL,
+	PRIMARY KEY(`user_id`),
+	UNIQUE KEY `by_githubid` (`github_id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;

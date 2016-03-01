@@ -305,4 +305,11 @@
 		'methods',
 	);
 
-?>
+	# START OF flamework-github-sso stuff
+
+	$GLOBALS['cfg']['github_oauth_key'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['github_oauth_secret'] = 'READ-FROM-SECRETS';	
+	$GLOBALS['cfg']['github_api_scope'] = 'user:email,public_repo';
+	$GLOBALS['cfg']['github_oauth_callback'] = 'auth/';
+
+	# START OF flamework-github-sso stuff
