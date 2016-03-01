@@ -10,6 +10,7 @@
 		  {$crumb_save_fallback|crumb_input}
 		  <input type="hidden" name="method" value="wof.save">
 		  <input type="hidden" name="access_token" value="{$site_token|@escape}">
+			<input type="hidden" name="repo" value="{$repo|@escape}">
 			<div id="map"></div>
 			<div id="where"></div>
 			<div class="row">

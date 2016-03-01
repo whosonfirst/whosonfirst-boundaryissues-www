@@ -66,9 +66,17 @@
 		$geojson = $rsp['body'];
 
 		// Figure out where we're going to put the incoming file
+		
+		$repo = post_str('repo'); // Should be either 'admin' or 'venue'
+		if (! $GLOBALS['cfg']["wof_{$repo}_dir"]) {
+			return array(
+				'ok' => 0,
+				'error_msg' => 'Invalid repo: ' . $repo
+			);
+		}
 
 		$geojson_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_data_dir'],
+			$GLOBALS['cfg']["wof_{$repo}_dir"],
 			$geojson_data['properties']['wof:id']
 		);
 

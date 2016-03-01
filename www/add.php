@@ -38,6 +38,7 @@
 
 	$crumb_venue = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_venue);
+	$GLOBALS['smarty']->assign('repo', get_str('repo'));
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 
 	$GLOBALS['smarty']->display('page_add.txt');
