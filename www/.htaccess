@@ -51,7 +51,7 @@ RewriteEngine on
 
 #RewriteRule  ^signup/?$			signup.php		[L]
 #RewriteRule  ^signin/?$			signin.php		[L]
-#RewriteRule  ^signout/?$		signout.php		[L]
+RewriteRule  ^signout/?$		signout.php		[L]
 RewriteRule  ^checkcookie/?$		checkcookie.php	[L]
 
 # Password retrieval stuff

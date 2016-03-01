@@ -35,8 +35,21 @@
 	}
 
 	$oauth_token = $rsp['oauth_token'];
+	
+	$args = array(
+		'oauth_token' => $oauth_token,
+	);
 
-	$github_user = github_users_get_by_oauth_token($oauth_token);
+	$rsp = github_api_call('user', $args);
+	
+	if (! $rsp['ok']){
+		$GLOBALS['error']['github_userinfo'] = 1;
+		$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+		exit();
+	}
+
+	$github_id = $rsp['rsp']['id'];
+	$github_user = github_users_get_by_github_id($github_id);
 
 	if (($github_user) && ($user_id = $github_user['user_id'])){
 		$user = users_get_by_id($user_id);
@@ -56,42 +69,51 @@
 
 	else {
 
-		dumper("WHAT NOW?");
-		dumper($github_user);
-		exit();
-
 		$args = array(
 			'oauth_token' => $oauth_token,
 		);
 
-		$rsp = github_api_call('users/self', $args);
-
+		$rsp = github_api_call('user', $args);
+		
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;
 			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
 			exit();
 		}
 
-		$github_id = $rsp['rsp']['user']['id'];
-		$username = $rsp['rsp']['user']['firstName'];
-		$email = $rsp['rsp']['user']['contact']['email'];
+		$github_id = $rsp['rsp']['id'];
+		$username = $rsp['rsp']['name'];
+
+		$rsp = github_api_call('user/emails', $args);
+		
+		if (! $rsp['ok']){
+			$GLOBALS['error']['github_userinfo'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			exit();
+		}
+
+		$email = $rsp['rsp'][0]['email'];
 
 		if (! $email){
 			$email = "{$github_id}@donotsend-github.com";
 		}
 
-		if (isset($rsp['rsp']['user']['lastName'])){
-			$username .= " {$rsp['rsp']['user']['lastName']}";
-		}
-
 		$password = random_string(32);
 
-		$user = users_create_user(array(
+		$rsp = users_create_user(array(
 			"username" => $username,
 			"email" => $email,
 			"password" => $password,
 		));
 
+		if (! $rsp['ok']){	
+			$GLOBALS['error']['dberr_user'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			exit();
+		}
+		
+		$user = $rsp['user'];
+		
 		if (! $user){
 			$GLOBALS['error']['dberr_user'] = 1;
 			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");

@@ -4,7 +4,7 @@
 
 	#################################################################
 
-	$GLOBALS['github_api_endpoint'] = '';
+	$GLOBALS['github_api_endpoint'] = 'https://api.github.com/';
 	$GLOBALS['github_oauth_endpoint'] = 'https://github.com/login/oauth/';
 
 	#################################################################
@@ -65,4 +65,20 @@
 
 	#################################################################
 
-?>
+	function github_api_call($path, $args) {
+		$query = http_build_query($args);
+		$more = array(
+			'user_agent' => 'Mapzen Boundary Issues'
+		);
+		$rsp = http_get("{$GLOBALS['github_api_endpoint']}$path?$query", null, $more);
+		if (! $rsp['ok']) {
+			return $rsp;
+		} else {
+			return array(
+				'ok' => 1,
+				'rsp' => json_decode($rsp['body'], true)
+			);
+		}
+	}
+
+	#################################################################

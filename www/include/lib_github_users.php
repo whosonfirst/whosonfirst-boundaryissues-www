@@ -19,6 +19,16 @@
 		$sql = "SELECT * FROM GithubUsers WHERE user_id='{$enc_id}'";
 		return db_single(db_fetch($sql));
 	}
+	
+	#################################################################
+
+	function github_users_get_by_github_id($github_id){
+
+		$enc_id = AddSlashes($github_id);
+
+		$sql = "SELECT * FROM GithubUsers WHERE github_id='{$enc_id}'";
+		return db_single(db_fetch($sql));
+	}
 
 	#################################################################
 
