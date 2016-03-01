@@ -20,7 +20,6 @@
 	# TO DO: pass redir around...
 
 	$url = github_api_get_auth_url();
-	//dumper($url);
 	header("location: {$url}");
 	exit();
 ?>

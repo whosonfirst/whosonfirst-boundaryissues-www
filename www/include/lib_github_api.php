@@ -52,13 +52,13 @@
 		if ((! $data) || (! $data['access_token'])){
 
 			return array(
-				'rsp' => 0,
+				'ok' => 0,
 				'error' => 'failed to parse response'
 			);
 		}
 
 		return array(
-			'rsp' => 1,
+			'ok' => 1,
 			'oauth_token' => $data['access_token']
 		);
 	}
