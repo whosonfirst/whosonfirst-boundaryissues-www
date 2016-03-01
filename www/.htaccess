@@ -71,9 +71,10 @@ RewriteRule ^about/?$			about.php 		[L,QSA]
 RewriteRule ^contact/?$			contact.php 		[L,QSA]
 
 # WOF pages
-RewriteRule ^upload/?$			upload.php 			[L,QSA]
-RewriteRule ^add/?$					add.php 				[L,QSA]
-RewriteRule ^id/(\d+)/?$		edit.php?id=$1	[L,QSA]
+RewriteRule ^upload/?$				upload.php 			[L,QSA]
+RewriteRule ^add/?$						add.php 				[L,QSA]
+RewriteRule ^admin/(\d+)/?$		edit.php?id=$1&repo=admin	[L,QSA]
+RewriteRule ^venue/(\d+)/?$		edit.php?id=$1&repo=venue	[L,QSA]
 
 # Test pages
 
