@@ -65,27 +65,31 @@
 
 	#################################################################
 
-	function github_api_call($method, $path, $args) {
+	function github_api_call($method, $path, $oauth_token, $args = null) {
 		$more = array(
 			// See: https://developer.github.com/v3/#user-agent-required
-			'user_agent' => 'Mapzen Boundary Issues'
+			'user_agent' => 'Mapzen Boundary Issues',
+			'donotsend_transfer_encoding' => 1
 		);
 		
 		$headers = array(
-			'Content-Type' => 'application/json',
+			'Authorization' => "token $oauth_token",
 			'Accept' => 'application/vnd.github.v3+json'
 		);
 		
-		if ($args['oauth_token']) {
-			$headers['Authorization'] = "token {$args['oauth_token']}";
+		if ($method != 'GET') {
+			$data = ($args) ? json_encode($args) : null;
+			$headers['Content-Type'] = 'application/json';
+			//$headers['Content-Length'] = mb_strlen($data);
 		}
 		
-		$data = json_encode($args);
 		if ($method == 'GET') {
-			$query = http_build_query($args);
-			$rsp = http_get("{$GLOBALS['github_api_endpoint']}$path?$query", null, $more);
+			if ($args) {
+				$query = '?' . http_build_query($args);
+			}
+			$rsp = http_get("{$GLOBALS['github_api_endpoint']}$path$query", $headers, $more);
 		} else if ($method == 'POST') {
-			$rsp = http_post("{$GLOBALS['github_api_endpoint']}$path", $data, $headers, $more);
+			$rsp = http_post("{$GLOBALS['github_api_endpoint']}$path?access_token=$oauth_token", $data, $headers, $more);
 		} else if ($method == 'PUT') {
 			$rsp = http_put("{$GLOBALS['github_api_endpoint']}$path", $data, $headers, $more);
 		} else if ($method == 'DELETE') {

@@ -29,7 +29,7 @@
 	}
 
 	function wof_save_string($geojson) {
-
+		
 		$new_wof_record = false;
 		
 		$geojson_data = json_decode($geojson, true);
@@ -94,41 +94,43 @@
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		
-		$oauth_token = $rsp['oauth_token'];
-		$path = 'repos/' . $GLOBALS['cfg']['wof_github_owner'] . // whosonfirst-data
-		        '/' . $GLOBALS['cfg']['wof_github_repo'] .       // whosonfirst-data-venue-us-new-york
-		        "/contents/data/$geojson_rel_path";
 
-		$what_happened = $new_wof_record ? 'created' : 'updated';
+		$oauth_token = $rsp['oauth_token'];
+		$owner = $GLOBALS['cfg']['wof_github_owner'];
+		$repo = $GLOBALS['cfg']['wof_github_repo'];
+
+		$path = "data/$geojson_rel_path";
+		$what_happened = ($new_wof_record) ? 'created' : 'updated';
+		$filename = basename($path);
+		$wof_name = $geojson_data['properties']['wof:name'];
 
 		$args = array(
-			'path' => "data/$geojson_rel_path",
-			'message' => "Boundary Issues $what_happened {$geojson_data['properties']['wof:id']}.geojson",
-			'content' => base64_encode($geojson),
-			'branch' => 'master'
+			'path' => $path,
+			'message' => "Boundary Issues $what_happened $filename ($wof_name)",
+			'content' => base64_encode($geojson)
 		);
 
-		if (! $new_wof_record &&
-		      file_exists($geojson_abs_path)) {
-			$args['sha'] = sha1_file($geojson_abs_path);
+		// If the file exists, find its SHA hash
+		$rsp = github_api_call('GET', "repos/$owner/$repo/contents/$path", $oauth_token);
+		if ($rsp['ok']) {
+			$args['sha'] = $rsp['rsp']['sha'];
 		}
 
-		// Commit the file to GitHub
-		$rsp = github_api_call('PUT', $path, $args);
+		$rsp = github_api_call('PUT', "repos/$owner/$repo/contents/$path", $oauth_token, $args);
+
 		if (! $rsp['ok']) {
-			$rsp['args'] = $args;
-			header('Content-Type: application/json');
-			echo json_encode($rsp);
-			exit;
+			api_output_error(500, "Unable to update GeoJSON file.");
 		}
-		
+
 		// Pull the new changes from GitHub
-		exec("cd {$GLOBALS['cfg']['wof_data_dir']} && /usr/bin/git pull origin master");
+		$git_pull = array();
+		exec("cd {$GLOBALS['cfg']['wof_data_dir']} && /usr/bin/git pull origin master", $git_pull);
+		$git_pull = implode("\n", $git_pull);
+		$args_str = print_r($args, true);
 
 		if (! file_exists($geojson_abs_path) ||
 		      file_get_contents($geojson_abs_path) != $geojson) {
-			api_output_error(500, "Argh! The server was unable to create your GeoJSON file");
+			api_output_error(500, "Argh! The server was unable to create your GeoJSON file.\n$git_pull\n$args_str");
 		}
 
 		error_reporting($reporting_level);
@@ -139,6 +141,7 @@
 		return array(
 			'ok' => 1,
 			'id' => $geojson_data['id'],
-			'geojson_url' => $geojson_url
+			'geojson_url' => $geojson_url,
+			'git_pull' => $git_pull
 		);
 	}

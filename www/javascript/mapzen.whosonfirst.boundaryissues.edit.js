@@ -46,10 +46,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var ll = marker.getLatLng();
 					self.update_coordinates(ll);
 				});
-				self.update_where({
-					lat: lat,
-					lng: lng
-				});
+				self.update_where(lat, lng);
 			} else {
 				// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
 				var lat = 40.73581157695217;
@@ -197,29 +194,33 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		update_coordinates: function(ll) {
+			// Round to the nearest 6 decimal places
+			var lat = ll.lat.toFixed(6);
+			var lng = ll.lng.toFixed(6);
+
 			if ($('input[name="geojson.properties.geom:latitude"]').length == 0) {
 				var $rel = $('#json-schema-object-geojson-properties');
-				self.add_object_row($rel, 'geom:latitude', ll.lat);
+				self.add_object_row($rel, 'geom:latitude', lat);
 			} else {
-				$('input[name="geojson.properties.geom:latitude"]').val(ll.lat);
+				$('input[name="geojson.properties.geom:latitude"]').val(lat);
 			}
 
 			if ($('input[name="geojson.properties.geom:longitude"]').length == 0) {
 				var $rel = $('#json-schema-object-geojson-properties');
-				self.add_object_row($rel, 'geom:longitude', ll.lng);
+				self.add_object_row($rel, 'geom:longitude', lng);
 			} else {
-				$('input[name="geojson.properties.geom:longitude"]').val(ll.lng);
+				$('input[name="geojson.properties.geom:longitude"]').val(lng);
 			}
 
-			self.update_where(ll);
+			self.update_where(lat, lng);
 		},
 
-		update_where: function(ll) {
-			var html = 'Coordinates: <strong>' + ll.lat + ', ' + ll.lng + '</strong>' +
+		update_where: function(lat, lng) {
+			var html = 'Coordinates: <strong>' + lat + ', ' + lng + '</strong>' +
 								 '<span id="where-parent"></span>';
 			$('#where').html(html);
 
-			self.lookup_parent_id(ll.lat, ll.lng, function(results) {
+			self.lookup_parent_id(lat, lng, function(results) {
 				try {
 					var parent_id = results[0].Id;
 					var html = ' in <strong>' + results[0].Name + '</strong> (' + results[0].Placetype + ')';

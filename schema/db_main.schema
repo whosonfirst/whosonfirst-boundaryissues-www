@@ -133,9 +133,7 @@ CREATE TABLE `GithubUsers` (
 	`github_id`
 	varchar(20) NOT NULL,
 	`oauth_token`
-	char(34) NOT NULL,
-	`oauth_secret`
-	char(34) NOT NULL,
+	char(40) NOT NULL,
 	PRIMARY KEY(`user_id`),
 	UNIQUE KEY `by_githubid` (`github_id`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;

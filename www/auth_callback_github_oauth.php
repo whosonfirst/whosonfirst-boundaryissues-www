@@ -14,7 +14,6 @@
 		exit();
 	}
 
-
 	if (! $GLOBALS['cfg']['enable_feature_signin']){
 		$GLOBALS['smarty']->display("page_signin_disabled.txt");
 		exit();
@@ -27,7 +26,7 @@
 	}
 
 	$rsp = github_api_get_auth_token($code);
-
+	
 	if (! $rsp['ok']){
 		$GLOBALS['error']['oauth_access_token'] = 1;
 		$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
@@ -35,12 +34,8 @@
 	}
 
 	$oauth_token = $rsp['oauth_token'];
-	
-	$args = array(
-		'oauth_token' => $oauth_token,
-	);
 
-	$rsp = github_api_call('GET', 'user', $args);
+	$rsp = github_api_call('GET', "user", $oauth_token);
 	
 	if (! $rsp['ok']){
 		$GLOBALS['error']['github_userinfo'] = 1;
@@ -68,12 +63,7 @@
 	# key on the Users table.
 
 	else {
-
-		$args = array(
-			'oauth_token' => $oauth_token,
-		);
-
-		$rsp = github_api_call('GET', 'user', $args);
+		$rsp = github_api_call('GET', "user", $oauth_token);
 		
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;
@@ -84,7 +74,7 @@
 		$github_id = $rsp['rsp']['id'];
 		$username = $rsp['rsp']['name'];
 
-		$rsp = github_api_call('GET', 'user/emails', $args);
+		$rsp = github_api_call('GET', 'user/emails', $oauth_token);
 		
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;
