@@ -3,7 +3,7 @@
 <div class="container">
 	<div class="row">
 		<h2>Add a place</h2>
-		<small class="caveat">map pins are <code>click to add</code> for now (drag and drop support is in the works)</small>
+		<small class="caveat">map pins are <strong>click to add</strong> and <strong>drag and drop</strong> to reposition</small>
 	</div>
 	<div class="row">
 		<form action="{$cfg.abs_root_url}add/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}">

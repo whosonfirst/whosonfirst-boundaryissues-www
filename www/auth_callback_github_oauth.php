@@ -40,7 +40,7 @@
 		'oauth_token' => $oauth_token,
 	);
 
-	$rsp = github_api_call('user', $args);
+	$rsp = github_api_call('GET', 'user', $args);
 	
 	if (! $rsp['ok']){
 		$GLOBALS['error']['github_userinfo'] = 1;
@@ -73,7 +73,7 @@
 			'oauth_token' => $oauth_token,
 		);
 
-		$rsp = github_api_call('user', $args);
+		$rsp = github_api_call('GET', 'user', $args);
 		
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;
@@ -84,7 +84,7 @@
 		$github_id = $rsp['rsp']['id'];
 		$username = $rsp['rsp']['name'];
 
-		$rsp = github_api_call('user/emails', $args);
+		$rsp = github_api_call('GET', 'user/emails', $args);
 		
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;

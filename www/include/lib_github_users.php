@@ -83,6 +83,25 @@
 
 		return $rsp;
 	}
+	
+	#################################################################
+	
+	function github_users_curr_oauth_token() {
+		if (! $GLOBALS['cfg']['user']['id']) {
+			return array(
+				'ok' => 0,
+				'error_msg' => 'No user ID found.'
+			);
+		}
+		$enc_id = AddSlashes($GLOBALS['cfg']['user']['id']);
+		$sql = "SELECT * FROM GithubUsers WHERE user_id='{$enc_id}'";
+		$github_user = db_single(db_fetch($sql));
+		
+		return array(
+			'ok' => 1,
+			'oauth_token' => $github_user['oauth_token']
+		);
+	}
 
 	#################################################################
 

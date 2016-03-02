@@ -65,13 +65,40 @@
 
 	#################################################################
 
-	function github_api_call($path, $args) {
-		$query = http_build_query($args);
+	function github_api_call($method, $path, $args) {
 		$more = array(
+			// See: https://developer.github.com/v3/#user-agent-required
 			'user_agent' => 'Mapzen Boundary Issues'
 		);
-		$rsp = http_get("{$GLOBALS['github_api_endpoint']}$path?$query", null, $more);
+		
+		$headers = array(
+			'Content-Type' => 'application/json',
+			'Accept' => 'application/vnd.github.v3+json'
+		);
+		
+		if ($args['oauth_token']) {
+			$headers['Authorization'] = "token {$args['oauth_token']}";
+		}
+		
+		$data = json_encode($args);
+		if ($method == 'GET') {
+			$query = http_build_query($args);
+			$rsp = http_get("{$GLOBALS['github_api_endpoint']}$path?$query", null, $more);
+		} else if ($method == 'POST') {
+			$rsp = http_post("{$GLOBALS['github_api_endpoint']}$path", $data, $headers, $more);
+		} else if ($method == 'PUT') {
+			$rsp = http_put("{$GLOBALS['github_api_endpoint']}$path", $data, $headers, $more);
+		} else if ($method == 'DELETE') {
+			$rsp = http_delete("{$GLOBALS['github_api_endpoint']}$path", $data, $headers, $more);
+		}
+		
 		if (! $rsp['ok']) {
+			$rsp['github_api_call'] = array(
+				'url' => "{$GLOBALS['github_api_endpoint']}$path",
+				'data' => $data,
+				'headers' => $headers,
+				'more' => $more
+			);
 			return $rsp;
 		} else {
 			return array(
