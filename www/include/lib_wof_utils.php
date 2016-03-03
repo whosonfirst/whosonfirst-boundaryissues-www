@@ -45,6 +45,32 @@
 
 		return implode(DIRECTORY_SEPARATOR, $tree);
 	}
+
+	########################################################################
+
+	function wof_utils_encode($geojson) {
+
+		// Use the GeoJSON pony to pretty-print the string
+		$rsp = http_post('http://localhost:8181/encode', array(
+			'geojson' => $geojson
+		));
+
+		if (! $rsp['ok']) {
+			$rsp['error_msg'] = 'Error encoding GeoJSON.';
+			return $rsp;
+		}
+
+		$encoded = $rsp['body'];
+
+		// For new entries that haven't been saved yet, remove empty top-level id param
+		$encoded = str_replace("  \"id\": \"\",\n", '', $encoded);
+
+		return array(
+			'ok' => 1,
+			'encoded' => $encoded
+		);
+	}
+
 	########################################################################
 
 	# the end

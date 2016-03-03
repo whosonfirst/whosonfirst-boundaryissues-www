@@ -69,7 +69,8 @@
 		$more = array(
 			// See: https://developer.github.com/v3/#user-agent-required
 			'user_agent' => 'Mapzen Boundary Issues',
-			'donotsend_transfer_encoding' => 1
+			'donotsend_transfer_encoding' => 1,
+			'http_timeout' => 20
 		);
 		
 		$headers = array(

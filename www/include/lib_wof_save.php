@@ -51,7 +51,7 @@
 
 			// Mint a new artisanal integer wof:id
 			$rsp = artisanal_integers_create();
-			if (! $rsp['ok']){
+			if (! $rsp['ok']) {
 				// Weird, this message doesn't seem to make it back to the AJAX requester
 				$rsp['error_msg'] = 'Could not load artisanal integer.';
 				return $rsp;
@@ -62,15 +62,10 @@
 			$geojson_data['properties']['wof:id'] = intval($rsp['integer']);
 		}
 
-		// Send GeoJSON to Python script to get prettied up
-		$rsp = http_post('http://localhost:5000/geojson-encode', array(
-			'geojson' => json_encode($geojson_data)
-		));
+		$rsp = wof_utils_encode($geojson_data);
 		if (! $rsp['ok']) {
-			$rsp['error_msg'] = 'Error encoding GeoJSON.';
 			return $rsp;
 		}
-		$geojson = $rsp['body'];
 
 		// Figure out where we're going to put the incoming file
 
@@ -119,7 +114,8 @@
 		$rsp = github_api_call('PUT', "repos/$owner/$repo/contents/$path", $oauth_token, $args);
 
 		if (! $rsp['ok']) {
-			api_output_error(500, "Unable to update GeoJSON file.");
+			print_r($rsp);
+			exit;
 		}
 
 		// Pull the new changes from GitHub

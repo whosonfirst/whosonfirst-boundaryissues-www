@@ -53,3 +53,23 @@
 			'results' => $results
 		));
 	}
+
+	function api_wof_encode() {
+
+		$geojson = post_str('geojson');
+		if (! $geojson) {
+			return array(
+				'ok' => 0,
+				'error_msg' => "Please include 'geojson' param."
+			);
+		}
+
+		$rsp = wof_utils_encode($geojson);
+		if (! $rsp['ok']) {
+			api_output_error(400, $rsp['error_msg']);
+		}
+
+		api_output_ok(array(
+			'encoded' => $rsp['encoded']
+		));
+	}

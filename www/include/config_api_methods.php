@@ -29,7 +29,7 @@
 		),
 
 		"wof.pip" => array (
-			"description" => ".",
+			"description" => "Point-in-polygon service.",
 			"documented" => 1,
 			"enabled" => 1,
 			"library" => "api_wof",
@@ -38,6 +38,18 @@
 			"parameters" => array(
 				array("name" => "latitude", "description" => "Coordinate latitude", "required" => 1),
 				array("name" => "longitude", "description" => "Coordinate longitude", "required" => 1)
+			)
+		),
+
+		"wof.encode" => array (
+			"description" => "Encode as GeoJSON string.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "geojson", "description" => "A GeoJSON string.", "required" => 1)
 			)
 		),
 
