@@ -56,7 +56,9 @@
 		));
 
 		if (! $rsp['ok']) {
-			$rsp['error_msg'] = 'Error encoding GeoJSON.';
+			if ($rsp['body']) {
+				$rsp['error'] = "Error from GeoJSON service: {$rsp['body']}";
+			}
 			return $rsp;
 		}
 

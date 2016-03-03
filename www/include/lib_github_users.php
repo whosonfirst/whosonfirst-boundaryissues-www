@@ -90,7 +90,7 @@
 		if (! $GLOBALS['cfg']['user']['id']) {
 			return array(
 				'ok' => 0,
-				'error_msg' => 'No user ID found.'
+				'error' => 'No user ID found.'
 			);
 		}
 		$enc_id = AddSlashes($GLOBALS['cfg']['user']['id']);

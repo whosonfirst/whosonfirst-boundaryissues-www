@@ -18,13 +18,44 @@
 
 	function api_wof_save() {
 
-		if (! $_POST['geojson']) {
+		$geojson = post_str('geojson');
+		$step = post_str('step');
+		$wof_id = post_int64('wof_id');
+		$new_wof_record = post_bool('new_wof_record');
+
+		if (! $geojson) {
 			api_output_error(400, "Please include a 'geojson' parameter.");
 		}
 
-		$rsp = wof_save_string($_POST['geojson']);
-		if (! $rsp['ok'] ||
-				! $rsp['geojson_url']) {
+		if (! $step) {
+
+			// If no step is specified, try to save in one shot
+			$rsp = wof_save_string($geojson);
+
+		} else if ($step == 'to_geojson') {
+
+			// Start by generating IDs and encoding from the GeoJSON service
+			$rsp = wof_save_to_geojson($geojson);
+
+		} else if ($step == 'to_github') {
+
+			// Save the GeoJSON string to GitHub
+			if (! $wof_id) {
+				api_output_error(400, "Please include a 'wof_id' parameter.");
+			}
+			$rsp = wof_save_to_github($wof_id, $geojson, $new_wof_record);
+
+		} else if ($step == 'to_disk') {
+
+			// Save the GeoJSON string to disk
+			if (! $wof_id) {
+				api_output_error(400, "Please include a 'wof_id' parameter.");
+			}
+			$rsp = wof_save_to_disk($wof_id, $geojson);
+
+		}
+
+		if (! $rsp['ok']) {
 			$error = $rsp['error'] || 'Saving failed for some reason.';
 			api_output_error(400, $error);
 		}
@@ -45,9 +76,9 @@
 
 		$rsp = http_get("http://localhost:8080/?$query");
 		if (! $rsp['ok']) {
-			$rsp['error_msg'] = 'Error finding point in polygon.';
-			return $rsp;
+			api_output_error(400, 'Error talking to the PIP service.');
 		}
+
 		$results = json_decode($rsp['body']);
 		api_output_ok(array(
 			'results' => $results
@@ -58,15 +89,13 @@
 
 		$geojson = post_str('geojson');
 		if (! $geojson) {
-			return array(
-				'ok' => 0,
-				'error_msg' => "Please include 'geojson' param."
-			);
+			api_output_error(400, "Please include 'geojson' param.");
 		}
 
 		$rsp = wof_utils_encode($geojson);
 		if (! $rsp['ok']) {
-			api_output_error(400, $rsp['error_msg']);
+			$error = $rsp['error'] || 'Error talking to the GeoJSON service';
+			api_output_error(400, $error);
 		}
 
 		api_output_ok(array(

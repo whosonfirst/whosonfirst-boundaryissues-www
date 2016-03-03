@@ -10,7 +10,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	var map,
 	    marker,
-	    $result;
+	    saved_geojson,
+	    saved_wof_id,
+	    saved_is_new_record,
+	    $status;
 
 	var VenueIcon = L.Icon.extend({
 		options: {
@@ -139,25 +142,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#edit-form').submit(function(e) {
 				e.preventDefault();
 
-				var onsuccess = function(rsp){
-					self.show_result(rsp);
-				};
-				var onerror = function(rsp){
-					self.show_result(rsp);
-				};
+				var lat = $('input[name="geojson.properties.geom:latitude"]').val();
+				var lng = $('input[name="geojson.properties.geom:longitude"]').val();
+				var wof_name = $('input[name="geojson.properties.wof:name"]').val();
 
-				var place = self.encode_properties();
-				if (!place) {
-					return;
+				if (! lat || ! lng) {
+					$status.html('Please set geom:latitude and geom:longitude.');
+				} else if (! wof_name) {
+					$status.html('Please set wof:name.');
+				} else {
+					self.save_to_geojson(self.generate_geojson());
 				}
-
-				var data = {
-					crumb: $(this).data("crumb-save"),
-					geojson: JSON.stringify(place)
-				};
-
-				mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, onerror);
-				$result.html('Saving...');
 			});
 		},
 
@@ -232,17 +227,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 		},
 
-		encode_properties: function() {
+		generate_geojson: function() {
 			var lat = $('input[name="geojson.properties.geom:latitude"]').val();
 			var lng = $('input[name="geojson.properties.geom:longitude"]').val();
 
 			if (! lat || ! lng) {
-				$result.html('Please set the latitude and longitude before saving.');
 				return null;
 			}
 			lat = parseFloat(lat);
 			lng = parseFloat(lng);
-			var place = {
+
+			var geojson_obj = {
 				type: 'Feature',
 				bbox: [lng, lat, lng, lat],
 				geometry: {
@@ -257,20 +252,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var value = $(input).val();
 				// Ignore initial 'geojson.' in name (e.g., "geojson.properties.wof:concordances.id")
 				name = name.replace(/^geojson\./, '');
-				self.assign_property(place, name, value);
+				self.assign_property(geojson_obj, name, value);
 			});
 
 			if ($('input[name="wof_id"]').length > 0) {
 				var id = $('input[name="wof_id"]').val();
 				id = parseInt(id);
-				place.id = id;
-				place.properties['wof:id'] = id;
+				geojson_obj.id = id;
+				geojson_obj.properties['wof:id'] = id;
 			}
 
-			place.properties['geom:latitude'] = lat;
-			place.properties['geom:longitude'] = lng;
+			geojson_obj.properties['geom:latitude'] = lat;
+			geojson_obj.properties['geom:longitude'] = lng;
 
-			return place;
+			return JSON.stringify(geojson_obj);
 		},
 
 		assign_property: function(context, name, value) {
@@ -288,30 +283,82 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 		},
 
-		show_result: function(rsp) {
+		save_to_geojson: function(geojson) {
 
-			if (! rsp){
-				$result.html('Argh, it\'s all gone pear-shaped! Check the JavaScript console?');
-				mapzen.whosonfirst.log.error(rsp);
-			} else if (rsp.ok && rsp.stat == 'ok') {
-				if ($('input[name="wof_id"]').length > 0) {
-					var wof_name = $('input[name="geojson.properties.wof:name"]').val();
-					$('#wof_name').text(wof_name);
-					$result.html('Saved! <p class="caveat"><strong>Temporary duct tape</strong>: waiting 10 seconds for `git pull` to finish...</p>');
-					setTimeout(function() {
-						$result.html('');
-					}, 10000);
+			var data = {
+				crumb: $('#edit-form').data('crumb-save'),
+				step: 'to_geojson',
+				geojson: geojson
+			};
+
+			var onsuccess = function(rsp) {
+				if (! rsp['wof_id'] ||
+				    ! rsp['geojson']) {
+					$status.html('Error saving GeoJSON: Bad response from server.');
 				} else {
-					$result.html('Saved! <p class="caveat"><strong>Temporary duct tape</strong>: waiting 10 seconds for `git pull` to finish...</p>');
-					setTimeout(function() {
-						location.href = '/id/' + rsp.id + '/';
-					}, 10000);
+					saved_geojson = rsp['geojson'];
+					saved_is_new_record = rsp['is_new_record'];
+					saved_wof_id = rsp['wof_id'];
+					self.save_to_github();
 				}
-			} else if (rsp.error_msg) {
-				$result.html('Error: ' + rsp.error_msg);
+			};
+
+			$status.html('Saving: generating GeoJSON');
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
+		},
+
+		save_to_github: function() {
+
+			var data = {
+				crumb: $('#edit-form').data('crumb-save'),
+				step: 'to_github',
+				wof_id: saved_wof_id,
+				geojson: saved_geojson,
+				is_new_record: saved_is_new_record
+			};
+
+			var onsuccess = function(rsp) {
+				if (! rsp['url']) {
+					$status.html('Error saving to GitHub: Bad response from server.');
+				} else {
+					self.save_to_disk();
+				}
+			};
+
+			$status.html('Saving: to GitHub');
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
+		},
+
+		save_to_disk: function() {
+
+			var data = {
+				crumb: $('#edit-form').data('crumb-save'),
+				step: 'to_disk',
+				wof_id: saved_wof_id,
+				geojson: saved_geojson
+			};
+
+			var onsuccess = function(rsp) {
+				if (! rsp['path']) {
+					$status.html('Error saving to disk: Bad response from server.');
+				} else {
+					$status.html('Done saving. Still need to `git revert` and `git pull`.');
+				}
+			};
+
+			$status.html('Saving: to disk');
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
+		},
+
+		display_error: function(rsp) {
+			if (! rsp) {
+				$status.html('Argh, it\'s all gone pear-shaped! Check the JavaScript console?');
+				mapzen.whosonfirst.log.error(rsp);
+			} else if (! rsp.error) {
+				$status.html('Oh noes, an error! Check the JavaScript console?');
 				mapzen.whosonfirst.log.error(rsp);
 			} else {
-				$result.html('Oh noes, an error! Check the JavaScript console?');
+				$status.html(rsp.error);
 				mapzen.whosonfirst.log.error(rsp);
 			}
 		},
@@ -339,7 +386,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		encode_geojson: function(onsuccess, onerror) {
 			var data = {
-				geojson: JSON.stringify(self.encode_properties())
+				geojson: self.generate_geojson()
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.encode", data, onsuccess, onerror);
 		}
@@ -347,7 +394,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	};
 
 	$(document).ready(function() {
-		$result = $('#result');
+		$status = $('#edit-status');
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_properties();

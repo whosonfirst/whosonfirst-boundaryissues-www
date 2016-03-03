@@ -11,7 +11,7 @@
 		if (! file_exists($input_path)){
 			return array(
 				'ok' => 0,
-				'error_msg' => "$filename not found."
+				'error' => "$filename not found."
 			);
 		}
 
@@ -28,32 +28,59 @@
 
 	}
 
-	function wof_save_string($geojson) {
-		
-		$new_wof_record = false;
-		
+	function wof_save_string($input_str) {
+
+		$rsp = wof_save_to_geojson($input_str);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$wof_id = $rsp['wof_id'];
+		$geojson = $rsp['geojson'];
+		$is_new_record = $rsp['is_new_record'];
+
+		$rsp = wof_save_to_github($wof_id, $geojson, $is_new_record);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = wof_save_to_disk($wof_id, $geojson);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		return array(
+			'ok' => 1,
+			'wof_id' => $wof_id
+		);
+	}
+
+	function wof_save_to_geojson($geojson) {
+
+		$is_new_record = false;
+
+		// Parse the string into a data structure
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data){
 			return array(
 				'ok' => 0,
-				'error_msg' => "Could not parse input; invalid JSON."
+				'error' => "Could not parse input; invalid JSON."
 			);
 		}
 
-		if (! $geojson_data['properties']){
+		if (! $geojson_data['properties']) {
 			$geojson_data['properties'] = array();
 		}
 
 		if (! $geojson_data['properties']['wof:id'] ||
-		    ! is_numeric($geojson_data['properties']['wof:id'])){
+		    ! is_numeric($geojson_data['properties']['wof:id'])) {
 
-			$new_wof_record = true;
+			$is_new_record = true;
 
 			// Mint a new artisanal integer wof:id
 			$rsp = artisanal_integers_create();
 			if (! $rsp['ok']) {
-				// Weird, this message doesn't seem to make it back to the AJAX requester
-				$rsp['error_msg'] = 'Could not load artisanal integer.';
+				$rsp['error'] = $rsp['error'] || 'Could not create a new artisanal integer.';
 				return $rsp;
 			}
 
@@ -62,29 +89,22 @@
 			$geojson_data['properties']['wof:id'] = intval($rsp['integer']);
 		}
 
-		$rsp = wof_utils_encode($geojson_data);
+		$rsp = wof_utils_encode(json_encode($geojson_data));
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
-		// Figure out where we're going to put the incoming file
-
-		$geojson_abs_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_data_dir'],
-			$geojson_data['properties']['wof:id']
+		return array(
+			'ok' => 1,
+			'wof_id' => $geojson_data['properties']['wof:id'],
+			'geojson' => $rsp['encoded'],
+			'is_new_record' => $is_new_record
 		);
-		
-		$geojson_rel_path = wof_utils_id2relpath(
-			$geojson_data['properties']['wof:id']
-		);
+	}
 
-		# Because the following emit E_WARNINGS when things don't
-		# work and that makes the JSON returned to the server sad
-		# (20160226/thisisaaronland)
+	function wof_save_to_github($wof_id, $geojson, $is_new_record) {
 
-		$reporting_level = error_reporting();
-		error_reporting(E_ERROR);
-
+		// Get the GitHub oauth token
 		$rsp = github_users_curr_oauth_token();
 		if (! $rsp['ok']) {
 			return $rsp;
@@ -94,8 +114,10 @@
 		$owner = $GLOBALS['cfg']['wof_github_owner'];
 		$repo = $GLOBALS['cfg']['wof_github_repo'];
 
-		$path = "data/$geojson_rel_path";
-		$what_happened = ($new_wof_record) ? 'created' : 'updated';
+		$path = 'data/' . wof_utils_id2relpath($wof_id);
+		$github_path = "repos/$owner/$repo/contents/$path";
+
+		$what_happened = ($is_new_record) ? 'created' : 'updated';
 		$filename = basename($path);
 		$wof_name = $geojson_data['properties']['wof:name'];
 
@@ -106,30 +128,40 @@
 		);
 
 		// If the file exists, find its SHA hash
-		$rsp = github_api_call('GET', "repos/$owner/$repo/contents/$path", $oauth_token);
-		if ($rsp['ok']) {
-			$args['sha'] = $rsp['rsp']['sha'];
+		if (! $is_new_record) {
+			$rsp = github_api_call('GET', $github_path, $oauth_token);
+			if ($rsp['ok']) {
+				$args['sha'] = $rsp['rsp']['sha'];
+			}
 		}
 
-		$rsp = github_api_call('PUT', "repos/$owner/$repo/contents/$path", $oauth_token, $args);
-
+		// Save to GitHub
+		$rsp = github_api_call('PUT', $github_path, $oauth_token, $args);
 		if (! $rsp['ok']) {
-			print_r($rsp);
-			exit;
+			return $rsp;
 		}
 
-		// Pull the new changes from GitHub
-		$data_dir = escapeshellarg($GLOBALS['cfg']['wof_data_dir']);
-		exec("cd $data_dir && /usr/bin/git pull origin master &");
-
-		error_reporting($reporting_level);
-
-		$geojson_url = "/data/$geojson_rel_path";
-
-		// It worked \o/
 		return array(
 			'ok' => 1,
-			'id' => $geojson_data['id'],
-			'geojson_url' => $geojson_url
+			'url' => $rsp['rsp']['content']['_links']['html']
+		);
+	}
+
+	function wof_save_to_disk($wof_id, $geojson) {
+
+		$path = wof_utils_id2abspath(
+			$GLOBALS['cfg']['wof_data_dir'],
+			$wof_id
+		);
+
+		$dir = dirname($path);
+		if (! file_exists($dir)) {
+			mkdir($dir, 0755, true);
+		}
+		file_put_contents($path, $geojson);
+
+		return array(
+			'ok' => 1,
+			'path' => $path
 		);
 	}
