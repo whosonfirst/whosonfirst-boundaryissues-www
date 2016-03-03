@@ -123,15 +123,8 @@
 		}
 
 		// Pull the new changes from GitHub
-		$git_pull = array();
-		exec("cd {$GLOBALS['cfg']['wof_data_dir']} && /usr/bin/git pull origin master", $git_pull);
-		$git_pull = implode("\n", $git_pull);
-		$args_str = print_r($args, true);
-
-		if (! file_exists($geojson_abs_path) ||
-		      file_get_contents($geojson_abs_path) != $geojson) {
-			api_output_error(500, "Argh! The server was unable to create your GeoJSON file.\n$git_pull\n$args_str");
-		}
+		$data_dir = escapeshellarg($GLOBALS['cfg']['wof_data_dir']);
+		exec("cd $data_dir && /usr/bin/git pull origin master &");
 
 		error_reporting($reporting_level);
 
@@ -141,7 +134,6 @@
 		return array(
 			'ok' => 1,
 			'id' => $geojson_data['id'],
-			'geojson_url' => $geojson_url,
-			'git_pull' => $git_pull
+			'geojson_url' => $geojson_url
 		);
 	}
