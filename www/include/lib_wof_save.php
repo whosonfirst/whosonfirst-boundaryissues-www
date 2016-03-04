@@ -83,7 +83,7 @@
 			// Mint a new artisanal integer wof:id
 			$rsp = artisanal_integers_create();
 			if (! $rsp['ok']) {
-				$rsp['error'] = $rsp['error'] || 'Could not create a new artisanal integer.';
+				$rsp['error'] = $rsp['error'] ? $rsp['error'] : 'Could not create a new artisanal integer.';
 				return $rsp;
 			}
 
@@ -97,6 +97,7 @@
 
 		$rsp = wof_utils_encode(json_encode($geojson_data));
 		if (! $rsp['ok']) {
+			$rsp['error'] = $rsp['error'] ? $rsp['error'] : 'Error talking to the GeoJSON pony.';
 			return $rsp;
 		}
 
