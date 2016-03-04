@@ -30,32 +30,35 @@
 
 	function wof_save_string($input_str) {
 
-		$rsp = wof_save_to_geojson($input_str);
+		$rsp = wof_save_encode_geojson($input_str);
 		if (! $rsp['ok']) {
+			$rsp['error'] = $rsp['error'] ? $rsp['error'] : 'Error encoding GeoJSON.';
 			return $rsp;
 		}
 
-		$wof_id = $rsp['wof_id'];
 		$geojson = $rsp['geojson'];
+		$geojson_data = $rsp['geojson_data'];
 		$is_new_record = $rsp['is_new_record'];
 
-		$rsp = wof_save_to_github($wof_id, $geojson, $is_new_record);
+		$rsp = wof_save_to_github($geojson, $geojson_data, $is_new_record);
 		if (! $rsp['ok']) {
+			$rsp['error'] = $rsp['error'] ? $rsp['error'] : 'Error saving to GitHub.';
 			return $rsp;
 		}
 
-		$rsp = wof_save_to_disk($wof_id, $geojson);
+		$rsp = wof_save_to_disk($geojson, $geojson_data);
 		if (! $rsp['ok']) {
+			$rsp['error'] = $rsp['error'] ? $rsp['error'] : 'Error saving to disk.';
 			return $rsp;
 		}
 
 		return array(
 			'ok' => 1,
-			'wof_id' => $wof_id
+			'wof_id' => $geojson_data['properties']['wof:id']
 		);
 	}
 
-	function wof_save_to_geojson($geojson) {
+	function wof_save_encode_geojson($geojson) {
 
 		$is_new_record = false;
 
@@ -89,6 +92,9 @@
 			$geojson_data['properties']['wof:id'] = intval($rsp['integer']);
 		}
 
+		// Make sure parent_id is an integer
+		$geojson_data['properties']['wof:parent_id'] = intval($geojson_data['properties']['wof:parent_id']);
+
 		$rsp = wof_utils_encode(json_encode($geojson_data));
 		if (! $rsp['ok']) {
 			return $rsp;
@@ -96,13 +102,13 @@
 
 		return array(
 			'ok' => 1,
-			'wof_id' => $geojson_data['properties']['wof:id'],
 			'geojson' => $rsp['encoded'],
+			'geojson_data' => $geojson_data,
 			'is_new_record' => $is_new_record
 		);
 	}
 
-	function wof_save_to_github($wof_id, $geojson, $is_new_record) {
+	function wof_save_to_github($geojson, $geojson_data, $is_new_record) {
 
 		// Get the GitHub oauth token
 		$rsp = github_users_curr_oauth_token();
@@ -113,13 +119,14 @@
 		$oauth_token = $rsp['oauth_token'];
 		$owner = $GLOBALS['cfg']['wof_github_owner'];
 		$repo = $GLOBALS['cfg']['wof_github_repo'];
+		$wof_id = $geojson_data['properties']['wof:id'];
+		$wof_name = $geojson_data['properties']['wof:name'];
 
 		$path = 'data/' . wof_utils_id2relpath($wof_id);
 		$github_path = "repos/$owner/$repo/contents/$path";
 
 		$what_happened = ($is_new_record) ? 'created' : 'updated';
 		$filename = basename($path);
-		$wof_name = $geojson_data['properties']['wof:name'];
 
 		$args = array(
 			'path' => $path,
@@ -147,18 +154,26 @@
 		);
 	}
 
-	function wof_save_to_disk($wof_id, $geojson) {
+	function wof_save_to_disk($geojson, $geojson_data) {
 
+		$wof_id = $geojson_data['properties']['wof:id'];
 		$path = wof_utils_id2abspath(
 			$GLOBALS['cfg']['wof_data_dir'],
 			$wof_id
 		);
 
-		$dir = dirname($path);
-		if (! file_exists($dir)) {
-			mkdir($dir, 0755, true);
+		try {
+			$dir = dirname($path);
+			if (! file_exists($dir)) {
+				mkdir($dir, 0775, true);
+			}
+			file_put_contents($path, $geojson);
+		} catch(Exception $e) {
+			return array(
+				'ok' => 0,
+				'error' => $e->getMessage()
+			);
 		}
-		file_put_contents($path, $geojson);
 
 		return array(
 			'ok' => 1,

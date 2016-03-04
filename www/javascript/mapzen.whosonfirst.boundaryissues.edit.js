@@ -10,9 +10,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	var map,
 	    marker,
-	    saved_geojson,
-	    saved_wof_id,
-	    saved_is_new_record,
 	    $status;
 
 	var VenueIcon = L.Icon.extend({
@@ -36,7 +33,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			    $lngInput.val()) {
 				var lat = parseFloat($latInput.val());
 				var lng = parseFloat($lngInput.val());
-				var zoom = 14;
+				var zoom = 16;
 				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
 					'map',
 					lat, lng, zoom
@@ -151,7 +148,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else if (! wof_name) {
 					$status.html('Please set wof:name.');
 				} else {
-					self.save_to_geojson(self.generate_geojson());
+					self.save_to_server(self.generate_geojson());
 				}
 			});
 		},
@@ -283,27 +280,25 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 		},
 
-		save_to_geojson: function(geojson) {
+		save_to_server: function(geojson) {
 
 			var data = {
 				crumb: $('#edit-form').data('crumb-save'),
-				step: 'to_geojson',
 				geojson: geojson
 			};
 
 			var onsuccess = function(rsp) {
-				if (! rsp['wof_id'] ||
-				    ! rsp['geojson']) {
+				if (! rsp['wof_id']) {
 					$status.html('Error saving GeoJSON: Bad response from server.');
+				} else if ($('input[name="wof_id"]').length == 0) {
+					var wof_id = parseInt(rsp['wof_id']);
+					location.href = '/id/' + wof_id + '/';
 				} else {
-					saved_geojson = rsp['geojson'];
-					saved_is_new_record = rsp['is_new_record'];
-					saved_wof_id = rsp['wof_id'];
-					self.save_to_github();
+					$status.html('Saved');
 				}
 			};
 
-			$status.html('Saving: generating GeoJSON');
+			$status.html('Saving...');
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
 		},
 
