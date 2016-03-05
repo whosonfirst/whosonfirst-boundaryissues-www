@@ -42,6 +42,7 @@
 	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data';
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
 	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
+	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 
 	# hard coding this URL will ensure it works in cron mode too
 

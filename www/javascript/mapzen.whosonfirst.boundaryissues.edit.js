@@ -63,6 +63,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			}).addTo(map);
 
+			map.on('dragend', function() {
+				var bounds = map.getBounds();
+				var data = {
+					lat_min: bounds._southWest.lat,
+					lat_max: bounds._northEast.lat,
+					lng_min: bounds._southWest.lng,
+					lng_max: bounds._northEast.lng
+				};
+				var onsuccess = function(rsp) {
+					$.each(rsp.results, function(i, item) {
+						marker = new L.Marker([
+							item._source['geom:latitude'],
+							item._source['geom:longitude']
+						], {
+							icon: new VenueIcon()
+						}).addTo(map);
+					});
+				};
+				var onerror = function() { };
+				mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
+			});
+
 			self.map = map;
 		},
 

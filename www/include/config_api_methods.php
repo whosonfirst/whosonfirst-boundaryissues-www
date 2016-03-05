@@ -53,6 +53,18 @@
 			)
 		),
 
+		"wof.search" => array (
+			"description" => "Search for WOF records.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "query", "description" => "The search query.", "required" => 1)
+			)
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,

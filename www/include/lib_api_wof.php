@@ -73,3 +73,53 @@
 			'encoded' => $rsp['encoded']
 		));
 	}
+	
+	function api_wof_search() {
+
+		$lat_min = post_float('lat_min');
+		$lat_max = post_float('lat_max');
+		$lng_min = post_float('lng_min');
+		$lng_max = post_float('lng_max');
+
+		if (! $lat_min || ! $lat_max ||
+		    ! $lng_min || ! $lng_max) {
+			api_output_error(400, "Please include: lat_min, lat_max, lng_min, lng_max");
+		}
+
+		$query = json_encode(array(
+			'query' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'range' => array(
+								'geom:latitude' => array(
+									'gte' => $lat_min,
+									'lte' => $lat_max
+								)
+							)
+						),
+						array(
+							'range' => array(
+								'geom:longitude' => array(
+									'gte' => $lng_min,
+									'lte' => $lng_max
+								)
+							)
+						)
+					)
+				)
+			)
+		));
+
+		$url = "{$GLOBALS['cfg']['es_base_url']}_search";
+		$rsp = http_post($url, $query);
+
+		if (! $rsp['ok']) {
+			api_output_error(400, $rsp['body']);
+		}
+		$body = json_decode($rsp['body'], true);
+
+		api_output_ok(array(
+			'results' => $body['hits']['hits']
+		));
+	}
