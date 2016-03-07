@@ -127,3 +127,11 @@ th:hover .remove-row {
     font-weight: 700;
     color:#D4645C;
 }
+
+#search-input {
+	font-size: 18px;
+	border: 2px solid #ccc;
+	padding: 5px;
+	vertical-align: bottom;
+	margin-right: 6px;
+}

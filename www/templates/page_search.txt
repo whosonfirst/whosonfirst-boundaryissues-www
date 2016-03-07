@@ -1,0 +1,25 @@
+{include file='inc_head.txt' nav_tab='search'}
+
+<div class="container">
+	<div class="row">
+		<h2>Search</h2>
+	</div>
+	<div class="row">
+		<form action="{$cfg.abs_root_url}search/" id="search-form">
+			<input type="text" name="q" value="{$query|@escape}" id="search-input" class="col-md-5">
+			<button type="submit" class="btn btn-primary">Search</button>
+		</form>
+		{if $results}
+			<ul id="search-results">
+				{foreach from=$results item=item}
+					<li class="search-result">
+						<a href="/id/{$item.id|@escape}">{$item.id|@escape} {$item.name|@escape}</a>
+						<span class="search-placetype">{$item.placetype|@escape}</span>
+					</li>
+				{/foreach}
+			</ul>
+		{/if}
+	</div>
+</div>
+
+{include file='inc_foot.txt'}
