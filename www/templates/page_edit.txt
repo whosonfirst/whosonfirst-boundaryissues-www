@@ -14,6 +14,10 @@
 			<div id="where"></div>
 			<div class="row">
 				<div class="col-md-8 col">
+					<p>
+						<small><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a> |
+						<a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download</a></small>
+					</p>
 					{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
 					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
