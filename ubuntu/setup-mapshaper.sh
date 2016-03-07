@@ -10,7 +10,7 @@ PROJECT_NAME=`basename ${PROJECT}`
 sudo apt-get update
 sudo apt-get upgrade -y
 
-sudo apt-get install npm
+sudo apt-get install npm -y
 
 if [ ! -x /usr/bin/node ]
 then
@@ -37,7 +37,7 @@ fi
 
 if [ ! -d /usr/local/mapzen/mapshaper ]
 then
-	git clone git@github.com:mbloch/mapshaper.git /usr/local/mapzen/mapshaper
+	git clone https://github.com/mbloch/mapshaper.git /usr/local/mapzen/mapshaper
 fi
 
 cd /usr/local/mapzen/mapshaper
