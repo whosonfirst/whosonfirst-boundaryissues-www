@@ -63,7 +63,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			}).addTo(map);
 
-			map.on('dragend', function() {
+			/*map.on('dragend', function() {
 				var bounds = map.getBounds();
 				var data = {
 					lat_min: bounds._southWest.lat,
@@ -83,7 +83,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				};
 				var onerror = function() { };
 				mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
-			});
+			});*/
 
 			self.map = map;
 		},

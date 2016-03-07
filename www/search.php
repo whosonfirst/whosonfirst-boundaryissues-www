@@ -6,22 +6,43 @@ $query = get_str('q');
 
 if ($query) {
 	$GLOBALS['smarty']->assign('query', $query);
-	$url = "{$GLOBALS['cfg']['es_base_url']}_search";
+	$url = "{$GLOBALS['cfg']['es_base_url']}_search?size=25";
 	$query = json_encode(array(
 		'query' => array(
-			'match' => array(
-				'_all' => array(
-					'operator' => 'and',
-					'query' => $query
+			// Search result relevance is determined by a combining multiple matches.
+			// The overall score is based on combining each of the matches.
+			'bool' => array(
+				'should' => array(
+					// #1: wof:name ('name_not_analyzed' field) is an exact match.
+					array(
+						'match' => array(
+							'name_not_analyzed' => $query
+						)
+					),
+					// #2: wof:name property has all the words.
+					array(
+						'match' => array(
+							'wof:name' => array(
+								'operator' => 'and',
+								'query' => $query
+							)
+						)
+					),
+					// #3: any of the name:* properties (appended to 'name_all') have
+					//     any of the words.
+					array(
+						'match' => array(
+							'name_all' => $query
+						)
+					)
 				),
+				'must' => array(
+					// #4: any of the words appear anywhere in the WOF record.
+					'match' => array(
+						'_all' => $query
+					)
+				)
 			)
-		),
-		'sort' => array(
-			//array('wof:megacity' => array('mode' => 'max', 'order' => 'desc')),
-			//array('gn:population' => array('mode' => 'max', 'order' => 'desc')),
-			array('wof:name' => array('order' => 'asc'))
-			//array('wof:scale' => array('mode' => 'max', 'order' => 'desc')),
-			//array('geom:area' => array('mode' => 'max', 'order' => 'desc'))
 		)
 	));
 	$rsp = http_post($url, $query);

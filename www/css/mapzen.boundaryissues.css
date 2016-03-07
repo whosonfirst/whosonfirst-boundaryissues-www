@@ -135,3 +135,12 @@ th:hover .remove-row {
 	vertical-align: bottom;
 	margin-right: 6px;
 }
+
+#search-results {
+	margin-top: 2em;
+	padding-left: 0;
+}
+
+#search-results li {
+	list-style: none;
+}

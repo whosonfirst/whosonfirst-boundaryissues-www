@@ -13,8 +13,9 @@
 			<ul id="search-results">
 				{foreach from=$results item=item}
 					<li class="search-result">
-						<a href="/id/{$item.id|@escape}">{$item.id|@escape} {$item.name|@escape}</a>
-						<span class="search-placetype">{$item.placetype|@escape}</span>
+						<code>{$item.id|@escape}</code>
+						<a href="/id/{$item.id|@escape}/">{$item.name|@escape}</a>
+						<small>a <strong>{$item.placetype|@escape}</strong></small>
 					</li>
 				{/foreach}
 			</ul>
