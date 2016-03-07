@@ -38,8 +38,7 @@
 					<a href="#" id="navi-account" class="dropdown-toggle navi-label" data-toggle="dropdown" role="button">You <b class="caret caret-ch"></b></a>
 
 					<ul class="dropdown-menu" aria-labelledby="account-navi" role="menu">
-						{if "signup"|@features_is_enabled}<li id="signup"><a href="{$cfg.abs_root_url}signup/">Create an account</a></li>{/if}
-						<li id="signin"><a href="{$cfg.abs_root_url}signin/">Sign in</a></li>
+						<li id="signin"><a href="{$cfg.abs_root_url}signin/">Sign in with GitHub</a></li>
 					</ul>
 
 				</li>

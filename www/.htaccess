@@ -49,15 +49,15 @@ RewriteEngine on
 
 # Login stuff
 
-RewriteRule  ^signup/?$			signup.php		[L]
-RewriteRule  ^signin/?$			signin.php		[L]
+#RewriteRule  ^signup/?$			signup.php		[L]
+#RewriteRule  ^signin/?$			signin.php		[L]
 RewriteRule  ^signout/?$		signout.php		[L]
 RewriteRule  ^checkcookie/?$		checkcookie.php	[L]
 
 # Password retrieval stuff
 
-RewriteRule ^forgot/?$			forgot.php		[L]
-RewriteRule ^reset/([a-zA-Z0-9]+)/?$	reset.php?reset=$1	[L,QSA]
+#RewriteRule ^forgot/?$			forgot.php		[L]
+#RewriteRule ^reset/([a-zA-Z0-9]+)/?$	reset.php?reset=$1	[L,QSA]
 
 # Account stuff
 
@@ -71,9 +71,9 @@ RewriteRule ^about/?$			about.php 		[L,QSA]
 RewriteRule ^contact/?$			contact.php 		[L,QSA]
 
 # WOF pages
-RewriteRule ^upload/?$			upload.php 			[L,QSA]
-RewriteRule ^add/?$					add.php 				[L,QSA]
-RewriteRule ^id/(\d+)/?$		edit.php?id=$1	[L,QSA]
+RewriteRule ^upload/?$				upload.php 			[L,QSA]
+RewriteRule ^add/?$						add.php 				[L,QSA]
+RewriteRule ^id/(\d+)/?$		edit.php?id=$1		[L,QSA]
 
 # Test pages
 
@@ -143,3 +143,10 @@ RewriteRule  ^api/oauth2/tokens(/page([0-9]+))?/?$			api_oauth2_tokens.php?page=
 RewriteRule  ^api/oauth2/tokens/([a-zA-Z0-9]+)/?$			api_oauth2_token.php?api_key=$1&%{QUERY_STRING} [L]
 
 RewriteRule  ^api/rest/?$						api_rest.php?%{QUERY_STRING}  [L]
+
+# START OF flamework-mapzen-sso stuff
+
+RewriteRule  ^signin/?$		/signin_github_oauth.php	[L]
+RewriteRule  ^auth/?$			/auth_callback_github_oauth.php?%{QUERY_STRING} [L]
+
+# END OF flamework-mapzen-sso stuff

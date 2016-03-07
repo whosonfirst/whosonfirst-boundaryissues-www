@@ -19,7 +19,7 @@
 				</div>
 			</div>
 		</form>
-		<div id="result"></div>
+		<div id="edit-status"></div>
 	</div>
 </div>
 

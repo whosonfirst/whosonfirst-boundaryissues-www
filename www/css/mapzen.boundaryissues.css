@@ -99,6 +99,31 @@ th:hover .remove-row {
 	margin-top: 10px;
 }
 
-#result {
+#edit-status {
 	margin-top: 1em;
+}
+
+.caveat {
+    font-style:italic;
+    color:#D4645C;
+}
+
+#site-message {
+    border-bottom: solid thin;
+    position: fixed;
+    top: 0;
+    z-index: 3501;
+    background: url(/images/stripes_bg.gif);
+    background-color: #fff;
+    font-family: monospace;
+    width: 100%;
+    padding: .75em;
+    color: darkslategray;
+    text-align:center;
+    font-size:small;
+}
+
+#wof_name {
+    font-weight: 700;
+    color:#D4645C;
 }

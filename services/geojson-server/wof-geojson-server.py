@@ -9,7 +9,7 @@ import mapzen.whosonfirst.geojson
 
 app = Flask(__name__)
 
-@app.route('/geojson-encode', methods=['POST'])
+@app.route('/encode', methods=['POST'])
 def geojson_encode():
     g = request.form['geojson']
     f = geojson.loads(g)
@@ -20,4 +20,4 @@ def geojson_encode():
     return fh.read()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=8181)

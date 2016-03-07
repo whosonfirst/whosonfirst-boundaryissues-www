@@ -11,8 +11,8 @@
 
 	# Message is displayed in the nav header in inc_head.txt
 
-	$GLOBALS['cfg']['display_message'] = 0;
-	$GLOBALS['cfg']['display_message_text'] = '';
+	$GLOBALS['cfg']['display_message'] = 1;
+	$GLOBALS['cfg']['display_message_text'] = 'this is still a wet-paint prototype, suggestions and cluebats are welcome but please be gentle';
 
 	# Things you'll certainly need to tweak
 	# See below for details about database password(s)
@@ -39,7 +39,10 @@
 		),
 	);
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data';
+	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
+	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
+	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 
 	# hard coding this URL will ensure it works in cron mode too
 
@@ -70,14 +73,14 @@
 
 	# Caching stuff
 
-        $GLOBALS['cfg']['enable_feature_cache_prefixes'] = 1;
-        $GLOBALS['cfg']['cache_prefix'] = $GLOBALS['cfg']['environment'];
+	$GLOBALS['cfg']['enable_feature_cache_prefixes'] = 1;
+	$GLOBALS['cfg']['cache_prefix'] = $GLOBALS['cfg']['environment'];
 
 	# Note: memcache stuff is not enabled by default but is
 	# available in the 'extras' directory
 
 	$GLOBALS['cfg']['auth_cookie_domain'] = parse_url($GLOBALS['cfg']['abs_root_url'], 1);
-	$GLOBALS['cfg']['auth_cookie_name'] = 'a';
+	$GLOBALS['cfg']['auth_cookie_name'] = 'boundaryissues';
 	$GLOBALS['cfg']['auth_cookie_require_https'] = 0;
 
 	$GLOBALS['cfg']['crumb_ttl_default'] = 300;	# seconds
@@ -305,4 +308,11 @@
 		'methods',
 	);
 
-?>
+	# START OF flamework-github-sso stuff
+
+	$GLOBALS['cfg']['github_oauth_key'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['github_oauth_secret'] = 'READ-FROM-SECRETS';	
+	$GLOBALS['cfg']['github_api_scope'] = 'user:email,repo';
+	$GLOBALS['cfg']['github_oauth_callback'] = 'auth/';
+
+	# START OF flamework-github-sso stuff
