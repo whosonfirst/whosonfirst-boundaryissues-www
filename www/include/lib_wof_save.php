@@ -39,6 +39,7 @@
 
 		$geojson = $rsp['geojson'];
 		$geojson_data = json_decode($geojson, true);
+		$wof_id = $geojson_data['properties']['wof:id'];
 
 		if (! $geojson_data) {
 			return array(
@@ -53,9 +54,11 @@
 			return $rsp;
 		}
 
+		register_shutdown_function('wof_utils_update_elasticsearch', $wof_id);
+
 		return array(
 			'ok' => 1,
-			'wof_id' => $geojson_data['properties']['wof:id']
+			'wof_id' => $wof_id
 		);
 	}
 
@@ -103,32 +106,5 @@
 		return array(
 			'ok' => 1,
 			'url' => $rsp['rsp']['content']['_links']['html']
-		);
-	}
-
-	function wof_save_to_disk($geojson, $geojson_data) {
-
-		$wof_id = $geojson_data['properties']['wof:id'];
-		$path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_data_dir'],
-			$wof_id
-		);
-
-		try {
-			$dir = dirname($path);
-			if (! file_exists($dir)) {
-				mkdir($dir, 0775, true);
-			}
-			$result = file_put_contents($path, $geojson);
-		} catch(Exception $e) {
-			return array(
-				'ok' => 0,
-				'error' => $e->getMessage()
-			);
-		}
-
-		return array(
-			'ok' => 1,
-			'path' => $path
 		);
 	}

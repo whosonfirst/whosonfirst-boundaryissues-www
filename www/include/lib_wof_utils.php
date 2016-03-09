@@ -97,4 +97,23 @@
 
 	########################################################################
 
+	function wof_utils_update_elasticsearch($id) {
+
+		// Update the Elasticsearch index
+		$rsp = http_post('http://localhost:8181/update_elasticsearch', array(
+			'id' => $id
+		));
+
+		if (! $rsp['ok']) {
+			if ($rsp['body']) {
+				$rsp['error'] = "Error from GeoJSON service: {$rsp['body']}";
+			}
+			return $rsp;
+		}
+
+		return array(
+			'ok' => 1
+		);
+	}
+
 	# the end
