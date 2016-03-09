@@ -26,7 +26,7 @@
 	}
 
 	$rsp = github_api_get_auth_token($code);
-	
+
 	if (! $rsp['ok']){
 		$GLOBALS['error']['oauth_access_token'] = 1;
 		$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
@@ -36,7 +36,7 @@
 	$oauth_token = $rsp['oauth_token'];
 
 	$rsp = github_api_call('GET', "user", $oauth_token);
-	
+
 	if (! $rsp['ok']){
 		$GLOBALS['error']['github_userinfo'] = 1;
 		$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
@@ -45,6 +45,10 @@
 
 	$github_id = $rsp['rsp']['id'];
 	$github_user = github_users_get_by_github_id($github_id);
+
+	github_users_update_user($github_user, array(
+		'oauth_token' => $oauth_token
+	));
 
 	if (($github_user) && ($user_id = $github_user['user_id'])){
 		$user = users_get_by_id($user_id);
@@ -64,7 +68,7 @@
 
 	else {
 		$rsp = github_api_call('GET', "user", $oauth_token);
-		
+
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;
 			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
@@ -75,7 +79,7 @@
 		$username = $rsp['rsp']['name'];
 
 		$rsp = github_api_call('GET', 'user/emails', $oauth_token);
-		
+
 		if (! $rsp['ok']){
 			$GLOBALS['error']['github_userinfo'] = 1;
 			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
@@ -96,14 +100,14 @@
 			"password" => $password,
 		));
 
-		if (! $rsp['ok']){	
+		if (! $rsp['ok']){
 			$GLOBALS['error']['dberr_user'] = 1;
 			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
 			exit();
 		}
-		
+
 		$user = $rsp['user'];
-		
+
 		if (! $user){
 			$GLOBALS['error']['dberr_user'] = 1;
 			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");

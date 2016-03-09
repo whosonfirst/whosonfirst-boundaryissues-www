@@ -346,38 +346,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
 		},
 
-		save_to_disk: function() {
-
-			var data = {
-				crumb: $('#edit-form').data('crumb-save'),
-				step: 'to_disk',
-				wof_id: saved_wof_id,
-				geojson: saved_geojson
-			};
-
-			var onsuccess = function(rsp) {
-				if (! rsp['path']) {
-					$status.html('Error saving to disk: Bad response from server.');
-				} else {
-					$status.html('Done saving. Still need to `git revert` and `git pull`.');
-				}
-			};
-
-			$status.html('Saving: to disk');
-			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
-		},
-
 		display_error: function(rsp) {
-			if (! rsp) {
-				$status.html('Argh, it\'s all gone pear-shaped! Check the JavaScript console?');
-				mapzen.whosonfirst.log.error(rsp);
-			} else if (! rsp.error) {
-				$status.html('Oh noes, an error! Check the JavaScript console?');
-				mapzen.whosonfirst.log.error(rsp);
-			} else {
-				$status.html(rsp.error);
-				mapzen.whosonfirst.log.error(rsp);
+			mapzen.whosonfirst.log.error(rsp);
+			var message = 'Argh, it\'s all gone pear-shaped! Check the JavaScript console?';
+			if (rsp.error && rsp.error.message) {
+				message = rsp.error.message;
 			}
+			if (rsp.error && rsp.error.code) {
+				message = '[' + parseInt(rsp.error.code) + '] ' + message;
+			}
+			$status.html(message);
 		},
 
 		lookup_parent_id: function(lat, lng, callback) {

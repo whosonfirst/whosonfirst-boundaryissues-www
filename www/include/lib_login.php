@@ -131,7 +131,7 @@
 	#################################################################
 
 	# inre: "securification"
-	# 
+	#
 	# The vulnerability stems from website developers' failure to designate
 	# authentication cookies as secure. That means web browsers are free to
 	# send them over the insecure http channel, and that's exactly what CookieMonster

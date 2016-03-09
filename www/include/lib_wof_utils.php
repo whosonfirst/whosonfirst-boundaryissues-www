@@ -35,7 +35,7 @@
 		$tree = array();
 		$tmp = $id;
 
-		while (strlen($tmp)){		
+		while (strlen($tmp)){
 
 			$slice = substr($tmp, 0, 3);
 			array_push($tree, $slice);
@@ -70,6 +70,28 @@
 		return array(
 			'ok' => 1,
 			'encoded' => $encoded
+		);
+	}
+
+	########################################################################
+
+	function wof_utils_save($geojson) {
+
+		// Save a GeoJSON file to disk
+		$rsp = http_post('http://localhost:8181/save', array(
+			'geojson' => $geojson
+		));
+
+		if (! $rsp['ok']) {
+			if ($rsp['body']) {
+				$rsp['error'] = "Error from GeoJSON service: {$rsp['body']}";
+			}
+			return $rsp;
+		}
+
+		return array(
+			'ok' => 1,
+			'geojson' => $rsp['body']
 		);
 	}
 

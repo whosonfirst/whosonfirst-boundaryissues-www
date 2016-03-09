@@ -19,7 +19,7 @@
 		$sql = "SELECT * FROM GithubUsers WHERE user_id='{$enc_id}'";
 		return db_single(db_fetch($sql));
 	}
-	
+
 	#################################################################
 
 	function github_users_get_by_github_id($github_id){
@@ -60,7 +60,7 @@
 	function github_users_update_user(&$github_user, $update){
 
 		$hash = array();
-		
+
 		foreach ($update as $k => $v){
 			$hash[$k] = AddSlashes($v);
 		}
@@ -83,9 +83,9 @@
 
 		return $rsp;
 	}
-	
+
 	#################################################################
-	
+
 	function github_users_curr_oauth_token() {
 		if (! $GLOBALS['cfg']['user']['id']) {
 			return array(
@@ -96,7 +96,7 @@
 		$enc_id = AddSlashes($GLOBALS['cfg']['user']['id']);
 		$sql = "SELECT * FROM GithubUsers WHERE user_id='{$enc_id}'";
 		$github_user = db_single(db_fetch($sql));
-		
+
 		return array(
 			'ok' => 1,
 			'oauth_token' => $github_user['oauth_token']

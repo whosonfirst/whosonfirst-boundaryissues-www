@@ -98,12 +98,7 @@
 		}
 
 		if (! $rsp['ok']) {
-			$rsp['github_api_call'] = array(
-				'url' => "{$GLOBALS['github_api_endpoint']}$path",
-				'data' => $data,
-				'headers' => $headers,
-				'more' => $more
-			);
+			$rsp['error'] = "{$rsp['error']} {$rsp['body']}";
 			return $rsp;
 		} else {
 			return array(
