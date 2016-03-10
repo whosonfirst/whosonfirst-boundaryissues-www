@@ -11,21 +11,21 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 	var map;
 
 	var marker_style = {
-    "color": "#000",
-    "weight": 1,
-    "opacity": 1,
-    "radius": 4,
-    "fillColor": "#d4645c",
-    "fillOpacity": 0.5
-  };
+		"color": "#000",
+		"weight": 1,
+		"opacity": 1,
+		"radius": 4,
+		"fillColor": "#d4645c",
+		"fillOpacity": 0.5
+	};
 
 	var marker_hover_style = {
-    "color": "#000",
-    "weight": 2,
-    "opacity": 1,
-    "radius": 6,
-    "fillColor": "#d4645c",
-    "fillOpacity": 1
+		"color": "#000",
+		"weight": 2,
+		"opacity": 1,
+		"radius": 6,
+		"fillColor": "#d4645c",
+		"fillOpacity": 1
 	};
 
 	var self = {
