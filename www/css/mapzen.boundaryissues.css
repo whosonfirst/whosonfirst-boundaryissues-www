@@ -144,3 +144,7 @@ th:hover .remove-row {
 #search-results li {
 	list-style: none;
 }
+
+#where-parent.is-breach strong {
+	cursor: pointer;
+}

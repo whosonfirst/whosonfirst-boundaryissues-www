@@ -23,6 +23,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		}
 	});
 
+	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
+	var esc_int = parseInt;
+	var esc_float = parseFloat;
+
 	var self = {
 
 		setup_map: function() {
@@ -234,14 +238,102 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 								 '<span id="where-parent"></span>';
 			$('#where').html(html);
 
-			self.lookup_parent_id(lat, lng, function(results) {
-				try {
-					var parent_id = results[0].Id;
-					var html = ' in <strong>' + results[0].Name + '</strong> (' + results[0].Placetype + ')';
-					$('input[name="geojson.properties.wof:parent_id"]').val(parent_id);
+			$('#where-parent').click(function(e) {
+				if ($('#where-parent').hasClass('is-breach')) {
+					var id = esc_int($(e.target).data('id'));
+					var name = esc_str($(e.target).html());
+					var placetype = esc_str($(e.target).data('placetype'));
+					$('input[name="geojson.properties.wof:parent_id"]').val(id);
+					$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
+					$('#where-parent').removeClass('is-breach');
+				}
+			});
+
+			self.lookup_parent_id(lat, lng, function(pip_results) {
+				if (pip_results.length > 0) {
+					var parents = self.get_nearest_parents(pip_results);
+					var curr_parent_id = $('input[name="geojson.properties.wof:parent_id"]').val();
+					curr_parent_id = parseInt(curr_parent_id);
+					var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
+
+					if (parents.length == 1) {
+						// Hey, alright, no breach. This is straightforward: choose the first parent
+						var id = esc_int(parents[0].Id);
+						var name = esc_str(parents[0].Name);
+						var placetype = esc_str(parents[0].Placetype);
+						var html = ' in <strong>' + name + '</strong> (' + placetype + ')';
+						$('input[name="geojson.properties.wof:parent_id"]').val(id);
+					} else if (chosen_parent) {
+						// If the current parent ID matches one of the nearest parents, use that
+						var name = esc_str(chosen_parent.Name);
+						var placetype = esc_str(chosen_parent.Placetype);
+						var html = ' in <strong>' + name + '</strong> (' + placetype + ')';
+					} else {
+						// There is more than one nearest parent. Gotta choose one!
+						var parent_html = [];
+						$.each(parents, function(i, parent) {
+							var id = esc_int(parent.Id);
+							var name = esc_str(parent.Name);
+							var placetype = esc_str(parent.Placetype);
+							parent_html.push('<strong data-id="' + id + '" data-placetype="' + placetype + '" title="Choose ' + name + ': ' + id + '">' + name + '</strong> (' + placetype + ')');
+						});
+						var html = ' in either ';
+						html += parent_html.join(' or ');
+						html += '<br><small class="caveat">more than one parent at this coordinate: <strong>click on a place</strong> to choose the best match</small>';
+						$('#where-parent').addClass('is-breach');
+					}
 					$('#where-parent').html(html);
-				} catch(e) {
-					mapzen.whosonfirst.log.error('Error looking up parent_id.');
+				}
+			});
+		},
+
+		get_nearest_parents: function(pip_results) {
+			var sorted_pip_results = self.sort_placetypes(pip_results);
+			var first_parent = sorted_pip_results.shift();
+			var nearest_parents = [first_parent];
+			var next_parent = sorted_pip_results.shift();
+
+			// Keep adding parents at the same placetype level (i.e., breaches)
+			while (next_parent.Placetype == first_parent.Placetype) {
+				nearest_parents.push(next_parent);
+				next_parent = sorted_pip_results.shift();
+			}
+
+			return nearest_parents;
+		},
+
+		get_parent_by_id: function(parents, parent_id) {
+			var found_parent = null;
+			$.each(parents, function(i, parent) {
+				if (parent.Id == parent_id) {
+					found_parent = parent;
+				}
+			});
+			return found_parent;
+		},
+
+		sort_placetypes: function(results) {
+			function is_parent_of(a, b) {
+				var a_parents = mapzen.whosonfirst.placetypes.placetype(a).parents();
+				if (a_parents.indexOf(b) !== -1) {
+					// b is a child of a
+					return true;
+				} else {
+					// Check if b is a (great)grandchild of each of a's parents
+					var is_grand_parent = false;
+					$.each(a_parents, function(a, a_parent) {
+						if (is_parent_of(a_parent, b)) {
+							is_grand_parent = true;
+						}
+					});
+					return is_grand_parent;
+				}
+			}
+			return results.sort(function(a, b) {
+				if (a.Placetype == b.Placetype) {
+					return 0;
+				} else {
+					return (is_parent_of(a.Placetype, b.Placetype)) ? -1 : 1;
 				}
 			});
 		},
