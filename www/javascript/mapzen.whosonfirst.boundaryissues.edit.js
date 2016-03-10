@@ -10,7 +10,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	var map,
 	    marker,
-	    $status = $('#edit-status');
+	    $status = $('#edit-status'),
+			nearby = {};
 
 	var VenueIcon = L.Icon.extend({
 		options: {
@@ -22,6 +23,24 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			popupAnchor: new L.Point(0, -42)
 		}
 	});
+
+	var marker_style = {
+    "color": "#000",
+    "weight": 1,
+    "opacity": 1,
+    "radius": 4,
+    "fillColor": "#d4645c",
+    "fillOpacity": 0.5
+  };
+
+	var marker_hover_style = {
+    "color": "#000",
+    "weight": 2,
+    "opacity": 1,
+    "radius": 6,
+    "fillColor": "#d4645c",
+    "fillOpacity": 1
+	};
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
@@ -66,6 +85,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
+
+			self.show_nearby_results();
+			map.on('dragend', function() {
+				self.show_nearby_results();
+			});
 
 			self.map = map;
 		},
@@ -188,32 +212,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 			$new_item.find('.property').val(value);
 		},
-
-		/*
-
-		map.on('dragend', function() {
-			var bounds = map.getBounds();
-			var data = {
-				lat_min: bounds._southWest.lat,
-				lat_max: bounds._northEast.lat,
-				lng_min: bounds._southWest.lng,
-				lng_max: bounds._northEast.lng
-			};
-			var onsuccess = function(rsp) {
-				$.each(rsp.results, function(i, item) {
-					marker = new L.Marker([
-						item._source['geom:latitude'],
-						item._source['geom:longitude']
-					], {
-						icon: new VenueIcon()
-					}).addTo(map);
-				});
-			};
-			var onerror = function() { };
-			mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
-		});
-
-		*/
 
 		update_coordinates: function(ll) {
 			// Round to the nearest 6 decimal places
@@ -340,6 +338,43 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return (is_parent_of(a.Placetype, b.Placetype)) ? -1 : 1;
 				}
 			});
+		},
+
+		show_nearby_results: function() {
+			var bounds = map.getBounds();
+			var data = {
+				lat_min: bounds._southWest.lat,
+				lat_max: bounds._northEast.lat,
+				lng_min: bounds._southWest.lng,
+				lng_max: bounds._northEast.lng
+			};
+			var onsuccess = function(rsp) {
+				$.each(rsp.results, function(i, item) {
+					var id = this._source['wof:id'];
+					if (nearby[id] || parseInt($('input[name="wof_id"]').val()) == id) {
+						return;
+					}
+					marker = new L.circleMarker([
+						item._source['geom:latitude'],
+						item._source['geom:longitude']
+					], marker_style).addTo(map);
+
+					nearby[id] = marker;
+					marker._source = item._source;
+					marker.bindLabel(item._source['wof:name']);
+					marker.on('click', function() {
+						location.href = '/id/' + id + '/';
+					});
+					marker.on('mouseover', function() {
+						this.setStyle(marker_hover_style);
+					});
+					marker.on('mouseout', function() {
+						this.setStyle(marker_style);
+					});
+				});
+			};
+			var onerror = function() { };
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
 		},
 
 		generate_geojson: function() {
