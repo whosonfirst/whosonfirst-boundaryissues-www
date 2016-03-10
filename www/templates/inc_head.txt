@@ -11,6 +11,7 @@
 		<link href="{$cfg.abs_root_url}css/bootstrap.min.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/leaflet.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/leaflet.draw.css" rel="stylesheet" />
+		<link href="{$cfg.abs_root_url}css/leaflet.label.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.css" rel="stylesheet" />
 
 		<link href="{$cfg.abs_root_url}css/mapzen.styleguide.css" rel="stylesheet" />
@@ -20,6 +21,7 @@
 		<script src="{$cfg.abs_root_url}javascript/bootstrap.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.draw.min.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/leaflet.label.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/tangram.min.js"></script>
 		<script src="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.js"></script>
 
