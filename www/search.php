@@ -53,7 +53,9 @@ if ($query) {
 			$results[] = array(
 				'id' => $hit['_source']['wof:id'],
 				'name' => $hit['_source']['wof:name'],
-				'placetype' => $hit['_source']['wof:placetype']
+				'placetype' => $hit['_source']['wof:placetype'],
+				'lat' => $hit['_source']['geom:latitude'],
+				'lng' => $hit['_source']['geom:longitude']
 			);
 		}
 		$GLOBALS['smarty']->assign('results', $results);

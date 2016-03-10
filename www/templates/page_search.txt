@@ -10,9 +10,10 @@
 			<button type="submit" class="btn btn-primary">Search</button>
 		</form>
 		{if $results}
+			<div id="map"></div>
 			<ul id="search-results">
 				{foreach from=$results item=item}
-					<li class="search-result">
+					<li class="search-result" data-id="{$item.id|@escape}" data-lat="{$item.lat|@escape}" data-lng="{$item.lng|@escape}">
 						<code>{$item.id|@escape}</code>
 						<a href="/id/{$item.id|@escape}/">{$item.name|@escape}</a>
 						<small>a <strong>{$item.placetype|@escape}</strong></small>

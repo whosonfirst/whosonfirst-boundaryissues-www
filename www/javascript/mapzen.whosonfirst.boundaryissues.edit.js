@@ -10,7 +10,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	var map,
 	    marker,
-	    $status;
+	    $status = $('#edit-status');
 
 	var VenueIcon = L.Icon.extend({
 		options: {
@@ -66,28 +66,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
-
-			/*map.on('dragend', function() {
-				var bounds = map.getBounds();
-				var data = {
-					lat_min: bounds._southWest.lat,
-					lat_max: bounds._northEast.lat,
-					lng_min: bounds._southWest.lng,
-					lng_max: bounds._northEast.lng
-				};
-				var onsuccess = function(rsp) {
-					$.each(rsp.results, function(i, item) {
-						marker = new L.Marker([
-							item._source['geom:latitude'],
-							item._source['geom:longitude']
-						], {
-							icon: new VenueIcon()
-						}).addTo(map);
-					});
-				};
-				var onerror = function() { };
-				mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
-			});*/
 
 			self.map = map;
 		},
@@ -210,6 +188,32 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 			$new_item.find('.property').val(value);
 		},
+
+		/*
+
+		map.on('dragend', function() {
+			var bounds = map.getBounds();
+			var data = {
+				lat_min: bounds._southWest.lat,
+				lat_max: bounds._northEast.lat,
+				lng_min: bounds._southWest.lng,
+				lng_max: bounds._northEast.lng
+			};
+			var onsuccess = function(rsp) {
+				$.each(rsp.results, function(i, item) {
+					marker = new L.Marker([
+						item._source['geom:latitude'],
+						item._source['geom:longitude']
+					], {
+						icon: new VenueIcon()
+					}).addTo(map);
+				});
+			};
+			var onerror = function() { };
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
+		});
+
+		*/
 
 		update_coordinates: function(ll) {
 			// Round to the nearest 6 decimal places
@@ -481,7 +485,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	};
 
 	$(document).ready(function() {
-		$status = $('#edit-status');
+		if ($('#edit-form').length == 0) {
+			return;
+		}
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_properties();

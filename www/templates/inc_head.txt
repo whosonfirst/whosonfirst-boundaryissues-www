@@ -46,6 +46,7 @@
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.enmapify.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.upload.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.edit.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.search.js"></script>
 
 	</head>
 
