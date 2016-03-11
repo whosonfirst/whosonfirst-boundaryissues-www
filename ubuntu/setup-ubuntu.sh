@@ -69,3 +69,7 @@ else
 	sudo python ./setup.py install
 	cd -
 fi
+
+# Setup dbug log
+sudo touch /var/log/boundaryissues.log
+sudo chown www-data:www-data /var/log/boundaryissues.log

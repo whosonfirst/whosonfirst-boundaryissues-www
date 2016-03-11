@@ -43,6 +43,7 @@
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
 	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
 	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
+	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues.log';
 
 	# hard coding this URL will ensure it works in cron mode too
 
@@ -179,6 +180,7 @@
 
 	$GLOBALS['cfg']['autoload_libs'] = array(
 		'cache',
+		'dbug',
 	);
 
 	# THINGS YOU SHOULD DEFINE IN YOUR secrets.php FILE WHICH IS NOT
@@ -311,7 +313,7 @@
 	# START OF flamework-github-sso stuff
 
 	$GLOBALS['cfg']['github_oauth_key'] = 'READ-FROM-SECRETS';
-	$GLOBALS['cfg']['github_oauth_secret'] = 'READ-FROM-SECRETS';	
+	$GLOBALS['cfg']['github_oauth_secret'] = 'READ-FROM-SECRETS';
 	$GLOBALS['cfg']['github_api_scope'] = 'user:email,repo';
 	$GLOBALS['cfg']['github_oauth_callback'] = 'auth/';
 
