@@ -22,7 +22,6 @@
 			'wof:superseded_by',
 			'wof:breaches',
 			'wof:country',
-			'wof:tags',
 			'iso:country'
 		)
 	);
@@ -42,6 +41,7 @@
 	$values = json_decode($geojson, true);
 
 	$schema_fields = wof_schema_fields($ref, $ignore_fields, $values);
+	//dbug($schema_fields);
 
 	$crumb_save = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);

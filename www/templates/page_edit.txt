@@ -18,7 +18,7 @@
 						<small><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a> |
 						<a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download</a></small>
 					</p>
-					{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
+					{include file="inc_json_schema_field.txt" name='properties' property=$schema_fields.properties.properties context=''}
 					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
 			</div>

@@ -50,8 +50,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_map: function() {
 			mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
-			var $latInput = $('input[name="geojson.properties.geom:latitude"]');
-			var $lngInput = $('input[name="geojson.properties.geom:longitude"]');
+			var $latInput = $('input[name="properties.geom:latitude"]');
+			var $lngInput = $('input[name="properties.geom:longitude"]');
 			if ($latInput.val() &&
 			    $lngInput.val()) {
 				var lat = parseFloat($latInput.val());
@@ -167,9 +167,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#edit-form').submit(function(e) {
 				e.preventDefault();
 
-				var lat = $('input[name="geojson.properties.geom:latitude"]').val();
-				var lng = $('input[name="geojson.properties.geom:longitude"]').val();
-				var wof_name = $('input[name="geojson.properties.wof:name"]').val();
+				var lat = $('input[name="properties.geom:latitude"]').val();
+				var lng = $('input[name="properties.geom:longitude"]').val();
+				var wof_name = $('input[name="properties.wof:name"]').val();
 
 				if (! lat || ! lng) {
 					$status.html('Please set geom:latitude and geom:longitude.');
@@ -218,18 +218,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var lat = ll.lat.toFixed(6);
 			var lng = ll.lng.toFixed(6);
 
-			if ($('input[name="geojson.properties.geom:latitude"]').length == 0) {
+			if ($('input[name="properties.geom:latitude"]').length == 0) {
 				var $rel = $('#json-schema-object-geojson-properties');
 				self.add_object_row($rel, 'geom:latitude', lat);
 			} else {
-				$('input[name="geojson.properties.geom:latitude"]').val(lat);
+				$('input[name="properties.geom:latitude"]').val(lat);
 			}
 
-			if ($('input[name="geojson.properties.geom:longitude"]').length == 0) {
+			if ($('input[name="properties.geom:longitude"]').length == 0) {
 				var $rel = $('#json-schema-object-geojson-properties');
 				self.add_object_row($rel, 'geom:longitude', lng);
 			} else {
-				$('input[name="geojson.properties.geom:longitude"]').val(lng);
+				$('input[name="properties.geom:longitude"]').val(lng);
 			}
 
 			self.update_where(lat, lng);
@@ -245,7 +245,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var id = esc_int($(e.target).data('id'));
 					var name = esc_str($(e.target).html());
 					var placetype = esc_str($(e.target).data('placetype'));
-					$('input[name="geojson.properties.wof:parent_id"]').val(id);
+					$('input[name="properties.wof:parent_id"]').val(id);
 					$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
 					$('#where-parent').removeClass('is-breach');
 				}
@@ -254,7 +254,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.lookup_parent_id(lat, lng, function(pip_results) {
 				if (pip_results.length > 0) {
 					var parents = self.get_nearest_parents(pip_results);
-					var curr_parent_id = $('input[name="geojson.properties.wof:parent_id"]').val();
+					var curr_parent_id = $('input[name="properties.wof:parent_id"]').val();
 					curr_parent_id = parseInt(curr_parent_id);
 					var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
 
@@ -264,7 +264,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						var name = esc_str(parents[0].Name);
 						var placetype = esc_str(parents[0].Placetype);
 						var html = ' in <strong>' + name + '</strong> (' + placetype + ')';
-						$('input[name="geojson.properties.wof:parent_id"]').val(id);
+						$('input[name="properties.wof:parent_id"]').val(id);
 					} else if (chosen_parent) {
 						// If the current parent ID matches one of the nearest parents, use that
 						var name = esc_str(chosen_parent.Name);
@@ -378,8 +378,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		generate_geojson: function() {
-			var lat = $('input[name="geojson.properties.geom:latitude"]').val();
-			var lng = $('input[name="geojson.properties.geom:longitude"]').val();
+			var lat = $('input[name="properties.geom:latitude"]').val();
+			var lng = $('input[name="properties.geom:longitude"]').val();
 
 			if (! lat || ! lng) {
 				return null;
@@ -400,8 +400,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#edit-form').find('input.property').each(function(i, input) {
 				var name = $(input).attr('name');
 				var value = $(input).val();
-				// Ignore initial 'geojson.' in name (e.g., "geojson.properties.wof:concordances.id")
-				name = name.replace(/^geojson\./, '');
+				if ($(input).data('type') == 'number') {
+					value = parseFloat(value);
+				} else if ($(input).data('type') == 'integer') {
+					value = parseInt(value);
+				}
 				self.assign_property(geojson_obj, name, value);
 			});
 
@@ -419,14 +422,29 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		assign_property: function(context, name, value) {
-			// Check if there are '.' chars in the name
-			var next_step = name.match(/^([^.]+)\.(.+)/);
-			if (next_step) {
-				// If so, recurse into the properties context
-				if (!context[next_step[1]]) {
-					context[next_step[1]] = {};
+
+			if (typeof name == 'string') {
+
+				// Check if there are '.' chars in the name (object)
+				var dot_match = name.match(/^([^.]+)\.(.+)/);
+
+				// ... or if there is a square bracket pair (array)
+				var bracket_match = name.match(/^([^.]+)\[(\d+)\]/);
+			}
+
+			if (dot_match) {
+				// Looks like an object; recurse into the properties context
+				if (!context[dot_match[1]]) {
+					context[dot_match[1]] = {};
 				}
-				self.assign_property(context[next_step[1]], next_step[2], value);
+				self.assign_property(context[dot_match[1]], dot_match[2], value);
+			} else if (bracket_match) {
+				// Looks like an array; recurse into the properties context
+				if (!context[bracket_match[1]]) {
+					context[bracket_match[1]] = [];
+				}
+				var index = parseInt(bracket_match[2]);
+				self.assign_property(context[bracket_match[1]], index, value);
 			} else {
 				// If not, then we've reached the correct context
 				context[name] = value;
@@ -506,8 +524,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		reset_coordinates: function() {
 			$('#where').html('');
-			$('input[name="geojson.properties.geom:latitude"]').val('');
-			$('input[name="geojson.properties.geom:longitude"]').val('');
+			$('input[name="properties.geom:latitude"]').val('');
+			$('input[name="properties.geom:longitude"]').val('');
 		},
 
 		encode_geojson: function(onsuccess, onerror) {

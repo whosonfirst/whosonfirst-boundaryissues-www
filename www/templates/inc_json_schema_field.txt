@@ -1,17 +1,15 @@
 <div class="json-schema-field">
-	{if $property.type == 'integer'}
-		<input type="number" name="{$context}.{$name|@escape}" value="{$property.value|@escape}" class="property">
-	{elseif isset($property.enum) }
-		<select name="{$context}.{$name}">
+	{if $property.type == 'object'}
+		{include file="inc_json_schema_object.txt" schema=$property context=$context}
+	{elseif $property.type == 'array'}
+		{include file="inc_json_schema_array.txt" schema=$property context=$context}
+	{elseif isset($property.enum)}
+		<select name="{$context|@escape}.{$name|@escape}">
 			{foreach from=$property.enum item=option}
 				<option>{$option|@escape}</option>
 			{/foreach}
 		</select>
-	{elseif $property.type == 'object'}
-		{include file="inc_json_schema_object.txt" schema=$property context="$context.$name"}
-	{elseif $property.type == 'array'}
-		{include file="inc_json_schema_array.txt" schema=$property context="$context.$name"}
 	{else}
-		<input type="text" name="{$context}.{$name|@escape}" value="{$property.value|@escape}" class="property">
+		<input type="text" name="{$context|@escape}.{$name|@escape}" value="{$property._value|@escape}" class="property" data-type="{$property.type|@escape}">
 	{/if}
 </div>

@@ -27,6 +27,15 @@
 						"wof:placetype": {
 							"type": "string"
 						},
+						"geom:latitude": {
+							"type": "number"
+						},
+						"geom:longitude": {
+							"type": "number"
+						},
+						"geom:area": {
+							"type": "number"
+						},
 						"wof:country": {
 							"type": "string"
 						},
@@ -62,6 +71,15 @@
 						},
 						"edtf:cessation": {
 							"type": "string"
+						},
+						"wof:lastmodified": {
+							"type": "integer"
+						},
+						"wof:geomhash": {
+							"type": "string"
+						},
+						"mz:is_current": {
+							"type": "integer"
 						}
 					},
 					"required": [

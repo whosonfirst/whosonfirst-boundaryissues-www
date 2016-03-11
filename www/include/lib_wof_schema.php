@@ -63,7 +63,7 @@ function wof_schema_insert_values($schema, $values) {
 	if (is_array($values)) {
 		foreach ($values as $key => $value) {
 			if (is_scalar($value)) {
-				$schema['properties'][$key]['value'] = $value;
+				$schema['properties'][$key]['_value'] = $value;
 			} else if ($schema['properties'][$key]) {
 				$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
 			}
