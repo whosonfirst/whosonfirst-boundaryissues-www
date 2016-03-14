@@ -13,8 +13,8 @@
 			<div id="map"></div>
 			<div id="where"></div>
 			<div class="row">
-				<div class="col-md-8 col">
-					{include file="inc_json_schema_object.txt" schema=$schema_fields context='geojson'}
+				<div id="edit-properties" class="col-md-8 col">
+					{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
 			</div>

@@ -13,7 +13,7 @@
 			<div id="map"></div>
 			<div id="where"></div>
 			<div class="row">
-				<div class="col-md-8 col">
+				<div id="edit-properties" class="col-md-8 col">
 					<p>
 						<small><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a> |
 						<a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download</a></small>
