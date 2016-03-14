@@ -1,15 +1,11 @@
-{if $context == ''}
-	{assign var="context" value="properties"}
-{else}
-	{assign var="context" value="`$context`.`$name`"}
-{/if}
 <div id="json-schema-object-{$context|regex_replace:"/[:.]/":"-"}" class="json-schema-object" data-context="{$context}">
 	<table>
 		{foreach from=$schema.properties key=name item=property}
 			<tr>
 				<th>{$name}</th>
 				<td>
-					{include file="inc_json_schema_field.txt" name=$name property=$property context=$context}
+					{assign var="name" value="`$context`.`$name`"}
+					{include file="inc_json_schema_field.txt" name=$name property=$property context=$name}
 				</td>
 			</tr>
 		{/foreach}

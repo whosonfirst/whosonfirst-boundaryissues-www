@@ -1,7 +1,8 @@
 <div id="json-schema-array-{$context|replace:'.':'-'|replace:':':'-'}" class="json-schema-array" data-context="{$context}">
 	<ul>
 		{foreach from=$schema.properties key=index item=item}
-			<li>{include file="inc_json_schema_field.txt" name="`$name`[`$index`]" property=$item context=$context}</li>
+			{assign var="name" value="`$context`[`$index`]"}
+			<li>{include file="inc_json_schema_field.txt" name=$name property=$item context=$name}</li>
 		{/foreach}
 	</ul>
 	<input type="text" class="add-item" placeholder="Add an item">

@@ -130,6 +130,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_properties: function() {
+
+			$('.json-schema-object tr').each(function(i, row) {
+				if ($(row).hasClass('add-row')) {
+					return;
+				}
+				$(row).find('> th').append('<span class="remove-row">&times;</span>');
+				$(row).find('.remove-row').click(function(e) {
+					$(row).remove();
+				});
+			});
+
 			// Add new properties to an object by changing the 'Value' field
 			$('input.add-value').change(function(e) {
 				if ($(e.target).val()) {
@@ -201,9 +212,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		add_array_item: function($rel, value) {
 			var context = $rel.data('context');
 			var remove = '<span class="remove-row">&times;</span>';
+			var index = $rel.find('> ul > li').length;
 			$rel.find('> ul').append(
 				'<li>' +
-					'<input name="' + context + '[]" class="property"></td>' +
+					'<input name="' + context + '[' + index + ']" class="property"></td>' +
 				'</tr>'
 			);
 			var $new_item = $rel.find('> ul > li').last();
