@@ -28,6 +28,12 @@ def geojson_save():
     g = request.form['geojson']
     f = geojson.loads(g)
 
+    # Does the input pass the smell check?
+    validation = geojson.is_valid(f)
+    if (validation['valid'] == 'no'):
+        logging.error("GeoJSON input is not valid: %s" % validation['message'])
+        return null
+
     # This assumes that a 'data' symlink has been created in the Boundary Issues
     # directory (20160307/dphiffer)
     ff = mapzen.whosonfirst.export.flatfile(root, debug=False)
