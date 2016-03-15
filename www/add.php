@@ -21,7 +21,6 @@
 			'wof:superseded_by',
 			'wof:breaches',
 			'wof:country',
-			'wof:tags',
 			'iso:country'
 		)
 	);
