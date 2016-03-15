@@ -3,13 +3,14 @@
 import StringIO
 import sys
 import logging
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 import geojson
 import mapzen.whosonfirst.geojson
 import mapzen.whosonfirst.export
 import mapzen.whosonfirst.search
 import mapzen.whosonfirst.utils
+import mapzen.whosonfirst.pip.utils
 
 root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/data"
 app = Flask(__name__)
@@ -52,6 +53,16 @@ def geojson_update_elasticsearch():
     except Exception, e:
         logging.error("failed to index %s, because %s" % (path, e))
     return "ok"
+@app.route('/pip', methods=['POST'])
+def geojson_hierarchy():
+    data_endpoint = 'https://whosonfirst.mapzen.com/data/'
+    lat = float(request.form['lat'])
+    lng = float(request.form['lng'])
+    placetype = request.form['placetype']
+    parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype)
+    parent_id = mapzen.whosonfirst.pip.utils.get_parent(parents, lat, lng)
+    hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, data_endpoint)
+    return jsonify(parent_id=parent_id, hierarchy=hierarchy, parents=parents)
 
 if __name__ == "__main__":
     app.run(port=8181)
