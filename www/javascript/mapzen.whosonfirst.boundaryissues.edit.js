@@ -263,9 +263,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			});
 
-			self.lookup_parent_id(lat, lng, function(pip_results) {
-				if (pip_results.length > 0) {
-					var parents = self.get_nearest_parents(pip_results);
+			self.reverse_geocode(lat, lng, function(rsp) {
+				if (rsp.parents.length > 0) {
+					var parents = rsp.parents;
 					var curr_parent_id = $('input[name="properties.wof:parent_id"]').val();
 					curr_parent_id = parseInt(curr_parent_id);
 					var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
@@ -301,21 +301,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 		},
 
-		get_nearest_parents: function(pip_results) {
-			var sorted_pip_results = self.sort_placetypes(pip_results);
-			var first_parent = sorted_pip_results.shift();
-			var nearest_parents = [first_parent];
-			var next_parent = sorted_pip_results.shift();
-
-			// Keep adding parents at the same placetype level (i.e., breaches)
-			while (next_parent.Placetype == first_parent.Placetype) {
-				nearest_parents.push(next_parent);
-				next_parent = sorted_pip_results.shift();
-			}
-
-			return nearest_parents;
-		},
-
 		get_parent_by_id: function(parents, parent_id) {
 			var found_parent = null;
 			$.each(parents, function(i, parent) {
@@ -324,32 +309,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			});
 			return found_parent;
-		},
-
-		sort_placetypes: function(results) {
-			function is_parent_of(a, b) {
-				var a_parents = mapzen.whosonfirst.placetypes.placetype(a).parents();
-				if (a_parents.indexOf(b) !== -1) {
-					// b is a child of a
-					return true;
-				} else {
-					// Check if b is a (great)grandchild of each of a's parents
-					var is_grand_parent = false;
-					$.each(a_parents, function(a, a_parent) {
-						if (is_parent_of(a_parent, b)) {
-							is_grand_parent = true;
-						}
-					});
-					return is_grand_parent;
-				}
-			}
-			return results.sort(function(a, b) {
-				if (a.Placetype == b.Placetype) {
-					return 0;
-				} else {
-					return (is_parent_of(a.Placetype, b.Placetype)) ? -1 : 1;
-				}
-			});
 		},
 
 		show_nearby_results: function() {
@@ -519,17 +478,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$status.html(message);
 		},
 
-		lookup_parent_id: function(lat, lng, callback) {
+		reverse_geocode: function(lat, lng, callback) {
 			var data = {
 				latitude: lat,
-				longitude: lng
+				longitude: lng,
+				placetype: 'venue' // For now we just do venues
 			};
 
 			var onsuccess = function(rsp) {
-				callback(rsp.results);
+				callback(rsp);
 			};
 			var onerror = function(rsp) {
-				mapzen.whosonfirst.log.error('Error looking up parent_id.');
+				mapzen.whosonfirst.log.error('Error reverse geocoding.');
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.pip", data, onsuccess, onerror);
 		},

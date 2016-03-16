@@ -10,6 +10,7 @@ import mapzen.whosonfirst.geojson
 import mapzen.whosonfirst.export
 import mapzen.whosonfirst.search
 import mapzen.whosonfirst.utils
+import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.pip.utils
 
 root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/data"
@@ -53,16 +54,19 @@ def geojson_update_elasticsearch():
     except Exception, e:
         logging.error("failed to index %s, because %s" % (path, e))
     return "ok"
-@app.route('/pip', methods=['POST'])
+@app.route('/pip', methods=['GET'])
 def geojson_hierarchy():
     data_endpoint = 'https://whosonfirst.mapzen.com/data/'
-    lat = float(request.form['lat'])
-    lng = float(request.form['lng'])
-    placetype = request.form['placetype']
+    lat = float(request.args.get('latitude'))
+    lng = float(request.args.get('longitude'))
+    placetype = request.args.get('placetype')
+
+    if (mapzen.whosonfirst.placetypes.is_valid_placetype(placetype) == False):
+        return "Error: invalid placetype."
+
     parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype)
-    parent_id = mapzen.whosonfirst.pip.utils.get_parent(parents, lat, lng)
     hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, data_endpoint)
-    return jsonify(parent_id=parent_id, hierarchy=hierarchy, parents=parents)
+    return jsonify(hierarchy=hierarchy, parents=parents)
 
 if __name__ == "__main__":
     app.run(port=8181)

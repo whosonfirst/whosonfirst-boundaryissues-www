@@ -35,25 +35,25 @@
 	function api_wof_pip() {
 
 		if (! isset($_POST['latitude']) ||
-		    ! isset($_POST['longitude'])) {
-			api_output_error(400, "Please include a 'latitude' and 'longitude'.");
+		    ! isset($_POST['longitude']) ||
+		    ! isset($_POST['placetype'])) {
+			api_output_error(400, "Please include: 'latitude', 'longitude', and 'placetype'.");
 		}
 
 		$query = http_build_query(array(
 			'latitude' => post_float('latitude'),
-			'longitude' => post_float('longitude')
+			'longitude' => post_float('longitude'),
+			'placetype' => post_str('placetype')
 		));
 
-		$rsp = http_get("http://localhost:8080/?$query");
+		$rsp = http_get("http://localhost:8181/pip?$query");
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Error talking to the PIP service.';
 			api_output_error(400, $error);
 		}
 
-		$results = json_decode($rsp['body']);
-		api_output_ok(array(
-			'results' => $results
-		));
+		$results = json_decode($rsp['body'], true);
+		api_output_ok($results);
 	}
 
 	function api_wof_encode() {
@@ -73,7 +73,7 @@
 			'encoded' => $rsp['encoded']
 		));
 	}
-	
+
 	function api_wof_search() {
 
 		$lat_min = post_float('lat_min');
