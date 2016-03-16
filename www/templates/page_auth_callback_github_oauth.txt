@@ -4,22 +4,37 @@
 
 <p class="error">
 {if $error.oauth_missing_secret}
-This website is not properly configured for signing you in using your Github credentials. It's not your fault but it is currently unsafe to proceed.
+This website is not properly configured for signing you in using your GitHub credentials. It's not your fault but it is currently unsafe to proceed.
 
 {elseif $error.oauth_missing_cookie}
 Hrm. Your request is missing some of the required data we need to cross the river. It's not clear what the problem is but it is currently unsafe to proceed.
 
 {elseif $error.oauth_access_token}
-There was a problem getting the required auth-y bits (specifically an <code>access token</code>) from Github!
+There was a problem getting the required auth-y bits (specifically an <code>access token</code>) from GitHub!
 
 {elseif $error.dberr_user}
 There was a database-related problem creating your account. Sad face.
 
 {elseif $error.dberr_githubuser}
-There was a database-related problem creating your account, specifically associating it with your Github account. Curses!
+There was a database-related problem creating your account, specifically associating it with your GitHub account. Curses!
 
 {elseif $error.dberr_githubuser_update}
-There was a database-related problem updating your Github information. Blargh...
+There was a database-related problem updating your GitHub information. Blargh...
+
+{elseif $error.github_userinfo}
+There was a retrieving details about your GitHub account. Ack!
+
+{elseif $error.github_missing_userid}
+There is some confusion about who (and where) your GitHub account points to on {$cfg.site_name|@escape}. So confused!
+
+{elseif $error.github_missing_user}
+Wait... your GitHub account points to an invisible user which doesn't make any sense. Which is ... unexpected.
+
+{elseif $error.github_missing_user}
+Wait a minute... this {$cfg.site_name|@escape} account has aleady been deleted.
+
+{elseif $error.github_token_update}
+Argh! There was a problem updating your GitHub access token... because we can't have nice things.
 
 {else}
 Ack! The INVISIBLE ERROR CAT hisses at you...
