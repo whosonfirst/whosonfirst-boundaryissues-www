@@ -28,9 +28,37 @@
 
 	}
 
-	function wof_save_string($input_str) {
+	function wof_save_string($geojson) {
 
-		$rsp = wof_utils_save($input_str);
+		$geojson_data = json_decode($geojson, true);
+		if (! $geojson_data) {
+			return array(
+				'ok' => 0,
+				'error' => "Could not parse input 'geojson' param."
+			);
+		}
+
+		// Since the editor currently doesn't support *all* properties, we'll
+		// grab the existing file and merge in our changes on top of it. That way
+		// anything that isn't represented in the editor won't be lost.
+		// (20160316/dphiffer)
+		if ($geojson_data['properties']['wof:id']) {
+			$path = wof_utils_id2abspath(
+				$GLOBALS['cfg']['wof_data_dir'],
+				$geojson_data['properties']['wof:id']
+			);
+			if (file_exists($path)) {
+				$existing_geojson = file_get_contents($path);
+				$existing_geojson_data = json_decode($existing_geojson, true);
+				$geojson_data['properties'] = array_merge(
+					$existing_geojson_data['properties'],
+					$geojson_data['properties']
+				);
+				$geojson = json_encode($geojson_data);
+			}
+		}
+
+		$rsp = wof_utils_save($geojson);
 
 		if (! $rsp['ok']) {
 			$rsp['error'] = "Error saving via GeoJSON service: {$rsp['error']}";
@@ -39,14 +67,14 @@
 
 		$geojson = $rsp['geojson'];
 		$geojson_data = json_decode($geojson, true);
-		$wof_id = $geojson_data['properties']['wof:id'];
-
 		if (! $geojson_data) {
 			return array(
 				'ok' => 0,
 				'error' => 'GeoJSON was saved to disk, but it seems to be unparseable.'
 			);
 		}
+
+		$wof_id = $geojson_data['properties']['wof:id'];
 
 		$rsp = wof_save_to_github($geojson, $geojson_data);
 		if (! $rsp['ok']) {
