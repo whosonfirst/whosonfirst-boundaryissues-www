@@ -15,13 +15,18 @@
 		'geometry', // smells like yaks (20160216/dphiffer)
 		'properties' => array(
 			'wof:id',
+			'wof:parent_id',
 			'wof:hierarchy',
 			'wof:belongsto',
 			'wof:supersedes',
 			'wof:superseded_by',
 			'wof:breaches',
 			'wof:country',
-			'iso:country'
+			'iso:country',
+			'geom:area',
+			'wof:geomhash',
+			'mz:is_current',
+			'wof:lastmodified'
 		)
 	);
 	$defaults = array(

@@ -16,6 +16,7 @@
 		'geometry', // smells like yaks (20160216/dphiffer)
 		'properties' => array(
 			'wof:id',
+			'wof:parent_id',
 			'wof:hierarchy',
 			'wof:belongsto',
 			'wof:supersedes',
@@ -47,6 +48,8 @@
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);
 	$GLOBALS['smarty']->assign('wof_name', $values['properties']['wof:name']);
+	$GLOBALS['smarty']->assign('wof_parent_id', $values['properties']['wof:parent_id']);
+	$GLOBALS['smarty']->assign('wof_hierarchy', json_encode($values['properties']['wof:hierarchy']));
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 
 	$GLOBALS['smarty']->display('page_edit.txt');

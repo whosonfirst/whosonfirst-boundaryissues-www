@@ -255,10 +255,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#where-parent').click(function(e) {
 				if ($('#where-parent').hasClass('is-breach')) {
 					var id = esc_int($(e.target).data('id'));
-					var name = esc_str($(e.target).html());
-					var placetype = esc_str($(e.target).data('placetype'));
-					$('input[name="properties.wof:parent_id"]').val(id);
-					$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
+					self.set_parent({
+						Id: id,
+						Name: esc_str($(e.target).html()),
+						Placetype: esc_str($(e.target).data('placetype'))
+					});
+					var hierarchy = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
+					self.set_hierarchy(self.get_hierarchy_by_id(hierarchy, id));
 					$('#where-parent').removeClass('is-breach');
 				}
 			});
@@ -266,22 +269,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.reverse_geocode(lat, lng, function(rsp) {
 				if (rsp.parents.length > 0) {
 					var parents = rsp.parents;
+					var hierarchy = rsp.hierarchy;
 					var curr_parent_id = $('input[name="properties.wof:parent_id"]').val();
 					curr_parent_id = parseInt(curr_parent_id);
 					var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
+					var chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
 
-					if (parents.length == 1) {
+					if (parents.length == 1 &&
+					    hierarchy.length == 1) {
 						// Hey, alright, no breach. This is straightforward: choose the first parent
-						var id = esc_int(parents[0].Id);
-						var name = esc_str(parents[0].Name);
-						var placetype = esc_str(parents[0].Placetype);
-						var html = ' in <strong>' + name + '</strong> (' + placetype + ')';
-						$('input[name="properties.wof:parent_id"]').val(id);
-					} else if (chosen_parent) {
-						// If the current parent ID matches one of the nearest parents, use that
-						var name = esc_str(chosen_parent.Name);
-						var placetype = esc_str(chosen_parent.Placetype);
-						var html = ' in <strong>' + name + '</strong> (' + placetype + ')';
+						self.set_parent(parents[0]);
+						self.set_hierarchy(hierarchy[0]);
+					} else if (chosen_parent && chosen_hierarchy) {
+						// If the current parent ID matches one of the parents, use that
+						self.set_parent(chosen_parent);
+						self.set_hierarchy(chosen_hierarchy);
 					} else {
 						// There is more than one nearest parent. Gotta choose one!
 						var parent_html = [];
@@ -295,10 +297,46 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						html += parent_html.join(' or ');
 						html += '<br><small class="caveat">more than one parent at this coordinate: <strong>click on a place</strong> to choose the best match</small>';
 						$('#where-parent').addClass('is-breach');
+
+						$('#hierarchy').html('');
+						$('#parent').html('Parent: <code><small>-1</small></code>');
+						$.each(hierarchy, function(i, h) {
+							self.show_hierarchy(h);
+						});
 					}
 					$('#where-parent').html(html);
 				}
 			});
+		},
+
+		set_parent: function(parent) {
+			var id = esc_int(parent.Id);
+			var name = esc_str(parent.Name);
+			var placetype = esc_str(parent.Placetype);
+			$('input[name="properties.wof:parent_id"]').val(id);
+			$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
+			$('#parent').html('Parent: <a href="/id/' + id + '/">' + name + ' <code><small>' + id + '</small></code></a>');
+		},
+
+		set_hierarchy: function(hierarchy) {
+			$('#hierarchy').html('');
+			self.show_hierarchy(hierarchy);
+			$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
+		},
+
+		show_hierarchy: function(hierarchy) {
+			var html = '<ul>';
+			var labelRegex = /^(.+)_id$/;
+			for (var key in hierarchy) {
+				var id = esc_int(hierarchy[key]);
+				var label = key;
+				if (key.match(labelRegex)) {
+					label = key.match(labelRegex)[1];
+				}
+				html += '<li>' + label + ': <a href="/id/' + id + '/"><code><small>' + id + '</small></code></a></li>';
+			}
+			html += '</ul>';
+			$('#hierarchy').append(html);
 		},
 
 		get_parent_by_id: function(parents, parent_id) {
@@ -309,6 +347,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			});
 			return found_parent;
+		},
+
+		get_hierarchy_by_id: function(hierarchies, parent_id) {
+			var found_hierarchy = null;
+			$.each(hierarchies, function(i, hierarchy) {
+				for (var key in hierarchy) {
+					if (hierarchy[key] == parent_id) {
+						found_hierarchy = hierarchy;
+					}
+				}
+			});
+			return found_hierarchy;
 		},
 
 		show_nearby_results: function() {
@@ -386,8 +436,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				geojson_obj.properties['wof:id'] = id;
 			}
 
-			geojson_obj.properties['geom:latitude'] = lat;
-			geojson_obj.properties['geom:longitude'] = lng;
+			geojson_obj.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
+			geojson_obj.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
 
 			return JSON.stringify(geojson_obj);
 		},
