@@ -10,8 +10,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	var map,
 	    marker,
-	    $status = $('#edit-status'),
-			nearby = {};
+	    $status,
+	    nearby = {};
 
 	var VenueIcon = L.Icon.extend({
 		options: {
@@ -231,17 +231,22 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var lng = ll.lng.toFixed(6);
 
 			if ($('input[name="properties.geom:latitude"]').length == 0) {
-				var $rel = $('#json-schema-object-geojson-properties');
+				var $rel = $('#json-schema-object-properties');
 				self.add_object_row($rel, 'geom:latitude', lat);
 			} else {
 				$('input[name="properties.geom:latitude"]').val(lat);
 			}
 
 			if ($('input[name="properties.geom:longitude"]').length == 0) {
-				var $rel = $('#json-schema-object-geojson-properties');
+				var $rel = $('#json-schema-object-properties');
 				self.add_object_row($rel, 'geom:longitude', lng);
 			} else {
 				$('input[name="properties.geom:longitude"]').val(lng);
+			}
+
+			if ($('input[name="properties.geom:bbox"]').length == 1) {
+				var bbox = lng + ',' + lat + ',' + lng + ',' + lat;
+				$('input[name="properties.geom:bbox"]').val(bbox);
 			}
 
 			self.update_where(lat, lng);
@@ -321,7 +326,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		set_hierarchy: function(hierarchy) {
 			$('#hierarchy').html('');
 			self.show_hierarchy(hierarchy);
-			$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
+			$('input[name="properties.wof:hierarchy"]').val('[' + JSON.stringify(hierarchy) + ']');
 		},
 
 		show_hierarchy: function(hierarchy) {
@@ -370,26 +375,27 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				lng_max: bounds._northEast.lng
 			};
 			var onsuccess = function(rsp) {
+				var m;
 				$.each(rsp.results, function(i, item) {
 					var id = this._source['wof:id'];
 					if (nearby[id] || parseInt($('input[name="wof_id"]').val()) == id) {
 						return;
 					}
-					marker = new L.circleMarker([
+					m = new L.circleMarker([
 						item._source['geom:latitude'],
 						item._source['geom:longitude']
 					], marker_style).addTo(map);
 
-					nearby[id] = marker;
-					marker._source = item._source;
-					marker.bindLabel(item._source['wof:name']);
-					marker.on('click', function() {
+					nearby[id] = m;
+					m._source = item._source;
+					m.bindLabel(item._source['wof:name']);
+					m.on('click', function() {
 						location.href = '/id/' + id + '/';
 					});
-					marker.on('mouseover', function() {
+					m.on('mouseover', function() {
 						this.setStyle(marker_hover_style);
 					});
-					marker.on('mouseout', function() {
+					m.on('mouseout', function() {
 						this.setStyle(marker_style);
 					});
 				});
@@ -563,6 +569,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		if ($('#edit-form').length == 0) {
 			return;
 		}
+		$status = $('#edit-status');
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_properties();
