@@ -46,12 +46,42 @@
 	$github_id = $rsp['rsp']['id'];
 	$github_user = github_users_get_by_github_id($github_id);
 
-	github_users_update_user($github_user, array(
-		'oauth_token' => $oauth_token
-	));
+	if ($github_user){
 
-	if (($github_user) && ($user_id = $github_user['user_id'])){
+		$user_id = $github_user['user_id'];
+
+		if (! $user_id){
+			$GLOBALS['error']['github_missing_userid'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			exit();
+		}
+
 		$user = users_get_by_id($user_id);
+
+		if (! $user){
+			$GLOBALS['error']['github_missing_user'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			exit();
+		}
+		
+		if ($user['deleted']){
+			$GLOBALS['error']['github_deleted_user'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			exit();
+		}
+
+		if ($github_user['oauth_token'] != $oauth_token){
+
+			$rsp = github_users_update_user($github_user, array(
+				'oauth_token' => $oauth_token
+			));
+
+			if (! $rsp['ok']){
+				$GLOBALS['error']['github_token_update'] = 1;
+				$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+				exit();
+			}
+		}
 	}
 
 	# If we don't ensure that new users are allowed to create
