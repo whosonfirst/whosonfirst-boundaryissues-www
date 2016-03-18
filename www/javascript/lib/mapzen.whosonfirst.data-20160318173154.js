@@ -21,7 +21,7 @@ mapzen.whosonfirst.data = (function(){
 
 			var rel_path = self.id2relpath(id);
 			var abs_path = self.endpoint() + rel_path;
-	
+
 			return abs_path;
 		},
 
@@ -40,12 +40,12 @@ mapzen.whosonfirst.data = (function(){
 			tmp = new Array();
 
 			while (str_id.length){
-				
+
 				var part = str_id.substr(0, 3);
-				tmp.push(part);		
+				tmp.push(part);
 				str_id = str_id.substr(3);
 			}
-			
+
 			parent = tmp.join("/");
 			return parent;
 		},
