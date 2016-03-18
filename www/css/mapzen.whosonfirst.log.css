@@ -1,0 +1,52 @@
+#wof-log-container {
+    margin-top:3em;
+    padding:1em;
+    max-height:200px;
+    overflow:scroll;
+    font-size:.9em;
+    display:none;
+    border:.5px solid #ccc;
+}
+
+#wof-log-container:before {
+}
+
+#wof-log {
+    margin:0px;
+    padding:0px;
+}
+
+.wof-log-debug {
+}
+
+.wof-log-info {
+}
+
+.wof-log-warning {
+    color:red;
+}
+
+.wof-log-error {
+    color:red;
+}
+
+.wof-log-ts {
+    font-size:small;
+    display:block;
+    margin-bottom:.4em;
+}
+
+.wof-log li {
+    margin-bottom:.5em;
+    border-bottom:.5px solid #ededed;
+}
+
+.wof-log-body:before {
+    content: " ";
+}
+
+.wof-log-item {
+    list-style-type: none;
+    margin-bottom:1em;
+    padding-bottom:.5em;
+}

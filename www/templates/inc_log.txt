@@ -1,0 +1,7 @@
+<div id="wof-log-container">
+
+<h4>Log</h4>
+
+<ul id="wof-log">
+</ul>
+</div>

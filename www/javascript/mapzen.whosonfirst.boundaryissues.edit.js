@@ -67,7 +67,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}).addTo(map);
 				marker.on('dragend', function(e) {
 					var ll = marker.getLatLng();
-					self.update_coordinates(ll);
+					self.update_coordinates(ll, true);
 				});
 				self.update_where(lat, lng);
 			} else {
@@ -342,45 +342,47 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		lookup_hierarchy: function(lat, lng) {
 			self.reverse_geocode(lat, lng, function(rsp) {
-				if (rsp.parents.length > 0) {
-					var parents = rsp.parents;
-					var hierarchy = rsp.hierarchy;
-					var curr_parent_id = $('input[name="properties.wof:parent_id"]').val();
-					curr_parent_id = parseInt(curr_parent_id);
-					var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
-					var chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
+				var parents = rsp.parents;
+				var hierarchy = rsp.hierarchy;
+				var curr_parent_id = $('input[name="properties.wof:parent_id"]').val();
+				curr_parent_id = parseInt(curr_parent_id);
+				var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
+				var chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
 
-					if (parents.length == 1 &&
-							hierarchy.length == 1) {
-						// Hey, alright, no breach. This is straightforward: choose the first parent
-						self.set_parent(parents[0]);
-						self.set_hierarchy(hierarchy[0]);
-					} else if (chosen_parent && chosen_hierarchy) {
-						// If the current parent ID matches one of the parents, use that
-						self.set_parent(chosen_parent);
-						self.set_hierarchy(chosen_hierarchy);
-					} else {
-						// There is more than one nearest parent. Gotta choose one!
-						var parent_html = [];
-						$.each(parents, function(i, parent) {
-							var id = esc_int(parent.Id);
-							var name = esc_str(parent.Name);
-							var placetype = esc_str(parent.Placetype);
-							parent_html.push('<strong data-id="' + id + '" data-placetype="' + placetype + '" title="Choose ' + name + ': ' + id + '">' + name + '</strong> (' + placetype + ')');
-						});
-						var html = ' in either ';
-						html += parent_html.join(' or ');
-						html += '<br><small class="caveat">more than one parent at this coordinate: <strong>click on a place</strong> to choose the best match</small>';
-						$('#where-parent').addClass('is-breach');
+				if (parents.length == 0 &&
+				    hierarchy.length == 0) {
+					self.set_parent(null);
+					self.set_hierarchy(null);
+				} else if (parents.length == 1 &&
+						hierarchy.length == 1) {
+					// Hey, alright, no breach. This is straightforward: choose the first parent
+					self.set_parent(parents[0]);
+					self.set_hierarchy(hierarchy[0]);
+				} else if (chosen_parent && chosen_hierarchy) {
+					// If the current parent ID matches one of the parents, use that
+					self.set_parent(chosen_parent);
+					self.set_hierarchy(chosen_hierarchy);
+				} else {
+					// There is more than one nearest parent. Gotta choose one!
+					var parent_html = [];
+					$.each(parents, function(i, parent) {
+						var id = esc_int(parent.Id);
+						var name = esc_str(parent.Name);
+						var placetype = esc_str(parent.Placetype);
+						parent_html.push('<strong data-id="' + id + '" data-placetype="' + placetype + '" title="Choose ' + name + ': ' + id + '">' + name + '</strong> (' + placetype + ')');
+					});
+					var html = ' in either ';
+					html += parent_html.join(' or ');
+					html += '<br><small class="caveat">more than one parent at this coordinate: <strong>click on a place</strong> to choose the best match</small>';
+					$('#where-parent').addClass('is-breach');
 
-						$('#hierarchy').html('');
-						$('#parent').html('Parent: <code><small>-1</small></code>');
-						$.each(hierarchy, function(i, h) {
-							self.show_hierarchy(h);
-						});
-					}
-					$('#where-parent').html(html);
+					$('#hierarchy').html('');
+					$('#parent').html('Parent: <code><small>-1</small></code>');
+					$.each(hierarchy, function(i, h) {
+						self.show_hierarchy(h);
+					});
 				}
+				$('#where-parent').html(html);
 			});
 		},
 
@@ -394,18 +396,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		set_parent: function(parent) {
-			var id = esc_int(parent.Id);
-			var name = esc_str(parent.Name);
-			var placetype = esc_str(parent.Placetype);
-			$('input[name="properties.wof:parent_id"]').val(id);
-			$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
-			$('#parent').html('Parent: <a href="/id/' + id + '/">' + name + ' <code><small>' + id + '</small></code></a>');
+			if (! parent) {
+				$('input[name="properties.wof:parent_id"]').val(-1);
+				$('#where-parent').html(' in (unknown)');
+				$('#parent').html('Parent: <code><small>-1</small></code>');
+			} else {
+				var id = esc_int(parent.Id);
+				var name = esc_str(parent.Name);
+				var placetype = esc_str(parent.Placetype);
+				$('input[name="properties.wof:parent_id"]').val(id);
+				$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
+				$('#parent').html('Parent: <a href="/id/' + id + '/">' + name + ' <code><small>' + id + '</small></code></a>');
+			}
 		},
 
 		set_hierarchy: function(hierarchy) {
 			$('#hierarchy').html('');
-			self.show_hierarchy(hierarchy);
-			$('input[name="properties.wof:hierarchy"]').val('[' + JSON.stringify(hierarchy) + ']');
+			if (! hierarchy) {
+				$('input[name="properties.wof:hierarchy"]').val('[]');
+			} else {
+				$('input[name="properties.wof:hierarchy"]').val('[' + JSON.stringify(hierarchy) + ']');
+				self.show_hierarchy(hierarchy);
+			}
 		},
 
 		show_hierarchy: function(hierarchy) {
@@ -417,14 +429,30 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (key.match(labelRegex)) {
 					label = key.match(labelRegex)[1];
 				}
-				html += '<li>' + label + ': <a href="/id/' + id + '/" id="hierarchy-' + id + '"><code><small>' + id + '</small></code></a></li>';
-				self.get_wof(id, function(wof) {
-					var id = wof.properties['wof:id'];
-					$('#hierarchy-' + id).html(wof.properties['wof:name'] + ' <code><small>' + id + '</small></code>');
-				});
+				html += '<li>' + label + ': <a href="/id/' + id + '/" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
 			}
 			html += '</ul>';
 			$('#hierarchy').append(html);
+			self.get_hierarchy_names();
+		},
+
+		get_hierarchy_names: function() {
+			var queue = [];
+			$('.hierarchy-needs-name').each(function(i, link) {
+				var id = $(link).data('id');
+				if (queue.indexOf(id) == -1) {
+					queue.push(id);
+				}
+			});
+			$.each(queue, function(i, id) {
+				if (id) {
+					self.get_wof(id, function(wof) {
+						var id = wof.properties['wof:id'];
+						$('.hierarchy-' + id).html(wof.properties['wof:name'] + ' <code><small>' + id + '</small></code>');
+						$('.hierarchy-' + id).removeClass('hierarchy-needs-name');
+					});
+				}
+			});
 		},
 
 		get_parent_by_id: function(parents, parent_id) {

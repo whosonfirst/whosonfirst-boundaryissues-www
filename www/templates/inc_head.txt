@@ -15,6 +15,7 @@
 		<link href="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.css" rel="stylesheet" />
 
 		<link href="{$cfg.abs_root_url}css/mapzen.styleguide.css" rel="stylesheet" />
+		<link href="{$cfg.abs_root_url}css/mapzen.whosonfirst.log.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/mapzen.boundaryissues.css" rel="stylesheet" />
 
 		<script src="{$cfg.abs_root_url}javascript/jquery-2.1.0.min.js"></script>
