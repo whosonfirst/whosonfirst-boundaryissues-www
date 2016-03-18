@@ -5,10 +5,9 @@
 		<h1>Boundary Issues</h1>
 	</div>
 	<ul>
-		<li><a href="/upload/">Upload a GeoJSON file</a></li>
-		<li><a href="/add/">Add a place</a> (venues only for now)</li>
-		<li><a href="/id/420573371/">Edit a place</a> (switch the ID in the URL to edit other places)
-		<li><a href="/search/">Search for a place</a></li>
+		<li><a href="{$cfg.abs_root_url}search/">Search for a place</a></li>
+		<li><a href="{$cfg.abs_root_url}add/">Add a new place</a> <small>&#8212; but only venues in New York (state) <em>for now</em></small></li>
+		<li><a href="{$cfg.abs_root_url}upload/">Upload a GeoJSON file</a></li>
 	</ul>
 </div>
 

@@ -12,6 +12,7 @@
 		</div>
 
 	{if !$cfg.site_disabled}
+
 		<div class="collapse navbar-collapse navbar-head-collapse row">
 			<ul class="nav navbar-nav pull-right">
 
@@ -50,4 +51,11 @@
 	{/if}
 
 	</nav>
+
+	<form class="navbar-form navbar-right" role="search" action="{$cfg.abs_root_url}search/">
+	       <div class="form-group">
+         	       <input type="text" class="form-control" placeholder="Search for a place" name="q" value="{$query|@escape}" id="search-input-x" />
+       	       </div>
+	</form>
+
 </div>

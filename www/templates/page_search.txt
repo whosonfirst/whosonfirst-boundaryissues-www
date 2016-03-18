@@ -5,10 +5,12 @@
 		<h2>Search</h2>
 	</div>
 	<div class="row">
+	{if 0}
 		<form action="{$cfg.abs_root_url}search/" id="search-form">
 			<input type="text" name="q" value="{$query|@escape}" id="search-input" class="col-md-5">
 			<button type="submit" class="btn btn-primary">Search</button>
 		</form>
+	{/if}
 		{if $results}
 			<div id="map"></div>
 			<ul id="search-results">
