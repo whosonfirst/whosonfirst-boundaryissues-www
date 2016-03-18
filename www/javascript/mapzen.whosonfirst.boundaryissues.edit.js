@@ -192,6 +192,52 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 		},
 
+		setup_buttons: function() {
+			$('#btn-current').click(function(e) {
+				e.preventDefault();
+				self.set_property('mz:is_current', 1);
+				self.remove_property('edtf:deprecated');
+			});
+
+			$('#btn-deprecated').click(function(e) {
+				e.preventDefault();
+				var now = new Date();
+				var yyyy = now.getFullYear();
+				var mm = self.leading_zero(now.getMonth() + 1);
+				var dd = self.leading_zero(now.getDate());
+				var edtf = yyyy + '-' + mm + '-' + dd;
+				self.set_property('mz:is_current', 0);
+				self.set_property('edtf:deprecated', edtf);
+			});
+
+			$('#btn-funky').click(function(e) {
+				e.preventDefault();
+				self.set_property('mz:is_funky', 1);
+			});
+		},
+
+		leading_zero: function(num) {
+			num = parseInt(num);
+			if (num < 10) {
+				num = '0' + num;
+			}
+			return num;
+		},
+
+		set_property: function(property, value) {
+			if ($('input[name="properties.' + property + '"]').length == 0) {
+				var $rel = $('#json-schema-object-properties');
+				self.add_object_row($rel, property, value);
+			} else {
+				$('input[name="properties.' + property + '"]').val(value);
+			}
+		},
+
+		remove_property: function(property) {
+			var row = $('input[name="properties.' + property + '"]').closest('tr');
+			row.remove();
+		},
+
 		add_object_row: function($rel, key, value) {
 			var $row = $rel.find('> table > tbody > .add-row');
 			var context = $rel.data('context');
@@ -612,6 +658,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		self.setup_drawing();
 		self.setup_properties();
 		self.setup_form();
+		self.setup_buttons();
 	});
 
 	return self;

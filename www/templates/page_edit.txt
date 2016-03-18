@@ -27,6 +27,11 @@
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
 					<h3 class="headroom">Options</h3>
+					<div id="edit-buttons">
+						<button type="submit" class="btn btn-success" id="btn-current">This is <strong>current</strong></button>
+						<button type="submit" class="btn btn-danger" id="btn-deprecated">This is <strong>deprecated</strong></button>
+						<button type="submit" class="btn btn-info" id="btn-funky">This is <strong>funky</strong></button>
+					</div>
 					<ul id="edit-options">
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a></li>
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download GeoJSON</a></li>
