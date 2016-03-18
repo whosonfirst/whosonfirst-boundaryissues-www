@@ -27,7 +27,7 @@ def geojson_encode():
     except Exception, e:
         error = "failed to load geojson, because %s" % e
         logging.error(error)
-        return flask.jsonify(ok=0, error=error)
+        return jsonify(ok=0, error=error)
 
     e = mapzen.whosonfirst.geojson.encoder(precision=None)
 
@@ -38,7 +38,7 @@ def geojson_encode():
         error = "failed to encode geojson, because %s" % e
         logging.error(error)
 
-        return flask.jsonify(ok=0, error=error)
+        return jsonify(ok=0, error=error)
 
     fh.seek(0)
     encoded = fh.read()
@@ -53,7 +53,7 @@ def geojson_save():
         f = geojson.loads(g)
     except Exception, e:
         err = "failed to load geojson, because %s" % e
-        return flask.jsonify(ok=0, error=err)
+        return jsonify(ok=0, error=err)
 
     # Does the input pass the smell check?
     validation = geojson.is_valid(f)
@@ -70,7 +70,7 @@ def geojson_save():
         error = "failed to export geojson, because %s" % e
         logging.error(error)
 
-        return flask.jsonify(ok=0, error=error)
+        return jsonify(ok=0, error=error)
 
     # Repeat back the file we just wrote
     gf = open(path, 'r')
