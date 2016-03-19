@@ -9,12 +9,23 @@
 
 						<small>
 						is a <strong>{$item|@wof_pv:"wof:placetype"|@escape}</strong>
+
+						{if !$skip_brands}
 						{if $item|@wof_pv:"wof:brand_id"} and a <a href="{$cfg.abs_root_url}brands/{$item|@wof_pv:"wof:brand_id"|@escape}" class="hey-look">#brand</a>{/if}
+						{/if}
+
+						{if !$skip_belongsto}
 						{if $item|@wof_pv:"wof:parent_id" != -1}
 						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
 						{else}
 						in <span class="caveat">a place of uncertainty</span>
 						{/if}
+						{/if}
+
+						{if $show_lastmodified}
+						that was last modifed <span class="hey-look">{$item|@wof_pv:"wof:lastmodified"|@date_format|@escape}</span>
+						{/if}
+
 						</small>
 					</li>
 				{/foreach}

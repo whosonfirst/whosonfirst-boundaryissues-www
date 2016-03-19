@@ -3,7 +3,7 @@
 <div class="container">
 <div class="row">
 
-     <h2>Things that a <q class="hey-look">#{$brand|@wof_pv:"wof:brand_id"|@escape}</q></h2>
+     <h2>Things that are a <q class="hey-look">#{$brand|@wof_pv:"wof:brand_id"|@escape}</q></h2>
 
 		{if $pagination.total_count==1}
 		<h3>There is <span class="hey-look">one results</span> of them</h3>
@@ -11,23 +11,7 @@
 		<h3>There are <span class="hey-look">{$pagination.total_count|@number_format|@escape}</span> of them {if $pagination.page_count > 1} and this is <span class="hey-look">page {$pagination.page|@number_format|@escape}</span> of {$pagination.page_count|@number_format|@escape}{/if}</h3>
 		{else}{/if}
 
-			<ul id="search-results">
-				{foreach from=$results item=item}
-					{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
-					{capture assign="is_current"}{$item|@wof_pv:"mz:is_current"}{/capture}
-					{capture assign="deprecated"}{$item|@wof_pv:"edtf:deprecated"}{/capture}
-					<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}">
-						<code>{$item|@wof_pv:"wof:id"|@escape}</code>
-						<a href="{$cfg.abs_root_url}id/{$item|@wof_pv:"wof:id"|@escape}/">{$item|@wof_pv:"wof:name"|@escape}</a>
-						<small>a <strong>{$item|@wof_pv:"wof:placetype"|@escape}</strong></small>
-						{if !$created}
-						<small> &#8212; last modifed {$item|@wof_pv:"wof:lastmodified"|@date_format|@escape}</small>
-						{/if}
-					</li>
-				{/foreach}
-			</ul>
-
-			{include file="inc_pagination.txt"}
+		{include file="inc_results.txt" results=$results skip_brands=1}
 
 </div>
 </div>
