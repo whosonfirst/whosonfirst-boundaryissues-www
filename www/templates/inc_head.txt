@@ -33,6 +33,7 @@
 
 		{assign var=lib_date_time value='20160318173154'}
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.data-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.brands-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.geojson-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet.handlers-{$lib_date_time}.js"></script>

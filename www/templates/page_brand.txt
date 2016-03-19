@@ -3,7 +3,7 @@
 <div class="container">
 <div class="row">
 
-     <h2>Things that are a <q class="hey-look">#{$brand|@wof_pv:"wof:brand_id"|@escape}</q></h2>
+     <h2>Things that are a <span class="hey-look">#</span><span class="hey-look wof-namify-brand" data-wof-id="{$brand|@wof_pv:"wof:brand_id"|@escape}">{$brand|@wof_pv:"wof:brand_id"|@escape}</span></h2>
 
 		{if $pagination.total_count==1}
 		<h3>There is <span class="hey-look">one results</span> of them</h3>
