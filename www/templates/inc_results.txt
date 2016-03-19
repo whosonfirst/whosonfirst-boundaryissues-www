@@ -16,10 +16,17 @@
 
 						{if !$skip_belongsto}
 						{if $item|@wof_pv:"wof:parent_id" != -1}
-						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
+
+						{if $item|@wof_pv:"wof_parent_name"}
+						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look">{$item|@wof_pv:"wof:parent_name"|@escape}</a>
+						{else}
+						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look wof-namify" data-wof-id="{$item|@wof_pv:"wof:parent_id"|@escape}">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
+						{/if}
+
 						{else}
 						in <span class="caveat">a place of uncertainty</span>
 						{/if}
+
 						{/if}
 
 						{if $show_lastmodified}
@@ -32,3 +39,7 @@
 			</ul>
 
 			{include file="inc_pagination.txt"}
+
+			{if ! $skip_belongsto}
+			{include file="inc_js_namify.txt"}
+			{/if}

@@ -7,20 +7,15 @@
 		'index' => 'whosonfirst'
 	);
 
-	$page = get_int32('page');
-
-	if ($page){
-		$args['page'] = $page;
-	}
-
 	$wofid = get_int64("id");
 
 	if (! $wofid){
 		error_404();
 	}
 
-	# this is a hack because I can't figure out how to extract a plain vanilla
-	# WOF ID out of elasticsearch... because guh (20160319/thisisaaronland)
+	# something something something about looking up a parent
+	# locally or remotely or from ES or... something something
+	# (20160319/thisisaaronland)
 
 	$ancestor = array(
 		'wof:id' => $wofid,
@@ -28,6 +23,12 @@
 
 	if (! $ancestor){
 		error_404();
+	}
+
+	$page = get_int32('page');
+
+	if ($page){
+		$args['page'] = $page;
 	}
 
 	$es_query = array(

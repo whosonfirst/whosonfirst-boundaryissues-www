@@ -60,7 +60,6 @@
 			</div>
 		</form>
 		<div id="edit-status"></div>
-		{include file='inc_log.txt'}
 	</div>
 </div>
 
