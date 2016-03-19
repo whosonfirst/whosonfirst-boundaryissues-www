@@ -8,6 +8,12 @@
 		<li><a href="{$cfg.abs_root_url}add/">Add a new place</a> <small>&#8212; but only venues in New York (state) <em>for now</em></small></li>
 		<li><a href="{$cfg.abs_root_url}upload/">Upload a GeoJSON file</a></li>
 	</ul>
+
+	<ul>
+		<li><a href="{$cfg.abs_root}recent/">Recently updated records</a></li>
+		<li><a href="{$cfg.abs_root}current/">Things flagged <span style="font-style:italic;">current</span></a> <small> &#8212; contains bugs</small></li>
+		<li><a href="{$cfg.abs_root}brands/">All the #brands</a></li>
+	</ul>
 </div>
 
 {include file='inc_foot.txt'}
