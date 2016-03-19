@@ -32,6 +32,11 @@
 						<button type="submit" class="btn btn-danger" id="btn-deprecated">This is <strong>deprecated</strong></button>
 						<button type="submit" class="btn btn-info" id="btn-funky">This is <strong>funky</strong></button>
 					</div>
+
+					<div class="caveat" style="margin-top:.5em;">
+					<small>For now, you will still need to click the <span style="font-weight:700;">save</span> button below for these changes to stick.</small>
+					</div>
+
 					<ul id="edit-options">
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a></li>
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download GeoJSON</a></li>
