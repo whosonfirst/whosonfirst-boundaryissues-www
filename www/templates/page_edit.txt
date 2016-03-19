@@ -3,6 +3,7 @@
 <div class="container">
 	<div class="row">
 		<h2>Edit <span id="wof_name">{$wof_name|@escape}</span></h2>
+		<small>{$wof_id|@wof_utils_id2relpath|@escape}</small>
 	</div>
 	<div class="row">
 		<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}">
