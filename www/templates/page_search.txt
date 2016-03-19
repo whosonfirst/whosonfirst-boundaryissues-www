@@ -22,6 +22,10 @@
 					</li>
 				{/foreach}
 			</ul>
+
+			<div class="caveat" style="margin-top:.5em;"><small>Pagination is on the way...</small></div>
+
+			{include file="inc_pagination.txt"}
 		{/if}
 	</div>
 </div>
