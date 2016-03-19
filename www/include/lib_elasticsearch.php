@@ -87,9 +87,10 @@
 			return array('ok' => 0, 'error' => $data['error']);
 		}
 
+		$rows = elasticsearch_rowinate_search_results($data);
 		$pagination = elasticsearch_paginate_search_results($data, $page, $per_page);
 
-		$rsp['data'] = $data;
+		$rsp['rows'] = $rows;
 		$rsp['pagination'] = $pagination;
 
 		log_notice('elasticsearch', $url . ' ' . $body . " HTTP {$rsp['info']['http_code']}", $rsp['info']['total_time']);
@@ -133,6 +134,19 @@
 
 		$rsp = json_decode($rsp['body'], 'as array');
 		return($rsp['_source']);
+	}
+
+	########################################################################
+
+	function elasticsearch_rowinate_search_results(&$data){
+
+		$rows = array();
+
+		foreach ($data['hits']['hits'] as $h){
+			$rows[] = $h['_source'];
+		}
+
+		return $rows;
 	}
 
 	########################################################################

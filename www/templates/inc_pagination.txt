@@ -1,6 +1,6 @@
 {if $pagination.page_count > 1}
 
-<div class="container" style="text-align:center;">
+<div class="container" style="width:65%; margin: 0 auto;">
 
 <ul class="pagination">
 
@@ -17,8 +17,8 @@
 
 	{* middle *}
 
-	{if $pagination.page_count > 10}
-	    {assign var=range_mid value=7}
+	{if $pagination.page_count > 7}
+	    {assign var=range_mid value=4}
 	    {assign var=rfloor value=$range_mid/2|@floor}
 	    
 	    {assign var=range_min value=$pagination.page-$rfloor}

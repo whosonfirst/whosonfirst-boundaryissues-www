@@ -45,6 +45,10 @@
 	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues.log';
 
+	$GLOBALS['cfg']['elasticsearch_host'] = 'localhost';
+	$GLOBALS['cfg']['elasticsearch_port'] = '9200';
+	$GLOBALS['cfg']['elasticsearch_http_timeout'] = 10;
+
 	# hard coding this URL will ensure it works in cron mode too
 
 	$GLOBALS['cfg']['server_scheme'] = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ? 'https' : 'http';

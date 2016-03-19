@@ -5,6 +5,12 @@
 
 	########################################################################
 
+	function wof_pv(&$props, $key){
+		return wof_smarty_properties_value($props, $key);
+	}
+
+	########################################################################
+
 	# this exists entirely to account for the part where smarty hates colons...
 	# for example: {$properties|@wof_smarty_properties_value:"edtf:cessation"|@escape}
 

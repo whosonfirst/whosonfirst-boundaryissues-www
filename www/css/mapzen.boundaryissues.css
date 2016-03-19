@@ -199,3 +199,7 @@ th:hover .remove-row {
     font-size: small;
     font-style: italic;
 }
+
+.hey-look {
+    font-weight: 700;
+}

@@ -3,7 +3,9 @@
 	include('include/init.php');
 	loadlib("elasticsearch");
 
-	$args = array();
+	$args = array(
+		'index' => 'whosonfirst'
+	);
 
 	$query = get_str('q');
 	$page = get_int32('page');
@@ -16,9 +18,7 @@
 
 		$GLOBALS['smarty']->assign('query', $query);
 
-		$url = "{$GLOBALS['cfg']['es_base_url']}_search?size=25";
-
-		$query = json_encode(array(
+		$es_query = array(
 			'query' => array(
 				// Search result relevance is determined by a combining multiple matches.
 				// The overall score is based on combining each of the matches.
@@ -55,29 +55,29 @@
 					)
 				)
 			)
-		));
+		);
 
-		$rsp = http_post($url, $query);
+		$rsp = elasticsearch_search($es_query, $args);
 
 		if ($rsp['ok']){
 
-			$results = array();
-			$body = json_decode($rsp['body'], true);
+			$pagination = $rsp['pagination'];
+			$results = $rsp['rows'];
+			
+			$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
+			$GLOBALS['smarty']->assign_by_ref("results", $results);
 
-			foreach ($body['hits']['hits'] as $hit) {
+			$pg_query = array('q' => $query);
+			$pg_query = http_build_query($pg_query);
 
-				$results[] = array(
-					'id' => $hit['_source']['wof:id'],
-					'name' => $hit['_source']['wof:name'],
-					'placetype' => $hit['_source']['wof:placetype'],
-					'lat' => $hit['_source']['geom:latitude'],
-					'lng' => $hit['_source']['geom:longitude'],
-					'is_current' => $hit['_source']['mz:is_current'],
-					'deprecated' => $hit['_source']['edtf:deprecated'],
-				);
-			}
+			$pagination_url = $GLOBALS['cfg']['abs_root_url'] . "search?" . $pg_query;
 
-			$GLOBALS['smarty']->assign('results', $results);
+			$GLOBALS['smarty']->assign("pagination_url", $pagination_url);
+			$GLOBALS['smarty']->assign("pagination_page_as_queryarg", 1);
+		}
+
+		else {
+			$GLOBALS['smarty']->assign("error_rsp", $rsp);
 		}
 	}
 
