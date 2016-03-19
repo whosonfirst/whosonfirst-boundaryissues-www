@@ -44,6 +44,8 @@
 	$schema_fields = wof_schema_fields($ref, $ignore_fields, $values);
 	//dbug($schema_fields);
 
+	$GLOBALS['smarty']->assign_by_ref("properties", $values['properties']);
+
 	$crumb_save = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);
