@@ -15,7 +15,7 @@
 			<div id="map"></div>
 			<ul id="search-results">
 				{foreach from=$results item=item}
-					<li class="search-result" data-id="{$item.id|@escape}" data-lat="{$item.lat|@escape}" data-lng="{$item.lng|@escape}">
+					<li class="search-result {if $item.is_current=='1'}iscurrent-yes{elseif $item.is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $item.deprecated and $item.deprecated!='uuuu'}deprecated{/if}" data-id="{$item.id|@escape}" data-lat="{$item.lat|@escape}" data-lng="{$item.lng|@escape}">
 						<code>{$item.id|@escape}</code>
 						<a href="/id/{$item.id|@escape}/">{$item.name|@escape}</a>
 						<small>a <strong>{$item.placetype|@escape}</strong></small>

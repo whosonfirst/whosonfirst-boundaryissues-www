@@ -50,12 +50,15 @@ if ($query) {
 		$results = array();
 		$body = json_decode($rsp['body'], true);
 		foreach ($body['hits']['hits'] as $hit) {
+
 			$results[] = array(
 				'id' => $hit['_source']['wof:id'],
 				'name' => $hit['_source']['wof:name'],
 				'placetype' => $hit['_source']['wof:placetype'],
 				'lat' => $hit['_source']['geom:latitude'],
-				'lng' => $hit['_source']['geom:longitude']
+				'lng' => $hit['_source']['geom:longitude'],
+				'is_current' => $hit['_source']['mz:is_current'],
+				'deprecated' => $hit['_source']['edtf:deprecated'],
 			);
 		}
 		$GLOBALS['smarty']->assign('results', $results);

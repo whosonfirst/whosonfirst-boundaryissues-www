@@ -163,3 +163,35 @@ th:hover .remove-row {
 #edit-options {
 	margin-top: 0.5em;
 }
+
+.iscurrent-yes {
+
+}
+
+.iscurrent-yes:after {
+    content: " – this record has been flagged as current";
+    color: green;
+    font-size: small;
+    font-style: italic;
+}
+
+.iscurrent-no {
+}
+
+.iscurrent-no:after {
+}
+
+.iscurrent-unknown {
+
+}
+
+.deprecated {
+
+}
+
+.deprecated:after {
+    content: " – this record has been marked as deprecated";
+    color: red;
+    font-size: small;
+    font-style: italic;
+}

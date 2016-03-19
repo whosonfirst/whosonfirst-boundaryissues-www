@@ -56,6 +56,8 @@
 	       <div class="form-group">
          	       <input type="text" class="form-control" placeholder="Search for a place" name="q" value="{$query|@escape}" id="search-input-x" />
        	       </div>
+	       
+	       <a href="{$cfg.abs_root_url}add/" title="add a new place">+</a>
 	</form>
-
+	
 </div>
