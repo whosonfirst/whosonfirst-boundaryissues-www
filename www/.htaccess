@@ -152,3 +152,6 @@ RewriteRule  ^signin/?$		/signin_github_oauth.php	[L]
 RewriteRule  ^auth/?$			/auth_callback_github_oauth.php?%{QUERY_STRING} [L]
 
 # END OF flamework-mapzen-sso stuff
+
+RewriteRule ^recent(/page([0-9]+))?/?$					recent.php?page=$2	[L,QSA]
+RewriteRule ^recent/created(/page([0-9]+))?/?$					recent.php?created=1&page=$2	[L,QSA]
