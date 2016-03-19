@@ -157,7 +157,7 @@
 
 	$GLOBALS['cfg']['pagination_assign_smarty_variable'] = 0;
 
-	$GLOBALS['cfg']['pagination_per_page'] = 10;
+	$GLOBALS['cfg']['pagination_per_page'] = 36;
 	$GLOBALS['cfg']['pagination_spill'] = 2;
 	$GLOBALS['cfg']['pagination_style'] = 'pretty';
 

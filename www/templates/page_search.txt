@@ -3,6 +3,13 @@
 <div class="container">
 	<div class="row">
 		<h2>Search</h2>
+
+		{if $pagination.total_count==1}
+		<h3>There is <span class="hey-look">one results</span> matching <q class="hey-look">{$query|@escape}</a></h3>
+		{elseif $pagination.total_count}
+		<h3>There are <span class="hey-look">{$pagination.total_count|@number_format|@escape}</span> results matching <q class="hey-look">{$query|@escape}</q> {if $pagination.page_count > 1} and this is <span class="hey-look">page {$pagination.page|@number_format|@escape}</span> of {$pagination.page_count|@number_format|@escape}{/if}</h3>
+		{else}{/if}
+
 	</div>
 	<div class="row">
 	{if 0}
