@@ -1,3 +1,4 @@
+{capture assign="page_title"}{$wof_name} ({$wof_id}){/capture}
 {include file='inc_head.txt' nav_tab='edit'}
 
 <div class="container">
