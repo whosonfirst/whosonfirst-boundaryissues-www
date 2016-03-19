@@ -153,6 +153,8 @@ RewriteRule  ^auth/?$			/auth_callback_github_oauth.php?%{QUERY_STRING} [L]
 
 # END OF flamework-mapzen-sso stuff
 
+RewriteRule ^brands/([0-9]+)(/page([0-9]+))?/?$					brand.php?id=$1&page=$3	[L,QSA]
+
 RewriteRule ^belongsto/([0-9]+)(/page([0-9]+))?/?$				belongs_to.php?id=$1&page=$3	[L,QSA]
 
 RewriteRule ^current(/page([0-9]+))?/?$						current.php?page=$2	[L,QSA]
