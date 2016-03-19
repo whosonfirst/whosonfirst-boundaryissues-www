@@ -429,7 +429,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (key.match(labelRegex)) {
 					label = key.match(labelRegex)[1];
 				}
-				html += '<li>' + label + ': <a href="/id/' + id + '/" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
+
+			    	var root = $(document.body).data("abs-root-url");
+			    	var href = root + '/belongsto/' + id + '/';
+
+				html += '<li>' + label + ': <a href="' + href + '" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
 			}
 			html += '</ul>';
 			$('#hierarchy').append(html);
