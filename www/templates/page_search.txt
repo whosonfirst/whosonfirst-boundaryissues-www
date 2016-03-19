@@ -23,7 +23,6 @@
 		<p class="error">Oh no! There was a problem processing your search...</p>
 	{else}
 		{if $results|@count}
-			<div id="map"></div>
 			{include file="inc_results.txt" results=$results}
 		{else}		
 			<p class="warning">Hrm... nothing found for <q class="hey-look">{$query|@escape}</q></p>

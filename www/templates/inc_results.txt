@@ -1,3 +1,5 @@
+		<div id="map"></div>
+
 			<ul id="search-results">
 				{foreach from=$results item=item}
 					{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
