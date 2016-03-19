@@ -179,6 +179,10 @@ th:hover .remove-row {
 }
 
 .iscurrent-no:after {
+    content: " – this record has been flagged as no longer current";
+    color: orange;
+    font-size: small;
+    font-style: italic;
 }
 
 .iscurrent-unknown {
