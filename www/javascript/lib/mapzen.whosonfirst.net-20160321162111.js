@@ -60,7 +60,7 @@ mapzen.whosonfirst.net = (function(){
 				}
 			};
 			
-			try {		
+			try {				    
 				req.open("get", url, true);
 				req.send();
 			}

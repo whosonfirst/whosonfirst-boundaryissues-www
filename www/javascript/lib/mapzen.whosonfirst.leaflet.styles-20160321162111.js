@@ -27,7 +27,7 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 				"fillOpacity": 0.8
 			};
 		},
-		
+
 		'math_centroid': function(){
 
 			return {
@@ -76,7 +76,7 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 				"fillOpacity": 0.1
 			};
 		},
-		
+
 		'consensus_polygon': function(){
 
 			return {
@@ -97,9 +97,60 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 				"fillColor": "#00308F",
 				"fillOpacity": 0.5
 			};
+		},
+
+		'venue_current': function(){
+			return {
+				"color": "#000",
+				"weight": 1,
+				"opacity": 1,
+				"radius": 4,
+				"fillColor": "#5cb85c",
+				"fillOpacity": 0.5
+			};
+		},
+
+		'venue_not_current': function(){
+			return {
+				"color": "#000",
+				"weight": 1,
+				"opacity": 1,
+				"radius": 4,
+				"fillColor": "#f0ad4e",
+				"fillOpacity": 0.5
+			};
+		},
+
+		'venue_deprecated': function(){
+			return {
+				"color": "#000",
+				"weight": 1,
+				"opacity": 1,
+				"radius": 4,
+				"fillColor": "#d9534f",
+				"fillOpacity": 0.5
+			};
+		},
+
+		'venue_funky': function(){
+			return {
+				"color": "#000",
+				"weight": 1,
+				"opacity": 1,
+				"radius": 4,
+				"fillColor": "#5bc0de",
+				"fillOpacity": 0.5
+			};
+		},
+
+		'venue_hover': function(){
+			return {
+				"radius": 6,
+				"fillOpacity": 1
+			};
 		}
 	};
 
-	
+
 	return self;
 })();
