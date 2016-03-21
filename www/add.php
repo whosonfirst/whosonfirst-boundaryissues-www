@@ -25,7 +25,6 @@
 			'iso:country',
 			'geom:area',
 			'wof:geomhash',
-			'mz:is_current',
 			'wof:lastmodified'
 		)
 	);
@@ -35,7 +34,8 @@
 			'wof:placetype' => 'venue',
 			'src:geom' => 'mapzen',
 			'edtf:inception' => 'uuuu',
-			'edtf:cessation' => 'uuuu'
+			'edtf:cessation' => 'uuuu',
+			'mz:is_current' => 1
 		)
 	);
 	$schema_fields = wof_schema_fields($ref, $ignore_fields, $defaults);
