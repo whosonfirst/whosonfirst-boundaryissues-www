@@ -10,24 +10,6 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 
 	var map;
 
-	var marker_style = {
-		"color": "#000",
-		"weight": 1,
-		"opacity": 1,
-		"radius": 4,
-		"fillColor": "#d4645c",
-		"fillOpacity": 0.5
-	};
-
-	var marker_hover_style = {
-		"color": "#000",
-		"weight": 2,
-		"opacity": 1,
-		"radius": 6,
-		"fillColor": "#d4645c",
-		"fillOpacity": 1
-	};
-
 	var self = {
 
 		setup_map: function() {
@@ -41,17 +23,20 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			);
 			var markers = [];
 			$('#search-results > li').each(function(i, result) {
+				marker_style = self.get_venue_marker_style(result);
 				var id = $(result).data('id');
 				var marker = L.circleMarker({
 					lat: parseFloat($(result).data('lat')),
 					lng: parseFloat($(result).data('lng'))
 				}, marker_style);
+				marker._style = marker_style;
+
 				markers.push(marker);
 				marker.on('mouseover', function() {
-					this.setStyle(marker_hover_style);
+					this.setStyle(mapzen.whosonfirst.leaflet.styles.venue_hover());
 				});
 				marker.on('mouseout', function() {
-					this.setStyle(marker_style);
+					this.setStyle(this._style);
 				});
 				marker.on('click', function() {
 					location.href = '/id/' + parseInt(id) + '/';
@@ -60,6 +45,18 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			});
 			var group = L.featureGroup(markers).addTo(map);
 			map.fitBounds(group.getBounds());
+		},
+
+		get_venue_marker_style: function(item) {
+			if ($(item).hasClass('iscurrent-yes')) {
+				return mapzen.whosonfirst.leaflet.styles.venue_current();
+			} else if ($(item).hasClass('deprecated')) {
+				return mapzen.whosonfirst.leaflet.styles.venue_deprecated();
+			} else if ($(item).hasClass('iscurrent-no')) {
+				return mapzen.whosonfirst.leaflet.styles.venue_not_current();
+			} else {
+				return mapzen.whosonfirst.leaflet.styles.venue_unknown();
+			}
 		}
 
 	};

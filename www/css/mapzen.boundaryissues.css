@@ -170,7 +170,7 @@ th:hover .remove-row {
 
 .iscurrent-yes:after {
     content: " – this record has been flagged as current";
-    color: green;
+    color: #5cb85c;
     font-size: small;
     font-style: italic;
 }
@@ -180,7 +180,7 @@ th:hover .remove-row {
 
 .iscurrent-no:after {
     content: " – this record has been flagged as no longer current";
-    color: orange;
+    color: #f0ad4e;
     font-size: small;
     font-style: italic;
 }
@@ -195,7 +195,7 @@ th:hover .remove-row {
 
 .deprecated:after {
     content: " – this record has been marked as deprecated";
-    color: red;
+    color: #d9534f;
     font-size: small;
     font-style: italic;
 }

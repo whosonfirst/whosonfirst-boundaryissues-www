@@ -24,24 +24,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		}
 	});
 
-	var marker_style = {
-    "color": "#000",
-    "weight": 1,
-    "opacity": 1,
-    "radius": 4,
-    "fillColor": "#d4645c",
-    "fillOpacity": 0.5
-  };
-
-	var marker_hover_style = {
-    "color": "#000",
-    "weight": 2,
-    "opacity": 1,
-    "radius": 6,
-    "fillColor": "#d4645c",
-    "fillOpacity": 1
-	};
-
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
 	var esc_float = parseFloat;
@@ -202,13 +184,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#btn-deprecated').click(function(e) {
 				e.preventDefault();
 				self.set_property('mz:is_current', 0);
-				self.set_property('edtf:deprecated', self.get_edtf_date(new Date());
+				self.set_property('edtf:deprecated', self.get_edtf_date(new Date()));
 			});
 
 			$('#btn-not-current').click(function(e) {
 				e.preventDefault();
 				self.set_property('mz:is_current', 0);
-				self.set_property('edtf:cessation', self.get_edtf_date(new Date());
+				self.set_property('edtf:cessation', self.get_edtf_date(new Date()));
 			});
 
 			$('#btn-funky').click(function(e) {
@@ -481,6 +463,25 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return yyyy + '-' + mm + '-' + dd;
 		},
 
+		get_venue_marker_style: function(props) {
+			console.log(props);
+			if (props['wof:is_current'] == 1) {
+				console.log('current');
+				return mapzen.whosonfirst.leaflet.styles.venue_current();
+			} else if (props['edtf:cessation'] &&
+			           props['edtf:cessation'] != 'uuuu') {
+				console.log('not current');
+				return mapzen.whosonfirst.leaflet.styles.venue_not_current();
+			} else if (props['edtf:deprecated'] &&
+			           props['edtf:deprecated'] != 'uuuu') {
+				console.log('deprecated');
+				return mapzen.whosonfirst.leaflet.styles.venue_deprecated();
+			} else {
+				console.log('unknown');
+				return mapzen.whosonfirst.leaflet.styles.venue_unknown();
+			}
+		},
+
 		leading_zero: function(num) {
 			num = parseInt(num);
 			if (num < 10) {
@@ -504,22 +505,26 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					if (nearby[id] || parseInt($('input[name="wof_id"]').val()) == id) {
 						return;
 					}
+
+					var style = self.get_venue_marker_style(item._source);
 					m = new L.circleMarker([
 						item._source['geom:latitude'],
 						item._source['geom:longitude']
-					], marker_style).addTo(map);
+					], style).addTo(map);
 
 					nearby[id] = m;
 					m._source = item._source;
+					m._style = style;
+
 					m.bindLabel(item._source['wof:name']);
 					m.on('click', function() {
 						location.href = '/id/' + id + '/';
 					});
 					m.on('mouseover', function() {
-						this.setStyle(marker_hover_style);
+						this.setStyle(mapzen.whosonfirst.leaflet.styles.venue_hover());
 					});
 					m.on('mouseout', function() {
-						this.setStyle(marker_style);
+						this.setStyle(this._style);
 					});
 				});
 			};
