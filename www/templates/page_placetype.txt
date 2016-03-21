@@ -15,7 +15,7 @@
 		/ See <a href="{$cfg.abs_root_url}placetypes/" class="hey-look">all the placetypes</a>
 	</h3>
 
-	{include file="inc_results.txt" results=$results skip_placetypes=1}
+	{include file="inc_results.txt" results=$results}
 
 </div>
 </div>

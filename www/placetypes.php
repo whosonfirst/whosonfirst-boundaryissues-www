@@ -2,33 +2,9 @@
 
 	include("include/init.php");
 	loadlib("elasticsearch");
+	loadlib("wof_utils");
 
-	$args = array(
-		'index' => 'whosonfirst'
-	);
-
-	$page = get_int32('page');
-
-	if ($page){
-		$args['page'] = $page;
-	}
-
-	$es_query = array(
-		'query' => array('filtered' => array(
-			'query' => array(
-				'match_all' => array()
-			),
-		)),
-		'aggregations' => array(
-			'placetypes' => array(
-				'terms' => array('field' => 'wof:placetype', 'size' => 0)
-			)
-		)
-	);
-
-	$rsp = elasticsearch_search($es_query, $args);
-
-	# sudo put me in a function or something?
+	$rsp = wof_utils_search_field_aggregation('wof:placetype');
 
 	$body = $rsp['body'];
 	$body = json_decode($body, 'as hash');

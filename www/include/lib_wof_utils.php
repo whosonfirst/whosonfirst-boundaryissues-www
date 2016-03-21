@@ -116,4 +116,35 @@
 		);
 	}
 
+	########################################################################
+
+	function wof_utils_search_field_aggregation($field) {
+
+		$args = array(
+			'index' => 'whosonfirst'
+		);
+
+		$page = get_int32('page');
+
+		if ($page){
+			$args['page'] = $page;
+		}
+
+		$es_query = array(
+			'query' => array('filtered' => array(
+				'query' => array(
+					'match_all' => array()
+				),
+			)),
+			'aggregations' => array(
+				'placetypes' => array(
+					'terms' => array('field' => $field, 'size' => 0)
+				)
+			)
+		);
+
+		$rsp = elasticsearch_search($es_query, $args);
+		return $rsp;
+	}
+
 	# the end
