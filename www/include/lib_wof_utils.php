@@ -118,7 +118,7 @@
 
 	########################################################################
 
-	function wof_utils_search_field_aggregation($field) {
+	function wof_utils_search_field_aggregation($name, $property) {
 
 		$args = array(
 			'index' => 'whosonfirst'
@@ -137,8 +137,8 @@
 				),
 			)),
 			'aggregations' => array(
-				'placetypes' => array(
-					'terms' => array('field' => $field, 'size' => 0)
+				$name => array(
+					'terms' => array('field' => $property, 'size' => 0)
 				)
 			)
 		);

@@ -4,7 +4,7 @@
 	loadlib("elasticsearch");
 	loadlib("wof_utils");
 
-	$rsp = wof_utils_search_field_aggregation('wof:placetype');
+	$rsp = wof_utils_search_field_aggregation('placetypes', 'wof:placetype');
 
 	$body = $rsp['body'];
 	$body = json_decode($body, 'as hash');

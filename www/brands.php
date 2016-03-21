@@ -4,7 +4,7 @@
 	loadlib("elasticsearch");
 	loadlib("wof_utils");
 
-	$rsp = wof_utils_search_field_aggregation('wof:brand_id');
+	$rsp = wof_utils_search_field_aggregation('brands', 'wof:brand_id');
 
 	$body = $rsp['body'];
 	$body = json_decode($body, 'as hash');
