@@ -34,6 +34,8 @@ cover:
 	php -q ./tests/coverage.php
 
 update_js:
+	git rm -f ./www/javascript/lib/*.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.brands-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.brands.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.data-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.data.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.geojson-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.geojson.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.handlers-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.handlers.js
