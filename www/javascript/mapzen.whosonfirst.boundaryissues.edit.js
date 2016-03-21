@@ -61,6 +61,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					'map',
 					lat, lon, zoom
 				);
+				var initial_position = L.Hash.parseHash(location.hash);
+				if (initial_position) {
+					// We've just deep-linked to a particular lat/lng, add a marker!
+					var m = new L.marker(initial_position.center, {
+						icon: new VenueIcon()
+					});
+					self.set_marker(m);
+				}
+				var hash = new L.Hash(map);
 			}
 			L.control.geocoder('search-o3YYmTI', {
 				markers: {
@@ -100,14 +109,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			map.on('draw:created', function(e){
-				marker = e.layer;
-				map.addLayer(marker);
-				self.update_coordinates(marker.getLatLng());
-				marker.dragging.enable();
-				marker.on('dragend', function(e) {
-					var ll = e.target.getLatLng();
-					self.update_coordinates(ll, true); // Update and reverse geocode
-				});
+				self.set_marker(e.layer);
 			});
 		},
 
@@ -196,6 +198,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#btn-funky').click(function(e) {
 				e.preventDefault();
 				self.set_property('mz:is_funky', 1);
+			});
+		},
+
+		set_marker: function(m) {
+			marker = m;
+			map.addLayer(marker);
+			self.update_coordinates(marker.getLatLng());
+			marker.dragging.enable();
+			marker.on('dragend', function(e) {
+				var ll = e.target.getLatLng();
+				self.update_coordinates(ll, true); // Update and reverse geocode
 			});
 		},
 
@@ -464,20 +477,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		get_venue_marker_style: function(props) {
-			console.log(props);
+			//console.log(props);
 			if (props['wof:is_current'] == 1) {
-				console.log('current');
+				//console.log('current');
 				return mapzen.whosonfirst.leaflet.styles.venue_current();
 			} else if (props['edtf:cessation'] &&
 			           props['edtf:cessation'] != 'uuuu') {
-				console.log('not current');
+				//console.log('not current');
 				return mapzen.whosonfirst.leaflet.styles.venue_not_current();
 			} else if (props['edtf:deprecated'] &&
 			           props['edtf:deprecated'] != 'uuuu') {
-				console.log('deprecated');
+				//console.log('deprecated');
 				return mapzen.whosonfirst.leaflet.styles.venue_deprecated();
 			} else {
-				console.log('unknown');
+				//console.log('unknown');
 				return mapzen.whosonfirst.leaflet.styles.venue_unknown();
 			}
 		},

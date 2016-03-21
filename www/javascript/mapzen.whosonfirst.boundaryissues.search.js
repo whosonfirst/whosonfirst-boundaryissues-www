@@ -10,6 +10,17 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 
 	var map;
 
+	var VenueIcon = L.Icon.extend({
+		options: {
+			iconUrl: '/images/marker-icon.png',
+			iconRetinaUrl: '/images/marker-icon-2x.png',
+			shadowUrl: null,
+			iconAnchor: new L.Point(13, 42),
+			iconSize: new L.Point(25, 42),
+			popupAnchor: new L.Point(0, -42)
+		}
+	});
+
 	var self = {
 
 		setup_map: function() {
@@ -21,6 +32,8 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 				'map',
 				lat, lon, zoom
 			);
+			var hash = new L.Hash(map);
+
 			var markers = [];
 			$('#search-results > li').each(function(i, result) {
 				marker_style = self.get_venue_marker_style(result);
@@ -47,6 +60,31 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			map.fitBounds(group.getBounds());
 		},
 
+		setup_drawing: function() {
+			var drawControl = new L.Control.Draw({
+				draw: {
+					polyline: false,
+					polygon: false,
+					rectangle: false,
+					circle: false,
+					marker: {
+						icon: new VenueIcon()
+					}
+				},
+				edit: false
+			});
+			map.addControl(drawControl);
+
+			map.on('draw:created', function(e){
+				var ll = e.layer.getLatLng();
+				var lat = parseFloat(ll.lat).toFixed(6);
+				var lng = parseFloat(ll.lng).toFixed(6);
+				var zoom = 16;
+				var url = '/add/#' + zoom + '/' + lat + '/' + lng;
+				location.href = url;
+			});
+		},
+
 		get_venue_marker_style: function(item) {
 			if ($(item).hasClass('iscurrent-yes')) {
 				return mapzen.whosonfirst.leaflet.styles.venue_current();
@@ -66,6 +104,7 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			return;
 		}
 		self.setup_map();
+		self.setup_drawing();
 	});
 
 	return self;

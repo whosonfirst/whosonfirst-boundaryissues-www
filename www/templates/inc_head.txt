@@ -23,6 +23,7 @@
 		<script src="{$cfg.abs_root_url}javascript/leaflet.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.draw.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.label.min.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/leaflet.hash.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/tangram.min.js"></script>
 		<script src="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.js"></script>
 
