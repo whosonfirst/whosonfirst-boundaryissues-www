@@ -22,7 +22,7 @@
 					</div>
 
 					<div class="caveat" style="margin-top:.5em;"><small>Saving can still be a bit slow because we have to talk to GitHub about things.</small></div>
-					<button type="submit" class="btn btn-primary">Save</button>				
+					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
 					<h3>Hierarchy</h3>
@@ -31,18 +31,13 @@
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
 					<h3 class="headroom">Options</h3>
-
-					<div class="caveat" style="margin-top:.5em;">
-					<small>This still needs a <span style="font-weight:700;">this is not current</span> button.</small>
-					</div>
-					
 					<div id="edit-buttons">
 						{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}
 						<button type="submit" class="btn btn-success" id="btn-current">This is <strong>current</strong></button>
 						{/if}
+						<button type="submit" class="btn btn-warning" id="btn-not-current">This is <strong>closed/not current</strong></button>
 						{* this needs to always be present in the props hash to work correclty... *}
 						<button type="submit" class="btn btn-danger" id="btn-deprecated">This is <strong>deprecated</strong></button>
-
 						{if $properties|@wof_smarty_properties_value:"mz:is_funky"!=1}
 						<button type="submit" class="btn btn-info" id="btn-funky">This is <strong>funky</strong></button>
 						{/if}

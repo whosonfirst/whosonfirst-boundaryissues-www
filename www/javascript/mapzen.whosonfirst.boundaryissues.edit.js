@@ -201,27 +201,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('#btn-deprecated').click(function(e) {
 				e.preventDefault();
-				var now = new Date();
-				var yyyy = now.getFullYear();
-				var mm = self.leading_zero(now.getMonth() + 1);
-				var dd = self.leading_zero(now.getDate());
-				var edtf = yyyy + '-' + mm + '-' + dd;
 				self.set_property('mz:is_current', 0);
-				self.set_property('edtf:deprecated', edtf);
+				self.set_property('edtf:deprecated', self.get_edtf_date(new Date());
+			});
+
+			$('#btn-not-current').click(function(e) {
+				e.preventDefault();
+				self.set_property('mz:is_current', 0);
+				self.set_property('edtf:cessation', self.get_edtf_date(new Date());
 			});
 
 			$('#btn-funky').click(function(e) {
 				e.preventDefault();
 				self.set_property('mz:is_funky', 1);
 			});
-		},
-
-		leading_zero: function(num) {
-			num = parseInt(num);
-			if (num < 10) {
-				num = '0' + num;
-			}
-			return num;
 		},
 
 		set_property: function(property, value) {
@@ -479,6 +472,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			});
 			return found_hierarchy;
+		},
+
+		get_edtf_date: function(date) {
+			var yyyy = date.getFullYear();
+			var mm = self.leading_zero(date.getMonth() + 1);
+			var dd = self.leading_zero(date.getDate());
+			return yyyy + '-' + mm + '-' + dd;
+		},
+
+		leading_zero: function(num) {
+			num = parseInt(num);
+			if (num < 10) {
+				num = '0' + num;
+			}
+			return num;
 		},
 
 		show_nearby_results: function() {
