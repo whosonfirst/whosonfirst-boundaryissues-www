@@ -143,6 +143,17 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 			};
 		},
 
+		'venue_unknown': function(){
+			return {
+				"color": "#000",
+				"weight": 1,
+				"opacity": 1,
+				"radius": 4,
+				"fillColor": "#999",
+				"fillOpacity": 0.5
+			};
+		},
+
 		'venue_hover': function(){
 			return {
 				"radius": 6,
