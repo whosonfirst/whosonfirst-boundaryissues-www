@@ -1,0 +1,20 @@
+{include file="inc_head.txt"}
+
+<div class="container">
+<div class="row">
+
+     <h2>Things that are part of <q class="hey-look wof-namify" data-wof-id="{$ancestor|@wof_pv:"wof:id"|@escape}">{$ancestor|@wof_pv:"wof:id"|@escape}</q></h2>
+
+		{if $pagination.total_count==1}
+		<h3>There is <span class="hey-look">one results</span> of them</h3>
+		{elseif $pagination.total_count}
+		<h3>There are <span class="hey-look">{$pagination.total_count|@number_format|@escape}</span> of them {if $pagination.page_count > 1} and this is <span class="hey-look">page {$pagination.page|@number_format|@escape}</span> of {$pagination.page_count|@number_format|@escape}{/if}</h3>
+		{else}{/if}
+
+		{include file="inc_results.txt" results=$results skip_belongsto=1}
+		{include file="inc_js_namify.txt"}
+
+</div>
+</div>
+
+{include file="inc_foot.txt"}

@@ -1,16 +1,16 @@
 var mapzen = mapzen || {};
 mapzen.whosonfirst = mapzen.whosonfirst || {};
 
-mapzen.whosonfirst.data = (function(){
+mapzen.whosonfirst.brands = (function(){
 
-	var _endpoint = "https://whosonfirst.mapzen.com/data/";
+	var _endpoint = "https://raw.githubusercontent.com/whosonfirst-data/whosonfirst-brands/master/data/";
 
 	var self = {
 
 		'endpoint': function(e){
 
 			if (e){
-				mapzen.whosonfirst.log.info("set data endpoint to " + e);
+				mapzen.whosonfirst.log.info("set brands endpoint to " + e);
 				_endpoint = e;
 			}
 
@@ -51,7 +51,7 @@ mapzen.whosonfirst.data = (function(){
 		},
 
 		'id2fname': function(id){
-			return id + ".geojson";
+			return id + ".json";
 		}
 	};
 

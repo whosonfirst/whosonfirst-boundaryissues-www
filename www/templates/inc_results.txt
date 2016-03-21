@@ -1,0 +1,47 @@
+		<div id="map"></div>
+
+			<ul id="search-results">
+				{foreach from=$results item=item}
+					{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
+					{capture assign="is_current"}{$item|@wof_pv:"mz:is_current"}{/capture}
+					{capture assign="deprecated"}{$item|@wof_pv:"edtf:deprecated"}{/capture}
+					<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}">
+						<code>{$item|@wof_pv:"wof:id"|@escape}</code>
+						<a href="{$cfg.abs_root_url}id/{$item|@wof_pv:"wof:id"|@escape}/">{$item|@wof_pv:"wof:name"|@escape}</a>
+
+						<small>
+						is a <strong>{$item|@wof_pv:"wof:placetype"|@escape}</strong>
+
+						{if !$skip_brands}
+						{if $item|@wof_pv:"wof:brand_id"} and a <a href="{$cfg.abs_root_url}brands/{$item|@wof_pv:"wof:brand_id"|@escape}" class="hey-look">#brand</a>{/if}
+						{/if}
+
+						{if !$skip_belongsto}
+						{if $item|@wof_pv:"wof:parent_id" != -1}
+
+						{if $item|@wof_pv:"wof_parent_name"}
+						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look">{$item|@wof_pv:"wof:parent_name"|@escape}</a>
+						{else}
+						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look wof-namify" data-wof-id="{$item|@wof_pv:"wof:parent_id"|@escape}">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
+						{/if}
+
+						{else}
+						in <span class="caveat">a place of uncertainty</span>
+						{/if}
+
+						{/if}
+
+						{if $show_lastmodified}
+						that was last modifed <span class="hey-look">{$item|@wof_pv:"wof:lastmodified"|@date_format|@escape}</span>
+						{/if}
+
+						</small>
+					</li>
+				{/foreach}
+			</ul>
+
+			{include file="inc_pagination.txt"}
+
+			{if ! $skip_belongsto}
+			{include file="inc_js_namify.txt"}
+			{/if}

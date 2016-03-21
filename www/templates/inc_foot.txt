@@ -1,4 +1,8 @@
 
+	<div class="container"><div class="row">
+		{include file='inc_log.txt'}
+	</div></div>
+
 		<div class="container">
 			<div class="row">
 				<hr>
@@ -7,14 +11,9 @@
 					<p>Boundary Issues is sponsored by <a href="https://mapzen.com/">Mapzen</a></p>
 				</footer>
 
-				{if "staff"|@auth_has_role}
-					{timings}
-				{/if}
-
 			</div> <!-- /row -->
 		</div> <!-- /container -->
 
-		{pagination_footer}
-
 	</body>
+
 </html>

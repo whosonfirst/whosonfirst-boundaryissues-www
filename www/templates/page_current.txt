@@ -1,0 +1,13 @@
+{include file="inc_head.txt"}
+
+<div class="container">
+<div class="row">
+
+     <h2>Things that have been flagged as <q class="hey-look">current</q></h2>
+
+     {include file="inc_results.txt" results=$results show_lastmodified=1}
+
+</div>
+</div>
+
+{include file="inc_foot.txt"}

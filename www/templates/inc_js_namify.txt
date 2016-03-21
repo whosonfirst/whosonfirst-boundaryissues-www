@@ -1,0 +1,2 @@
+<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.namify.js"></script>
+<script type="text/javascript">{literal}window.onload = function(e){ mapzen.whosonfirst.boundaryissues.namify.init(); };{/literal}</script>

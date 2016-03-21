@@ -3,24 +3,31 @@
 <div class="container">
 	<div class="row">
 		<h2>Search</h2>
+
+		{if $pagination.total_count==1}
+		<h3>There is <span class="hey-look">one results</span> matching <q class="hey-look">{$query|@escape}</a></h3>
+		{elseif $pagination.total_count}
+		<h3>There are <span class="hey-look">{$pagination.total_count|@number_format|@escape}</span> results matching <q class="hey-look">{$query|@escape}</q> {if $pagination.page_count > 1} and this is <span class="hey-look">page {$pagination.page|@number_format|@escape}</span> of {$pagination.page_count|@number_format|@escape}{/if}</h3>
+		{else}{/if}
+
 	</div>
 	<div class="row">
+	{if 0}
 		<form action="{$cfg.abs_root_url}search/" id="search-form">
 			<input type="text" name="q" value="{$query|@escape}" id="search-input" class="col-md-5">
 			<button type="submit" class="btn btn-primary">Search</button>
 		</form>
-		{if $results}
-			<div id="map"></div>
-			<ul id="search-results">
-				{foreach from=$results item=item}
-					<li class="search-result" data-id="{$item.id|@escape}" data-lat="{$item.lat|@escape}" data-lng="{$item.lng|@escape}">
-						<code>{$item.id|@escape}</code>
-						<a href="/id/{$item.id|@escape}/">{$item.name|@escape}</a>
-						<small>a <strong>{$item.placetype|@escape}</strong></small>
-					</li>
-				{/foreach}
-			</ul>
+	{/if}
+
+	{if $error_rsp}
+		<p class="error">Oh no! There was a problem processing your search...</p>
+	{else}
+		{if $results|@count}
+			{include file="inc_results.txt" results=$results}
+		{else}		
+			<p class="warning">Hrm... nothing found for <q class="hey-look">{$query|@escape}</q></p>
 		{/if}
+	{/if}
 	</div>
 </div>
 

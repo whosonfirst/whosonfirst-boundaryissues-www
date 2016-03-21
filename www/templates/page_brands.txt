@@ -1,0 +1,26 @@
+{include file="inc_head.txt"}
+
+<div class="container"><div class="row">
+
+<h2>Brands!</h2>
+
+		{if $pagination.total_count==1}
+		<h3>There is <span class="hey-look">one</span> of them</h3>
+		{elseif $pagination.total_count}
+		<h3>There are <span class="hey-look">{$pagination.total_count|@number_format|@escape} #brands</span> {if $pagination.page_count > 1} and this is <span class="hey-look">page {$pagination.page|@number_format|@escape}</span> of {$pagination.page_count|@number_format|@escape}{/if}</h3>
+		{else}{/if}
+
+<ul id="search-results">
+	{foreach from=$brands item=item}
+	<li><a href="{$cfg.abs_root_url}brands/{$item.key|@escape}/" class="hey-look wof-namify-brand" data-wof-id="{$item.key|@escape}">{$item.key|@escape}</a>
+	<small>{if $item.doc_count==1}there is <span class="hey-look">one</span> of them{else}there are <span class="hey-look">{$item.doc_count|@number_format|@escape}</span> of them{/if}</small>
+	</li>
+	{/foreach}
+</ul>
+
+{include file="inc_pagination.txt"}
+{include file="inc_js_namify.txt"}
+
+</div></div>
+
+{include file="inc_foot.txt"}

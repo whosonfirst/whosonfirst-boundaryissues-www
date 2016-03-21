@@ -1,0 +1,13 @@
+{include file="inc_head.txt"}
+
+<div class="container">
+<div class="row">
+
+     <h2>{if $created}Recently created{else}Recently modified{/if}</h2>
+
+     {include file="inc_results.txt" show_lastmodified=1}
+
+</div>
+</div>
+
+{include file="inc_foot.txt"}

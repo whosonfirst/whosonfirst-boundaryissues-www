@@ -2,6 +2,7 @@
 .vagrant
 /data
 www/include/secrets*.php
+www/include/config_local*.php
 www/data
 tests/coverage.state
 coverage/
