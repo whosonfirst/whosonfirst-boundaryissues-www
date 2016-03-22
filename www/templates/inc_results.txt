@@ -15,6 +15,17 @@
 						{if !$skip_brands}
 						{if $item|@wof_pv:"wof:brand_id"} and a <a href="{$cfg.abs_root_url}brands/{$item|@wof_pv:"wof:brand_id"|@escape}" class="hey-look">#brand</a>{/if}
 						{/if}
+						
+						{if $item|@wof_pv:"wof:placetype"=="venue"}
+
+						{if $item|@wof_pv:"addr:full"}
+						 located at <span class="hey-look">{$item|@wof_pv:"addr:full"|@escape}</span>
+						{elseif $item|@wof_pv:"sg:address"}
+						 located at <span class="hey-look">{$item|@wof_pv:"sg:address"|@escape}</span>
+						{else}
+						{/if}
+
+						{/if}
 
 						{if !$skip_belongsto}
 						{if $item|@wof_pv:"wof:parent_id" != -1}
