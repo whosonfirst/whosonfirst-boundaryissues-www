@@ -48,6 +48,9 @@
 
 	########################################################################
 
+	# please to move in to lib_wof_pony <- not really, but something more
+	# specific to the functionality/use (20160322/thisisaaronland)
+
 	function wof_utils_encode($geojson) {
 
 		// Use the GeoJSON pony to pretty-print the string
@@ -75,6 +78,9 @@
 
 	########################################################################
 
+	# please to move in to lib_wof_pony <- not really, but something more
+	# specific to the functionality/use (20160322/thisisaaronland)
+
 	function wof_utils_save($geojson) {
 
 		// Save a GeoJSON file to disk
@@ -97,6 +103,9 @@
 
 	########################################################################
 
+	# please to move this in to lib_wof_elasticsearch and call lib_elasticsearch
+	# as necessary (20160322/thisisaaonland)
+
 	function wof_utils_update_elasticsearch($id) {
 
 		// Update the Elasticsearch index
@@ -117,34 +126,5 @@
 	}
 
 	########################################################################
-
-	function wof_utils_search_field_aggregation($name, $property) {
-
-		$args = array(
-			'index' => 'whosonfirst'
-		);
-
-		$page = get_int32('page');
-
-		if ($page){
-			$args['page'] = $page;
-		}
-
-		$es_query = array(
-			'query' => array('filtered' => array(
-				'query' => array(
-					'match_all' => array()
-				),
-			)),
-			'aggregations' => array(
-				$name => array(
-					'terms' => array('field' => $property, 'size' => 0)
-				)
-			)
-		);
-
-		$rsp = elasticsearch_search($es_query, $args);
-		return $rsp;
-	}
 
 	# the end

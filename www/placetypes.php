@@ -1,25 +1,15 @@
 <?php
 
 	include("include/init.php");
-	loadlib("elasticsearch");
-	loadlib("wof_utils");
+	loadlib("wof_elasticsearch");
 
-	$rsp = wof_utils_search_field_aggregation('placetypes', 'wof:placetype');
-
-	$body = $rsp['body'];
-	$body = json_decode($body, 'as hash');
-
-	$aggrs = $body['aggregations'];
-	$placetypes = $aggrs['placetypes'];
-	$placetypes = $placetypes['buckets'];
-
-	$rsp = elasticsearch_paginate_aggregation_results($placetypes, $args);
+	$rsp = wof_elasticsearch_facet('wof:placetype');
 
 	$pagination = $rsp['pagination'];
-	$placetypes = $rsp['aggregations'];
+	$rows = $rsp['rows'];
 
 	$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
-	$GLOBALS['smarty']->assign_by_ref("placetypes", $placetypes);
+	$GLOBALS['smarty']->assign_by_ref("placetypes", $rows);
 
 	$pagination_url = $GLOBALS['cfg']['abs_root_url'] . "placetypes/";
 	$GLOBALS['smarty']->assign("pagination_url", $pagination_url);

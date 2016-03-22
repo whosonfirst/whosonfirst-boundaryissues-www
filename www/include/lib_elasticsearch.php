@@ -100,7 +100,58 @@
 
 	########################################################################
 
+	function elasticsearch_facet($field, $more=array()){
+
+		$query_all = array('filtered' => array(
+			'query' => array(
+				'match_all' => array()
+			),
+		));
+
+		$defaults = array(
+			'query' => $query_all
+		);
+
+		$more = array_merge($defaults, $more);
+
+		$es_query = array(
+			'query' => $more['query'],
+			'aggregations' => array(
+				'facet' => array(
+					'terms' => array('field' => $field, 'size' => 0)
+				)
+			)
+		);
+
+		$rsp = elasticsearch_search($es_query, $more);
+
+		if (! $rsp['ok']){
+			return $rsp;
+		}
+
+		$body = $rsp['body'];
+		$body = json_decode($body, 'as hash');
+
+		if (! $body){
+			return array("ok" => 0, "error" => "failed to parse response");
+		}
+
+		$aggrs = $body['aggregations'];
+		$facets = $aggrs['facet'];
+		$facets = $facets['buckets'];
+
+		$rsp = elasticsearch_paginate_aggregation_results($facets, $more);
+
+		$pagination = $rsp['pagination'];
+		$rows = $rsp['aggregations'];
+		
+		return array("ok" => 1, "rows" => $rows, "pagination" => $pagination);
+	}
+
+	########################################################################
+
 	function elasticsearch_get_index_record($id, $more=array()) {
+
 		$defaults = array(
 			"host" => $GLOBALS['cfg']['elasticsearch_host'],
 			"port" => $GLOBALS['cfg']['elasticsearch_port'],

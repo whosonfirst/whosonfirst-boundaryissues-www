@@ -1,11 +1,9 @@
 <?php
 
 	include("include/init.php");
-	loadlib("elasticsearch");
+	loadlib("wof_elasticsearch");
 
-	$args = array(
-		'index' => 'whosonfirst'
-	);
+	$args = array();
 
 	$page = get_int32('page');
 	$created = get_isset('created');
@@ -27,7 +25,7 @@
 		$es_query['sort'][0] = array('wof:id' => 'desc');
 	}
 
-	$rsp = elasticsearch_search($es_query, $args);
+	$rsp = wof_elasticsearch_search($es_query, $args);
 
 	$pagination = $rsp['pagination'];
 	$results = $rsp['rows'];
