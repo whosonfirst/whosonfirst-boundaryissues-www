@@ -1,0 +1,23 @@
+{include file="inc_head.txt"}
+
+<div class="container">
+<div class="row">
+
+     <h2>Things that are a <span class="hey-look">{$tag|@escape}</span></h2>
+
+     	<h3>
+		{if $pagination.total_count==1}
+		There is <span class="hey-look">one results</span> of them
+		{elseif $pagination.total_count}
+		There are <span class="hey-look">{$pagination.total_count|@number_format|@escape}</span> of them {if $pagination.page_count > 1} and this is <span class="hey-look">page {$pagination.page|@number_format|@escape}</span> of {$pagination.page_count|@number_format|@escape}{/if}
+		{else}{/if}
+
+		/ See <a href="{$cfg.abs_root_url}tags/" class="hey-look">all the tags</a>
+		</h3>
+
+		{include file="inc_results.txt" results=$results}
+
+</div>
+</div>
+
+{include file="inc_foot.txt"}
