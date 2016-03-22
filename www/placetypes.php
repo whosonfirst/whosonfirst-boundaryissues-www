@@ -3,7 +3,13 @@
 	include("include/init.php");
 	loadlib("wof_elasticsearch");
 
-	$rsp = wof_elasticsearch_facet('wof:placetype');
+	$args = array();
+
+	if ($page = get_int32("page")){
+		$args['page'] = $page;
+	}
+
+	$rsp = wof_elasticsearch_facet('wof:placetype', $args);
 
 	$pagination = $rsp['pagination'];
 	$rows = $rsp['rows'];

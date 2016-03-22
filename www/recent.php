@@ -5,12 +5,11 @@
 
 	$args = array();
 
-	$page = get_int32('page');
-	$created = get_isset('created');
-
-	if ($page){
+	if ($page = get_int32('page')){
 		$args['page'] = $page;
 	}
+
+	$created = get_isset('created';)
 
 	$es_query = array(
 		'query' => array(

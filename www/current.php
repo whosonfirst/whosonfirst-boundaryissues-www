@@ -5,9 +5,7 @@
 
 	$args = array();
 
-	$page = get_int32('page');
-
-	if ($page){
+	if ($page = get_int32('page')){
 		$args['page'] = $page;
 	}
 
