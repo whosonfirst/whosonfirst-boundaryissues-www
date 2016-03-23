@@ -5,6 +5,30 @@
 
 	########################################################################
 
+	function wof_ancestor(&$props, $pt){
+
+		if (! isset($props['wof:hierarchy'])){
+			return null;
+		}
+
+		$hiers = $props['wof:hierarchy'];
+
+		if (count($hiers) > 1){
+			return null;
+		}
+
+		$hiers = $hiers[0];
+		$k = "{$pt}_id";
+
+		if (! isset($hiers[$k])){
+			return null;
+		}
+
+		return $hiers[$k];
+	}
+
+	########################################################################
+
 	function wof_pv(&$props, $key){
 		return wof_smarty_properties_value($props, $key);
 	}

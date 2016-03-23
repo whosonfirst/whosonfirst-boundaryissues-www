@@ -36,6 +36,8 @@
 						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look wof-namify" data-wof-id="{$item|@wof_pv:"wof:parent_id"|@escape}">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
 						{/if}
 
+						{if 0}{$item|@wof_ancestor:"locality"|@escape}{/if}
+
 						{else}
 						in <span class="caveat">a place of uncertainty</span>
 						{/if}

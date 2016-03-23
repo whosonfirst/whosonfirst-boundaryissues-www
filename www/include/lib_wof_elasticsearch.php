@@ -2,6 +2,8 @@
 
 	loadlib("elasticsearch");
 
+	# https://github.com/whosonfirst/whosonfirst-www-boundaryissues/wiki/Updating-ES-schema
+
 	########################################################################
 
 	function wof_elasticsearch_search($query, $more=array()){
