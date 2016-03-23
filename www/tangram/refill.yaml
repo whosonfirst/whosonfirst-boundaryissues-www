@@ -23,12 +23,12 @@ labels-global:
     - &label_visible_landuse_green    true
     - &icon_visible_landuse_green     false
     - &text_visible_landuse_green     true
-    - &label_visible_poi_landuse      true
+    - &label_visible_poi_landuse      false
     - &icon_visible_poi_landuse       false
-    - &text_visible_poi_landuse       true
-    - &label_visible_poi_landuse_e    true
+    - &text_visible_poi_landuse       false
+    - &label_visible_poi_landuse_e    false
     - &icon_visible_poi_landuse_e     false
-    - &text_visible_poi_landuse_e     true
+    - &text_visible_poi_landuse_e     false
     - &label_visible_station          true
     - &icon_visible_station           false
     - &text_visible_station           true
