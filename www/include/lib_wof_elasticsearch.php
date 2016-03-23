@@ -28,5 +28,14 @@
 	}
 
 	########################################################################
-	
+
+	function wof_elasticsearch_update_document($wof) {
+		$index = 'whosonfirst';
+		$type = $wof['properties']['wof:placetype'];
+		$id = $wof['properties']['wof:id'];
+		elasticsearch_update_document($index, $type, $id, $wof);
+	}
+
+	########################################################################
+
 	# the end
