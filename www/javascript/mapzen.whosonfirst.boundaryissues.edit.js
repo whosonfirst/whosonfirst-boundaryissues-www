@@ -339,19 +339,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
 				var chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
 
-				if (parents.length == 0 &&
-				    hierarchy.length == 0) {
+				if (parents.length == 0) {
+					// No options to choose from!
 					self.set_parent(null);
-					self.set_hierarchy(null);
-				} else if (parents.length == 1 &&
-						hierarchy.length == 1) {
-					// Hey, alright, no breach. This is straightforward: choose the first parent
+				} else if (parents.length == 1) {
+					// This is straightforward: choose the one and only parent
 					self.set_parent(parents[0]);
-					self.set_hierarchy(hierarchy[0]);
-				} else if (chosen_parent && chosen_hierarchy) {
+				} else if (chosen_parent) {
 					// If the current parent ID matches one of the parents, use that
 					self.set_parent(chosen_parent);
-					self.set_hierarchy(chosen_hierarchy);
 				} else {
 					// There is more than one nearest parent. Gotta choose one!
 					var parent_html = [];
@@ -372,6 +368,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						self.show_hierarchy(h);
 					});
 					$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
+				}
+
+				if (hierarchy.length == 0) {
+					self.set_hierarchy(null);
+				} else if (parents.length == 1 &&
+					hierarchy.length == 1) {
+					self.set_hierarchy(hierarchy[0]);
+				} else if (chosen_hierarchy) {
+					self.set_hierarchy(chosen_hierarchy);
 				}
 				$('#where-parent').html(html);
 			});
