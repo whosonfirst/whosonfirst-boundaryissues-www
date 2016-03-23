@@ -76,22 +76,6 @@ def geojson_save():
     gf = open(path, 'r')
     return gf.read()
 
-@app.route('/update_elasticsearch', methods=['POST'])
-def geojson_update_elasticsearch():
-    id = int(request.form['id'])
-    path = mapzen.whosonfirst.utils.id2abspath(root, id)
-    idx = mapzen.whosonfirst.search.index()
-
-    try:
-        idx.index_file(path)
-    except Exception, e:
-        error = "failed to index %s, because %s" % (path, e)
-        logging.error(error)
-        
-        return jsonify(ok=0, error=error)
-
-    return jsonify(ok=1)
-
 @app.route('/pip', methods=['GET'])
 def geojson_hierarchy():
     data_endpoint = 'https://whosonfirst.mapzen.com/data/'

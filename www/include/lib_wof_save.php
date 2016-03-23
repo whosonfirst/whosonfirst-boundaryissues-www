@@ -1,5 +1,7 @@
 <?php
 	loadlib('wof_utils');
+	loadlib('wof_geojson');
+	loadlib('wof_elasticsearch');
 	loadlib('artisanal_integers');
 	loadlib("github_api");
 	loadlib("github_users");
@@ -58,7 +60,7 @@
 			}
 		}
 
-		$rsp = wof_utils_save($geojson);
+		$rsp = wof_geojson_save($geojson);
 
 		if (! $rsp['ok']) {
 			$rsp['error'] = "Error saving via GeoJSON service: {$rsp['error']}";
@@ -82,7 +84,7 @@
 			return $rsp;
 		}
 
-		register_shutdown_function('wof_utils_update_elasticsearch', $wof_id);
+		register_shutdown_function('wof_elasticsearch_update_document', $geojson_data);
 
 		return array(
 			'ok' => 1,
