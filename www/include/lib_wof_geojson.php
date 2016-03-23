@@ -7,7 +7,7 @@
 	function wof_geojson_encode($geojson) {
 
 		// Use the GeoJSON pony to pretty-print the string
-		$rsp = http_post('http://localhost:8181/encode', array(
+		$rsp = http_post("{$GLOBALS['cfg']['geojson_base_url']}/encode", array(
 			'geojson' => $geojson
 		));
 
@@ -34,7 +34,7 @@
 	function wof_geojson_save($geojson) {
 
 		// Save a GeoJSON file to disk
-		$rsp = http_post('http://localhost:8181/save', array(
+		$rsp = http_post("{$GLOBALS['cfg']['geojson_base_url']}/save", array(
 			'geojson' => $geojson
 		));
 

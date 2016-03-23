@@ -69,13 +69,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					});
 					self.set_marker(m);
 				}
-				var hash = new L.Hash(map);
 			}
 			L.control.geocoder('search-o3YYmTI', {
 				markers: {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
+			var hash = new L.Hash(map);
 
 			self.show_nearby_results();
 			map.on('dragend', function() {
@@ -110,6 +110,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			map.on('draw:created', function(e){
 				self.set_marker(e.layer);
+				var ll = e.layer.getLatLng();
+				self.lookup_hierarchy(ll.lat, ll.lng);
 			});
 		},
 
@@ -123,6 +125,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$(row).find('.remove-row').click(function(e) {
 					$(row).remove();
 				});
+			});
+
+			$('#edit-properties input').change(function(e) {
+				var property = $(e.target).attr('name');
+				var value = $(e.target).val();
+				$('#edit-form').trigger('propertychanged', [property, value]);
 			});
 
 			// Add new properties to an object by changing the 'Value' field
@@ -174,6 +182,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.save_to_server(self.generate_geojson());
 				}
 			});
+
+			$('#edit-form').on('propertychanged', function(e, property, value) {
+				if (property == 'properties.wof:name') {
+					var id = $('input[name="wof_id"]').val();
+					if (!id) {
+						return;
+					}
+					var title = value;
+					var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
+					$('#wof_name').html(esc_title);
+					document.title = title + ' (' + id + ') | Boundary Issues';
+				}
+			});
+
+			$status = $('#edit-status');
 		},
 
 		setup_buttons: function() {
@@ -310,18 +333,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var parent = $('input[name="properties.wof:parent_id"]').val();
 				if (hierarchy && hierarchy != '[]') {
 					var hierarchy = JSON.parse(hierarchy);
+					parent = parseInt(parent);
 					if (hierarchy && parent) {
 						$.each(hierarchy, function(i, h) {
 							self.show_hierarchy(h);
 						});
-						self.get_wof(parent, function(wof) {
-							self.set_parent({
-								Id: wof.properties['wof:id'],
-								Name: wof.properties['wof:name'],
-								Placetype: wof.properties['wof:placetype']
+						if (parent != -1) {
+							self.get_wof(parent, function(wof) {
+								self.set_parent({
+									Id: wof.properties['wof:id'],
+									Name: wof.properties['wof:name'],
+									Placetype: wof.properties['wof:placetype']
+								});
 							});
-						});
-						return;
+							return;
+						}
 					}
 				}
 			}
@@ -337,19 +363,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
 				var chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
 
-				if (parents.length == 0 &&
-				    hierarchy.length == 0) {
+				if (parents.length == 0) {
+					// No options to choose from!
 					self.set_parent(null);
-					self.set_hierarchy(null);
-				} else if (parents.length == 1 &&
-						hierarchy.length == 1) {
-					// Hey, alright, no breach. This is straightforward: choose the first parent
+				} else if (parents.length == 1) {
+					// This is straightforward: choose the one and only parent
 					self.set_parent(parents[0]);
-					self.set_hierarchy(hierarchy[0]);
-				} else if (chosen_parent && chosen_hierarchy) {
+				} else if (chosen_parent) {
 					// If the current parent ID matches one of the parents, use that
 					self.set_parent(chosen_parent);
-					self.set_hierarchy(chosen_hierarchy);
 				} else {
 					// There is more than one nearest parent. Gotta choose one!
 					var parent_html = [];
@@ -369,6 +391,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$.each(hierarchy, function(i, h) {
 						self.show_hierarchy(h);
 					});
+					$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
+				}
+
+				if (hierarchy.length == 0) {
+					self.set_hierarchy(null);
+					if ($('input[name="properties.wof:parent_id"]').val() != "-1") {
+						$('#parent').append('<p class="caveat">This parent has no hierarchy</p>');
+					}
+				} else if (parents.length == 1 &&
+					hierarchy.length == 1) {
+					self.set_hierarchy(hierarchy[0]);
+				} else if (chosen_hierarchy) {
+					self.set_hierarchy(chosen_hierarchy);
 				}
 				$('#where-parent').html(html);
 			});
@@ -710,7 +745,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		if ($('#edit-form').length == 0) {
 			return;
 		}
-		$status = $('#edit-status');
 		mapzen.whosonfirst.data.endpoint('https://whosonfirst.mapzen.com/data/');
 		self.setup_map();
 		self.setup_drawing();
