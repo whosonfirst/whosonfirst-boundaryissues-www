@@ -71,6 +71,12 @@ tangram:
 refill:
 	if test -e www/tangram/refill.yaml; then cp www/tangram/refill.yaml www/tangram/refill.yaml.bak; fi
 	curl -s -o www/tangram/refill.yaml https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml
+	perl -p -i -e "s!-(\s+)\&text_visible_poi_landuse(\s+)true!-\1&text_visible_poi_landuse\2false!" www/tangram/refill.yaml
+	perl -p -i -e "s!-(\s+)\&label_visible_poi_landuse(\s+)true!-\1&label_visible_poi_landuse\2false!" www/tangram/refill.yaml
+	perl -p -i -e "s!-(\s+)\&icon_visible_poi_landuse(\s+)true!-\1&icon_visible_poi_landuse\2false!" www/tangram/refill.yaml
+	perl -p -i -e "s!-(\s+)\&text_visible_poi_landuse_e(\s+)true!-\1&text_visible_poi_landuse_e\2false!" www/tangram/refill.yaml
+	perl -p -i -e "s!-(\s+)\&label_visible_poi_landuse_e(\s+)true!-\1&label_visible_poi_landuse_e\2false!" www/tangram/refill.yaml
+	perl -p -i -e "s!-(\s+)\&icon_visible_poi_landuse_e(\s+)true!-\1&icon_visible_poi_landuse_e\2false!" www/tangram/refill.yaml
 
 leaflet-geocoder:
 	if test -e www/css/leaflet-geocoder-mapzen.css; then cp www/css/leaflet-geocoder-mapzen.css www/css/leaflet-geocoder-mapzen.css.bak; fi
