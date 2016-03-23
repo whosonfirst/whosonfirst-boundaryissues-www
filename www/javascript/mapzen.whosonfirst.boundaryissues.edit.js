@@ -69,13 +69,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					});
 					self.set_marker(m);
 				}
-				var hash = new L.Hash(map);
 			}
 			L.control.geocoder('search-o3YYmTI', {
 				markers: {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
+			var hash = new L.Hash(map);
 
 			self.show_nearby_results();
 			map.on('dragend', function() {
@@ -110,6 +110,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			map.on('draw:created', function(e){
 				self.set_marker(e.layer);
+				var ll = e.layer.getLatLng();
+				self.lookup_hierarchy(ll.lat, ll.lng);
 			});
 		},
 
@@ -369,6 +371,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$.each(hierarchy, function(i, h) {
 						self.show_hierarchy(h);
 					});
+					$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
 				}
 				$('#where-parent').html(html);
 			});

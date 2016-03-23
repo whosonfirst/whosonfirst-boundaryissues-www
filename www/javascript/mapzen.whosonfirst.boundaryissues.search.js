@@ -32,6 +32,11 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 				'map',
 				lat, lon, zoom
 			);
+			L.control.geocoder('search-o3YYmTI', {
+				markers: {
+					icon: new VenueIcon()
+				}
+			}).addTo(map);
 			var hash = new L.Hash(map);
 
 			var markers = [];
