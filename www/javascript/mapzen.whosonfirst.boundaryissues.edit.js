@@ -735,6 +735,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		$('#edit-form').on('propertychanged', function(e, property, value) {
 			if (property == 'properties.wof:name') {
 				var id = $('input[name="wof_id"]').val();
+				if (!id) {
+					return;
+				}
 				var title = value;
 				var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
 				$('#wof_name').html(esc_title);
