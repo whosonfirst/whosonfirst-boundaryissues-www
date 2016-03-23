@@ -396,6 +396,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 				if (hierarchy.length == 0) {
 					self.set_hierarchy(null);
+					if ($('input[name="properties.wof:parent_id"]').val() != "-1") {
+						$('#parent').append('<p class="caveat">This parent has no hierarchy</p>');
+					}
 				} else if (parents.length == 1 &&
 					hierarchy.length == 1) {
 					self.set_hierarchy(hierarchy[0]);
