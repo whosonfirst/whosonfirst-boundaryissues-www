@@ -182,6 +182,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.save_to_server(self.generate_geojson());
 				}
 			});
+
+			$('#edit-form').on('propertychanged', function(e, property, value) {
+				if (property == 'properties.wof:name') {
+					var id = $('input[name="wof_id"]').val();
+					if (!id) {
+						return;
+					}
+					var title = value;
+					var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
+					$('#wof_name').html(esc_title);
+					document.title = title + ' (' + id + ') | Boundary Issues';
+				}
+			});
+
+			$status = $('#edit-status');
 		},
 
 		setup_buttons: function() {
@@ -318,18 +333,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var parent = $('input[name="properties.wof:parent_id"]').val();
 				if (hierarchy && hierarchy != '[]') {
 					var hierarchy = JSON.parse(hierarchy);
+					parent = parseInt(parent);
 					if (hierarchy && parent) {
 						$.each(hierarchy, function(i, h) {
 							self.show_hierarchy(h);
 						});
-						self.get_wof(parent, function(wof) {
-							self.set_parent({
-								Id: wof.properties['wof:id'],
-								Name: wof.properties['wof:name'],
-								Placetype: wof.properties['wof:placetype']
+						if (parent != -1) {
+							self.get_wof(parent, function(wof) {
+								self.set_parent({
+									Id: wof.properties['wof:id'],
+									Name: wof.properties['wof:name'],
+									Placetype: wof.properties['wof:placetype']
+								});
 							});
-						});
-						return;
+							return;
+						}
 					}
 				}
 			}
@@ -724,26 +742,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		if ($('#edit-form').length == 0) {
 			return;
 		}
-		$status = $('#edit-status');
 		mapzen.whosonfirst.data.endpoint('https://whosonfirst.mapzen.com/data/');
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_properties();
 		self.setup_form();
 		self.setup_buttons();
-
-		$('#edit-form').on('propertychanged', function(e, property, value) {
-			if (property == 'properties.wof:name') {
-				var id = $('input[name="wof_id"]').val();
-				if (!id) {
-					return;
-				}
-				var title = value;
-				var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
-				$('#wof_name').html(esc_title);
-				document.title = title + ' (' + id + ') | Boundary Issues';
-			}
-		});
 	});
 
 	return self;
