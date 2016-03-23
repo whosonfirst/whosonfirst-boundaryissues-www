@@ -25,6 +25,7 @@
 		<script src="{$cfg.abs_root_url}javascript/leaflet.label.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.hash.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/tangram.min.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/localforage.min.js"></script>
 		<script src="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.js"></script>
 
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->

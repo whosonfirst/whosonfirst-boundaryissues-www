@@ -53,7 +53,47 @@ mapzen.whosonfirst.boundaryissues.namify = (function() {
 
 	    var url = resolver(wofid);
 
+	    if (localforage){
+		self.namify_el_from_cache(url, el);
+	    }
+
+	    else {
+		self.namify_el_from_source(url, el);
+	    }
+	},
+
+	'namify_el_from_cache': function(url, el){
+
+	    localforage.getItem(url, function (err, feature) {
+
+		if ((err) || (! feature)){
+		    return self.namify_el_from_source(url, el);
+		}
+
+		self.apply_namification(el, feature);
+	    });	    
+
+	},
+
+	'namify_el_from_source': function(url, el){
+
 	    var on_fetch = function(feature){
+
+		self.apply_namification(el, feature);
+
+		if (localforage){
+		    localforage.setItem(url, feature);
+		}
+	    };
+
+	    var on_fail = function(rsp){
+		console.log("sad face");
+	    };
+	    
+	    mapzen.whosonfirst.net.fetch(url, on_fetch, on_fail);
+	},
+
+	'apply_namification': function(el, feature){
 
 		var props = feature['properties'];
 
@@ -64,8 +104,8 @@ mapzen.whosonfirst.boundaryissues.namify = (function() {
 		    props = feature;
 		}
 
-		console.log(props);
-
+	    	// console.log(props);
+	    
 		var label = props['wof:label'];
 
 		if ((! label) || (label == '')){
@@ -74,14 +114,8 @@ mapzen.whosonfirst.boundaryissues.namify = (function() {
 
 		var enc_label = mapzen.whosonfirst.php.htmlspecialchars(label);
 		el.innerHTML = enc_label;
-	    };
-
-	    var on_fail = function(rsp){
-		console.log("sad face");
-	    };
-	    
-	    mapzen.whosonfirst.net.fetch(url, on_fetch, on_fail);
 	},
+
     };
 
     return self;
