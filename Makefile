@@ -55,6 +55,10 @@ update_json_schema:
 	curl -s -o ./schema/json/bbox.schema $(JSON_SCHEMA_GITHUB)/schema/bbox.schema
 	curl -s -o ./schema/json/geometry.schema $(JSON_SCHEMA_GITHUB)/schema/geometry.schema
 
+localforage:
+	curl -s -o www/javascript/localforage.js https://raw.githubusercontent.com/mozilla/localForage/master/dist/localforage.js
+	curl -s -o www/javascript/localforage.min.js https://raw.githubusercontent.com/mozilla/localForage/master/dist/localforage.min.js
+
 mapzen: styleguide tangram refill
 
 styleguide:
