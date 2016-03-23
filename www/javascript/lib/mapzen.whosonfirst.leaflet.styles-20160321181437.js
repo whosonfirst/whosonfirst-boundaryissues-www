@@ -101,7 +101,7 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 
 		'venue_current': function(){
 			return {
-				"color": "#000",
+				"color": "#398439",
 				"weight": 1,
 				"opacity": 1,
 				"radius": 4,
@@ -112,7 +112,7 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 
 		'venue_not_current': function(){
 			return {
-				"color": "#000",
+				"color": "#ec971f",
 				"weight": 1,
 				"opacity": 1,
 				"radius": 4,
@@ -123,7 +123,7 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 
 		'venue_deprecated': function(){
 			return {
-				"color": "#000",
+				"color": "#ac2925",
 				"weight": 1,
 				"opacity": 1,
 				"radius": 4,
@@ -134,7 +134,7 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 
 		'venue_funky': function(){
 			return {
-				"color": "#000",
+				"color": "#269abc",
 				"weight": 1,
 				"opacity": 1,
 				"radius": 4,
@@ -145,11 +145,11 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 
 		'venue_unknown': function(){
 			return {
-				"color": "#000",
+				"color": "#204d74",
 				"weight": 1,
 				"opacity": 1,
 				"radius": 4,
-				"fillColor": "#999",
+				"fillColor": "#337ab7",
 				"fillOpacity": 0.5
 			};
 		},
