@@ -127,6 +127,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			});
 
+			$('#edit-properties input').change(function(e) {
+				var property = $(e.target).attr('name');
+				var value = $(e.target).val();
+				$('#edit-form').trigger('propertychanged', [property, value]);
+			});
+
 			// Add new properties to an object by changing the 'Value' field
 			$('input.add-value').change(function(e) {
 				if ($(e.target).val()) {
@@ -725,6 +731,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		self.setup_properties();
 		self.setup_form();
 		self.setup_buttons();
+
+		$('#edit-form').on('propertychanged', function(e, property, value) {
+			if (property == 'properties.wof:name') {
+				var id = $('input[name="wof_id"]').val();
+				var title = value;
+				var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
+				$('#wof_name').html(esc_title);
+				document.title = title + ' (' + id + ') | Boundary Issues';
+			}
+		});
 	});
 
 	return self;
