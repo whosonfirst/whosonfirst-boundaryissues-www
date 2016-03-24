@@ -93,3 +93,6 @@ pip-server:
 	if test ! -d /usr/local/mapzen/go-whosonfirst-pip; then git clone git@github.com:whosonfirst/go-whosonfirst-pip.git /usr/local/mapzen/go-whosonfirst-pip; fi
 	cd /usr/local/mapzen/go-whosonfirst-pip; git pull origin master; make build
 	cp /usr/local/mapzen/go-whosonfirst-pip/bin/wof-pip-server services/pip-server/wof-pip-server
+
+es-index:
+	sudo -u www-data ./ubuntu/setup-elasticsearch-index.sh
