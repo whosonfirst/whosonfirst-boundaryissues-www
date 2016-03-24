@@ -9,7 +9,7 @@
 		$args['page'] = $page;
 	}
 
-	$created = get_isset('created';)
+	$created = get_isset('created');
 
 	$es_query = array(
 		'query' => array(
