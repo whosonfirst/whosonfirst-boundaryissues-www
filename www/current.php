@@ -9,15 +9,12 @@
 		$args['page'] = $page;
 	}
 
-	# This doesn't work yet (20160319/thisisaaronland)
-
 	# https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_exact_values.html
-	# https://github.com/whosonfirst/es-whosonfirst-schema/issues/1
 
 	$es_query = array(
 		'query' => array('filtered' => array(
 			'filter' => array(
-				'term' => array('mz:is_current' => '1')
+				'term' => array('mz:is_current' => 1)
 			)
 		)),
 		'sort' => array(
