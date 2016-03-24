@@ -33,12 +33,24 @@
 
 	function wof_elasticsearch_update_document($wof) {
 
+		$props = $wof['properties'];
 		$index = 'whosonfirst';
-		$type = $wof['properties']['wof:placetype'];
-		$id = $wof['properties']['wof:id'];
+		$type = $props['wof:placetype'];
+		$id = $props['wof:id'];
+		$more = array(
+			'id_field' => 'wof:id'
+		);
 
+		$existing_es_record = elasticsearch_get_index_record($id);
+		if ($existing_es_record) {
+			$rsp = elasticsearch_update_document($index, $type, $id, $props);
+		} else {
+			$docs = array(
+				$props
+			);
+			$rsp = elasticsearch_add_documents($docs, $index, $type, $more);
+		}
 
-		$rsp = elasticsearch_update_document($index, $type, $id, $wof);
 		return $rsp;
 	}
 
