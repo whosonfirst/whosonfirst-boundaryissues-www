@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "PRE-EMPTIVELY DISABLING UNTIL THINGS SETTLE DOWN IN npm-LAND..."
+exit 1
+
 WHOAMI=`python -c 'import os, sys; print os.path.realpath(sys.argv[1])' $0`
 
 UBUNTU=`dirname $WHOAMI`
