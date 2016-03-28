@@ -105,7 +105,7 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 				if (batch_update_ids.length > 0) {
 					var data = {
 						crumb: $('#batch-update').data('crumb-save-batch'),
-						ids: batch_update_ids
+						ids: batch_update_ids.join(',')
 					};
 					var status = $(e.target).data('status');
 					var today = mapzen.whosonfirst.boundaryissues.edit.get_edtf_date(new Date());
@@ -128,9 +128,16 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 							"wof:is_funky": 1
 						};
 					}
-					alert('Ok, at this point we would update ' + batch_update_ids.join(', ') + ' to be ' + status + '. But we are not quite there yet. Check out the JS console to see what we would have sent to the wof.save_batch API.');
-					console.log('wof.save_batch:', data);
-					//mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
+					data.properties = JSON.stringify(data.properties);
+
+					var onsuccess = function(rsp) {
+						alert(rsp.placeholder);
+					};
+					var onerror = function(rsp) {
+						mapzen.whosonfirst.log.debug("error with batch saving.");
+					};
+
+					mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
 				}
 			});
 		},

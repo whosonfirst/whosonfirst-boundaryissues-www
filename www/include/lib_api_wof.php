@@ -32,6 +32,36 @@
 		api_output_ok($rsp);
 	}
 
+	function api_wof_save_batch() {
+
+		$ids = post_str('ids');
+		$ids = explode(',', $ids);
+		if (empty($ids)) {
+			api_output_error(400, "Please include an 'ids' parameter.");
+		}
+
+		foreach ($ids as $id) {
+			$id = trim($id);
+			if (! is_numeric($id)) {
+				api_output_error(400, "Invalid ID value: '$id'");
+			}
+		}
+
+		$properties = post_str('properties');
+		$properties = json_decode($properties, true);
+		if (! $properties) {
+			api_output_error(400, "Please include a 'properties' parameter.");
+		}
+
+		$rsp = wof_save_batch($ids, $properties);
+
+		if (! $rsp['ok']) {
+			$error = $rsp['error'] ? $rsp['error'] : 'Error batch-saving WOF records.';
+			api_output_error(400, $error);
+		}
+		api_output_ok($rsp);
+	}
+
 	function api_wof_pip() {
 
 		if (! isset($_POST['latitude']) ||

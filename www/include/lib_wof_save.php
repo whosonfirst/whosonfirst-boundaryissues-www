@@ -92,6 +92,14 @@
 		);
 	}
 
+	function wof_save_batch($ids, $properties) {
+		// TODO: save all the things.
+		return array(
+			'ok' => 1,
+			'placeholder' => "Hello from wof_save_batch."
+		);
+	}
+
 	function wof_save_to_github($geojson, $geojson_data) {
 
 		// Get the GitHub oauth token
