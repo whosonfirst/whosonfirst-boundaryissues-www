@@ -46,5 +46,8 @@
 	$GLOBALS['smarty']->assign("pagination_url", $pagination_url);
 	$GLOBALS['smarty']->assign("placetype", $placetype);
 
+	$crumb_save_batch = crumb_generate('api', 'wof.save_batch');
+	$GLOBALS['smarty']->assign("crumb_save_batch", $crumb_save_batch);
+
 	$GLOBALS['smarty']->display('page_placetype.txt');
 	exit();

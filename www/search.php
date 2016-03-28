@@ -63,7 +63,7 @@
 
 			$pagination = $rsp['pagination'];
 			$results = $rsp['rows'];
-			
+
 			$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
 			$GLOBALS['smarty']->assign_by_ref("results", $results);
 
@@ -80,6 +80,9 @@
 			$GLOBALS['smarty']->assign("error_rsp", $rsp);
 		}
 	}
+
+	$crumb_save_batch = crumb_generate('api', 'wof.save_batch');
+	$GLOBALS['smarty']->assign("crumb_save_batch", $crumb_save_batch);
 
 	$GLOBALS['smarty']->display('page_search.txt');
 	exit();

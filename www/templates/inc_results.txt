@@ -1,6 +1,6 @@
 		<div id="map"></div>
 
-			<div id="batch-update">
+			<div id="batch-update" data-crumb-batch-update="{$crumb_batch_update|@escape}">
 				Batch update:
 				<div class="btn-group">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">

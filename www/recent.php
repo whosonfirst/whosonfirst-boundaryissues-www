@@ -40,6 +40,9 @@
 
 	$GLOBALS['smarty']->assign("created", $created);
 	$GLOBALS['smarty']->assign("pagination_url", $pagination_url);
-	
+
+	$crumb_save_batch = crumb_generate('api', 'wof.save_batch');
+	$GLOBALS['smarty']->assign("crumb_save_batch", $crumb_save_batch);
+
 	$GLOBALS['smarty']->display('page_recent.txt');
 	exit();
