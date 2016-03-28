@@ -103,8 +103,34 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			$('#batch-update-status a').click(function(e) {
 				e.preventDefault();
 				if (batch_update_ids.length > 0) {
+					var data = {
+						crumb: $('#batch-update').data('crumb-save-batch'),
+						ids: batch_update_ids
+					};
 					var status = $(e.target).data('status');
-					alert('Ok, at this point we would update ' + batch_update_ids.join(', ') + ' to be ' + status + '. But we are not quite there yet.');
+					var today = mapzen.whosonfirst.boundaryissues.edit.get_edtf_date(new Date());
+					if (status == 'current') {
+						data.properties = {
+							"wof:is_current": 1
+						};
+					} else if (status == 'closed') {
+						data.properties = {
+							"wof:is_current": 0,
+							"edtf:cessation": today
+						};
+					} else if (status == 'deprecated') {
+						data.properties = {
+							"wof:is_current": 0,
+							"edtf:deprecated": today
+						};
+					} else if (status == 'funky') {
+						data.properties = {
+							"wof:is_funky": 1
+						};
+					}
+					alert('Ok, at this point we would update ' + batch_update_ids.join(', ') + ' to be ' + status + '. But we are not quite there yet. Check out the JS console to see what we would have sent to the wof.save_batch API.');
+					console.log('wof.save_batch:', data);
+					//mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
 				}
 			});
 		},
