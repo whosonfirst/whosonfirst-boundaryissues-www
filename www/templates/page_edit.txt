@@ -35,7 +35,7 @@
 						{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}
 						<button type="submit" class="btn btn-success" id="btn-current">This is <strong>current</strong></button>
 						{/if}
-						<button type="submit" class="btn btn-warning" id="btn-not-current">This is <strong>closed/not current</strong></button>
+						<button type="submit" class="btn btn-warning" id="btn-not-current">This is <strong>closed</strong></button>
 						{* this needs to always be present in the props hash to work correclty... *}
 						<button type="submit" class="btn btn-danger" id="btn-deprecated">This is <strong>deprecated</strong></button>
 						{if $properties|@wof_smarty_properties_value:"mz:is_funky"!=1}

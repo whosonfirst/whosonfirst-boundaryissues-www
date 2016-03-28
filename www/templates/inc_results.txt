@@ -1,11 +1,30 @@
 		<div id="map"></div>
 
+			<div id="batch-update">
+				Batch update:
+				<div class="btn-group">
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+						Status
+						<span class="caret"></span>
+					</a>
+					<ul id="batch-update-status" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<li><a tabindex="-1" href="#" data-status="current">Mark <strong>Current</strong></a></li>
+						<li><a tabindex="-1" href="#" data-status="closed">Mark <strong>Closed</strong></a></li>
+						<li><a tabindex="-1" href="#" data-status="deprecated">Mark <strong>Deprecated</strong></a></li>
+						<li><a tabindex="-1" href="#" data-status="funky">Mark <strong>Funky</strong></a></li>
+					</ul>
+				</div>
+			</div>
+
 			<ul id="search-results">
 				{foreach from=$results item=item}
 					{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
 					{capture assign="is_current"}{$item|@wof_pv:"mz:is_current"}{/capture}
 					{capture assign="deprecated"}{$item|@wof_pv:"edtf:deprecated"}{/capture}
 					<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}">
+
+						<input type="checkbox" name="select-{$item|@wof_pv:"wof:id"|@escape}">
+
 						<code>{$item|@wof_pv:"wof:id"|@escape}</code>
 						<a href="{$cfg.abs_root_url}id/{$item|@wof_pv:"wof:id"|@escape}/">{$item|@wof_pv:"wof:name"|@escape}</a>
 
@@ -15,7 +34,7 @@
 						{if !$skip_brands}
 						{if $item|@wof_pv:"wof:brand_id"} and a <a href="{$cfg.abs_root_url}brands/{$item|@wof_pv:"wof:brand_id"|@escape}" class="hey-look">#brand</a>{/if}
 						{/if}
-						
+
 						{if $item|@wof_pv:"wof:placetype"=="venue"}
 
 						{if $item|@wof_pv:"addr:full"}

@@ -8,7 +8,8 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 mapzen.whosonfirst.boundaryissues.search = (function() {
 
-	var map;
+	var map,
+	    batch_update_ids = [];
 
 	var VenueIcon = L.Icon.extend({
 		options: {
@@ -90,6 +91,24 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			});
 		},
 
+		setup_results: function() {
+			$('#search-results > li > input[type=checkbox]').each(function(i, checkbox) {
+				// Check for initial checked state (i.e., reload after selection)
+				self.update_batch(checkbox);
+				$(checkbox).change(function(e) {
+					// Check for change to checked state
+					self.update_batch(e.target);
+				});
+			});
+			$('#batch-update-status a').click(function(e) {
+				e.preventDefault();
+				if (batch_update_ids.length > 0) {
+					var status = $(e.target).data('status');
+					alert('Ok, at this point we would update ' + batch_update_ids.join(', ') + ' to be ' + status + '. But we are not quite there yet.');
+				}
+			});
+		},
+
 		get_venue_marker_style: function(item) {
 			if ($(item).hasClass('iscurrent-yes')) {
 				return mapzen.whosonfirst.leaflet.styles.venue_current();
@@ -99,6 +118,26 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 				return mapzen.whosonfirst.leaflet.styles.venue_not_current();
 			} else {
 				return mapzen.whosonfirst.leaflet.styles.venue_unknown();
+			}
+		},
+
+		update_batch: function(checkbox) {
+			var id = $(checkbox).closest('li').data('id');
+			id = parseInt(id);
+			var index = batch_update_ids.indexOf(id);
+			if (checkbox.checked) {
+				if (index == -1) {
+					batch_update_ids.push(id);
+				}
+			} else {
+				if (index != -1) {
+					batch_update_ids.splice(index, 1);
+				}
+			}
+			if (batch_update_ids.length > 0) {
+				$('#batch-update li').removeClass('disabled');
+			} else {
+				$('#batch-update li').addClass('disabled');
 			}
 		}
 
@@ -110,6 +149,7 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 		}
 		self.setup_map();
 		self.setup_drawing();
+		self.setup_results();
 	});
 
 	return self;

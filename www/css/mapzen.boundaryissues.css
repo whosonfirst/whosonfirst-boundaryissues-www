@@ -137,7 +137,6 @@ th:hover .remove-row {
 }
 
 #search-results {
-	margin-top: 2em;
 	padding-left: 0;
 }
 
@@ -202,4 +201,10 @@ th:hover .remove-row {
 
 .hey-look {
     font-weight: 700;
+}
+
+#batch-update {
+	margin-top: 2em;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 1em;
 }
