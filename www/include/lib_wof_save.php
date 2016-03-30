@@ -32,6 +32,14 @@
 
 	function wof_save_string($geojson) {
 
+		if (! $GLOBALS['gearman_client']) {
+			$gearman_client = new GearmanClient();
+			$gearman_client->addServer();
+			$GLOBALS['gearman_client'] = $gearman_client;
+		} else {
+			$gearman_client = $GLOBALS['gearman_client'];
+		}
+
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {
 			return array(
@@ -78,37 +86,78 @@
 
 		$wof_id = $geojson_data['properties']['wof:id'];
 
-		$rsp = wof_save_to_github($geojson, $geojson_data);
-		if (! $rsp['ok']) {
-			$rsp['error'] = "Error saving to GitHub: {$rsp['error']}";
-			return $rsp;
-		}
+		$github_details = serialize(array(
+			'geojson' => $geojson,
+			'geojson_data' => $geojson_data,
+			'user_id' => $GLOBALS['cfg']['user']['id']
+		));
+		$gearman_client->doBackground("save_to_github", $github_details);
 
-		register_shutdown_function('wof_elasticsearch_update_document', $geojson_data);
+		$search_details = serialize(array(
+			'geojson_data' => $geojson_data
+		));
+		$gearman_client->doBackground("update_search_index", $search_details);
 
 		return array(
 			'ok' => 1,
-			'wof_id' => $wof_id
+			'wof_id' => $wof_id,
+			'geojson' => $geojson_data
 		);
 	}
 
-	function wof_save_batch($ids, $properties) {
-		// TODO: save all the things.
-		return array(
-			'ok' => 1,
-			'placeholder' => "Hello from wof_save_batch."
-		);
-	}
+	function wof_save_batch($batch_ids, $batch_properties) {
+		foreach ($batch_ids as $wof_id) {
+			$geojson_path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
+			$errors = array();
+			$saved = array();
+			if (file_exists($geojson_path)) {
+				$existing_geojson = file_get_contents($geojson_path);
+				$existing_feature = json_decode($existing_geojson, true);
+				$existing_feature['properties'] = array_merge(
+					$existing_feature['properties'],
+					$batch_properties
+				);
+				$updated_geojson = json_encode($existing_feature);
+				$rsp = wof_save_string($updated_geojson);
 
-	function wof_save_to_github($geojson, $geojson_data) {
-
-		// Get the GitHub oauth token
-		$rsp = github_users_curr_oauth_token();
-		if (! $rsp['ok']) {
-			return $rsp;
+				if (! $rsp['ok']) {
+					$errors[$wof_id] = $rsp['error'];
+				} else {
+					$saved[$wof_id] = $rsp['geojson'];
+				}
+			} else {
+				$errors[$wof_id] = "Could not find WOF GeoJSON file.";
+			}
 		}
 
-		$oauth_token = $rsp['oauth_token'];
+		if (! $errors) {
+			return array(
+				'ok' => 1,
+				'properties' => $batch_properties,
+				'saved' => $saved
+			);
+		} else {
+			return array(
+				'ok' => 0,
+				'properties' => $batch_properties,
+				'error' => 'Error batch saving WOF documents.',
+				'details' => $errors,
+				'saved' => $saved
+			);
+		}
+	}
+
+	function wof_save_to_github($geojson, $geojson_data, $oauth_token = null) {
+
+		if (! $oauth_token) {
+			// Get the GitHub oauth token if none was specified
+			$rsp = github_users_curr_oauth_token();
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$oauth_token = $rsp['oauth_token'];
+		}
+
 		$owner = $GLOBALS['cfg']['wof_github_owner'];
 		$repo = $GLOBALS['cfg']['wof_github_repo'];
 		$wof_id = $geojson_data['properties']['wof:id'];

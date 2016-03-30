@@ -74,7 +74,7 @@ def geojson_save():
 
     # Repeat back the file we just wrote
     gf = open(path, 'r')
-    return gf.read()
+    return jsonify(ok=1, geojson=gf.read())
 
 @app.route('/pip', methods=['GET'])
 def geojson_hierarchy():

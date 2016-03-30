@@ -38,16 +38,21 @@
 			'geojson' => $geojson
 		));
 
+		// Check for connection errors
 		if (! $rsp['ok']) {
-			if ($rsp['body']) {
-				$rsp['error'] = "Error from GeoJSON service: {$rsp['body']}";
-			}
+			$rsp['error'] = "Error connecting to GeoJSON service: {$rsp['body']}";
+			return;
+		}
+
+		$rsp = json_decode($rsp['body'], true);
+		if (! $rsp['ok']) {
+			$rsp['error'] = "Error with saving via GeoJSON service: {$rsp['error']}";
 			return $rsp;
 		}
 
 		return array(
 			'ok' => 1,
-			'geojson' => $rsp['body']
+			'geojson' => $rsp['geojson']
 		);
 	}
 

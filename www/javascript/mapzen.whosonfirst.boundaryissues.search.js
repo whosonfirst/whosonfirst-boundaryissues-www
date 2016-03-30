@@ -108,30 +108,31 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 						ids: batch_update_ids.join(',')
 					};
 					var status = $(e.target).data('status');
+					
 					var today = mapzen.whosonfirst.boundaryissues.edit.get_edtf_date(new Date());
 					if (status == 'current') {
 						data.properties = {
-							"wof:is_current": 1
+							"mz:is_current": 1
 						};
 					} else if (status == 'closed') {
 						data.properties = {
-							"wof:is_current": 0,
+							"mz:is_current": 0,
 							"edtf:cessation": today
 						};
 					} else if (status == 'deprecated') {
 						data.properties = {
-							"wof:is_current": 0,
+							"mz:is_current": 0,
 							"edtf:deprecated": today
 						};
 					} else if (status == 'funky') {
 						data.properties = {
-							"wof:is_funky": 1
+							"mz:is_funky": 1
 						};
 					}
 					data.properties = JSON.stringify(data.properties);
 
 					var onsuccess = function(rsp) {
-						alert(rsp.placeholder);
+						console.log(rsp);
 					};
 					var onerror = function(rsp) {
 						mapzen.whosonfirst.log.debug("error with batch saving.");
