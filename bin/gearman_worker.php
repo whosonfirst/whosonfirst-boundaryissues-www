@@ -2,6 +2,7 @@
 	include(__DIR__ . '/../www/include/init.php');
 	loadlib('github_users');
 	loadlib('wof_save');
+	loadlib('wof_elasticsearch');
 
 	$worker = new GearmanWorker();
 	$worker->addServer();

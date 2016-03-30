@@ -91,11 +91,13 @@
 			'geojson_data' => $geojson_data,
 			'user_id' => $GLOBALS['cfg']['user']['id']
 		));
+		dbug('gearman_client: save_to_github');
 		$gearman_client->doBackground("save_to_github", $github_details);
 
 		$search_details = serialize(array(
 			'geojson_data' => $geojson_data
 		));
+		dbug('gearman_client: update_search_index');
 		$gearman_client->doBackground("update_search_index", $search_details);
 
 		return array(
@@ -123,7 +125,7 @@
 				if (! $rsp['ok']) {
 					$errors[$wof_id] = $rsp['error'];
 				} else {
-					$saved[$wof_id] = $rsp['geojson'];
+					$saved[] = $rsp['geojson'];
 				}
 			} else {
 				$errors[$wof_id] = "Could not find WOF GeoJSON file.";

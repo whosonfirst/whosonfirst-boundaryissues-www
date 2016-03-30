@@ -41,7 +41,10 @@
 			'id_field' => 'wof:id'
 		);
 
-		$existing_es_record = elasticsearch_get_index_record($id);
+		$existing_es_record = elasticsearch_get_index_record($id, array(
+			'index' => $index,
+			'type' => $type
+		));
 		if ($existing_es_record) {
 			$rsp = elasticsearch_update_document($index, $type, $id, $props);
 		} else {
