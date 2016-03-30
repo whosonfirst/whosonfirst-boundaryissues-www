@@ -1724,14 +1724,12 @@ layers:
                             color: [[10, [1.0,1.0,1.0]], [16, [1.0,1.0,1.0]], [17, [0.00,0.00,0.00]]]
                             width: [[10,2px], [16,0px], [17, 2px], [18, 2px]]
                 early:
-                    filter: { $zoom: { max: 15 } }
+                    filter: { $zoom: { max: 16 } }
                     draw:
                         lines:
                             order: 352
-                            visible: false
                             outline:
                                 order: 353 #function() { return feature.sort_key + 2; }
-                                visible: false
                 routes:
                     filter: { ref: true, $zoom: { min: 12} }
                     draw:
@@ -3487,7 +3485,7 @@ layers:
             populated-places-osm-z8:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: true
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -3714,7 +3712,7 @@ layers:
             populated-places-osm-z9:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: true
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -3863,7 +3861,7 @@ layers:
             populated-places-osm-z9-no-population:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: false
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -3963,7 +3961,7 @@ layers:
             populated-places-osm-z10:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: true
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4057,7 +4055,7 @@ layers:
             populated-places-osm-z10-no-population:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: false
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4145,7 +4143,7 @@ layers:
             populated-places-osm-z11:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: true
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4197,7 +4195,7 @@ layers:
             populated-places-osm-z11-no-population:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: false
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4285,7 +4283,7 @@ layers:
             populated-places-osm-z12:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: true
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4351,7 +4349,7 @@ layers:
             populated-places-osm-z12-no-population:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: false
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4433,7 +4431,7 @@ layers:
             populated-places-osm-z13-z14:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: true
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4502,7 +4500,7 @@ layers:
             populated-places-osm-z13-z14-no-population:
                 filter:
                     all:
-                        - source: openstreetmap
+                        - source: [openstreetmap, openstreetmap.org]
                         - name: true
                         - population: false
                         - not: { kind: [country, county, state, island, neighbourhood, suburb, quarter] }
@@ -4561,8 +4559,8 @@ layers:
                         - kind: [macrohood, neighbourhood]
                         - $zoom: [11]
                     any:
-                        - source: openstreetmap
-                        - source: whosonfirst
+                        - source: [openstreetmap, openstreetmap.org]
+                        - source: [whosonfirst, whosonfirst.mapzen.com]
                           all:
                             - min_zoom: [11]
                             - max_zoom: { min: 12 }
@@ -4586,8 +4584,8 @@ layers:
                         - kind: [macrohood, neighbourhood]
                         - $zoom: [12]
                     any:
-                        - source: openstreetmap
-                        - source: whosonfirst
+                        - source: [openstreetmap, openstreetmap.org]
+                        - source: [whosonfirst, whosonfirst.mapzen.com]
                           all:
                             - min_zoom: [11,12]
                             - max_zoom: { min: 13 }
@@ -4611,8 +4609,8 @@ layers:
                         - kind: [macrohood, neighbourhood]
                         - $zoom: [13]
                     any:
-                        - source: openstreetmap
-                        - source: whosonfirst
+                        - source: [openstreetmap, openstreetmap.org]
+                        - source: [whosonfirst, whosonfirst.mapzen.com]
                           all:
                             - min_zoom: [11,12,13]
                             - max_zoom: { min: 14 }
@@ -4636,8 +4634,8 @@ layers:
                         - kind: [macrohood, neighbourhood]
                         - $zoom: [14]
                     any:
-                        - source: openstreetmap
-                        - source: whosonfirst
+                        - source: [openstreetmap, openstreetmap.org]
+                        - source: [whosonfirst, whosonfirst.mapzen.com]
                           all:
                             - min_zoom: [11,12,13,14]
                             - max_zoom: { min: 15 }
@@ -4661,8 +4659,8 @@ layers:
                         - kind: [macrohood, neighbourhood]
                         - $zoom: [15]
                     any:
-                        - source: openstreetmap
-                        - source: whosonfirst
+                        - source: [openstreetmap, openstreetmap.org]
+                        - source: [whosonfirst, whosonfirst.mapzen.com]
                           all:
                             - min_zoom: [11,12,13,14,15]
                             - max_zoom: { min: 16 }
@@ -4695,8 +4693,8 @@ layers:
                         - kind: [macrohood, neighbourhood]
                         - $zoom: [16]
                     any:
-                        - source: openstreetmap
-                        - source: whosonfirst
+                        - source: [openstreetmap, openstreetmap.org]
+                        - source: [whosonfirst, whosonfirst.mapzen.com]
                           all:
                             - min_zoom: [11,12,13,14,15,16]
                             - max_zoom: { min: 17 }
@@ -5458,6 +5456,8 @@ layers:
                 draw:
                     icons:
                         visible: false
+                    text-blend-order:
+                        visible: false
             tram-stop-early-z15:
                 filter: { kind: tram_stop, $zoom: [15] }
                 draw:
@@ -5467,7 +5467,7 @@ layers:
                 filter: { kind: tram_stop, $zoom: { min: 15 } }
                 draw:
                     icons:
-                        size: [[13, 12px], [16, 18px]]
+                        size: [[16, 12px], [17, 18px]]
                     text-blend-order:
                         offset: [[13, [0, 6px]], [16, [0, 9px]]]
             bus-stop-bus-station-labels:
