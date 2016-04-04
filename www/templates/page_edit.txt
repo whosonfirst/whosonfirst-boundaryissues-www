@@ -20,8 +20,6 @@
 					<div class="headroom">
 						{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					</div>
-
-					<div class="caveat" style="margin-top:.5em;"><small>Saving can still be a bit slow because we have to talk to GitHub about things.</small></div>
 					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
@@ -30,6 +28,7 @@
 					<input type="hidden" name="properties.wof:hierarchy" value="{$wof_hierarchy|@escape}">
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
+					<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
 					<h3 class="headroom">Options</h3>
 					<div id="edit-buttons">
 						{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}

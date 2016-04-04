@@ -34,7 +34,10 @@
 
 		if (! $GLOBALS['gearman_client']) {
 			$gearman_client = new GearmanClient();
-			$gearman_client->addServer();
+			$gearman_client->addServer(
+				$GLOBALS['cfg']['gearman_host'],
+				$GLOBALS['cfg']['gearman_port']
+			);
 			$GLOBALS['gearman_client'] = $gearman_client;
 		} else {
 			$gearman_client = $GLOBALS['gearman_client'];
@@ -91,13 +94,13 @@
 			'geojson_data' => $geojson_data,
 			'user_id' => $GLOBALS['cfg']['user']['id']
 		));
-		dbug('gearman_client: save_to_github');
+		//dbug('gearman_client: save_to_github');
 		$gearman_client->doBackground("save_to_github", $github_details);
 
 		$search_details = serialize(array(
 			'geojson_data' => $geojson_data
 		));
-		dbug('gearman_client: update_search_index');
+		//dbug('gearman_client: update_search_index');
 		$gearman_client->doBackground("update_search_index", $search_details);
 
 		return array(
@@ -108,10 +111,10 @@
 	}
 
 	function wof_save_batch($batch_ids, $batch_properties) {
+		$errors = array();
+		$saved = array();
 		foreach ($batch_ids as $wof_id) {
 			$geojson_path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
-			$errors = array();
-			$saved = array();
 			if (file_exists($geojson_path)) {
 				$existing_geojson = file_get_contents($geojson_path);
 				$existing_feature = json_decode($existing_geojson, true);

@@ -50,6 +50,9 @@
 	$GLOBALS['cfg']['elasticsearch_port'] = '9200';
 	$GLOBALS['cfg']['elasticsearch_http_timeout'] = 10;
 
+	$GLOBALS['cfg']['gearman_host'] = 'localhost';
+	$GLOBALS['cfg']['gearman_port'] = '4730';
+
 	# hard coding this URL will ensure it works in cron mode too
 
 	$GLOBALS['cfg']['server_scheme'] = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ? 'https' : 'http';
