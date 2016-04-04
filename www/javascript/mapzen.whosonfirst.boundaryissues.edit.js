@@ -222,6 +222,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				e.preventDefault();
 				self.set_property('mz:is_funky', 1);
 			});
+
+			$('#btn-rebuild-hierarchy').click(function(e) {
+				e.preventDefault();
+				$('input[name="properties.wof:parent_id"]').val(-1);
+				var $latInput = $('input[name="properties.geom:latitude"]');
+				var $lngInput = $('input[name="properties.geom:longitude"]');
+				if ($latInput.val() &&
+				    $lngInput.val()) {
+					var lat = parseFloat($latInput.val());
+					var lng = parseFloat($lngInput.val());
+					self.lookup_hierarchy(lat, lng);
+				}
+			});
 		},
 
 		set_marker: function(m) {
@@ -453,14 +466,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					label = key.match(labelRegex)[1];
 				}
 
-			    	var root = $(document.body).data("abs-root-url");
-			    	var href = root + '/belongsto/' + id + '/';
+				var root = $(document.body).data("abs-root-url");
+				var href = root + '/belongsto/' + id + '/';
 
 				html += '<li>' + label + ': <a href="' + href + '" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
 			}
 			html += '</ul>';
 			$('#hierarchy').append(html);
 			self.get_hierarchy_names();
+			$('#btn-rebuild-hierarchy').removeClass('disabled');
+
 		},
 
 		get_hierarchy_names: function() {

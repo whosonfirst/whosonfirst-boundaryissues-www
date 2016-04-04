@@ -26,6 +26,7 @@
 					<input type="hidden" name="properties.wof:hierarchy" value="[]">
 					<div id="parent" class="headroom">Parent: <code><small>-1</small></code></div>
 					<div id="hierarchy"></div>
+					<button class="btn disabled" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
 				</div>
 			</div>
 		</form>
