@@ -106,6 +106,7 @@ th:hover .remove-row {
 .caveat {
     font-style:italic;
     color:#D4645C;
+    margin-top:.75em;
 }
 
 #site-message {

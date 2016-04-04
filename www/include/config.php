@@ -39,9 +39,9 @@
 		),
 	);
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data';
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
-	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
+	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-california';
 	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues.log';

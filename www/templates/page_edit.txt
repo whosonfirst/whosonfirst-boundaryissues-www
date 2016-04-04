@@ -20,7 +20,11 @@
 					<div class="headroom">
 						{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					</div>
+					{if $cfg.user}
 					<button type="submit" class="btn btn-primary">Save</button>
+					{else}
+					<div class="caveat">You need to be logged in to save changes</div>
+					{/if}
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
 					<h3>Hierarchy</h3>
@@ -28,7 +32,11 @@
 					<input type="hidden" name="properties.wof:hierarchy" value="{$wof_hierarchy|@escape}">
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
+					{if $cfg.user}
 					<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
+					{/if}
+
+					{if $cfg.user}
 					<h3 class="headroom">Options</h3>
 					<div id="edit-buttons">
 						{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}
@@ -42,9 +50,10 @@
 						{/if}
 					</div>
 
-					<div class="caveat" style="margin-top:.5em;">
+					<div class="caveat">
 					<small>For now, you will still need to click the <span style="font-weight:700;">save</span> button below for these changes to stick.</small>
 					</div>
+					{/if}
 
 					<ul id="edit-options">
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a></li>

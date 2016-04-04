@@ -3,7 +3,7 @@
 	loadlib('wof_schema');
 	loadlib('wof_utils');
 
-	login_ensure_loggedin();
+	# login_ensure_loggedin();
 
 	$crumb_venue_fallback = crumb_generate('wof.save');
 	$GLOBALS['smarty']->assign("crumb_save_fallback", $crumb_venue_fallback);
@@ -28,15 +28,14 @@
 	);
 
 	$wof_id = get_int64('id');
+
 	$path = wof_utils_id2abspath(
 		$GLOBALS['cfg']['wof_data_dir'],
 		$wof_id
 	);
+
 	if (!file_exists($path)) {
-		// TODO: Do this the proper Flamework way
-		http_response_code(404);
-		echo "404 not found.";
-		exit;
+		error_404();
 	}
 	$geojson = file_get_contents($path);
 	$values = json_decode($geojson, true);
@@ -46,8 +45,11 @@
 
 	$GLOBALS['smarty']->assign_by_ref("properties", $values['properties']);
 
-	$crumb_save = crumb_generate('api', 'wof.save');
-	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
+	if ($GLOBALS['cfg']['user']){
+		$crumb_save = crumb_generate('api', 'wof.save');
+		$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
+	}
+
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);
 	$GLOBALS['smarty']->assign('wof_name', $values['properties']['wof:name']);
 	$GLOBALS['smarty']->assign('wof_parent_id', $values['properties']['wof:parent_id']);
