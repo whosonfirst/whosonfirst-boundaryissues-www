@@ -28,6 +28,7 @@
 					<input type="hidden" name="properties.wof:hierarchy" value="{$wof_hierarchy|@escape}">
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
+					<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
 					<h3 class="headroom">Options</h3>
 					<div id="edit-buttons">
 						{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}
