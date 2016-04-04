@@ -30,7 +30,13 @@
 	########################################################################
 
 	function wof_pv(&$props, $key){
-		return wof_smarty_properties_value($props, $key);
+		$value = wof_smarty_properties_value($props, $key);
+		if (substr($key, 0, 5) == 'edtf:' &&
+		    $value == 'uuuu') {
+			// Treat 'uuuu' EDTF date values as equivalent to no property value
+			return null;
+		}
+		return $value;
 	}
 
 	########################################################################
