@@ -34,7 +34,10 @@
 
 		if (! $GLOBALS['gearman_client']) {
 			$gearman_client = new GearmanClient();
-			$gearman_client->addServer();
+			$gearman_client->addServer(
+				$GLOBALS['cfg']['gearman_host'],
+				$GLOBALS['cfg']['gearman_port']
+			);
 			$GLOBALS['gearman_client'] = $gearman_client;
 		} else {
 			$gearman_client = $GLOBALS['gearman_client'];
