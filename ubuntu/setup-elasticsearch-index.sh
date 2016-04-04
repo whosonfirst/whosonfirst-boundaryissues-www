@@ -4,15 +4,13 @@ WHOAMI=`python -c 'import os, sys; print os.path.realpath(sys.argv[1])' $0`
 
 PARENT=`dirname $WHOAMI`
 PROJECT=`dirname $PARENT`
-DATA="${PROJECT}/data"
+DATA=$1
 
-# this seems like a good idea... until it's not
-# (20160202/thisisaaronland)
-#
-# if [ ! -d ${DATA} ]
-# then
-#     ${PARENT}/setup-data.sh
-# fi
+if [ ! -d ${DATA} ]
+then
+    echo "Can not find data directory ${DATA}"
+    exit 1
+fi
 
 /usr/local/bin/wof-es-index -s ${DATA} -b
 
