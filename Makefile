@@ -99,8 +99,8 @@ es-schema:
 	curl -s -o schema/elasticsearch/mappings.boundaryissues.json https://raw.githubusercontent.com/whosonfirst/es-whosonfirst-schema/master/schema/mappings.boundaryissues.json
 
 es-reload:
-	curl -s -XDELETE 'http://localhost:9200/whosonfirst' | python -mjson.tool
-	cat "schema/elasticsearch/mappings.boundaryissues.json" | curl -s -XPUT 'http://localhost:9200/whosonfirst' -d @- | python -mjson.tool
+	curl -s -XDELETE 'http://$(host):9200/whosonfirst' | python -mjson.tool
+	cat "schema/elasticsearch/mappings.boundaryissues.json" | curl -s -XPUT 'http://$(host):9200/whosonfirst' -d @- | python -mjson.tool
 
 es-index:
 	sudo -u www-data ./ubuntu/setup-elasticsearch-index.sh $(data)
