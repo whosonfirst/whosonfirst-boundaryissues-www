@@ -20,8 +20,6 @@
 					<div class="headroom">
 						{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					</div>
-
-					<div class="caveat" style="margin-top:.5em;"><small>Saving can still be a bit slow because we have to talk to GitHub about things.</small></div>
 					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
