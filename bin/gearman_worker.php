@@ -5,7 +5,10 @@
 	loadlib('wof_elasticsearch');
 
 	$worker = new GearmanWorker();
-	$worker->addServer();
+	$worker->addServer(
+		$GLOBALS['cfg']['gearman_host'],
+		$GLOBALS['cfg']['gearman_port']
+	);
 	$worker->addFunction('save_to_github', 'gearman_save_to_github');
 	$worker->addFunction('update_search_index', 'gearman_update_search_index');
 	while ($worker->work());
