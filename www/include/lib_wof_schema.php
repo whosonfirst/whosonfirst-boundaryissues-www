@@ -70,6 +70,12 @@
 					$schema['properties'][$key]['_value'] = $value;
 				} else if ($schema['properties'][$key]) {
 					$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
+				} else {
+					dbug('read_only found: ' . $key);
+					$schema['properties'][$key] = array(
+						'type' => 'read_only',
+						'_value' => json_encode($value)
+					);
 				}
 			}
 		}
@@ -79,6 +85,9 @@
 	function wof_schema_set_read_only($schema, $read_only) {
 		if (is_array($read_only)) {
 			foreach ($read_only as $key => $value) {
+				if (! $schema['properties'][$key]) {
+					$schema['properties'][$key] = array();
+				}
 				if (is_scalar($value)) {
 					$schema['properties'][$key]['_read_only'] = $value;
 				} else if ($schema['properties'][$key]) {
