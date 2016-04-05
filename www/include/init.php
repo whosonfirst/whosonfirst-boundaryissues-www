@@ -171,15 +171,25 @@
 
 	$config_files = array();
 
+	# See the order of predence? It's important. Global is global.
+	# Local is by hostname. Dev is local to a specific machine or
+	# instance where you may not know or have a hostname...
+	# (20160404/thisisaaronland)
+	
 	$global_config = FLAMEWORK_INCLUDE_DIR . "config.php";
 	$global_secrets = FLAMEWORK_INCLUDE_DIR . "secrets.php";
-
+	
 	$local_config = FLAMEWORK_INCLUDE_DIR . "config_local_{$host}.php";
 	$local_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_local_{$host}.php";
 
+	$dev_config = FLAMEWORK_INCLUDE_DIR . "config_dev.php";
+	$dev_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_dev.php";
+
 	$config_files[] = $global_config;
 
-	foreach (array($global_secrets, $local_config, $local_secrets) as $path){
+	$to_check = array($global_secrets, $local_config, $local_secrets, $dev_config, $dev_secrets);
+
+	foreach ($to_check as $path){
 
 		if (file_exists($path)){
 			$config_files[] = $path;
@@ -187,6 +197,17 @@
 	}
 
 	foreach ($config_files as $path){
+
+		# See this - prod does not make exceptions. If you're in prod then
+		# just make it work, yeah? (20160405/thisisaaronland)
+
+		if ($GLOBALS['cfg']['environment'] == 'prod'){
+
+			if (in_array($path, array($dev_config, $dev_secrets))){
+				continue;
+			}
+		}
+
 		# echo "load {$path} <br />";
 
 		$start = microtime_ms();
