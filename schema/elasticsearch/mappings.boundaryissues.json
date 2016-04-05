@@ -1,0 +1,6561 @@
+{
+  "mappings" : {
+    "locality" : {
+      "properties" : {
+        "names_all" : {
+          "type" : "string"
+        },
+        "name_not_analyzed" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
+        "edtf:cessation" : {
+          "type" : "string"
+        },
+        "edtf:inception" : {
+          "type" : "string"
+        },
+        "geom:area" : {
+          "type" : "double"
+        },
+        "geom:bbox" : {
+          "type" : "string"
+        },
+        "geom:latitude" : {
+          "type" : "double"
+        },
+        "geom:longitude" : {
+          "type" : "double"
+        },
+        "geom:type" : {
+          "type" : "string"
+        },
+        "geonames:id" : {
+          "type" : "string"
+        },
+        "gn:elevation" : {
+          "type" : "long"
+        },
+        "gn:id" : {
+          "type" : "long"
+        },
+        "gn:latitude" : {
+          "type" : "string"
+        },
+        "gn:longitude" : {
+          "type" : "string"
+        },
+        "gn:population" : {
+          "type" : "long"
+        },
+        "iso:country" : {
+          "type" : "string"
+        },
+        "lbl:latitude" : {
+          "type" : "double"
+        },
+        "lbl:longitude" : {
+          "type" : "double"
+        },
+        "mps:latitude" : {
+          "type" : "double"
+        },
+        "mps:longitude" : {
+          "type" : "double"
+        },
+        "mz:is_funky" : {
+          "type" : "integer"
+        },
+        "mz:is_landuse_aoi" : {
+          "type" : "integer"
+        },
+        "mz:max_zoom" : {
+          "type" : "integer"
+        },
+        "mz:min_zoom" : {
+          "type" : "integer"
+        },
+        "name:ara_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:chi_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:chi_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:cze_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:cze_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:cze_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dan_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dan_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dan_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dut_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dut_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dut_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fin_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fin_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fin_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fre_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fre_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fre_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ger_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ger_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ger_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:hun_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:hun_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:hun_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:jpn_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:jpn_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:kor_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:kor_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:kor_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:nor_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:nor_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:nor_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:pol_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:pol_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:pol_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:por_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:por_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:por_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:rum_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:rum_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:rum_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:und_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:und_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:und_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "qs:a0" : {
+          "type" : "string"
+        },
+        "qs:a0_lc" : {
+          "type" : "string"
+        },
+        "qs:a1" : {
+          "type" : "string"
+        },
+        "qs:a1_alt" : {
+          "type" : "string"
+        },
+        "qs:a1_lc" : {
+          "type" : "string"
+        },
+        "qs:a1r" : {
+          "type" : "string"
+        },
+        "qs:a1r_lc" : {
+          "type" : "string"
+        },
+        "qs:a2" : {
+          "type" : "string"
+        },
+        "qs:a2_alt" : {
+          "type" : "string"
+        },
+        "qs:a2_lc" : {
+          "type" : "string"
+        },
+        "qs:a2r" : {
+          "type" : "string"
+        },
+        "qs:adm0" : {
+          "type" : "string"
+        },
+        "qs:id" : {
+          "type" : "string"
+        },
+        "qs:la" : {
+          "type" : "string"
+        },
+        "qs:la_lc" : {
+          "type" : "string"
+        },
+        "qs:level" : {
+          "type" : "string"
+        },
+        "qs:loc" : {
+          "type" : "string"
+        },
+        "qs:loc_alt" : {
+          "type" : "string"
+        },
+        "qs:loc_lc" : {
+          "type" : "string"
+        },
+        "qs:pop" : {
+          "type" : "string"
+        },
+        "qs:source" : {
+          "type" : "string"
+        },
+        "qs:type" : {
+          "type" : "string"
+        },
+        "src:geom" : {
+          "type" : "string"
+        },
+        "src:lbl:centroid" : {
+          "type" : "string"
+        },
+        "wof:belongsto" : {
+          "type" : "long"
+        },
+        "wof:breaches" : {
+          "type" : "long"
+        },
+        "wof:concordances" : {
+          "properties" : {
+            "dbp:id" : {
+              "type" : "string"
+            },
+            "fb:id" : {
+              "type" : "string"
+            },
+            "fct:id" : {
+              "type" : "string"
+            },
+            "gn:id" : {
+              "type" : "long"
+            },
+            "gp:id" : {
+              "type" : "long"
+            },
+            "loc:id" : {
+              "type" : "string"
+            },
+            "nyt:id" : {
+              "type" : "string"
+            },
+            "qs:id" : {
+              "type" : "string"
+            },
+            "tgn:id" : {
+              "type" : "string"
+            },
+            "wd:id" : {
+              "type" : "string"
+            }
+          }
+        },
+        "wof:concordances_count" : {
+          "type" : "string"
+        },
+        "wof:country" : {
+          "type" : "string"
+        },
+        "wof:geomhash" : {
+          "type" : "string"
+        },
+        "wof:hierarchy" : {
+          "properties" : {
+            "continent_id" : {
+              "type" : "long"
+            },
+            "country_id" : {
+              "type" : "long"
+            },
+            "county_id" : {
+              "type" : "long"
+            },
+            "dependency_id" : {
+              "type" : "string"
+            },
+            "disputed_id" : {
+              "type" : "string"
+            },
+            "localadmin_id" : {
+              "type" : "string"
+            },
+            "locality_id" : {
+              "type" : "long"
+            },
+            "macrocounty_id" : {
+              "type" : "string"
+            },
+            "macroregion_id" : {
+              "type" : "string"
+            },
+            "region_id" : {
+              "type" : "long"
+            }
+          }
+        },
+        "wof:id" : {
+          "type" : "long"
+        },
+        "wof:lang" : {
+          "type" : "string"
+        },
+        "wof:lastmodified" : {
+          "type" : "long"
+        },
+        "wof:megacity" : {
+          "type" : "long"
+        },
+        "wof:name" : {
+          "type" : "string",
+          "copy_to" : [ "names_all", "name_not_analyzed" ]
+        },
+        "wof:parent_id" : {
+          "type" : "string"
+        },
+        "wof:placetype" : {
+          "type" : "string"
+        },
+        "wof:placetype_id" : {
+          "type" : "long"
+        },
+        "wof:scale" : {
+          "type" : "long"
+        },
+        "wof:supersedes" : {
+          "type" : "long"
+        },
+        "zs:blockids" : {
+          "type" : "string"
+        },
+        "zs:housing10" : {
+          "type" : "string"
+        },
+        "zs:pop10" : {
+          "type" : "long"
+        }
+      }
+    },
+    "neighbourhood" : {
+      "properties" : {
+        "names_all" : {
+          "type" : "string"
+        },
+        "name_not_analyzed" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
+        "edtf:cessation" : {
+          "type" : "string"
+        },
+        "edtf:deprecated" : {
+          "type" : "string"
+        },
+        "edtf:inception" : {
+          "type" : "string"
+        },
+        "geom:area" : {
+          "type" : "double"
+        },
+        "geom:bbox" : {
+          "type" : "string"
+        },
+        "geom:latitude" : {
+          "type" : "double"
+        },
+        "geom:longitude" : {
+          "type" : "double"
+        },
+        "geom:type" : {
+          "type" : "string"
+        },
+        "gn:elevation" : {
+          "type" : "long"
+        },
+        "gn:id" : {
+          "type" : "long"
+        },
+        "gn:latitude" : {
+          "type" : "string"
+        },
+        "gn:longitude" : {
+          "type" : "string"
+        },
+        "gn:population" : {
+          "type" : "long"
+        },
+        "iso:country" : {
+          "type" : "string"
+        },
+        "lbl:latitude" : {
+          "type" : "double"
+        },
+        "lbl:longitude" : {
+          "type" : "double"
+        },
+        "misc:gn_adm0_cc" : {
+          "type" : "string"
+        },
+        "misc:gn_fcode" : {
+          "type" : "string"
+        },
+        "misc:gn_id" : {
+          "type" : "string"
+        },
+        "misc:gn_local" : {
+          "type" : "string"
+        },
+        "misc:gn_nam_loc" : {
+          "type" : "string"
+        },
+        "misc:gn_namadm1" : {
+          "type" : "string"
+        },
+        "misc:gn_name" : {
+          "type" : "string"
+        },
+        "misc:local_max" : {
+          "type" : "string"
+        },
+        "misc:local_sum" : {
+          "type" : "string"
+        },
+        "misc:localhoods" : {
+          "type" : "string"
+        },
+        "misc:name" : {
+          "type" : "string"
+        },
+        "misc:name_adm0" : {
+          "type" : "string"
+        },
+        "misc:name_adm1" : {
+          "type" : "string"
+        },
+        "misc:name_adm2" : {
+          "type" : "string"
+        },
+        "misc:name_en" : {
+          "type" : "string"
+        },
+        "misc:name_lau" : {
+          "type" : "string"
+        },
+        "misc:name_local" : {
+          "type" : "string"
+        },
+        "misc:photo_max" : {
+          "type" : "string"
+        },
+        "misc:photo_sum" : {
+          "type" : "string"
+        },
+        "misc:placetype" : {
+          "type" : "string"
+        },
+        "misc:quad_count" : {
+          "type" : "string"
+        },
+        "misc:woe_adm0" : {
+          "type" : "string"
+        },
+        "misc:woe_adm1" : {
+          "type" : "string"
+        },
+        "misc:woe_adm2" : {
+          "type" : "string"
+        },
+        "misc:woe_funk" : {
+          "type" : "string"
+        },
+        "misc:woe_lau" : {
+          "type" : "string"
+        },
+        "misc:woe_local" : {
+          "type" : "string"
+        },
+        "misc:woe_ver" : {
+          "type" : "string"
+        },
+        "mps:latitude" : {
+          "type" : "double"
+        },
+        "mps:longitude" : {
+          "type" : "double"
+        },
+        "mz:is_funky" : {
+          "type" : "integer"
+        },
+        "mz:is_landuse_aoi" : {
+          "type" : "integer"
+        },
+        "mz:max_zoom" : {
+          "type" : "integer"
+        },
+        "mz:min_zoom" : {
+          "type" : "integer"
+        },
+        "name:ara_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ara_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ara_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:chi_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:chi_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:cze_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:cze_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:cze_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dan_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dan_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dan_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dut_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dut_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:dut_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_p" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:eng_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fin_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fin_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fin_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fre_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fre_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:fre_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ger_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ger_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ger_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:hun_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:hun_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:hun_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:ita_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:jpn_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:jpn_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:kor_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:kor_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:nor_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:nor_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:nor_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:pol_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:pol_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:pol_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:por_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:por_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:por_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:rum_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:rum_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:rum_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:spa_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:swe_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:und_x_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:und_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name:und_x_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_colloquial" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_unknown" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_variant" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "qs:id" : {
+          "type" : "string"
+        },
+        "src:geom" : {
+          "type" : "string"
+        },
+        "src:geom_alt" : {
+          "type" : "string"
+        },
+        "src:lbl" : {
+          "type" : "string"
+        },
+        "src:lbl:centroid" : {
+          "type" : "string"
+        },
+        "wof:belongsto" : {
+          "type" : "long"
+        },
+        "wof:breaches" : {
+          "type" : "long"
+        },
+        "wof:concordances" : {
+          "properties" : {
+            "dbp:id" : {
+              "type" : "string"
+            },
+            "fb:id" : {
+              "type" : "string"
+            },
+            "fct:id" : {
+              "type" : "string"
+            },
+            "gn:id" : {
+              "type" : "long"
+            },
+            "gp:id" : {
+              "type" : "long"
+            },
+            "loc:id" : {
+              "type" : "string"
+            },
+            "nyt:id" : {
+              "type" : "string"
+            },
+            "qs:id" : {
+              "type" : "string"
+            },
+            "tgn:id" : {
+              "type" : "string"
+            },
+            "wd:id" : {
+              "type" : "string"
+            }
+          }
+        },
+        "wof:concordances_count" : {
+          "type" : "string"
+        },
+        "wof:country" : {
+          "type" : "string"
+        },
+        "wof:geomhash" : {
+          "type" : "string"
+        },
+        "wof:hierarchy" : {
+          "properties" : {
+            "continent_id" : {
+              "type" : "long"
+            },
+            "country_id" : {
+              "type" : "long"
+            },
+            "county_id" : {
+              "type" : "long"
+            },
+            "dependency_id" : {
+              "type" : "string"
+            },
+            "disputed_id" : {
+              "type" : "string"
+            },
+            "localadmin_id" : {
+              "type" : "string"
+            },
+            "locality_id" : {
+              "type" : "long"
+            },
+            "macrocounty_id" : {
+              "type" : "string"
+            },
+            "macrohood_id" : {
+              "type" : "string"
+            },
+            "macroregion_id" : {
+              "type" : "string"
+            },
+            "neighbourhood_id" : {
+              "type" : "long"
+            },
+            "region_id" : {
+              "type" : "long"
+            }
+          }
+        },
+        "wof:id" : {
+          "type" : "long"
+        },
+        "wof:lang" : {
+          "type" : "string"
+        },
+        "wof:lastmodified" : {
+          "type" : "long"
+        },
+        "wof:megacity" : {
+          "type" : "long"
+        },
+        "wof:name" : {
+          "type" : "string",
+          "copy_to" : [ "names_all", "name_not_analyzed" ]
+        },
+        "wof:parent_id" : {
+          "type" : "string"
+        },
+        "wof:placetype" : {
+          "type" : "string"
+        },
+        "wof:placetype_id" : {
+          "type" : "long"
+        },
+        "wof:placetype_names" : {
+          "type" : "string"
+        },
+        "wof:scale" : {
+          "type" : "long"
+        },
+        "wof:superseded_by" : {
+          "type" : "long"
+        },
+        "wof:supersedes" : {
+          "type" : "long"
+        },
+        "zs:10003:area_m" : {
+          "type" : "string"
+        },
+        "zs:10003:blockids" : {
+          "type" : "string"
+        },
+        "zs:10003:housing10" : {
+          "type" : "string"
+        },
+        "zs:10003:id" : {
+          "type" : "string"
+        },
+        "zs:10003:label" : {
+          "type" : "string"
+        },
+        "zs:10003:pop10" : {
+          "type" : "string"
+        },
+        "zs:1033:area_m" : {
+          "type" : "string"
+        },
+        "zs:1033:blockids" : {
+          "type" : "string"
+        },
+        "zs:1033:housing10" : {
+          "type" : "string"
+        },
+        "zs:1033:id" : {
+          "type" : "string"
+        },
+        "zs:1033:label" : {
+          "type" : "string"
+        },
+        "zs:1033:pop10" : {
+          "type" : "string"
+        },
+        "zs:1055:area_m" : {
+          "type" : "string"
+        },
+        "zs:1055:blockids" : {
+          "type" : "string"
+        },
+        "zs:1055:housing10" : {
+          "type" : "string"
+        },
+        "zs:1055:id" : {
+          "type" : "string"
+        },
+        "zs:1055:label" : {
+          "type" : "string"
+        },
+        "zs:1055:pop10" : {
+          "type" : "string"
+        },
+        "zs:1069:area_m" : {
+          "type" : "string"
+        },
+        "zs:1069:blockids" : {
+          "type" : "string"
+        },
+        "zs:1069:housing10" : {
+          "type" : "string"
+        },
+        "zs:1069:id" : {
+          "type" : "string"
+        },
+        "zs:1069:label" : {
+          "type" : "string"
+        },
+        "zs:1069:pop10" : {
+          "type" : "string"
+        },
+        "zs:1073:area_m" : {
+          "type" : "string"
+        },
+        "zs:1073:blockids" : {
+          "type" : "string"
+        },
+        "zs:1073:housing10" : {
+          "type" : "string"
+        },
+        "zs:1073:id" : {
+          "type" : "string"
+        },
+        "zs:1073:label" : {
+          "type" : "string"
+        },
+        "zs:1073:pop10" : {
+          "type" : "string"
+        },
+        "zs:1089:area_m" : {
+          "type" : "string"
+        },
+        "zs:1089:blockids" : {
+          "type" : "string"
+        },
+        "zs:1089:housing10" : {
+          "type" : "string"
+        },
+        "zs:1089:id" : {
+          "type" : "string"
+        },
+        "zs:1089:label" : {
+          "type" : "string"
+        },
+        "zs:1089:pop10" : {
+          "type" : "string"
+        },
+        "zs:1095:area_m" : {
+          "type" : "string"
+        },
+        "zs:1095:blockids" : {
+          "type" : "string"
+        },
+        "zs:1095:housing10" : {
+          "type" : "string"
+        },
+        "zs:1095:id" : {
+          "type" : "string"
+        },
+        "zs:1095:label" : {
+          "type" : "string"
+        },
+        "zs:1095:pop10" : {
+          "type" : "string"
+        },
+        "zs:1097:area_m" : {
+          "type" : "string"
+        },
+        "zs:1097:blockids" : {
+          "type" : "string"
+        },
+        "zs:1097:housing10" : {
+          "type" : "string"
+        },
+        "zs:1097:id" : {
+          "type" : "string"
+        },
+        "zs:1097:label" : {
+          "type" : "string"
+        },
+        "zs:1097:pop10" : {
+          "type" : "string"
+        },
+        "zs:11001:area_m" : {
+          "type" : "string"
+        },
+        "zs:11001:blockids" : {
+          "type" : "string"
+        },
+        "zs:11001:housing10" : {
+          "type" : "string"
+        },
+        "zs:11001:id" : {
+          "type" : "string"
+        },
+        "zs:11001:label" : {
+          "type" : "string"
+        },
+        "zs:11001:pop10" : {
+          "type" : "string"
+        },
+        "zs:1101:area_m" : {
+          "type" : "string"
+        },
+        "zs:1101:blockids" : {
+          "type" : "string"
+        },
+        "zs:1101:housing10" : {
+          "type" : "string"
+        },
+        "zs:1101:id" : {
+          "type" : "string"
+        },
+        "zs:1101:label" : {
+          "type" : "string"
+        },
+        "zs:1101:pop10" : {
+          "type" : "string"
+        },
+        "zs:1109:area_m" : {
+          "type" : "string"
+        },
+        "zs:1109:blockids" : {
+          "type" : "string"
+        },
+        "zs:1109:housing10" : {
+          "type" : "string"
+        },
+        "zs:1109:id" : {
+          "type" : "string"
+        },
+        "zs:1109:label" : {
+          "type" : "string"
+        },
+        "zs:1109:pop10" : {
+          "type" : "string"
+        },
+        "zs:1115:area_m" : {
+          "type" : "string"
+        },
+        "zs:1115:blockids" : {
+          "type" : "string"
+        },
+        "zs:1115:housing10" : {
+          "type" : "string"
+        },
+        "zs:1115:id" : {
+          "type" : "string"
+        },
+        "zs:1115:label" : {
+          "type" : "string"
+        },
+        "zs:1115:pop10" : {
+          "type" : "string"
+        },
+        "zs:1125:area_m" : {
+          "type" : "string"
+        },
+        "zs:1125:blockids" : {
+          "type" : "string"
+        },
+        "zs:1125:housing10" : {
+          "type" : "string"
+        },
+        "zs:1125:id" : {
+          "type" : "string"
+        },
+        "zs:1125:label" : {
+          "type" : "string"
+        },
+        "zs:1125:pop10" : {
+          "type" : "string"
+        },
+        "zs:12001:area_m" : {
+          "type" : "string"
+        },
+        "zs:12001:blockids" : {
+          "type" : "string"
+        },
+        "zs:12001:housing10" : {
+          "type" : "string"
+        },
+        "zs:12001:id" : {
+          "type" : "string"
+        },
+        "zs:12001:label" : {
+          "type" : "string"
+        },
+        "zs:12001:pop10" : {
+          "type" : "string"
+        },
+        "zs:12011:area_m" : {
+          "type" : "string"
+        },
+        "zs:12011:blockids" : {
+          "type" : "string"
+        },
+        "zs:12011:housing10" : {
+          "type" : "string"
+        },
+        "zs:12011:id" : {
+          "type" : "string"
+        },
+        "zs:12011:label" : {
+          "type" : "string"
+        },
+        "zs:12011:pop10" : {
+          "type" : "string"
+        },
+        "zs:12021:area_m" : {
+          "type" : "string"
+        },
+        "zs:12021:blockids" : {
+          "type" : "string"
+        },
+        "zs:12021:housing10" : {
+          "type" : "string"
+        },
+        "zs:12021:id" : {
+          "type" : "string"
+        },
+        "zs:12021:label" : {
+          "type" : "string"
+        },
+        "zs:12021:pop10" : {
+          "type" : "string"
+        },
+        "zs:12031:area_m" : {
+          "type" : "string"
+        },
+        "zs:12031:blockids" : {
+          "type" : "string"
+        },
+        "zs:12031:housing10" : {
+          "type" : "string"
+        },
+        "zs:12031:id" : {
+          "type" : "string"
+        },
+        "zs:12031:label" : {
+          "type" : "string"
+        },
+        "zs:12031:pop10" : {
+          "type" : "string"
+        },
+        "zs:12045:area_m" : {
+          "type" : "string"
+        },
+        "zs:12045:blockids" : {
+          "type" : "string"
+        },
+        "zs:12045:housing10" : {
+          "type" : "string"
+        },
+        "zs:12045:id" : {
+          "type" : "string"
+        },
+        "zs:12045:label" : {
+          "type" : "string"
+        },
+        "zs:12045:pop10" : {
+          "type" : "string"
+        },
+        "zs:12053:area_m" : {
+          "type" : "string"
+        },
+        "zs:12053:blockids" : {
+          "type" : "string"
+        },
+        "zs:12053:housing10" : {
+          "type" : "string"
+        },
+        "zs:12053:id" : {
+          "type" : "string"
+        },
+        "zs:12053:label" : {
+          "type" : "string"
+        },
+        "zs:12053:pop10" : {
+          "type" : "string"
+        },
+        "zs:12057:area_m" : {
+          "type" : "string"
+        },
+        "zs:12057:blockids" : {
+          "type" : "string"
+        },
+        "zs:12057:housing10" : {
+          "type" : "string"
+        },
+        "zs:12057:id" : {
+          "type" : "string"
+        },
+        "zs:12057:label" : {
+          "type" : "string"
+        },
+        "zs:12057:pop10" : {
+          "type" : "string"
+        },
+        "zs:12061:area_m" : {
+          "type" : "string"
+        },
+        "zs:12061:blockids" : {
+          "type" : "string"
+        },
+        "zs:12061:housing10" : {
+          "type" : "string"
+        },
+        "zs:12061:id" : {
+          "type" : "string"
+        },
+        "zs:12061:label" : {
+          "type" : "string"
+        },
+        "zs:12061:pop10" : {
+          "type" : "string"
+        },
+        "zs:12069:area_m" : {
+          "type" : "string"
+        },
+        "zs:12069:blockids" : {
+          "type" : "string"
+        },
+        "zs:12069:housing10" : {
+          "type" : "string"
+        },
+        "zs:12069:id" : {
+          "type" : "string"
+        },
+        "zs:12069:label" : {
+          "type" : "string"
+        },
+        "zs:12069:pop10" : {
+          "type" : "string"
+        },
+        "zs:12071:area_m" : {
+          "type" : "string"
+        },
+        "zs:12071:blockids" : {
+          "type" : "string"
+        },
+        "zs:12071:housing10" : {
+          "type" : "string"
+        },
+        "zs:12071:id" : {
+          "type" : "string"
+        },
+        "zs:12071:label" : {
+          "type" : "string"
+        },
+        "zs:12071:pop10" : {
+          "type" : "string"
+        },
+        "zs:12073:area_m" : {
+          "type" : "string"
+        },
+        "zs:12073:blockids" : {
+          "type" : "string"
+        },
+        "zs:12073:housing10" : {
+          "type" : "string"
+        },
+        "zs:12073:id" : {
+          "type" : "string"
+        },
+        "zs:12073:label" : {
+          "type" : "string"
+        },
+        "zs:12073:pop10" : {
+          "type" : "string"
+        },
+        "zs:12085:area_m" : {
+          "type" : "string"
+        },
+        "zs:12085:blockids" : {
+          "type" : "string"
+        },
+        "zs:12085:housing10" : {
+          "type" : "string"
+        },
+        "zs:12085:id" : {
+          "type" : "string"
+        },
+        "zs:12085:label" : {
+          "type" : "string"
+        },
+        "zs:12085:pop10" : {
+          "type" : "string"
+        },
+        "zs:12086:area_m" : {
+          "type" : "string"
+        },
+        "zs:12086:blockids" : {
+          "type" : "string"
+        },
+        "zs:12086:housing10" : {
+          "type" : "string"
+        },
+        "zs:12086:id" : {
+          "type" : "string"
+        },
+        "zs:12086:label" : {
+          "type" : "string"
+        },
+        "zs:12086:pop10" : {
+          "type" : "string"
+        },
+        "zs:12095:area_m" : {
+          "type" : "string"
+        },
+        "zs:12095:blockids" : {
+          "type" : "string"
+        },
+        "zs:12095:housing10" : {
+          "type" : "string"
+        },
+        "zs:12095:id" : {
+          "type" : "string"
+        },
+        "zs:12095:label" : {
+          "type" : "string"
+        },
+        "zs:12095:pop10" : {
+          "type" : "string"
+        },
+        "zs:12101:area_m" : {
+          "type" : "string"
+        },
+        "zs:12101:blockids" : {
+          "type" : "string"
+        },
+        "zs:12101:housing10" : {
+          "type" : "string"
+        },
+        "zs:12101:id" : {
+          "type" : "string"
+        },
+        "zs:12101:label" : {
+          "type" : "string"
+        },
+        "zs:12101:pop10" : {
+          "type" : "string"
+        },
+        "zs:12103:area_m" : {
+          "type" : "string"
+        },
+        "zs:12103:blockids" : {
+          "type" : "string"
+        },
+        "zs:12103:housing10" : {
+          "type" : "string"
+        },
+        "zs:12103:id" : {
+          "type" : "string"
+        },
+        "zs:12103:label" : {
+          "type" : "string"
+        },
+        "zs:12103:pop10" : {
+          "type" : "string"
+        },
+        "zs:12105:area_m" : {
+          "type" : "string"
+        },
+        "zs:12105:blockids" : {
+          "type" : "string"
+        },
+        "zs:12105:housing10" : {
+          "type" : "string"
+        },
+        "zs:12105:id" : {
+          "type" : "string"
+        },
+        "zs:12105:label" : {
+          "type" : "string"
+        },
+        "zs:12105:pop10" : {
+          "type" : "string"
+        },
+        "zs:13015:area_m" : {
+          "type" : "string"
+        },
+        "zs:13015:blockids" : {
+          "type" : "string"
+        },
+        "zs:13015:housing10" : {
+          "type" : "string"
+        },
+        "zs:13015:id" : {
+          "type" : "string"
+        },
+        "zs:13015:label" : {
+          "type" : "string"
+        },
+        "zs:13015:pop10" : {
+          "type" : "string"
+        },
+        "zs:13021:area_m" : {
+          "type" : "string"
+        },
+        "zs:13021:blockids" : {
+          "type" : "string"
+        },
+        "zs:13021:housing10" : {
+          "type" : "string"
+        },
+        "zs:13021:id" : {
+          "type" : "string"
+        },
+        "zs:13021:label" : {
+          "type" : "string"
+        },
+        "zs:13021:pop10" : {
+          "type" : "string"
+        },
+        "zs:13051:area_m" : {
+          "type" : "string"
+        },
+        "zs:13051:blockids" : {
+          "type" : "string"
+        },
+        "zs:13051:housing10" : {
+          "type" : "string"
+        },
+        "zs:13051:id" : {
+          "type" : "string"
+        },
+        "zs:13051:label" : {
+          "type" : "string"
+        },
+        "zs:13051:pop10" : {
+          "type" : "string"
+        },
+        "zs:13057:area_m" : {
+          "type" : "string"
+        },
+        "zs:13057:blockids" : {
+          "type" : "string"
+        },
+        "zs:13057:housing10" : {
+          "type" : "string"
+        },
+        "zs:13057:id" : {
+          "type" : "string"
+        },
+        "zs:13057:label" : {
+          "type" : "string"
+        },
+        "zs:13057:pop10" : {
+          "type" : "string"
+        },
+        "zs:13067:area_m" : {
+          "type" : "string"
+        },
+        "zs:13067:blockids" : {
+          "type" : "string"
+        },
+        "zs:13067:housing10" : {
+          "type" : "string"
+        },
+        "zs:13067:id" : {
+          "type" : "string"
+        },
+        "zs:13067:label" : {
+          "type" : "string"
+        },
+        "zs:13067:pop10" : {
+          "type" : "string"
+        },
+        "zs:13089:area_m" : {
+          "type" : "string"
+        },
+        "zs:13089:blockids" : {
+          "type" : "string"
+        },
+        "zs:13089:housing10" : {
+          "type" : "string"
+        },
+        "zs:13089:id" : {
+          "type" : "string"
+        },
+        "zs:13089:label" : {
+          "type" : "string"
+        },
+        "zs:13089:pop10" : {
+          "type" : "string"
+        },
+        "zs:13121:area_m" : {
+          "type" : "string"
+        },
+        "zs:13121:blockids" : {
+          "type" : "string"
+        },
+        "zs:13121:housing10" : {
+          "type" : "string"
+        },
+        "zs:13121:id" : {
+          "type" : "string"
+        },
+        "zs:13121:label" : {
+          "type" : "string"
+        },
+        "zs:13121:pop10" : {
+          "type" : "string"
+        },
+        "zs:13215:area_m" : {
+          "type" : "string"
+        },
+        "zs:13215:blockids" : {
+          "type" : "string"
+        },
+        "zs:13215:housing10" : {
+          "type" : "string"
+        },
+        "zs:13215:id" : {
+          "type" : "string"
+        },
+        "zs:13215:label" : {
+          "type" : "string"
+        },
+        "zs:13215:pop10" : {
+          "type" : "string"
+        },
+        "zs:13245:area_m" : {
+          "type" : "string"
+        },
+        "zs:13245:blockids" : {
+          "type" : "string"
+        },
+        "zs:13245:housing10" : {
+          "type" : "string"
+        },
+        "zs:13245:id" : {
+          "type" : "string"
+        },
+        "zs:13245:label" : {
+          "type" : "string"
+        },
+        "zs:13245:pop10" : {
+          "type" : "string"
+        },
+        "zs:15001:area_m" : {
+          "type" : "string"
+        },
+        "zs:15001:blockids" : {
+          "type" : "string"
+        },
+        "zs:15001:housing10" : {
+          "type" : "string"
+        },
+        "zs:15001:id" : {
+          "type" : "string"
+        },
+        "zs:15001:label" : {
+          "type" : "string"
+        },
+        "zs:15001:pop10" : {
+          "type" : "string"
+        },
+        "zs:15003:area_m" : {
+          "type" : "string"
+        },
+        "zs:15003:blockids" : {
+          "type" : "string"
+        },
+        "zs:15003:housing10" : {
+          "type" : "string"
+        },
+        "zs:15003:id" : {
+          "type" : "string"
+        },
+        "zs:15003:label" : {
+          "type" : "string"
+        },
+        "zs:15003:pop10" : {
+          "type" : "string"
+        },
+        "zs:15007:area_m" : {
+          "type" : "string"
+        },
+        "zs:15007:blockids" : {
+          "type" : "string"
+        },
+        "zs:15007:housing10" : {
+          "type" : "string"
+        },
+        "zs:15007:id" : {
+          "type" : "string"
+        },
+        "zs:15007:label" : {
+          "type" : "string"
+        },
+        "zs:15007:pop10" : {
+          "type" : "string"
+        },
+        "zs:15009:area_m" : {
+          "type" : "string"
+        },
+        "zs:15009:blockids" : {
+          "type" : "string"
+        },
+        "zs:15009:housing10" : {
+          "type" : "string"
+        },
+        "zs:15009:id" : {
+          "type" : "string"
+        },
+        "zs:15009:label" : {
+          "type" : "string"
+        },
+        "zs:15009:pop10" : {
+          "type" : "string"
+        },
+        "zs:16001:area_m" : {
+          "type" : "string"
+        },
+        "zs:16001:blockids" : {
+          "type" : "string"
+        },
+        "zs:16001:housing10" : {
+          "type" : "string"
+        },
+        "zs:16001:id" : {
+          "type" : "string"
+        },
+        "zs:16001:label" : {
+          "type" : "string"
+        },
+        "zs:16001:pop10" : {
+          "type" : "string"
+        },
+        "zs:17041:area_m" : {
+          "type" : "string"
+        },
+        "zs:17041:blockids" : {
+          "type" : "string"
+        },
+        "zs:17041:housing10" : {
+          "type" : "string"
+        },
+        "zs:17041:id" : {
+          "type" : "string"
+        },
+        "zs:17041:label" : {
+          "type" : "string"
+        },
+        "zs:17041:pop10" : {
+          "type" : "string"
+        },
+        "zs:17043:area_m" : {
+          "type" : "string"
+        },
+        "zs:17043:blockids" : {
+          "type" : "string"
+        },
+        "zs:17043:housing10" : {
+          "type" : "string"
+        },
+        "zs:17043:id" : {
+          "type" : "string"
+        },
+        "zs:17043:label" : {
+          "type" : "string"
+        },
+        "zs:17043:pop10" : {
+          "type" : "string"
+        },
+        "zs:17089:area_m" : {
+          "type" : "string"
+        },
+        "zs:17089:blockids" : {
+          "type" : "string"
+        },
+        "zs:17089:housing10" : {
+          "type" : "string"
+        },
+        "zs:17089:id" : {
+          "type" : "string"
+        },
+        "zs:17089:label" : {
+          "type" : "string"
+        },
+        "zs:17089:pop10" : {
+          "type" : "string"
+        },
+        "zs:17143:area_m" : {
+          "type" : "string"
+        },
+        "zs:17143:blockids" : {
+          "type" : "string"
+        },
+        "zs:17143:housing10" : {
+          "type" : "string"
+        },
+        "zs:17143:id" : {
+          "type" : "string"
+        },
+        "zs:17143:label" : {
+          "type" : "string"
+        },
+        "zs:17143:pop10" : {
+          "type" : "string"
+        },
+        "zs:17161:area_m" : {
+          "type" : "string"
+        },
+        "zs:17161:blockids" : {
+          "type" : "string"
+        },
+        "zs:17161:housing10" : {
+          "type" : "string"
+        },
+        "zs:17161:id" : {
+          "type" : "string"
+        },
+        "zs:17161:label" : {
+          "type" : "string"
+        },
+        "zs:17161:pop10" : {
+          "type" : "string"
+        },
+        "zs:17163:area_m" : {
+          "type" : "string"
+        },
+        "zs:17163:blockids" : {
+          "type" : "string"
+        },
+        "zs:17163:housing10" : {
+          "type" : "string"
+        },
+        "zs:17163:id" : {
+          "type" : "string"
+        },
+        "zs:17163:label" : {
+          "type" : "string"
+        },
+        "zs:17163:pop10" : {
+          "type" : "string"
+        },
+        "zs:18057:area_m" : {
+          "type" : "string"
+        },
+        "zs:18057:blockids" : {
+          "type" : "string"
+        },
+        "zs:18057:housing10" : {
+          "type" : "string"
+        },
+        "zs:18057:id" : {
+          "type" : "string"
+        },
+        "zs:18057:label" : {
+          "type" : "string"
+        },
+        "zs:18057:pop10" : {
+          "type" : "string"
+        },
+        "zs:18095:area_m" : {
+          "type" : "string"
+        },
+        "zs:18095:blockids" : {
+          "type" : "string"
+        },
+        "zs:18095:housing10" : {
+          "type" : "string"
+        },
+        "zs:18095:id" : {
+          "type" : "string"
+        },
+        "zs:18095:label" : {
+          "type" : "string"
+        },
+        "zs:18095:pop10" : {
+          "type" : "string"
+        },
+        "zs:18127:area_m" : {
+          "type" : "string"
+        },
+        "zs:18127:blockids" : {
+          "type" : "string"
+        },
+        "zs:18127:housing10" : {
+          "type" : "string"
+        },
+        "zs:18127:id" : {
+          "type" : "string"
+        },
+        "zs:18127:label" : {
+          "type" : "string"
+        },
+        "zs:18127:pop10" : {
+          "type" : "string"
+        },
+        "zs:19103:area_m" : {
+          "type" : "string"
+        },
+        "zs:19103:blockids" : {
+          "type" : "string"
+        },
+        "zs:19103:housing10" : {
+          "type" : "string"
+        },
+        "zs:19103:id" : {
+          "type" : "string"
+        },
+        "zs:19103:label" : {
+          "type" : "string"
+        },
+        "zs:19103:pop10" : {
+          "type" : "string"
+        },
+        "zs:19153:area_m" : {
+          "type" : "string"
+        },
+        "zs:19153:blockids" : {
+          "type" : "string"
+        },
+        "zs:19153:housing10" : {
+          "type" : "string"
+        },
+        "zs:19153:id" : {
+          "type" : "string"
+        },
+        "zs:19153:label" : {
+          "type" : "string"
+        },
+        "zs:19153:pop10" : {
+          "type" : "string"
+        },
+        "zs:19163:area_m" : {
+          "type" : "string"
+        },
+        "zs:19163:blockids" : {
+          "type" : "string"
+        },
+        "zs:19163:housing10" : {
+          "type" : "string"
+        },
+        "zs:19163:id" : {
+          "type" : "string"
+        },
+        "zs:19163:label" : {
+          "type" : "string"
+        },
+        "zs:19163:pop10" : {
+          "type" : "string"
+        },
+        "zs:21067:area_m" : {
+          "type" : "string"
+        },
+        "zs:21067:blockids" : {
+          "type" : "string"
+        },
+        "zs:21067:housing10" : {
+          "type" : "string"
+        },
+        "zs:21067:id" : {
+          "type" : "string"
+        },
+        "zs:21067:label" : {
+          "type" : "string"
+        },
+        "zs:21067:pop10" : {
+          "type" : "string"
+        },
+        "zs:21111:area_m" : {
+          "type" : "string"
+        },
+        "zs:21111:blockids" : {
+          "type" : "string"
+        },
+        "zs:21111:housing10" : {
+          "type" : "string"
+        },
+        "zs:21111:id" : {
+          "type" : "string"
+        },
+        "zs:21111:label" : {
+          "type" : "string"
+        },
+        "zs:21111:pop10" : {
+          "type" : "string"
+        },
+        "zs:22017:area_m" : {
+          "type" : "string"
+        },
+        "zs:22017:blockids" : {
+          "type" : "string"
+        },
+        "zs:22017:housing10" : {
+          "type" : "string"
+        },
+        "zs:22017:id" : {
+          "type" : "string"
+        },
+        "zs:22017:label" : {
+          "type" : "string"
+        },
+        "zs:22017:pop10" : {
+          "type" : "string"
+        },
+        "zs:22033:area_m" : {
+          "type" : "string"
+        },
+        "zs:22033:blockids" : {
+          "type" : "string"
+        },
+        "zs:22033:housing10" : {
+          "type" : "string"
+        },
+        "zs:22033:id" : {
+          "type" : "string"
+        },
+        "zs:22033:label" : {
+          "type" : "string"
+        },
+        "zs:22033:pop10" : {
+          "type" : "string"
+        },
+        "zs:22071:area_m" : {
+          "type" : "string"
+        },
+        "zs:22071:blockids" : {
+          "type" : "string"
+        },
+        "zs:22071:housing10" : {
+          "type" : "string"
+        },
+        "zs:22071:id" : {
+          "type" : "string"
+        },
+        "zs:22071:label" : {
+          "type" : "string"
+        },
+        "zs:22071:pop10" : {
+          "type" : "string"
+        },
+        "zs:22075:area_m" : {
+          "type" : "string"
+        },
+        "zs:22075:blockids" : {
+          "type" : "string"
+        },
+        "zs:22075:housing10" : {
+          "type" : "string"
+        },
+        "zs:22075:id" : {
+          "type" : "string"
+        },
+        "zs:22075:label" : {
+          "type" : "string"
+        },
+        "zs:22075:pop10" : {
+          "type" : "string"
+        },
+        "zs:22103:area_m" : {
+          "type" : "string"
+        },
+        "zs:22103:blockids" : {
+          "type" : "string"
+        },
+        "zs:22103:housing10" : {
+          "type" : "string"
+        },
+        "zs:22103:id" : {
+          "type" : "string"
+        },
+        "zs:22103:label" : {
+          "type" : "string"
+        },
+        "zs:22103:pop10" : {
+          "type" : "string"
+        },
+        "zs:22115:area_m" : {
+          "type" : "string"
+        },
+        "zs:22115:blockids" : {
+          "type" : "string"
+        },
+        "zs:22115:housing10" : {
+          "type" : "string"
+        },
+        "zs:22115:id" : {
+          "type" : "string"
+        },
+        "zs:22115:label" : {
+          "type" : "string"
+        },
+        "zs:22115:pop10" : {
+          "type" : "string"
+        },
+        "zs:23005:area_m" : {
+          "type" : "string"
+        },
+        "zs:23005:blockids" : {
+          "type" : "string"
+        },
+        "zs:23005:housing10" : {
+          "type" : "string"
+        },
+        "zs:23005:id" : {
+          "type" : "string"
+        },
+        "zs:23005:label" : {
+          "type" : "string"
+        },
+        "zs:23005:pop10" : {
+          "type" : "string"
+        },
+        "zs:23009:area_m" : {
+          "type" : "string"
+        },
+        "zs:23009:blockids" : {
+          "type" : "string"
+        },
+        "zs:23009:housing10" : {
+          "type" : "string"
+        },
+        "zs:23009:id" : {
+          "type" : "string"
+        },
+        "zs:23009:label" : {
+          "type" : "string"
+        },
+        "zs:23009:pop10" : {
+          "type" : "string"
+        },
+        "zs:23015:area_m" : {
+          "type" : "string"
+        },
+        "zs:23015:blockids" : {
+          "type" : "string"
+        },
+        "zs:23015:housing10" : {
+          "type" : "string"
+        },
+        "zs:23015:id" : {
+          "type" : "string"
+        },
+        "zs:23015:label" : {
+          "type" : "string"
+        },
+        "zs:23015:pop10" : {
+          "type" : "string"
+        },
+        "zs:23017:area_m" : {
+          "type" : "string"
+        },
+        "zs:23017:blockids" : {
+          "type" : "string"
+        },
+        "zs:23017:housing10" : {
+          "type" : "string"
+        },
+        "zs:23017:id" : {
+          "type" : "string"
+        },
+        "zs:23017:label" : {
+          "type" : "string"
+        },
+        "zs:23017:pop10" : {
+          "type" : "string"
+        },
+        "zs:23019:area_m" : {
+          "type" : "string"
+        },
+        "zs:23019:blockids" : {
+          "type" : "string"
+        },
+        "zs:23019:housing10" : {
+          "type" : "string"
+        },
+        "zs:23019:id" : {
+          "type" : "string"
+        },
+        "zs:23019:label" : {
+          "type" : "string"
+        },
+        "zs:23019:pop10" : {
+          "type" : "string"
+        },
+        "zs:23021:area_m" : {
+          "type" : "string"
+        },
+        "zs:23021:blockids" : {
+          "type" : "string"
+        },
+        "zs:23021:housing10" : {
+          "type" : "string"
+        },
+        "zs:23021:id" : {
+          "type" : "string"
+        },
+        "zs:23021:label" : {
+          "type" : "string"
+        },
+        "zs:23021:pop10" : {
+          "type" : "string"
+        },
+        "zs:23029:area_m" : {
+          "type" : "string"
+        },
+        "zs:23029:blockids" : {
+          "type" : "string"
+        },
+        "zs:23029:housing10" : {
+          "type" : "string"
+        },
+        "zs:23029:id" : {
+          "type" : "string"
+        },
+        "zs:23029:label" : {
+          "type" : "string"
+        },
+        "zs:23029:pop10" : {
+          "type" : "string"
+        },
+        "zs:23031:area_m" : {
+          "type" : "string"
+        },
+        "zs:23031:blockids" : {
+          "type" : "string"
+        },
+        "zs:23031:housing10" : {
+          "type" : "string"
+        },
+        "zs:23031:id" : {
+          "type" : "string"
+        },
+        "zs:23031:label" : {
+          "type" : "string"
+        },
+        "zs:23031:pop10" : {
+          "type" : "string"
+        },
+        "zs:24003:area_m" : {
+          "type" : "string"
+        },
+        "zs:24003:blockids" : {
+          "type" : "string"
+        },
+        "zs:24003:housing10" : {
+          "type" : "string"
+        },
+        "zs:24003:id" : {
+          "type" : "string"
+        },
+        "zs:24003:label" : {
+          "type" : "string"
+        },
+        "zs:24003:pop10" : {
+          "type" : "string"
+        },
+        "zs:24005:area_m" : {
+          "type" : "string"
+        },
+        "zs:24005:blockids" : {
+          "type" : "string"
+        },
+        "zs:24005:housing10" : {
+          "type" : "string"
+        },
+        "zs:24005:id" : {
+          "type" : "string"
+        },
+        "zs:24005:label" : {
+          "type" : "string"
+        },
+        "zs:24005:pop10" : {
+          "type" : "string"
+        },
+        "zs:24017:area_m" : {
+          "type" : "string"
+        },
+        "zs:24017:blockids" : {
+          "type" : "string"
+        },
+        "zs:24017:housing10" : {
+          "type" : "string"
+        },
+        "zs:24017:id" : {
+          "type" : "string"
+        },
+        "zs:24017:label" : {
+          "type" : "string"
+        },
+        "zs:24017:pop10" : {
+          "type" : "string"
+        },
+        "zs:24021:area_m" : {
+          "type" : "string"
+        },
+        "zs:24021:blockids" : {
+          "type" : "string"
+        },
+        "zs:24021:housing10" : {
+          "type" : "string"
+        },
+        "zs:24021:id" : {
+          "type" : "string"
+        },
+        "zs:24021:label" : {
+          "type" : "string"
+        },
+        "zs:24021:pop10" : {
+          "type" : "string"
+        },
+        "zs:24031:area_m" : {
+          "type" : "string"
+        },
+        "zs:24031:blockids" : {
+          "type" : "string"
+        },
+        "zs:24031:housing10" : {
+          "type" : "string"
+        },
+        "zs:24031:id" : {
+          "type" : "string"
+        },
+        "zs:24031:label" : {
+          "type" : "string"
+        },
+        "zs:24031:pop10" : {
+          "type" : "string"
+        },
+        "zs:24033:area_m" : {
+          "type" : "string"
+        },
+        "zs:24033:blockids" : {
+          "type" : "string"
+        },
+        "zs:24033:housing10" : {
+          "type" : "string"
+        },
+        "zs:24033:id" : {
+          "type" : "string"
+        },
+        "zs:24033:label" : {
+          "type" : "string"
+        },
+        "zs:24033:pop10" : {
+          "type" : "string"
+        },
+        "zs:24041:area_m" : {
+          "type" : "string"
+        },
+        "zs:24041:blockids" : {
+          "type" : "string"
+        },
+        "zs:24041:housing10" : {
+          "type" : "string"
+        },
+        "zs:24041:id" : {
+          "type" : "string"
+        },
+        "zs:24041:label" : {
+          "type" : "string"
+        },
+        "zs:24041:pop10" : {
+          "type" : "string"
+        },
+        "zs:24510:area_m" : {
+          "type" : "string"
+        },
+        "zs:24510:blockids" : {
+          "type" : "string"
+        },
+        "zs:24510:housing10" : {
+          "type" : "string"
+        },
+        "zs:24510:id" : {
+          "type" : "string"
+        },
+        "zs:24510:label" : {
+          "type" : "string"
+        },
+        "zs:24510:pop10" : {
+          "type" : "string"
+        },
+        "zs:25005:area_m" : {
+          "type" : "string"
+        },
+        "zs:25005:blockids" : {
+          "type" : "string"
+        },
+        "zs:25005:housing10" : {
+          "type" : "string"
+        },
+        "zs:25005:id" : {
+          "type" : "string"
+        },
+        "zs:25005:label" : {
+          "type" : "string"
+        },
+        "zs:25005:pop10" : {
+          "type" : "string"
+        },
+        "zs:25009:area_m" : {
+          "type" : "string"
+        },
+        "zs:25009:blockids" : {
+          "type" : "string"
+        },
+        "zs:25009:housing10" : {
+          "type" : "string"
+        },
+        "zs:25009:id" : {
+          "type" : "string"
+        },
+        "zs:25009:label" : {
+          "type" : "string"
+        },
+        "zs:25009:pop10" : {
+          "type" : "string"
+        },
+        "zs:25011:area_m" : {
+          "type" : "string"
+        },
+        "zs:25011:blockids" : {
+          "type" : "string"
+        },
+        "zs:25011:housing10" : {
+          "type" : "string"
+        },
+        "zs:25011:id" : {
+          "type" : "string"
+        },
+        "zs:25011:label" : {
+          "type" : "string"
+        },
+        "zs:25011:pop10" : {
+          "type" : "string"
+        },
+        "zs:25013:area_m" : {
+          "type" : "string"
+        },
+        "zs:25013:blockids" : {
+          "type" : "string"
+        },
+        "zs:25013:housing10" : {
+          "type" : "string"
+        },
+        "zs:25013:id" : {
+          "type" : "string"
+        },
+        "zs:25013:label" : {
+          "type" : "string"
+        },
+        "zs:25013:pop10" : {
+          "type" : "string"
+        },
+        "zs:25017:area_m" : {
+          "type" : "string"
+        },
+        "zs:25017:blockids" : {
+          "type" : "string"
+        },
+        "zs:25017:housing10" : {
+          "type" : "string"
+        },
+        "zs:25017:id" : {
+          "type" : "string"
+        },
+        "zs:25017:label" : {
+          "type" : "string"
+        },
+        "zs:25017:pop10" : {
+          "type" : "string"
+        },
+        "zs:25023:area_m" : {
+          "type" : "string"
+        },
+        "zs:25023:blockids" : {
+          "type" : "string"
+        },
+        "zs:25023:housing10" : {
+          "type" : "string"
+        },
+        "zs:25023:id" : {
+          "type" : "string"
+        },
+        "zs:25023:label" : {
+          "type" : "string"
+        },
+        "zs:25023:pop10" : {
+          "type" : "string"
+        },
+        "zs:25025:area_m" : {
+          "type" : "string"
+        },
+        "zs:25025:blockids" : {
+          "type" : "string"
+        },
+        "zs:25025:housing10" : {
+          "type" : "string"
+        },
+        "zs:25025:id" : {
+          "type" : "string"
+        },
+        "zs:25025:label" : {
+          "type" : "string"
+        },
+        "zs:25025:pop10" : {
+          "type" : "string"
+        },
+        "zs:25027:area_m" : {
+          "type" : "string"
+        },
+        "zs:25027:blockids" : {
+          "type" : "string"
+        },
+        "zs:25027:housing10" : {
+          "type" : "string"
+        },
+        "zs:25027:id" : {
+          "type" : "string"
+        },
+        "zs:25027:label" : {
+          "type" : "string"
+        },
+        "zs:25027:pop10" : {
+          "type" : "string"
+        },
+        "zs:26017:area_m" : {
+          "type" : "string"
+        },
+        "zs:26017:blockids" : {
+          "type" : "string"
+        },
+        "zs:26017:housing10" : {
+          "type" : "string"
+        },
+        "zs:26017:id" : {
+          "type" : "string"
+        },
+        "zs:26017:label" : {
+          "type" : "string"
+        },
+        "zs:26017:pop10" : {
+          "type" : "string"
+        },
+        "zs:26099:area_m" : {
+          "type" : "string"
+        },
+        "zs:26099:blockids" : {
+          "type" : "string"
+        },
+        "zs:26099:housing10" : {
+          "type" : "string"
+        },
+        "zs:26099:id" : {
+          "type" : "string"
+        },
+        "zs:26099:label" : {
+          "type" : "string"
+        },
+        "zs:26099:pop10" : {
+          "type" : "string"
+        },
+        "zs:26125:area_m" : {
+          "type" : "string"
+        },
+        "zs:26125:blockids" : {
+          "type" : "string"
+        },
+        "zs:26125:housing10" : {
+          "type" : "string"
+        },
+        "zs:26125:id" : {
+          "type" : "string"
+        },
+        "zs:26125:label" : {
+          "type" : "string"
+        },
+        "zs:26125:pop10" : {
+          "type" : "string"
+        },
+        "zs:26147:area_m" : {
+          "type" : "string"
+        },
+        "zs:26147:blockids" : {
+          "type" : "string"
+        },
+        "zs:26147:housing10" : {
+          "type" : "string"
+        },
+        "zs:26147:id" : {
+          "type" : "string"
+        },
+        "zs:26147:label" : {
+          "type" : "string"
+        },
+        "zs:26147:pop10" : {
+          "type" : "string"
+        },
+        "zs:26161:area_m" : {
+          "type" : "string"
+        },
+        "zs:26161:blockids" : {
+          "type" : "string"
+        },
+        "zs:26161:housing10" : {
+          "type" : "string"
+        },
+        "zs:26161:id" : {
+          "type" : "string"
+        },
+        "zs:26161:label" : {
+          "type" : "string"
+        },
+        "zs:26161:pop10" : {
+          "type" : "string"
+        },
+        "zs:26163:area_m" : {
+          "type" : "string"
+        },
+        "zs:26163:blockids" : {
+          "type" : "string"
+        },
+        "zs:26163:housing10" : {
+          "type" : "string"
+        },
+        "zs:26163:id" : {
+          "type" : "string"
+        },
+        "zs:26163:label" : {
+          "type" : "string"
+        },
+        "zs:26163:pop10" : {
+          "type" : "string"
+        },
+        "zs:27053:area_m" : {
+          "type" : "string"
+        },
+        "zs:27053:blockids" : {
+          "type" : "string"
+        },
+        "zs:27053:housing10" : {
+          "type" : "string"
+        },
+        "zs:27053:id" : {
+          "type" : "string"
+        },
+        "zs:27053:label" : {
+          "type" : "string"
+        },
+        "zs:27053:pop10" : {
+          "type" : "string"
+        },
+        "zs:28049:area_m" : {
+          "type" : "string"
+        },
+        "zs:28049:blockids" : {
+          "type" : "string"
+        },
+        "zs:28049:housing10" : {
+          "type" : "string"
+        },
+        "zs:28049:id" : {
+          "type" : "string"
+        },
+        "zs:28049:label" : {
+          "type" : "string"
+        },
+        "zs:28049:pop10" : {
+          "type" : "string"
+        },
+        "zs:28089:area_m" : {
+          "type" : "string"
+        },
+        "zs:28089:blockids" : {
+          "type" : "string"
+        },
+        "zs:28089:housing10" : {
+          "type" : "string"
+        },
+        "zs:28089:id" : {
+          "type" : "string"
+        },
+        "zs:28089:label" : {
+          "type" : "string"
+        },
+        "zs:28089:pop10" : {
+          "type" : "string"
+        },
+        "zs:28095:area_m" : {
+          "type" : "string"
+        },
+        "zs:28095:blockids" : {
+          "type" : "string"
+        },
+        "zs:28095:housing10" : {
+          "type" : "string"
+        },
+        "zs:28095:id" : {
+          "type" : "string"
+        },
+        "zs:28095:label" : {
+          "type" : "string"
+        },
+        "zs:28095:pop10" : {
+          "type" : "string"
+        },
+        "zs:29095:area_m" : {
+          "type" : "string"
+        },
+        "zs:29095:blockids" : {
+          "type" : "string"
+        },
+        "zs:29095:housing10" : {
+          "type" : "string"
+        },
+        "zs:29095:id" : {
+          "type" : "string"
+        },
+        "zs:29095:label" : {
+          "type" : "string"
+        },
+        "zs:29095:pop10" : {
+          "type" : "string"
+        },
+        "zs:30031:area_m" : {
+          "type" : "string"
+        },
+        "zs:30031:blockids" : {
+          "type" : "string"
+        },
+        "zs:30031:housing10" : {
+          "type" : "string"
+        },
+        "zs:30031:id" : {
+          "type" : "string"
+        },
+        "zs:30031:label" : {
+          "type" : "string"
+        },
+        "zs:30031:pop10" : {
+          "type" : "string"
+        },
+        "zs:32003:area_m" : {
+          "type" : "string"
+        },
+        "zs:32003:blockids" : {
+          "type" : "string"
+        },
+        "zs:32003:housing10" : {
+          "type" : "string"
+        },
+        "zs:32003:id" : {
+          "type" : "string"
+        },
+        "zs:32003:label" : {
+          "type" : "string"
+        },
+        "zs:32003:pop10" : {
+          "type" : "string"
+        },
+        "zs:33001:area_m" : {
+          "type" : "string"
+        },
+        "zs:33001:blockids" : {
+          "type" : "string"
+        },
+        "zs:33001:housing10" : {
+          "type" : "string"
+        },
+        "zs:33001:id" : {
+          "type" : "string"
+        },
+        "zs:33001:label" : {
+          "type" : "string"
+        },
+        "zs:33001:pop10" : {
+          "type" : "string"
+        },
+        "zs:33009:area_m" : {
+          "type" : "string"
+        },
+        "zs:33009:blockids" : {
+          "type" : "string"
+        },
+        "zs:33009:housing10" : {
+          "type" : "string"
+        },
+        "zs:33009:id" : {
+          "type" : "string"
+        },
+        "zs:33009:label" : {
+          "type" : "string"
+        },
+        "zs:33009:pop10" : {
+          "type" : "string"
+        },
+        "zs:33013:area_m" : {
+          "type" : "string"
+        },
+        "zs:33013:blockids" : {
+          "type" : "string"
+        },
+        "zs:33013:housing10" : {
+          "type" : "string"
+        },
+        "zs:33013:id" : {
+          "type" : "string"
+        },
+        "zs:33013:label" : {
+          "type" : "string"
+        },
+        "zs:33013:pop10" : {
+          "type" : "string"
+        },
+        "zs:33015:area_m" : {
+          "type" : "string"
+        },
+        "zs:33015:blockids" : {
+          "type" : "string"
+        },
+        "zs:33015:housing10" : {
+          "type" : "string"
+        },
+        "zs:33015:id" : {
+          "type" : "string"
+        },
+        "zs:33015:label" : {
+          "type" : "string"
+        },
+        "zs:33015:pop10" : {
+          "type" : "string"
+        },
+        "zs:34005:area_m" : {
+          "type" : "string"
+        },
+        "zs:34005:blockids" : {
+          "type" : "string"
+        },
+        "zs:34005:housing10" : {
+          "type" : "string"
+        },
+        "zs:34005:id" : {
+          "type" : "string"
+        },
+        "zs:34005:label" : {
+          "type" : "string"
+        },
+        "zs:34005:pop10" : {
+          "type" : "string"
+        },
+        "zs:34007:area_m" : {
+          "type" : "string"
+        },
+        "zs:34007:blockids" : {
+          "type" : "string"
+        },
+        "zs:34007:housing10" : {
+          "type" : "string"
+        },
+        "zs:34007:id" : {
+          "type" : "string"
+        },
+        "zs:34007:label" : {
+          "type" : "string"
+        },
+        "zs:34007:pop10" : {
+          "type" : "string"
+        },
+        "zs:34009:area_m" : {
+          "type" : "string"
+        },
+        "zs:34009:blockids" : {
+          "type" : "string"
+        },
+        "zs:34009:housing10" : {
+          "type" : "string"
+        },
+        "zs:34009:id" : {
+          "type" : "string"
+        },
+        "zs:34009:label" : {
+          "type" : "string"
+        },
+        "zs:34009:pop10" : {
+          "type" : "string"
+        },
+        "zs:34013:area_m" : {
+          "type" : "string"
+        },
+        "zs:34013:blockids" : {
+          "type" : "string"
+        },
+        "zs:34013:housing10" : {
+          "type" : "string"
+        },
+        "zs:34013:id" : {
+          "type" : "string"
+        },
+        "zs:34013:label" : {
+          "type" : "string"
+        },
+        "zs:34013:pop10" : {
+          "type" : "string"
+        },
+        "zs:34017:area_m" : {
+          "type" : "string"
+        },
+        "zs:34017:blockids" : {
+          "type" : "string"
+        },
+        "zs:34017:housing10" : {
+          "type" : "string"
+        },
+        "zs:34017:id" : {
+          "type" : "string"
+        },
+        "zs:34017:label" : {
+          "type" : "string"
+        },
+        "zs:34017:pop10" : {
+          "type" : "string"
+        },
+        "zs:34021:area_m" : {
+          "type" : "string"
+        },
+        "zs:34021:blockids" : {
+          "type" : "string"
+        },
+        "zs:34021:housing10" : {
+          "type" : "string"
+        },
+        "zs:34021:id" : {
+          "type" : "string"
+        },
+        "zs:34021:label" : {
+          "type" : "string"
+        },
+        "zs:34021:pop10" : {
+          "type" : "string"
+        },
+        "zs:34023:area_m" : {
+          "type" : "string"
+        },
+        "zs:34023:blockids" : {
+          "type" : "string"
+        },
+        "zs:34023:housing10" : {
+          "type" : "string"
+        },
+        "zs:34023:id" : {
+          "type" : "string"
+        },
+        "zs:34023:label" : {
+          "type" : "string"
+        },
+        "zs:34023:pop10" : {
+          "type" : "string"
+        },
+        "zs:34025:area_m" : {
+          "type" : "string"
+        },
+        "zs:34025:blockids" : {
+          "type" : "string"
+        },
+        "zs:34025:housing10" : {
+          "type" : "string"
+        },
+        "zs:34025:id" : {
+          "type" : "string"
+        },
+        "zs:34025:label" : {
+          "type" : "string"
+        },
+        "zs:34025:pop10" : {
+          "type" : "string"
+        },
+        "zs:34027:area_m" : {
+          "type" : "string"
+        },
+        "zs:34027:blockids" : {
+          "type" : "string"
+        },
+        "zs:34027:housing10" : {
+          "type" : "string"
+        },
+        "zs:34027:id" : {
+          "type" : "string"
+        },
+        "zs:34027:label" : {
+          "type" : "string"
+        },
+        "zs:34027:pop10" : {
+          "type" : "string"
+        },
+        "zs:34029:area_m" : {
+          "type" : "string"
+        },
+        "zs:34029:blockids" : {
+          "type" : "string"
+        },
+        "zs:34029:housing10" : {
+          "type" : "string"
+        },
+        "zs:34029:id" : {
+          "type" : "string"
+        },
+        "zs:34029:label" : {
+          "type" : "string"
+        },
+        "zs:34029:pop10" : {
+          "type" : "string"
+        },
+        "zs:34033:area_m" : {
+          "type" : "string"
+        },
+        "zs:34033:blockids" : {
+          "type" : "string"
+        },
+        "zs:34033:housing10" : {
+          "type" : "string"
+        },
+        "zs:34033:id" : {
+          "type" : "string"
+        },
+        "zs:34033:label" : {
+          "type" : "string"
+        },
+        "zs:34033:pop10" : {
+          "type" : "string"
+        },
+        "zs:34039:area_m" : {
+          "type" : "string"
+        },
+        "zs:34039:blockids" : {
+          "type" : "string"
+        },
+        "zs:34039:housing10" : {
+          "type" : "string"
+        },
+        "zs:34039:id" : {
+          "type" : "string"
+        },
+        "zs:34039:label" : {
+          "type" : "string"
+        },
+        "zs:34039:pop10" : {
+          "type" : "string"
+        },
+        "zs:34041:area_m" : {
+          "type" : "string"
+        },
+        "zs:34041:blockids" : {
+          "type" : "string"
+        },
+        "zs:34041:housing10" : {
+          "type" : "string"
+        },
+        "zs:34041:id" : {
+          "type" : "string"
+        },
+        "zs:34041:label" : {
+          "type" : "string"
+        },
+        "zs:34041:pop10" : {
+          "type" : "string"
+        },
+        "zs:36005:area_m" : {
+          "type" : "string"
+        },
+        "zs:36005:blockids" : {
+          "type" : "string"
+        },
+        "zs:36005:housing10" : {
+          "type" : "string"
+        },
+        "zs:36005:id" : {
+          "type" : "string"
+        },
+        "zs:36005:label" : {
+          "type" : "string"
+        },
+        "zs:36005:pop10" : {
+          "type" : "string"
+        },
+        "zs:36007:area_m" : {
+          "type" : "string"
+        },
+        "zs:36007:blockids" : {
+          "type" : "string"
+        },
+        "zs:36007:housing10" : {
+          "type" : "string"
+        },
+        "zs:36007:id" : {
+          "type" : "string"
+        },
+        "zs:36007:label" : {
+          "type" : "string"
+        },
+        "zs:36007:pop10" : {
+          "type" : "string"
+        },
+        "zs:36013:area_m" : {
+          "type" : "string"
+        },
+        "zs:36013:blockids" : {
+          "type" : "string"
+        },
+        "zs:36013:housing10" : {
+          "type" : "string"
+        },
+        "zs:36013:id" : {
+          "type" : "string"
+        },
+        "zs:36013:label" : {
+          "type" : "string"
+        },
+        "zs:36013:pop10" : {
+          "type" : "string"
+        },
+        "zs:36027:area_m" : {
+          "type" : "string"
+        },
+        "zs:36027:blockids" : {
+          "type" : "string"
+        },
+        "zs:36027:housing10" : {
+          "type" : "string"
+        },
+        "zs:36027:id" : {
+          "type" : "string"
+        },
+        "zs:36027:label" : {
+          "type" : "string"
+        },
+        "zs:36027:pop10" : {
+          "type" : "string"
+        },
+        "zs:36047:area_m" : {
+          "type" : "string"
+        },
+        "zs:36047:blockids" : {
+          "type" : "string"
+        },
+        "zs:36047:housing10" : {
+          "type" : "string"
+        },
+        "zs:36047:id" : {
+          "type" : "string"
+        },
+        "zs:36047:label" : {
+          "type" : "string"
+        },
+        "zs:36047:pop10" : {
+          "type" : "string"
+        },
+        "zs:36051:area_m" : {
+          "type" : "string"
+        },
+        "zs:36051:blockids" : {
+          "type" : "string"
+        },
+        "zs:36051:housing10" : {
+          "type" : "string"
+        },
+        "zs:36051:id" : {
+          "type" : "string"
+        },
+        "zs:36051:label" : {
+          "type" : "string"
+        },
+        "zs:36051:pop10" : {
+          "type" : "string"
+        },
+        "zs:36059:area_m" : {
+          "type" : "string"
+        },
+        "zs:36059:blockids" : {
+          "type" : "string"
+        },
+        "zs:36059:housing10" : {
+          "type" : "string"
+        },
+        "zs:36059:id" : {
+          "type" : "string"
+        },
+        "zs:36059:label" : {
+          "type" : "string"
+        },
+        "zs:36059:pop10" : {
+          "type" : "string"
+        },
+        "zs:36067:area_m" : {
+          "type" : "string"
+        },
+        "zs:36067:blockids" : {
+          "type" : "string"
+        },
+        "zs:36067:housing10" : {
+          "type" : "string"
+        },
+        "zs:36067:id" : {
+          "type" : "string"
+        },
+        "zs:36067:label" : {
+          "type" : "string"
+        },
+        "zs:36067:pop10" : {
+          "type" : "string"
+        },
+        "zs:36069:area_m" : {
+          "type" : "string"
+        },
+        "zs:36069:blockids" : {
+          "type" : "string"
+        },
+        "zs:36069:housing10" : {
+          "type" : "string"
+        },
+        "zs:36069:id" : {
+          "type" : "string"
+        },
+        "zs:36069:label" : {
+          "type" : "string"
+        },
+        "zs:36069:pop10" : {
+          "type" : "string"
+        },
+        "zs:36081:area_m" : {
+          "type" : "string"
+        },
+        "zs:36081:blockids" : {
+          "type" : "string"
+        },
+        "zs:36081:housing10" : {
+          "type" : "string"
+        },
+        "zs:36081:id" : {
+          "type" : "string"
+        },
+        "zs:36081:label" : {
+          "type" : "string"
+        },
+        "zs:36081:pop10" : {
+          "type" : "string"
+        },
+        "zs:36085:area_m" : {
+          "type" : "string"
+        },
+        "zs:36085:blockids" : {
+          "type" : "string"
+        },
+        "zs:36085:housing10" : {
+          "type" : "string"
+        },
+        "zs:36085:id" : {
+          "type" : "string"
+        },
+        "zs:36085:label" : {
+          "type" : "string"
+        },
+        "zs:36085:pop10" : {
+          "type" : "string"
+        },
+        "zs:36087:area_m" : {
+          "type" : "string"
+        },
+        "zs:36087:blockids" : {
+          "type" : "string"
+        },
+        "zs:36087:housing10" : {
+          "type" : "string"
+        },
+        "zs:36087:id" : {
+          "type" : "string"
+        },
+        "zs:36087:label" : {
+          "type" : "string"
+        },
+        "zs:36087:pop10" : {
+          "type" : "string"
+        },
+        "zs:36093:area_m" : {
+          "type" : "string"
+        },
+        "zs:36093:blockids" : {
+          "type" : "string"
+        },
+        "zs:36093:housing10" : {
+          "type" : "string"
+        },
+        "zs:36093:id" : {
+          "type" : "string"
+        },
+        "zs:36093:label" : {
+          "type" : "string"
+        },
+        "zs:36093:pop10" : {
+          "type" : "string"
+        },
+        "zs:36103:area_m" : {
+          "type" : "string"
+        },
+        "zs:36103:blockids" : {
+          "type" : "string"
+        },
+        "zs:36103:housing10" : {
+          "type" : "string"
+        },
+        "zs:36103:id" : {
+          "type" : "string"
+        },
+        "zs:36103:label" : {
+          "type" : "string"
+        },
+        "zs:36103:pop10" : {
+          "type" : "string"
+        },
+        "zs:36109:area_m" : {
+          "type" : "string"
+        },
+        "zs:36109:blockids" : {
+          "type" : "string"
+        },
+        "zs:36109:housing10" : {
+          "type" : "string"
+        },
+        "zs:36109:id" : {
+          "type" : "string"
+        },
+        "zs:36109:label" : {
+          "type" : "string"
+        },
+        "zs:36109:pop10" : {
+          "type" : "string"
+        },
+        "zs:36111:area_m" : {
+          "type" : "string"
+        },
+        "zs:36111:blockids" : {
+          "type" : "string"
+        },
+        "zs:36111:housing10" : {
+          "type" : "string"
+        },
+        "zs:36111:id" : {
+          "type" : "string"
+        },
+        "zs:36111:label" : {
+          "type" : "string"
+        },
+        "zs:36111:pop10" : {
+          "type" : "string"
+        },
+        "zs:36115:area_m" : {
+          "type" : "string"
+        },
+        "zs:36115:blockids" : {
+          "type" : "string"
+        },
+        "zs:36115:housing10" : {
+          "type" : "string"
+        },
+        "zs:36115:id" : {
+          "type" : "string"
+        },
+        "zs:36115:label" : {
+          "type" : "string"
+        },
+        "zs:36115:pop10" : {
+          "type" : "string"
+        },
+        "zs:36119:area_m" : {
+          "type" : "string"
+        },
+        "zs:36119:blockids" : {
+          "type" : "string"
+        },
+        "zs:36119:housing10" : {
+          "type" : "string"
+        },
+        "zs:36119:id" : {
+          "type" : "string"
+        },
+        "zs:36119:label" : {
+          "type" : "string"
+        },
+        "zs:36119:pop10" : {
+          "type" : "string"
+        },
+        "zs:36121:area_m" : {
+          "type" : "string"
+        },
+        "zs:36121:blockids" : {
+          "type" : "string"
+        },
+        "zs:36121:housing10" : {
+          "type" : "string"
+        },
+        "zs:36121:id" : {
+          "type" : "string"
+        },
+        "zs:36121:label" : {
+          "type" : "string"
+        },
+        "zs:36121:pop10" : {
+          "type" : "string"
+        },
+        "zs:36123:area_m" : {
+          "type" : "string"
+        },
+        "zs:36123:blockids" : {
+          "type" : "string"
+        },
+        "zs:36123:housing10" : {
+          "type" : "string"
+        },
+        "zs:36123:id" : {
+          "type" : "string"
+        },
+        "zs:36123:label" : {
+          "type" : "string"
+        },
+        "zs:36123:pop10" : {
+          "type" : "string"
+        },
+        "zs:37021:area_m" : {
+          "type" : "string"
+        },
+        "zs:37021:blockids" : {
+          "type" : "string"
+        },
+        "zs:37021:housing10" : {
+          "type" : "string"
+        },
+        "zs:37021:id" : {
+          "type" : "string"
+        },
+        "zs:37021:label" : {
+          "type" : "string"
+        },
+        "zs:37021:pop10" : {
+          "type" : "string"
+        },
+        "zs:37025:area_m" : {
+          "type" : "string"
+        },
+        "zs:37025:blockids" : {
+          "type" : "string"
+        },
+        "zs:37025:housing10" : {
+          "type" : "string"
+        },
+        "zs:37025:id" : {
+          "type" : "string"
+        },
+        "zs:37025:label" : {
+          "type" : "string"
+        },
+        "zs:37025:pop10" : {
+          "type" : "string"
+        },
+        "zs:37031:area_m" : {
+          "type" : "string"
+        },
+        "zs:37031:blockids" : {
+          "type" : "string"
+        },
+        "zs:37031:housing10" : {
+          "type" : "string"
+        },
+        "zs:37031:id" : {
+          "type" : "string"
+        },
+        "zs:37031:label" : {
+          "type" : "string"
+        },
+        "zs:37031:pop10" : {
+          "type" : "string"
+        },
+        "zs:37037:area_m" : {
+          "type" : "string"
+        },
+        "zs:37037:blockids" : {
+          "type" : "string"
+        },
+        "zs:37037:housing10" : {
+          "type" : "string"
+        },
+        "zs:37037:id" : {
+          "type" : "string"
+        },
+        "zs:37037:label" : {
+          "type" : "string"
+        },
+        "zs:37037:pop10" : {
+          "type" : "string"
+        },
+        "zs:37049:area_m" : {
+          "type" : "string"
+        },
+        "zs:37049:blockids" : {
+          "type" : "string"
+        },
+        "zs:37049:housing10" : {
+          "type" : "string"
+        },
+        "zs:37049:id" : {
+          "type" : "string"
+        },
+        "zs:37049:label" : {
+          "type" : "string"
+        },
+        "zs:37049:pop10" : {
+          "type" : "string"
+        },
+        "zs:37051:area_m" : {
+          "type" : "string"
+        },
+        "zs:37051:blockids" : {
+          "type" : "string"
+        },
+        "zs:37051:housing10" : {
+          "type" : "string"
+        },
+        "zs:37051:id" : {
+          "type" : "string"
+        },
+        "zs:37051:label" : {
+          "type" : "string"
+        },
+        "zs:37051:pop10" : {
+          "type" : "string"
+        },
+        "zs:37063:area_m" : {
+          "type" : "string"
+        },
+        "zs:37063:blockids" : {
+          "type" : "string"
+        },
+        "zs:37063:housing10" : {
+          "type" : "string"
+        },
+        "zs:37063:id" : {
+          "type" : "string"
+        },
+        "zs:37063:label" : {
+          "type" : "string"
+        },
+        "zs:37063:pop10" : {
+          "type" : "string"
+        },
+        "zs:37067:area_m" : {
+          "type" : "string"
+        },
+        "zs:37067:blockids" : {
+          "type" : "string"
+        },
+        "zs:37067:housing10" : {
+          "type" : "string"
+        },
+        "zs:37067:id" : {
+          "type" : "string"
+        },
+        "zs:37067:label" : {
+          "type" : "string"
+        },
+        "zs:37067:pop10" : {
+          "type" : "string"
+        },
+        "zs:37081:area_m" : {
+          "type" : "string"
+        },
+        "zs:37081:blockids" : {
+          "type" : "string"
+        },
+        "zs:37081:housing10" : {
+          "type" : "string"
+        },
+        "zs:37081:id" : {
+          "type" : "string"
+        },
+        "zs:37081:label" : {
+          "type" : "string"
+        },
+        "zs:37081:pop10" : {
+          "type" : "string"
+        },
+        "zs:37089:area_m" : {
+          "type" : "string"
+        },
+        "zs:37089:blockids" : {
+          "type" : "string"
+        },
+        "zs:37089:housing10" : {
+          "type" : "string"
+        },
+        "zs:37089:id" : {
+          "type" : "string"
+        },
+        "zs:37089:label" : {
+          "type" : "string"
+        },
+        "zs:37089:pop10" : {
+          "type" : "string"
+        },
+        "zs:37101:area_m" : {
+          "type" : "string"
+        },
+        "zs:37101:blockids" : {
+          "type" : "string"
+        },
+        "zs:37101:housing10" : {
+          "type" : "string"
+        },
+        "zs:37101:id" : {
+          "type" : "string"
+        },
+        "zs:37101:label" : {
+          "type" : "string"
+        },
+        "zs:37101:pop10" : {
+          "type" : "string"
+        },
+        "zs:37107:area_m" : {
+          "type" : "string"
+        },
+        "zs:37107:blockids" : {
+          "type" : "string"
+        },
+        "zs:37107:housing10" : {
+          "type" : "string"
+        },
+        "zs:37107:id" : {
+          "type" : "string"
+        },
+        "zs:37107:label" : {
+          "type" : "string"
+        },
+        "zs:37107:pop10" : {
+          "type" : "string"
+        },
+        "zs:37119:area_m" : {
+          "type" : "string"
+        },
+        "zs:37119:blockids" : {
+          "type" : "string"
+        },
+        "zs:37119:housing10" : {
+          "type" : "string"
+        },
+        "zs:37119:id" : {
+          "type" : "string"
+        },
+        "zs:37119:label" : {
+          "type" : "string"
+        },
+        "zs:37119:pop10" : {
+          "type" : "string"
+        },
+        "zs:37129:area_m" : {
+          "type" : "string"
+        },
+        "zs:37129:blockids" : {
+          "type" : "string"
+        },
+        "zs:37129:housing10" : {
+          "type" : "string"
+        },
+        "zs:37129:id" : {
+          "type" : "string"
+        },
+        "zs:37129:label" : {
+          "type" : "string"
+        },
+        "zs:37129:pop10" : {
+          "type" : "string"
+        },
+        "zs:37147:area_m" : {
+          "type" : "string"
+        },
+        "zs:37147:blockids" : {
+          "type" : "string"
+        },
+        "zs:37147:housing10" : {
+          "type" : "string"
+        },
+        "zs:37147:id" : {
+          "type" : "string"
+        },
+        "zs:37147:label" : {
+          "type" : "string"
+        },
+        "zs:37147:pop10" : {
+          "type" : "string"
+        },
+        "zs:37159:area_m" : {
+          "type" : "string"
+        },
+        "zs:37159:blockids" : {
+          "type" : "string"
+        },
+        "zs:37159:housing10" : {
+          "type" : "string"
+        },
+        "zs:37159:id" : {
+          "type" : "string"
+        },
+        "zs:37159:label" : {
+          "type" : "string"
+        },
+        "zs:37159:pop10" : {
+          "type" : "string"
+        },
+        "zs:37183:area_m" : {
+          "type" : "string"
+        },
+        "zs:37183:blockids" : {
+          "type" : "string"
+        },
+        "zs:37183:housing10" : {
+          "type" : "string"
+        },
+        "zs:37183:id" : {
+          "type" : "string"
+        },
+        "zs:37183:label" : {
+          "type" : "string"
+        },
+        "zs:37183:pop10" : {
+          "type" : "string"
+        },
+        "zs:38017:area_m" : {
+          "type" : "string"
+        },
+        "zs:38017:blockids" : {
+          "type" : "string"
+        },
+        "zs:38017:housing10" : {
+          "type" : "string"
+        },
+        "zs:38017:id" : {
+          "type" : "string"
+        },
+        "zs:38017:label" : {
+          "type" : "string"
+        },
+        "zs:38017:pop10" : {
+          "type" : "string"
+        },
+        "zs:39007:area_m" : {
+          "type" : "string"
+        },
+        "zs:39007:blockids" : {
+          "type" : "string"
+        },
+        "zs:39007:housing10" : {
+          "type" : "string"
+        },
+        "zs:39007:id" : {
+          "type" : "string"
+        },
+        "zs:39007:label" : {
+          "type" : "string"
+        },
+        "zs:39007:pop10" : {
+          "type" : "string"
+        },
+        "zs:39009:area_m" : {
+          "type" : "string"
+        },
+        "zs:39009:blockids" : {
+          "type" : "string"
+        },
+        "zs:39009:housing10" : {
+          "type" : "string"
+        },
+        "zs:39009:id" : {
+          "type" : "string"
+        },
+        "zs:39009:label" : {
+          "type" : "string"
+        },
+        "zs:39009:pop10" : {
+          "type" : "string"
+        },
+        "zs:39023:area_m" : {
+          "type" : "string"
+        },
+        "zs:39023:blockids" : {
+          "type" : "string"
+        },
+        "zs:39023:housing10" : {
+          "type" : "string"
+        },
+        "zs:39023:id" : {
+          "type" : "string"
+        },
+        "zs:39023:label" : {
+          "type" : "string"
+        },
+        "zs:39023:pop10" : {
+          "type" : "string"
+        },
+        "zs:39035:area_m" : {
+          "type" : "string"
+        },
+        "zs:39035:blockids" : {
+          "type" : "string"
+        },
+        "zs:39035:housing10" : {
+          "type" : "string"
+        },
+        "zs:39035:id" : {
+          "type" : "string"
+        },
+        "zs:39035:label" : {
+          "type" : "string"
+        },
+        "zs:39035:pop10" : {
+          "type" : "string"
+        },
+        "zs:39043:area_m" : {
+          "type" : "string"
+        },
+        "zs:39043:blockids" : {
+          "type" : "string"
+        },
+        "zs:39043:housing10" : {
+          "type" : "string"
+        },
+        "zs:39043:id" : {
+          "type" : "string"
+        },
+        "zs:39043:label" : {
+          "type" : "string"
+        },
+        "zs:39043:pop10" : {
+          "type" : "string"
+        },
+        "zs:39049:area_m" : {
+          "type" : "string"
+        },
+        "zs:39049:blockids" : {
+          "type" : "string"
+        },
+        "zs:39049:housing10" : {
+          "type" : "string"
+        },
+        "zs:39049:id" : {
+          "type" : "string"
+        },
+        "zs:39049:label" : {
+          "type" : "string"
+        },
+        "zs:39049:pop10" : {
+          "type" : "string"
+        },
+        "zs:39061:area_m" : {
+          "type" : "string"
+        },
+        "zs:39061:blockids" : {
+          "type" : "string"
+        },
+        "zs:39061:housing10" : {
+          "type" : "string"
+        },
+        "zs:39061:id" : {
+          "type" : "string"
+        },
+        "zs:39061:label" : {
+          "type" : "string"
+        },
+        "zs:39061:pop10" : {
+          "type" : "string"
+        },
+        "zs:39085:area_m" : {
+          "type" : "string"
+        },
+        "zs:39085:blockids" : {
+          "type" : "string"
+        },
+        "zs:39085:housing10" : {
+          "type" : "string"
+        },
+        "zs:39085:id" : {
+          "type" : "string"
+        },
+        "zs:39085:label" : {
+          "type" : "string"
+        },
+        "zs:39085:pop10" : {
+          "type" : "string"
+        },
+        "zs:39095:area_m" : {
+          "type" : "string"
+        },
+        "zs:39095:blockids" : {
+          "type" : "string"
+        },
+        "zs:39095:housing10" : {
+          "type" : "string"
+        },
+        "zs:39095:id" : {
+          "type" : "string"
+        },
+        "zs:39095:label" : {
+          "type" : "string"
+        },
+        "zs:39095:pop10" : {
+          "type" : "string"
+        },
+        "zs:39131:area_m" : {
+          "type" : "string"
+        },
+        "zs:39131:blockids" : {
+          "type" : "string"
+        },
+        "zs:39131:housing10" : {
+          "type" : "string"
+        },
+        "zs:39131:id" : {
+          "type" : "string"
+        },
+        "zs:39131:label" : {
+          "type" : "string"
+        },
+        "zs:39131:pop10" : {
+          "type" : "string"
+        },
+        "zs:39151:area_m" : {
+          "type" : "string"
+        },
+        "zs:39151:blockids" : {
+          "type" : "string"
+        },
+        "zs:39151:housing10" : {
+          "type" : "string"
+        },
+        "zs:39151:id" : {
+          "type" : "string"
+        },
+        "zs:39151:label" : {
+          "type" : "string"
+        },
+        "zs:39151:pop10" : {
+          "type" : "string"
+        },
+        "zs:39173:area_m" : {
+          "type" : "string"
+        },
+        "zs:39173:blockids" : {
+          "type" : "string"
+        },
+        "zs:39173:housing10" : {
+          "type" : "string"
+        },
+        "zs:39173:id" : {
+          "type" : "string"
+        },
+        "zs:39173:label" : {
+          "type" : "string"
+        },
+        "zs:39173:pop10" : {
+          "type" : "string"
+        },
+        "zs:4013:area_m" : {
+          "type" : "string"
+        },
+        "zs:4013:blockids" : {
+          "type" : "string"
+        },
+        "zs:4013:housing10" : {
+          "type" : "string"
+        },
+        "zs:4013:id" : {
+          "type" : "string"
+        },
+        "zs:4013:label" : {
+          "type" : "string"
+        },
+        "zs:4013:pop10" : {
+          "type" : "string"
+        },
+        "zs:4027:area_m" : {
+          "type" : "string"
+        },
+        "zs:4027:blockids" : {
+          "type" : "string"
+        },
+        "zs:4027:housing10" : {
+          "type" : "string"
+        },
+        "zs:4027:id" : {
+          "type" : "string"
+        },
+        "zs:4027:label" : {
+          "type" : "string"
+        },
+        "zs:4027:pop10" : {
+          "type" : "string"
+        },
+        "zs:41005:area_m" : {
+          "type" : "string"
+        },
+        "zs:41005:blockids" : {
+          "type" : "string"
+        },
+        "zs:41005:housing10" : {
+          "type" : "string"
+        },
+        "zs:41005:id" : {
+          "type" : "string"
+        },
+        "zs:41005:label" : {
+          "type" : "string"
+        },
+        "zs:41005:pop10" : {
+          "type" : "string"
+        },
+        "zs:41051:area_m" : {
+          "type" : "string"
+        },
+        "zs:41051:blockids" : {
+          "type" : "string"
+        },
+        "zs:41051:housing10" : {
+          "type" : "string"
+        },
+        "zs:41051:id" : {
+          "type" : "string"
+        },
+        "zs:41051:label" : {
+          "type" : "string"
+        },
+        "zs:41051:pop10" : {
+          "type" : "string"
+        },
+        "zs:42003:area_m" : {
+          "type" : "string"
+        },
+        "zs:42003:blockids" : {
+          "type" : "string"
+        },
+        "zs:42003:housing10" : {
+          "type" : "string"
+        },
+        "zs:42003:id" : {
+          "type" : "string"
+        },
+        "zs:42003:label" : {
+          "type" : "string"
+        },
+        "zs:42003:pop10" : {
+          "type" : "string"
+        },
+        "zs:42011:area_m" : {
+          "type" : "string"
+        },
+        "zs:42011:blockids" : {
+          "type" : "string"
+        },
+        "zs:42011:housing10" : {
+          "type" : "string"
+        },
+        "zs:42011:id" : {
+          "type" : "string"
+        },
+        "zs:42011:label" : {
+          "type" : "string"
+        },
+        "zs:42011:pop10" : {
+          "type" : "string"
+        },
+        "zs:42017:area_m" : {
+          "type" : "string"
+        },
+        "zs:42017:blockids" : {
+          "type" : "string"
+        },
+        "zs:42017:housing10" : {
+          "type" : "string"
+        },
+        "zs:42017:id" : {
+          "type" : "string"
+        },
+        "zs:42017:label" : {
+          "type" : "string"
+        },
+        "zs:42017:pop10" : {
+          "type" : "string"
+        },
+        "zs:42019:area_m" : {
+          "type" : "string"
+        },
+        "zs:42019:blockids" : {
+          "type" : "string"
+        },
+        "zs:42019:housing10" : {
+          "type" : "string"
+        },
+        "zs:42019:id" : {
+          "type" : "string"
+        },
+        "zs:42019:label" : {
+          "type" : "string"
+        },
+        "zs:42019:pop10" : {
+          "type" : "string"
+        },
+        "zs:42023:area_m" : {
+          "type" : "string"
+        },
+        "zs:42023:blockids" : {
+          "type" : "string"
+        },
+        "zs:42023:housing10" : {
+          "type" : "string"
+        },
+        "zs:42023:id" : {
+          "type" : "string"
+        },
+        "zs:42023:label" : {
+          "type" : "string"
+        },
+        "zs:42023:pop10" : {
+          "type" : "string"
+        },
+        "zs:42025:area_m" : {
+          "type" : "string"
+        },
+        "zs:42025:blockids" : {
+          "type" : "string"
+        },
+        "zs:42025:housing10" : {
+          "type" : "string"
+        },
+        "zs:42025:id" : {
+          "type" : "string"
+        },
+        "zs:42025:label" : {
+          "type" : "string"
+        },
+        "zs:42025:pop10" : {
+          "type" : "string"
+        },
+        "zs:42029:area_m" : {
+          "type" : "string"
+        },
+        "zs:42029:blockids" : {
+          "type" : "string"
+        },
+        "zs:42029:housing10" : {
+          "type" : "string"
+        },
+        "zs:42029:id" : {
+          "type" : "string"
+        },
+        "zs:42029:label" : {
+          "type" : "string"
+        },
+        "zs:42029:pop10" : {
+          "type" : "string"
+        },
+        "zs:42045:area_m" : {
+          "type" : "string"
+        },
+        "zs:42045:blockids" : {
+          "type" : "string"
+        },
+        "zs:42045:housing10" : {
+          "type" : "string"
+        },
+        "zs:42045:id" : {
+          "type" : "string"
+        },
+        "zs:42045:label" : {
+          "type" : "string"
+        },
+        "zs:42045:pop10" : {
+          "type" : "string"
+        },
+        "zs:42049:area_m" : {
+          "type" : "string"
+        },
+        "zs:42049:blockids" : {
+          "type" : "string"
+        },
+        "zs:42049:housing10" : {
+          "type" : "string"
+        },
+        "zs:42049:id" : {
+          "type" : "string"
+        },
+        "zs:42049:label" : {
+          "type" : "string"
+        },
+        "zs:42049:pop10" : {
+          "type" : "string"
+        },
+        "zs:42055:area_m" : {
+          "type" : "string"
+        },
+        "zs:42055:blockids" : {
+          "type" : "string"
+        },
+        "zs:42055:housing10" : {
+          "type" : "string"
+        },
+        "zs:42055:id" : {
+          "type" : "string"
+        },
+        "zs:42055:label" : {
+          "type" : "string"
+        },
+        "zs:42055:pop10" : {
+          "type" : "string"
+        },
+        "zs:42065:area_m" : {
+          "type" : "string"
+        },
+        "zs:42065:blockids" : {
+          "type" : "string"
+        },
+        "zs:42065:housing10" : {
+          "type" : "string"
+        },
+        "zs:42065:id" : {
+          "type" : "string"
+        },
+        "zs:42065:label" : {
+          "type" : "string"
+        },
+        "zs:42065:pop10" : {
+          "type" : "string"
+        },
+        "zs:42073:area_m" : {
+          "type" : "string"
+        },
+        "zs:42073:blockids" : {
+          "type" : "string"
+        },
+        "zs:42073:housing10" : {
+          "type" : "string"
+        },
+        "zs:42073:id" : {
+          "type" : "string"
+        },
+        "zs:42073:label" : {
+          "type" : "string"
+        },
+        "zs:42073:pop10" : {
+          "type" : "string"
+        },
+        "zs:42077:area_m" : {
+          "type" : "string"
+        },
+        "zs:42077:blockids" : {
+          "type" : "string"
+        },
+        "zs:42077:housing10" : {
+          "type" : "string"
+        },
+        "zs:42077:id" : {
+          "type" : "string"
+        },
+        "zs:42077:label" : {
+          "type" : "string"
+        },
+        "zs:42077:pop10" : {
+          "type" : "string"
+        },
+        "zs:42079:area_m" : {
+          "type" : "string"
+        },
+        "zs:42079:blockids" : {
+          "type" : "string"
+        },
+        "zs:42079:housing10" : {
+          "type" : "string"
+        },
+        "zs:42079:id" : {
+          "type" : "string"
+        },
+        "zs:42079:label" : {
+          "type" : "string"
+        },
+        "zs:42079:pop10" : {
+          "type" : "string"
+        },
+        "zs:42085:area_m" : {
+          "type" : "string"
+        },
+        "zs:42085:blockids" : {
+          "type" : "string"
+        },
+        "zs:42085:housing10" : {
+          "type" : "string"
+        },
+        "zs:42085:id" : {
+          "type" : "string"
+        },
+        "zs:42085:label" : {
+          "type" : "string"
+        },
+        "zs:42085:pop10" : {
+          "type" : "string"
+        },
+        "zs:42095:area_m" : {
+          "type" : "string"
+        },
+        "zs:42095:blockids" : {
+          "type" : "string"
+        },
+        "zs:42095:housing10" : {
+          "type" : "string"
+        },
+        "zs:42095:id" : {
+          "type" : "string"
+        },
+        "zs:42095:label" : {
+          "type" : "string"
+        },
+        "zs:42095:pop10" : {
+          "type" : "string"
+        },
+        "zs:42097:area_m" : {
+          "type" : "string"
+        },
+        "zs:42097:blockids" : {
+          "type" : "string"
+        },
+        "zs:42097:housing10" : {
+          "type" : "string"
+        },
+        "zs:42097:id" : {
+          "type" : "string"
+        },
+        "zs:42097:label" : {
+          "type" : "string"
+        },
+        "zs:42097:pop10" : {
+          "type" : "string"
+        },
+        "zs:42101:area_m" : {
+          "type" : "string"
+        },
+        "zs:42101:blockids" : {
+          "type" : "string"
+        },
+        "zs:42101:housing10" : {
+          "type" : "string"
+        },
+        "zs:42101:id" : {
+          "type" : "string"
+        },
+        "zs:42101:label" : {
+          "type" : "string"
+        },
+        "zs:42101:pop10" : {
+          "type" : "string"
+        },
+        "zs:42107:area_m" : {
+          "type" : "string"
+        },
+        "zs:42107:blockids" : {
+          "type" : "string"
+        },
+        "zs:42107:housing10" : {
+          "type" : "string"
+        },
+        "zs:42107:id" : {
+          "type" : "string"
+        },
+        "zs:42107:label" : {
+          "type" : "string"
+        },
+        "zs:42107:pop10" : {
+          "type" : "string"
+        },
+        "zs:42123:area_m" : {
+          "type" : "string"
+        },
+        "zs:42123:blockids" : {
+          "type" : "string"
+        },
+        "zs:42123:housing10" : {
+          "type" : "string"
+        },
+        "zs:42123:id" : {
+          "type" : "string"
+        },
+        "zs:42123:label" : {
+          "type" : "string"
+        },
+        "zs:42123:pop10" : {
+          "type" : "string"
+        },
+        "zs:42125:area_m" : {
+          "type" : "string"
+        },
+        "zs:42125:blockids" : {
+          "type" : "string"
+        },
+        "zs:42125:housing10" : {
+          "type" : "string"
+        },
+        "zs:42125:id" : {
+          "type" : "string"
+        },
+        "zs:42125:label" : {
+          "type" : "string"
+        },
+        "zs:42125:pop10" : {
+          "type" : "string"
+        },
+        "zs:42129:area_m" : {
+          "type" : "string"
+        },
+        "zs:42129:blockids" : {
+          "type" : "string"
+        },
+        "zs:42129:housing10" : {
+          "type" : "string"
+        },
+        "zs:42129:id" : {
+          "type" : "string"
+        },
+        "zs:42129:label" : {
+          "type" : "string"
+        },
+        "zs:42129:pop10" : {
+          "type" : "string"
+        },
+        "zs:42133:area_m" : {
+          "type" : "string"
+        },
+        "zs:42133:blockids" : {
+          "type" : "string"
+        },
+        "zs:42133:housing10" : {
+          "type" : "string"
+        },
+        "zs:42133:id" : {
+          "type" : "string"
+        },
+        "zs:42133:label" : {
+          "type" : "string"
+        },
+        "zs:42133:pop10" : {
+          "type" : "string"
+        },
+        "zs:44007:area_m" : {
+          "type" : "string"
+        },
+        "zs:44007:blockids" : {
+          "type" : "string"
+        },
+        "zs:44007:housing10" : {
+          "type" : "string"
+        },
+        "zs:44007:id" : {
+          "type" : "string"
+        },
+        "zs:44007:label" : {
+          "type" : "string"
+        },
+        "zs:44007:pop10" : {
+          "type" : "string"
+        },
+        "zs:45019:area_m" : {
+          "type" : "string"
+        },
+        "zs:45019:blockids" : {
+          "type" : "string"
+        },
+        "zs:45019:housing10" : {
+          "type" : "string"
+        },
+        "zs:45019:id" : {
+          "type" : "string"
+        },
+        "zs:45019:label" : {
+          "type" : "string"
+        },
+        "zs:45019:pop10" : {
+          "type" : "string"
+        },
+        "zs:45043:area_m" : {
+          "type" : "string"
+        },
+        "zs:45043:blockids" : {
+          "type" : "string"
+        },
+        "zs:45043:housing10" : {
+          "type" : "string"
+        },
+        "zs:45043:id" : {
+          "type" : "string"
+        },
+        "zs:45043:label" : {
+          "type" : "string"
+        },
+        "zs:45043:pop10" : {
+          "type" : "string"
+        },
+        "zs:45047:area_m" : {
+          "type" : "string"
+        },
+        "zs:45047:blockids" : {
+          "type" : "string"
+        },
+        "zs:45047:housing10" : {
+          "type" : "string"
+        },
+        "zs:45047:id" : {
+          "type" : "string"
+        },
+        "zs:45047:label" : {
+          "type" : "string"
+        },
+        "zs:45047:pop10" : {
+          "type" : "string"
+        },
+        "zs:45051:area_m" : {
+          "type" : "string"
+        },
+        "zs:45051:blockids" : {
+          "type" : "string"
+        },
+        "zs:45051:housing10" : {
+          "type" : "string"
+        },
+        "zs:45051:id" : {
+          "type" : "string"
+        },
+        "zs:45051:label" : {
+          "type" : "string"
+        },
+        "zs:45051:pop10" : {
+          "type" : "string"
+        },
+        "zs:45077:area_m" : {
+          "type" : "string"
+        },
+        "zs:45077:blockids" : {
+          "type" : "string"
+        },
+        "zs:45077:housing10" : {
+          "type" : "string"
+        },
+        "zs:45077:id" : {
+          "type" : "string"
+        },
+        "zs:45077:label" : {
+          "type" : "string"
+        },
+        "zs:45077:pop10" : {
+          "type" : "string"
+        },
+        "zs:45079:area_m" : {
+          "type" : "string"
+        },
+        "zs:45079:blockids" : {
+          "type" : "string"
+        },
+        "zs:45079:housing10" : {
+          "type" : "string"
+        },
+        "zs:45079:id" : {
+          "type" : "string"
+        },
+        "zs:45079:label" : {
+          "type" : "string"
+        },
+        "zs:45079:pop10" : {
+          "type" : "string"
+        },
+        "zs:45085:area_m" : {
+          "type" : "string"
+        },
+        "zs:45085:blockids" : {
+          "type" : "string"
+        },
+        "zs:45085:housing10" : {
+          "type" : "string"
+        },
+        "zs:45085:id" : {
+          "type" : "string"
+        },
+        "zs:45085:label" : {
+          "type" : "string"
+        },
+        "zs:45085:pop10" : {
+          "type" : "string"
+        },
+        "zs:45091:area_m" : {
+          "type" : "string"
+        },
+        "zs:45091:blockids" : {
+          "type" : "string"
+        },
+        "zs:45091:housing10" : {
+          "type" : "string"
+        },
+        "zs:45091:id" : {
+          "type" : "string"
+        },
+        "zs:45091:label" : {
+          "type" : "string"
+        },
+        "zs:45091:pop10" : {
+          "type" : "string"
+        },
+        "zs:47001:area_m" : {
+          "type" : "string"
+        },
+        "zs:47001:blockids" : {
+          "type" : "string"
+        },
+        "zs:47001:housing10" : {
+          "type" : "string"
+        },
+        "zs:47001:id" : {
+          "type" : "string"
+        },
+        "zs:47001:label" : {
+          "type" : "string"
+        },
+        "zs:47001:pop10" : {
+          "type" : "string"
+        },
+        "zs:47009:area_m" : {
+          "type" : "string"
+        },
+        "zs:47009:blockids" : {
+          "type" : "string"
+        },
+        "zs:47009:housing10" : {
+          "type" : "string"
+        },
+        "zs:47009:id" : {
+          "type" : "string"
+        },
+        "zs:47009:label" : {
+          "type" : "string"
+        },
+        "zs:47009:pop10" : {
+          "type" : "string"
+        },
+        "zs:47035:area_m" : {
+          "type" : "string"
+        },
+        "zs:47035:blockids" : {
+          "type" : "string"
+        },
+        "zs:47035:housing10" : {
+          "type" : "string"
+        },
+        "zs:47035:id" : {
+          "type" : "string"
+        },
+        "zs:47035:label" : {
+          "type" : "string"
+        },
+        "zs:47035:pop10" : {
+          "type" : "string"
+        },
+        "zs:47037:area_m" : {
+          "type" : "string"
+        },
+        "zs:47037:blockids" : {
+          "type" : "string"
+        },
+        "zs:47037:housing10" : {
+          "type" : "string"
+        },
+        "zs:47037:id" : {
+          "type" : "string"
+        },
+        "zs:47037:label" : {
+          "type" : "string"
+        },
+        "zs:47037:pop10" : {
+          "type" : "string"
+        },
+        "zs:47051:area_m" : {
+          "type" : "string"
+        },
+        "zs:47051:blockids" : {
+          "type" : "string"
+        },
+        "zs:47051:housing10" : {
+          "type" : "string"
+        },
+        "zs:47051:id" : {
+          "type" : "string"
+        },
+        "zs:47051:label" : {
+          "type" : "string"
+        },
+        "zs:47051:pop10" : {
+          "type" : "string"
+        },
+        "zs:47055:area_m" : {
+          "type" : "string"
+        },
+        "zs:47055:blockids" : {
+          "type" : "string"
+        },
+        "zs:47055:housing10" : {
+          "type" : "string"
+        },
+        "zs:47055:id" : {
+          "type" : "string"
+        },
+        "zs:47055:label" : {
+          "type" : "string"
+        },
+        "zs:47055:pop10" : {
+          "type" : "string"
+        },
+        "zs:47065:area_m" : {
+          "type" : "string"
+        },
+        "zs:47065:blockids" : {
+          "type" : "string"
+        },
+        "zs:47065:housing10" : {
+          "type" : "string"
+        },
+        "zs:47065:id" : {
+          "type" : "string"
+        },
+        "zs:47065:label" : {
+          "type" : "string"
+        },
+        "zs:47065:pop10" : {
+          "type" : "string"
+        },
+        "zs:47107:area_m" : {
+          "type" : "string"
+        },
+        "zs:47107:blockids" : {
+          "type" : "string"
+        },
+        "zs:47107:housing10" : {
+          "type" : "string"
+        },
+        "zs:47107:id" : {
+          "type" : "string"
+        },
+        "zs:47107:label" : {
+          "type" : "string"
+        },
+        "zs:47107:pop10" : {
+          "type" : "string"
+        },
+        "zs:47115:area_m" : {
+          "type" : "string"
+        },
+        "zs:47115:blockids" : {
+          "type" : "string"
+        },
+        "zs:47115:housing10" : {
+          "type" : "string"
+        },
+        "zs:47115:id" : {
+          "type" : "string"
+        },
+        "zs:47115:label" : {
+          "type" : "string"
+        },
+        "zs:47115:pop10" : {
+          "type" : "string"
+        },
+        "zs:47119:area_m" : {
+          "type" : "string"
+        },
+        "zs:47119:blockids" : {
+          "type" : "string"
+        },
+        "zs:47119:housing10" : {
+          "type" : "string"
+        },
+        "zs:47119:id" : {
+          "type" : "string"
+        },
+        "zs:47119:label" : {
+          "type" : "string"
+        },
+        "zs:47119:pop10" : {
+          "type" : "string"
+        },
+        "zs:47125:area_m" : {
+          "type" : "string"
+        },
+        "zs:47125:blockids" : {
+          "type" : "string"
+        },
+        "zs:47125:housing10" : {
+          "type" : "string"
+        },
+        "zs:47125:id" : {
+          "type" : "string"
+        },
+        "zs:47125:label" : {
+          "type" : "string"
+        },
+        "zs:47125:pop10" : {
+          "type" : "string"
+        },
+        "zs:47149:area_m" : {
+          "type" : "string"
+        },
+        "zs:47149:blockids" : {
+          "type" : "string"
+        },
+        "zs:47149:housing10" : {
+          "type" : "string"
+        },
+        "zs:47149:id" : {
+          "type" : "string"
+        },
+        "zs:47149:label" : {
+          "type" : "string"
+        },
+        "zs:47149:pop10" : {
+          "type" : "string"
+        },
+        "zs:47163:area_m" : {
+          "type" : "string"
+        },
+        "zs:47163:blockids" : {
+          "type" : "string"
+        },
+        "zs:47163:housing10" : {
+          "type" : "string"
+        },
+        "zs:47163:id" : {
+          "type" : "string"
+        },
+        "zs:47163:label" : {
+          "type" : "string"
+        },
+        "zs:47163:pop10" : {
+          "type" : "string"
+        },
+        "zs:47179:area_m" : {
+          "type" : "string"
+        },
+        "zs:47179:blockids" : {
+          "type" : "string"
+        },
+        "zs:47179:housing10" : {
+          "type" : "string"
+        },
+        "zs:47179:id" : {
+          "type" : "string"
+        },
+        "zs:47179:label" : {
+          "type" : "string"
+        },
+        "zs:47179:pop10" : {
+          "type" : "string"
+        },
+        "zs:48041:area_m" : {
+          "type" : "string"
+        },
+        "zs:48041:blockids" : {
+          "type" : "string"
+        },
+        "zs:48041:housing10" : {
+          "type" : "string"
+        },
+        "zs:48041:id" : {
+          "type" : "string"
+        },
+        "zs:48041:label" : {
+          "type" : "string"
+        },
+        "zs:48041:pop10" : {
+          "type" : "string"
+        },
+        "zs:48113:area_m" : {
+          "type" : "string"
+        },
+        "zs:48113:blockids" : {
+          "type" : "string"
+        },
+        "zs:48113:housing10" : {
+          "type" : "string"
+        },
+        "zs:48113:id" : {
+          "type" : "string"
+        },
+        "zs:48113:label" : {
+          "type" : "string"
+        },
+        "zs:48113:pop10" : {
+          "type" : "string"
+        },
+        "zs:48121:area_m" : {
+          "type" : "string"
+        },
+        "zs:48121:blockids" : {
+          "type" : "string"
+        },
+        "zs:48121:housing10" : {
+          "type" : "string"
+        },
+        "zs:48121:id" : {
+          "type" : "string"
+        },
+        "zs:48121:label" : {
+          "type" : "string"
+        },
+        "zs:48121:pop10" : {
+          "type" : "string"
+        },
+        "zs:48141:area_m" : {
+          "type" : "string"
+        },
+        "zs:48141:blockids" : {
+          "type" : "string"
+        },
+        "zs:48141:housing10" : {
+          "type" : "string"
+        },
+        "zs:48141:id" : {
+          "type" : "string"
+        },
+        "zs:48141:label" : {
+          "type" : "string"
+        },
+        "zs:48141:pop10" : {
+          "type" : "string"
+        },
+        "zs:48157:area_m" : {
+          "type" : "string"
+        },
+        "zs:48157:blockids" : {
+          "type" : "string"
+        },
+        "zs:48157:housing10" : {
+          "type" : "string"
+        },
+        "zs:48157:id" : {
+          "type" : "string"
+        },
+        "zs:48157:label" : {
+          "type" : "string"
+        },
+        "zs:48157:pop10" : {
+          "type" : "string"
+        },
+        "zs:48167:area_m" : {
+          "type" : "string"
+        },
+        "zs:48167:blockids" : {
+          "type" : "string"
+        },
+        "zs:48167:housing10" : {
+          "type" : "string"
+        },
+        "zs:48167:id" : {
+          "type" : "string"
+        },
+        "zs:48167:label" : {
+          "type" : "string"
+        },
+        "zs:48167:pop10" : {
+          "type" : "string"
+        },
+        "zs:48201:area_m" : {
+          "type" : "string"
+        },
+        "zs:48201:blockids" : {
+          "type" : "string"
+        },
+        "zs:48201:housing10" : {
+          "type" : "string"
+        },
+        "zs:48201:id" : {
+          "type" : "string"
+        },
+        "zs:48201:label" : {
+          "type" : "string"
+        },
+        "zs:48201:pop10" : {
+          "type" : "string"
+        },
+        "zs:48245:area_m" : {
+          "type" : "string"
+        },
+        "zs:48245:blockids" : {
+          "type" : "string"
+        },
+        "zs:48245:housing10" : {
+          "type" : "string"
+        },
+        "zs:48245:id" : {
+          "type" : "string"
+        },
+        "zs:48245:label" : {
+          "type" : "string"
+        },
+        "zs:48245:pop10" : {
+          "type" : "string"
+        },
+        "zs:48329:area_m" : {
+          "type" : "string"
+        },
+        "zs:48329:blockids" : {
+          "type" : "string"
+        },
+        "zs:48329:housing10" : {
+          "type" : "string"
+        },
+        "zs:48329:id" : {
+          "type" : "string"
+        },
+        "zs:48329:label" : {
+          "type" : "string"
+        },
+        "zs:48329:pop10" : {
+          "type" : "string"
+        },
+        "zs:48439:area_m" : {
+          "type" : "string"
+        },
+        "zs:48439:blockids" : {
+          "type" : "string"
+        },
+        "zs:48439:housing10" : {
+          "type" : "string"
+        },
+        "zs:48439:id" : {
+          "type" : "string"
+        },
+        "zs:48439:label" : {
+          "type" : "string"
+        },
+        "zs:48439:pop10" : {
+          "type" : "string"
+        },
+        "zs:48453:area_m" : {
+          "type" : "string"
+        },
+        "zs:48453:blockids" : {
+          "type" : "string"
+        },
+        "zs:48453:housing10" : {
+          "type" : "string"
+        },
+        "zs:48453:id" : {
+          "type" : "string"
+        },
+        "zs:48453:label" : {
+          "type" : "string"
+        },
+        "zs:48453:pop10" : {
+          "type" : "string"
+        },
+        "zs:48479:area_m" : {
+          "type" : "string"
+        },
+        "zs:48479:blockids" : {
+          "type" : "string"
+        },
+        "zs:48479:housing10" : {
+          "type" : "string"
+        },
+        "zs:48479:id" : {
+          "type" : "string"
+        },
+        "zs:48479:label" : {
+          "type" : "string"
+        },
+        "zs:48479:pop10" : {
+          "type" : "string"
+        },
+        "zs:48491:area_m" : {
+          "type" : "string"
+        },
+        "zs:48491:blockids" : {
+          "type" : "string"
+        },
+        "zs:48491:housing10" : {
+          "type" : "string"
+        },
+        "zs:48491:id" : {
+          "type" : "string"
+        },
+        "zs:48491:label" : {
+          "type" : "string"
+        },
+        "zs:48491:pop10" : {
+          "type" : "string"
+        },
+        "zs:49011:area_m" : {
+          "type" : "string"
+        },
+        "zs:49011:blockids" : {
+          "type" : "string"
+        },
+        "zs:49011:housing10" : {
+          "type" : "string"
+        },
+        "zs:49011:id" : {
+          "type" : "string"
+        },
+        "zs:49011:label" : {
+          "type" : "string"
+        },
+        "zs:49011:pop10" : {
+          "type" : "string"
+        },
+        "zs:49035:area_m" : {
+          "type" : "string"
+        },
+        "zs:49035:blockids" : {
+          "type" : "string"
+        },
+        "zs:49035:housing10" : {
+          "type" : "string"
+        },
+        "zs:49035:id" : {
+          "type" : "string"
+        },
+        "zs:49035:label" : {
+          "type" : "string"
+        },
+        "zs:49035:pop10" : {
+          "type" : "string"
+        },
+        "zs:49049:area_m" : {
+          "type" : "string"
+        },
+        "zs:49049:blockids" : {
+          "type" : "string"
+        },
+        "zs:49049:housing10" : {
+          "type" : "string"
+        },
+        "zs:49049:id" : {
+          "type" : "string"
+        },
+        "zs:49049:label" : {
+          "type" : "string"
+        },
+        "zs:49049:pop10" : {
+          "type" : "string"
+        },
+        "zs:49057:area_m" : {
+          "type" : "string"
+        },
+        "zs:49057:blockids" : {
+          "type" : "string"
+        },
+        "zs:49057:housing10" : {
+          "type" : "string"
+        },
+        "zs:49057:id" : {
+          "type" : "string"
+        },
+        "zs:49057:label" : {
+          "type" : "string"
+        },
+        "zs:49057:pop10" : {
+          "type" : "string"
+        },
+        "zs:50021:area_m" : {
+          "type" : "string"
+        },
+        "zs:50021:blockids" : {
+          "type" : "string"
+        },
+        "zs:50021:housing10" : {
+          "type" : "string"
+        },
+        "zs:50021:id" : {
+          "type" : "string"
+        },
+        "zs:50021:label" : {
+          "type" : "string"
+        },
+        "zs:50021:pop10" : {
+          "type" : "string"
+        },
+        "zs:5007:area_m" : {
+          "type" : "string"
+        },
+        "zs:5007:blockids" : {
+          "type" : "string"
+        },
+        "zs:5007:housing10" : {
+          "type" : "string"
+        },
+        "zs:5007:id" : {
+          "type" : "string"
+        },
+        "zs:5007:label" : {
+          "type" : "string"
+        },
+        "zs:5007:pop10" : {
+          "type" : "string"
+        },
+        "zs:51003:area_m" : {
+          "type" : "string"
+        },
+        "zs:51003:blockids" : {
+          "type" : "string"
+        },
+        "zs:51003:housing10" : {
+          "type" : "string"
+        },
+        "zs:51003:id" : {
+          "type" : "string"
+        },
+        "zs:51003:label" : {
+          "type" : "string"
+        },
+        "zs:51003:pop10" : {
+          "type" : "string"
+        },
+        "zs:51059:area_m" : {
+          "type" : "string"
+        },
+        "zs:51059:blockids" : {
+          "type" : "string"
+        },
+        "zs:51059:housing10" : {
+          "type" : "string"
+        },
+        "zs:51059:id" : {
+          "type" : "string"
+        },
+        "zs:51059:label" : {
+          "type" : "string"
+        },
+        "zs:51059:pop10" : {
+          "type" : "string"
+        },
+        "zs:51095:area_m" : {
+          "type" : "string"
+        },
+        "zs:51095:blockids" : {
+          "type" : "string"
+        },
+        "zs:51095:housing10" : {
+          "type" : "string"
+        },
+        "zs:51095:id" : {
+          "type" : "string"
+        },
+        "zs:51095:label" : {
+          "type" : "string"
+        },
+        "zs:51095:pop10" : {
+          "type" : "string"
+        },
+        "zs:51121:area_m" : {
+          "type" : "string"
+        },
+        "zs:51121:blockids" : {
+          "type" : "string"
+        },
+        "zs:51121:housing10" : {
+          "type" : "string"
+        },
+        "zs:51121:id" : {
+          "type" : "string"
+        },
+        "zs:51121:label" : {
+          "type" : "string"
+        },
+        "zs:51121:pop10" : {
+          "type" : "string"
+        },
+        "zs:51179:area_m" : {
+          "type" : "string"
+        },
+        "zs:51179:blockids" : {
+          "type" : "string"
+        },
+        "zs:51179:housing10" : {
+          "type" : "string"
+        },
+        "zs:51179:id" : {
+          "type" : "string"
+        },
+        "zs:51179:label" : {
+          "type" : "string"
+        },
+        "zs:51179:pop10" : {
+          "type" : "string"
+        },
+        "zs:51197:area_m" : {
+          "type" : "string"
+        },
+        "zs:51197:blockids" : {
+          "type" : "string"
+        },
+        "zs:51197:housing10" : {
+          "type" : "string"
+        },
+        "zs:51197:id" : {
+          "type" : "string"
+        },
+        "zs:51197:label" : {
+          "type" : "string"
+        },
+        "zs:51197:pop10" : {
+          "type" : "string"
+        },
+        "zs:5119:area_m" : {
+          "type" : "string"
+        },
+        "zs:5119:blockids" : {
+          "type" : "string"
+        },
+        "zs:5119:housing10" : {
+          "type" : "string"
+        },
+        "zs:5119:id" : {
+          "type" : "string"
+        },
+        "zs:5119:label" : {
+          "type" : "string"
+        },
+        "zs:5119:pop10" : {
+          "type" : "string"
+        },
+        "zs:5143:area_m" : {
+          "type" : "string"
+        },
+        "zs:5143:blockids" : {
+          "type" : "string"
+        },
+        "zs:5143:housing10" : {
+          "type" : "string"
+        },
+        "zs:5143:id" : {
+          "type" : "string"
+        },
+        "zs:5143:label" : {
+          "type" : "string"
+        },
+        "zs:5143:pop10" : {
+          "type" : "string"
+        },
+        "zs:51540:area_m" : {
+          "type" : "string"
+        },
+        "zs:51540:blockids" : {
+          "type" : "string"
+        },
+        "zs:51540:housing10" : {
+          "type" : "string"
+        },
+        "zs:51540:id" : {
+          "type" : "string"
+        },
+        "zs:51540:label" : {
+          "type" : "string"
+        },
+        "zs:51540:pop10" : {
+          "type" : "string"
+        },
+        "zs:51550:area_m" : {
+          "type" : "string"
+        },
+        "zs:51550:blockids" : {
+          "type" : "string"
+        },
+        "zs:51550:housing10" : {
+          "type" : "string"
+        },
+        "zs:51550:id" : {
+          "type" : "string"
+        },
+        "zs:51550:label" : {
+          "type" : "string"
+        },
+        "zs:51550:pop10" : {
+          "type" : "string"
+        },
+        "zs:51590:area_m" : {
+          "type" : "string"
+        },
+        "zs:51590:blockids" : {
+          "type" : "string"
+        },
+        "zs:51590:housing10" : {
+          "type" : "string"
+        },
+        "zs:51590:id" : {
+          "type" : "string"
+        },
+        "zs:51590:label" : {
+          "type" : "string"
+        },
+        "zs:51590:pop10" : {
+          "type" : "string"
+        },
+        "zs:51700:area_m" : {
+          "type" : "string"
+        },
+        "zs:51700:blockids" : {
+          "type" : "string"
+        },
+        "zs:51700:housing10" : {
+          "type" : "string"
+        },
+        "zs:51700:id" : {
+          "type" : "string"
+        },
+        "zs:51700:label" : {
+          "type" : "string"
+        },
+        "zs:51700:pop10" : {
+          "type" : "string"
+        },
+        "zs:51710:area_m" : {
+          "type" : "string"
+        },
+        "zs:51710:blockids" : {
+          "type" : "string"
+        },
+        "zs:51710:housing10" : {
+          "type" : "string"
+        },
+        "zs:51710:id" : {
+          "type" : "string"
+        },
+        "zs:51710:label" : {
+          "type" : "string"
+        },
+        "zs:51710:pop10" : {
+          "type" : "string"
+        },
+        "zs:51740:area_m" : {
+          "type" : "string"
+        },
+        "zs:51740:blockids" : {
+          "type" : "string"
+        },
+        "zs:51740:housing10" : {
+          "type" : "string"
+        },
+        "zs:51740:id" : {
+          "type" : "string"
+        },
+        "zs:51740:label" : {
+          "type" : "string"
+        },
+        "zs:51740:pop10" : {
+          "type" : "string"
+        },
+        "zs:51810:area_m" : {
+          "type" : "string"
+        },
+        "zs:51810:blockids" : {
+          "type" : "string"
+        },
+        "zs:51810:housing10" : {
+          "type" : "string"
+        },
+        "zs:51810:id" : {
+          "type" : "string"
+        },
+        "zs:51810:label" : {
+          "type" : "string"
+        },
+        "zs:51810:pop10" : {
+          "type" : "string"
+        },
+        "zs:51830:area_m" : {
+          "type" : "string"
+        },
+        "zs:51830:blockids" : {
+          "type" : "string"
+        },
+        "zs:51830:housing10" : {
+          "type" : "string"
+        },
+        "zs:51830:id" : {
+          "type" : "string"
+        },
+        "zs:51830:label" : {
+          "type" : "string"
+        },
+        "zs:51830:pop10" : {
+          "type" : "string"
+        },
+        "zs:53011:area_m" : {
+          "type" : "string"
+        },
+        "zs:53011:blockids" : {
+          "type" : "string"
+        },
+        "zs:53011:housing10" : {
+          "type" : "string"
+        },
+        "zs:53011:id" : {
+          "type" : "string"
+        },
+        "zs:53011:label" : {
+          "type" : "string"
+        },
+        "zs:53011:pop10" : {
+          "type" : "string"
+        },
+        "zs:53033:area_m" : {
+          "type" : "string"
+        },
+        "zs:53033:blockids" : {
+          "type" : "string"
+        },
+        "zs:53033:housing10" : {
+          "type" : "string"
+        },
+        "zs:53033:id" : {
+          "type" : "string"
+        },
+        "zs:53033:label" : {
+          "type" : "string"
+        },
+        "zs:53033:pop10" : {
+          "type" : "string"
+        },
+        "zs:53035:area_m" : {
+          "type" : "string"
+        },
+        "zs:53035:blockids" : {
+          "type" : "string"
+        },
+        "zs:53035:housing10" : {
+          "type" : "string"
+        },
+        "zs:53035:id" : {
+          "type" : "string"
+        },
+        "zs:53035:label" : {
+          "type" : "string"
+        },
+        "zs:53035:pop10" : {
+          "type" : "string"
+        },
+        "zs:55009:area_m" : {
+          "type" : "string"
+        },
+        "zs:55009:blockids" : {
+          "type" : "string"
+        },
+        "zs:55009:housing10" : {
+          "type" : "string"
+        },
+        "zs:55009:id" : {
+          "type" : "string"
+        },
+        "zs:55009:label" : {
+          "type" : "string"
+        },
+        "zs:55009:pop10" : {
+          "type" : "string"
+        },
+        "zs:55079:area_m" : {
+          "type" : "string"
+        },
+        "zs:55079:blockids" : {
+          "type" : "string"
+        },
+        "zs:55079:housing10" : {
+          "type" : "string"
+        },
+        "zs:55079:id" : {
+          "type" : "string"
+        },
+        "zs:55079:label" : {
+          "type" : "string"
+        },
+        "zs:55079:pop10" : {
+          "type" : "string"
+        },
+        "zs:6001:area_m" : {
+          "type" : "string"
+        },
+        "zs:6001:blockids" : {
+          "type" : "string"
+        },
+        "zs:6001:housing10" : {
+          "type" : "string"
+        },
+        "zs:6001:id" : {
+          "type" : "string"
+        },
+        "zs:6001:label" : {
+          "type" : "string"
+        },
+        "zs:6001:pop10" : {
+          "type" : "string"
+        },
+        "zs:6013:area_m" : {
+          "type" : "string"
+        },
+        "zs:6013:blockids" : {
+          "type" : "string"
+        },
+        "zs:6013:housing10" : {
+          "type" : "string"
+        },
+        "zs:6013:id" : {
+          "type" : "string"
+        },
+        "zs:6013:label" : {
+          "type" : "string"
+        },
+        "zs:6013:pop10" : {
+          "type" : "string"
+        },
+        "zs:6017:area_m" : {
+          "type" : "string"
+        },
+        "zs:6017:blockids" : {
+          "type" : "string"
+        },
+        "zs:6017:housing10" : {
+          "type" : "string"
+        },
+        "zs:6017:id" : {
+          "type" : "string"
+        },
+        "zs:6017:label" : {
+          "type" : "string"
+        },
+        "zs:6017:pop10" : {
+          "type" : "string"
+        },
+        "zs:6037:area_m" : {
+          "type" : "string"
+        },
+        "zs:6037:blockids" : {
+          "type" : "string"
+        },
+        "zs:6037:housing10" : {
+          "type" : "string"
+        },
+        "zs:6037:id" : {
+          "type" : "string"
+        },
+        "zs:6037:label" : {
+          "type" : "string"
+        },
+        "zs:6037:pop10" : {
+          "type" : "string"
+        },
+        "zs:6051:area_m" : {
+          "type" : "string"
+        },
+        "zs:6051:blockids" : {
+          "type" : "string"
+        },
+        "zs:6051:housing10" : {
+          "type" : "string"
+        },
+        "zs:6051:id" : {
+          "type" : "string"
+        },
+        "zs:6051:label" : {
+          "type" : "string"
+        },
+        "zs:6051:pop10" : {
+          "type" : "string"
+        },
+        "zs:6059:area_m" : {
+          "type" : "string"
+        },
+        "zs:6059:blockids" : {
+          "type" : "string"
+        },
+        "zs:6059:housing10" : {
+          "type" : "string"
+        },
+        "zs:6059:id" : {
+          "type" : "string"
+        },
+        "zs:6059:label" : {
+          "type" : "string"
+        },
+        "zs:6059:pop10" : {
+          "type" : "string"
+        },
+        "zs:6067:area_m" : {
+          "type" : "string"
+        },
+        "zs:6067:blockids" : {
+          "type" : "string"
+        },
+        "zs:6067:housing10" : {
+          "type" : "string"
+        },
+        "zs:6067:id" : {
+          "type" : "string"
+        },
+        "zs:6067:label" : {
+          "type" : "string"
+        },
+        "zs:6067:pop10" : {
+          "type" : "string"
+        },
+        "zs:6073:area_m" : {
+          "type" : "string"
+        },
+        "zs:6073:blockids" : {
+          "type" : "string"
+        },
+        "zs:6073:housing10" : {
+          "type" : "string"
+        },
+        "zs:6073:id" : {
+          "type" : "string"
+        },
+        "zs:6073:label" : {
+          "type" : "string"
+        },
+        "zs:6073:pop10" : {
+          "type" : "string"
+        },
+        "zs:6075:area_m" : {
+          "type" : "string"
+        },
+        "zs:6075:blockids" : {
+          "type" : "string"
+        },
+        "zs:6075:housing10" : {
+          "type" : "string"
+        },
+        "zs:6075:id" : {
+          "type" : "string"
+        },
+        "zs:6075:label" : {
+          "type" : "string"
+        },
+        "zs:6075:pop10" : {
+          "type" : "string"
+        },
+        "zs:6077:area_m" : {
+          "type" : "string"
+        },
+        "zs:6077:blockids" : {
+          "type" : "string"
+        },
+        "zs:6077:housing10" : {
+          "type" : "string"
+        },
+        "zs:6077:id" : {
+          "type" : "string"
+        },
+        "zs:6077:label" : {
+          "type" : "string"
+        },
+        "zs:6077:pop10" : {
+          "type" : "string"
+        },
+        "zs:6081:area_m" : {
+          "type" : "string"
+        },
+        "zs:6081:blockids" : {
+          "type" : "string"
+        },
+        "zs:6081:housing10" : {
+          "type" : "string"
+        },
+        "zs:6081:id" : {
+          "type" : "string"
+        },
+        "zs:6081:label" : {
+          "type" : "string"
+        },
+        "zs:6081:pop10" : {
+          "type" : "string"
+        },
+        "zs:6085:area_m" : {
+          "type" : "string"
+        },
+        "zs:6085:blockids" : {
+          "type" : "string"
+        },
+        "zs:6085:housing10" : {
+          "type" : "string"
+        },
+        "zs:6085:id" : {
+          "type" : "string"
+        },
+        "zs:6085:label" : {
+          "type" : "string"
+        },
+        "zs:6085:pop10" : {
+          "type" : "string"
+        },
+        "zs:6095:area_m" : {
+          "type" : "string"
+        },
+        "zs:6095:blockids" : {
+          "type" : "string"
+        },
+        "zs:6095:housing10" : {
+          "type" : "string"
+        },
+        "zs:6095:id" : {
+          "type" : "string"
+        },
+        "zs:6095:label" : {
+          "type" : "string"
+        },
+        "zs:6095:pop10" : {
+          "type" : "string"
+        },
+        "zs:6097:area_m" : {
+          "type" : "string"
+        },
+        "zs:6097:blockids" : {
+          "type" : "string"
+        },
+        "zs:6097:housing10" : {
+          "type" : "string"
+        },
+        "zs:6097:id" : {
+          "type" : "string"
+        },
+        "zs:6097:label" : {
+          "type" : "string"
+        },
+        "zs:6097:pop10" : {
+          "type" : "string"
+        },
+        "zs:6111:area_m" : {
+          "type" : "string"
+        },
+        "zs:6111:blockids" : {
+          "type" : "string"
+        },
+        "zs:6111:housing10" : {
+          "type" : "string"
+        },
+        "zs:6111:id" : {
+          "type" : "string"
+        },
+        "zs:6111:label" : {
+          "type" : "string"
+        },
+        "zs:6111:pop10" : {
+          "type" : "string"
+        },
+        "zs:6113:area_m" : {
+          "type" : "string"
+        },
+        "zs:6113:blockids" : {
+          "type" : "string"
+        },
+        "zs:6113:housing10" : {
+          "type" : "string"
+        },
+        "zs:6113:id" : {
+          "type" : "string"
+        },
+        "zs:6113:label" : {
+          "type" : "string"
+        },
+        "zs:6113:pop10" : {
+          "type" : "string"
+        },
+        "zs:8001:area_m" : {
+          "type" : "string"
+        },
+        "zs:8001:blockids" : {
+          "type" : "string"
+        },
+        "zs:8001:housing10" : {
+          "type" : "string"
+        },
+        "zs:8001:id" : {
+          "type" : "string"
+        },
+        "zs:8001:label" : {
+          "type" : "string"
+        },
+        "zs:8001:pop10" : {
+          "type" : "string"
+        },
+        "zs:8005:area_m" : {
+          "type" : "string"
+        },
+        "zs:8005:blockids" : {
+          "type" : "string"
+        },
+        "zs:8005:housing10" : {
+          "type" : "string"
+        },
+        "zs:8005:id" : {
+          "type" : "string"
+        },
+        "zs:8005:label" : {
+          "type" : "string"
+        },
+        "zs:8005:pop10" : {
+          "type" : "string"
+        },
+        "zs:8013:area_m" : {
+          "type" : "string"
+        },
+        "zs:8013:blockids" : {
+          "type" : "string"
+        },
+        "zs:8013:housing10" : {
+          "type" : "string"
+        },
+        "zs:8013:id" : {
+          "type" : "string"
+        },
+        "zs:8013:label" : {
+          "type" : "string"
+        },
+        "zs:8013:pop10" : {
+          "type" : "string"
+        },
+        "zs:8014:area_m" : {
+          "type" : "string"
+        },
+        "zs:8014:blockids" : {
+          "type" : "string"
+        },
+        "zs:8014:housing10" : {
+          "type" : "string"
+        },
+        "zs:8014:id" : {
+          "type" : "string"
+        },
+        "zs:8014:label" : {
+          "type" : "string"
+        },
+        "zs:8014:pop10" : {
+          "type" : "string"
+        },
+        "zs:8031:area_m" : {
+          "type" : "string"
+        },
+        "zs:8031:blockids" : {
+          "type" : "string"
+        },
+        "zs:8031:housing10" : {
+          "type" : "string"
+        },
+        "zs:8031:id" : {
+          "type" : "string"
+        },
+        "zs:8031:label" : {
+          "type" : "string"
+        },
+        "zs:8031:pop10" : {
+          "type" : "string"
+        },
+        "zs:8051:area_m" : {
+          "type" : "string"
+        },
+        "zs:8051:blockids" : {
+          "type" : "string"
+        },
+        "zs:8051:housing10" : {
+          "type" : "string"
+        },
+        "zs:8051:id" : {
+          "type" : "string"
+        },
+        "zs:8051:label" : {
+          "type" : "string"
+        },
+        "zs:8051:pop10" : {
+          "type" : "string"
+        },
+        "zs:8077:area_m" : {
+          "type" : "string"
+        },
+        "zs:8077:blockids" : {
+          "type" : "string"
+        },
+        "zs:8077:housing10" : {
+          "type" : "string"
+        },
+        "zs:8077:id" : {
+          "type" : "string"
+        },
+        "zs:8077:label" : {
+          "type" : "string"
+        },
+        "zs:8077:pop10" : {
+          "type" : "string"
+        },
+        "zs:8083:area_m" : {
+          "type" : "string"
+        },
+        "zs:8083:blockids" : {
+          "type" : "string"
+        },
+        "zs:8083:housing10" : {
+          "type" : "string"
+        },
+        "zs:8083:id" : {
+          "type" : "string"
+        },
+        "zs:8083:label" : {
+          "type" : "string"
+        },
+        "zs:8083:pop10" : {
+          "type" : "string"
+        },
+        "zs:8113:area_m" : {
+          "type" : "string"
+        },
+        "zs:8113:blockids" : {
+          "type" : "string"
+        },
+        "zs:8113:housing10" : {
+          "type" : "string"
+        },
+        "zs:8113:id" : {
+          "type" : "string"
+        },
+        "zs:8113:label" : {
+          "type" : "string"
+        },
+        "zs:8113:pop10" : {
+          "type" : "string"
+        },
+        "zs:9001:area_m" : {
+          "type" : "string"
+        },
+        "zs:9001:blockids" : {
+          "type" : "string"
+        },
+        "zs:9001:housing10" : {
+          "type" : "string"
+        },
+        "zs:9001:id" : {
+          "type" : "string"
+        },
+        "zs:9001:label" : {
+          "type" : "string"
+        },
+        "zs:9001:pop10" : {
+          "type" : "string"
+        },
+        "zs:9009:area_m" : {
+          "type" : "string"
+        },
+        "zs:9009:blockids" : {
+          "type" : "string"
+        },
+        "zs:9009:housing10" : {
+          "type" : "string"
+        },
+        "zs:9009:id" : {
+          "type" : "string"
+        },
+        "zs:9009:label" : {
+          "type" : "string"
+        },
+        "zs:9009:pop10" : {
+          "type" : "string"
+        },
+        "zs:area_m" : {
+          "type" : "string"
+        },
+        "zs:blockids" : {
+          "type" : "string"
+        },
+        "zs:housing10" : {
+          "type" : "string"
+        },
+        "zs:id" : {
+          "type" : "string"
+        },
+        "zs:label" : {
+          "type" : "string"
+        },
+        "zs:name" : {
+          "type" : "string"
+        },
+        "zs:placetype" : {
+          "type" : "string"
+        },
+        "zs:pop10" : {
+          "type" : "long"
+        },
+        "zs:us:counties" : {
+          "type" : "string"
+        }
+      }
+    },
+    "venue" : {
+      "properties" : {
+        "names_all" : {
+          "type" : "string"
+        },
+        "name_not_analyzed" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
+        "edtf:cessation" : {
+          "type" : "string"
+        },
+        "edtf:inception" : {
+          "type" : "string"
+        },
+        "edtf:deprecated" : {
+          "type" : "string"
+        },
+        "edtf:superseded" : {
+          "type" : "string"
+        },
+        "geom:bbox" : {
+          "type" : "string"
+        },
+        "geom:latitude" : {
+          "type" : "double"
+        },
+        "geom:longitude" : {
+          "type" : "double"
+        },
+        "geom:type" : {
+          "type" : "string"
+        },
+        "src:geom" : {
+          "type" : "string"
+        },
+        "wof:concordances" : {
+          "properties" : {
+            "asdf" : {
+              "type" : "string"
+            },
+            "bar" : {
+              "type" : "string"
+            },
+            "foo" : {
+              "type" : "string"
+            },
+            "nyt:id" : {
+              "type" : "string"
+            }
+          }
+        },
+        "wof:concordances_count" : {
+          "type" : "string"
+        },
+        "wof:id" : {
+          "type" : "long"
+        },
+        "wof:name" : {
+          "type" : "string",
+          "copy_to" : [ "names_all", "name_not_analyzed" ]
+        },
+        "wof:parent_id" : {
+          "type" : "string"
+        },
+        "wof:placetype" : {
+          "type" : "string"
+        },
+        "wof:placetype_id" : {
+          "type" : "long"
+        },
+        "mz:is_current": {
+          "type": "integer"
+        },
+        "mz:is_funky": {
+          "type": "integer"
+        }
+      }
+    },
+    "microhood" : {
+      "properties" : {
+        "names_all" : {
+          "type" : "string"
+        },
+        "name_not_analyzed" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
+        "bbox" : {
+          "type" : "double"
+        },
+        "edtf:cessation" : {
+          "type" : "string"
+        },
+        "edtf:inception" : {
+          "type" : "string"
+        },
+        "geom:area" : {
+          "type" : "double"
+        },
+        "geom:bbox" : {
+          "type" : "string"
+        },
+        "geom:latitude" : {
+          "type" : "double"
+        },
+        "geom:longitude" : {
+          "type" : "double"
+        },
+        "geom:src" : {
+          "type" : "string"
+        },
+        "geom:type" : {
+          "type" : "string"
+        },
+        "geometry" : {
+          "properties" : {
+            "coordinates" : {
+              "type" : "double"
+            },
+            "type" : {
+              "type" : "string"
+            }
+          }
+        },
+        "id" : {
+          "type" : "long"
+        },
+        "iso:country" : {
+          "type" : "string"
+        },
+        "lbl:latitude" : {
+          "type" : "double"
+        },
+        "lbl:longitude" : {
+          "type" : "double"
+        },
+        "mps:latitude" : {
+          "type" : "double"
+        },
+        "mps:longitude" : {
+          "type" : "double"
+        },
+        "name:eng_x_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "name_preferred" : {
+          "type" : "string",
+          "copy_to" : "names_all"
+        },
+        "properties" : {
+          "properties" : {
+            "edtf:cessation" : {
+              "type" : "string"
+            },
+            "edtf:inception" : {
+              "type" : "string"
+            },
+            "geom:area" : {
+              "type" : "double"
+            },
+            "geom:bbox" : {
+              "type" : "string"
+            },
+            "geom:latitude" : {
+              "type" : "double"
+            },
+            "geom:longitude" : {
+              "type" : "double"
+            },
+            "iso:country" : {
+              "type" : "string"
+            },
+            "lbl:latitude" : {
+              "type" : "double"
+            },
+            "lbl:longitude" : {
+              "type" : "double"
+            },
+            "name:eng_x_preferred" : {
+              "type" : "string",
+              "copy_to" : "names_all"
+            },
+            "src:geom" : {
+              "type" : "string"
+            },
+            "wof:belongsto" : {
+              "type" : "long"
+            },
+            "wof:concordances" : {
+              "type" : "object"
+            },
+            "wof:country" : {
+              "type" : "string"
+            },
+            "wof:geomhash" : {
+              "type" : "string"
+            },
+            "wof:hierarchy" : {
+              "properties" : {
+                "continent_id" : {
+                  "type" : "long"
+                },
+                "country_id" : {
+                  "type" : "long"
+                },
+                "county_id" : {
+                  "type" : "long"
+                },
+                "locality_id" : {
+                  "type" : "long"
+                },
+                "microhood_id" : {
+                  "type" : "long"
+                },
+                "neighbourhood_id" : {
+                  "type" : "long"
+                },
+                "region_id" : {
+                  "type" : "long"
+                }
+              }
+            },
+            "wof:id" : {
+              "type" : "long"
+            },
+            "wof:lastmodified" : {
+              "type" : "long"
+            },
+            "wof:name" : {
+              "type" : "string",
+              "copy_to" : [ "names_all", "name_not_analyzed" ]
+            },
+            "wof:parent_id" : {
+              "type" : "long"
+            },
+            "wof:placetype" : {
+              "type" : "string"
+            }
+          }
+        },
+        "src:geom" : {
+          "type" : "string"
+        },
+        "src:lbl:centroid" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "wof:belongsto" : {
+          "type" : "long"
+        },
+        "wof:category" : {
+          "type" : "string"
+        },
+        "wof:concordances_count" : {
+          "type" : "string"
+        },
+        "wof:country" : {
+          "type" : "string"
+        },
+        "wof:geomhash" : {
+          "type" : "string"
+        },
+        "wof:hierarchy" : {
+          "properties" : {
+            "continent_id" : {
+              "type" : "long"
+            },
+            "country_id" : {
+              "type" : "long"
+            },
+            "county_id" : {
+              "type" : "long"
+            },
+            "locality_id" : {
+              "type" : "long"
+            },
+            "microhood_id" : {
+              "type" : "string"
+            },
+            "neighbourhood_id" : {
+              "type" : "long"
+            },
+            "region_id" : {
+              "type" : "long"
+            }
+          }
+        },
+        "wof:id" : {
+          "type" : "long"
+        },
+        "wof:lang" : {
+          "type" : "string"
+        },
+        "wof:lastmodified" : {
+          "type" : "long"
+        },
+        "wof:name" : {
+          "type" : "string",
+          "copy_to" : [ "names_all", "name_not_analyzed" ]
+        },
+        "wof:parent_id" : {
+          "type" : "string"
+        },
+        "wof:placetype" : {
+          "type" : "string"
+        },
+        "wof:placetype_id" : {
+          "type" : "long"
+        },
+        "wof:tags" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

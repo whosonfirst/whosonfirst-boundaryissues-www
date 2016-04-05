@@ -39,12 +39,25 @@
 		),
 	);
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data';
+	# WE SHOULD STANDARDIZE ON /usr/local/data/whosonfirst-data BUT THAT IS WAITING
+	# ON WORK AROUND MULTIPLE REPOSITORIES AND FUSE STUFF AND REPO LOOKUP (BELOW)
+	# (20160405/thisisaaronland)
+
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data';
+
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
+
+	# ULTIMATELY THIS WILL/SHOULD BE REPLACED BY A FUNCTION THAT MAPS ANY GIVEN
+	# RECORD TO A REPO BUT THAT WORK IS NOT DONE YET. ALSO THIS SHOULD PROBABLY
+	# BE STORED IN `config_dev.php` UNTIL THEN (20160405/thisissaaronland)
+
 	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
-	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
+
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues.log';
+
+	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
+	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 
 	$GLOBALS['cfg']['elasticsearch_host'] = 'localhost';
 	$GLOBALS['cfg']['elasticsearch_port'] = '9200';

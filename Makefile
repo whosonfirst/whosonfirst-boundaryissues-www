@@ -94,5 +94,13 @@ pip-server:
 	cd /usr/local/mapzen/go-whosonfirst-pip; git pull origin master; make build
 	cp /usr/local/mapzen/go-whosonfirst-pip/bin/wof-pip-server services/pip-server/wof-pip-server
 
+es-schema:
+	if test -e schema/elasticsearch/mappings.boundaryissues.json; then cp schema/elasticsearch/mappings.boundaryissues.json schema/elasticsearch/mappings.boundaryissues.json.bak; fi
+	curl -s -o schema/elasticsearch/mappings.boundaryissues.json https://raw.githubusercontent.com/whosonfirst/es-whosonfirst-schema/master/schema/mappings.boundaryissues.json
+
+es-reload:
+	curl -s -XDELETE 'http://$(host):9200/whosonfirst' | python -mjson.tool
+	cat "schema/elasticsearch/mappings.boundaryissues.json" | curl -s -XPUT 'http://$(host):9200/whosonfirst' -d @- | python -mjson.tool
+
 es-index:
-	sudo -u www-data ./ubuntu/setup-elasticsearch-index.sh
+	sudo -u www-data ./ubuntu/setup-elasticsearch-index.sh $(data)

@@ -3,6 +3,8 @@
 /data
 www/include/secrets*.php
 www/include/config_local*.php
+www/include/config_dev.php
+www/include/secrets_dev.php
 www/data
 tests/coverage.state
 coverage/
