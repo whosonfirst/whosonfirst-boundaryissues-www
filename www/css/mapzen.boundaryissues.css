@@ -60,17 +60,6 @@ button.marker-option {
 	padding: 4px 0.5em;
 }
 
-#edit-properties input {
-	border: none;
-	border-bottom: 1px solid #999;
-	padding: 5px 0;
-	background: transparent;
-}
-
-#edit-properties input[readonly] {
-	color: #999;
-}
-
 input.add-item, input.add-key, input.add-value {
 	display: inline-block;
 }
