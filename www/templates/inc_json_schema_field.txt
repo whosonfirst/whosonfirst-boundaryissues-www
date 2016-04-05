@@ -10,6 +10,6 @@
 			{/foreach}
 		</select>
 	{else}
-		<input type="text" name="{$name|@escape}" value="{$property._value|@escape}" class="property" data-type="{$property.type|@escape}">
+		<input type="text" name="{$name|@escape}" value="{$property._value|@escape}" class="property" data-type="{$property.type|@escape}"{if $property._read_only} readonly="readonly"{/if}>
 	{/if}
 </div>
