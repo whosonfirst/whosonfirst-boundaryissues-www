@@ -71,7 +71,9 @@
 				} else if ($schema['properties'][$key]) {
 					$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
 				} else {
-					dbug('read_only found: ' . $key);
+					// If a value we find in a GeoJSON file isn't in the schema, and it
+					// is an array or an object, then JSON encode the value and treat
+					// it as "read only." (20160405/dphiffer)
 					$schema['properties'][$key] = array(
 						'type' => 'read_only',
 						'_value' => json_encode($value)
