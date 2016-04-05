@@ -43,7 +43,7 @@
 	# ON WORK AROUND MULTIPLE REPOSITORIES AND FUSE STUFF AND REPO LOOKUP (BELOW)
 	# (20160405/thisisaaronland)
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data/';
 
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
 
