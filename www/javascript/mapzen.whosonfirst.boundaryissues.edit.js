@@ -622,6 +622,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					value = parseFloat(value);
 				} else if ($(input).data('type') == 'integer') {
 					value = parseInt(value);
+				} else if ($(input).data('type') == 'read_only') {
+					value = JSON.parse(value);
 				}
 				self.assign_property(geojson_obj, name, value);
 			});
