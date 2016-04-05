@@ -6315,6 +6315,12 @@
         },
         "mz:is_funky": {
           "type": "integer"
+        },
+        "wof:created" : {
+          "type" : "long"
+        },
+        "wof:lastmodified" : {
+          "type" : "long"
         }
       }
     },
