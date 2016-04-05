@@ -67,6 +67,10 @@ button.marker-option {
 	background: transparent;
 }
 
+#edit-properties input[readonly] {
+	color: #999;
+}
+
 input.add-item, input.add-key, input.add-value {
 	display: inline-block;
 }

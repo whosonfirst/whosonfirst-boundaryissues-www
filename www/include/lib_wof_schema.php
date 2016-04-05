@@ -1,6 +1,6 @@
 <?php
 
-function wof_schema_fields($ref, $ignore_fields = null, $values = null) {
+function wof_schema_fields($ref, $ignore_fields = null, $values = null, $read_only = null) {
 	global $wof_schema_lookup;
 	if (empty($wof_schema_lookup)) {
 		$wof_schema_lookup = wof_load_schemas(array(
@@ -10,7 +10,7 @@ function wof_schema_fields($ref, $ignore_fields = null, $values = null) {
 			'bbox.schema'
 		));
 	}
-	$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields, $values);
+	$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields, $values, $read_only);
 	return $schema_fields;
 }
 
@@ -26,7 +26,7 @@ function wof_load_schemas($schema_files) {
 	return $schemas;
 }
 
-function wof_schema_filter($schema, $ignore_fields = null, $values = null) {
+function wof_schema_filter($schema, $ignore_fields = null, $values = null, $read_only = null) {
 	if ($schema['allOf']) {
 		foreach ($schema['allOf'] as $part_of) {
 			if ($part_of['$ref']) {
@@ -44,6 +44,9 @@ function wof_schema_filter($schema, $ignore_fields = null, $values = null) {
 	if ($ignore_fields) {
 		// We don't always want to show all the fields all the time
 		$schema = wof_schema_remove_ignored($schema, $ignore_fields);
+	}
+	if ($read_only) {
+		$schema = wof_schema_set_read_only($schema, $read_only);
 	}
 	return $schema;
 }
@@ -66,6 +69,19 @@ function wof_schema_insert_values($schema, $values) {
 				$schema['properties'][$key]['_value'] = $value;
 			} else if ($schema['properties'][$key]) {
 				$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
+			}
+		}
+	}
+	return $schema;
+}
+
+function wof_schema_set_read_only($schema, $read_only) {
+	if (is_array($read_only)) {
+		foreach ($read_only as $key => $value) {
+			if (is_scalar($value)) {
+				$schema['properties'][$key]['_read_only'] = $value;
+			} else if ($schema['properties'][$key]) {
+				$schema['properties'][$key] = wof_schema_set_read_only($schema['properties'][$key], $value);
 			}
 		}
 	}
