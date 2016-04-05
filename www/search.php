@@ -45,6 +45,12 @@
 							'match' => array(
 								'name_all' => $query
 							)
+						),
+						// #4: boost records with mz:is_current set to 1
+						array(
+							'match' => array(
+								'mz:is_current' => 1
+							)
 						)
 					),
 					'must' => array(
