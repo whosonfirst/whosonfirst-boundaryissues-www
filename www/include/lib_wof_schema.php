@@ -1,73 +1,101 @@
 <?php
 
-function wof_schema_fields($ref, $ignore_fields = null, $values = null) {
-	global $wof_schema_lookup;
-	if (empty($wof_schema_lookup)) {
-		$wof_schema_lookup = wof_load_schemas(array(
-			'whosonfirst.schema',
-			'geojson.schema',
-			'geometry.schema',
-			'bbox.schema'
-		));
+	function wof_schema_fields($ref, $ignore_fields = null, $values = null, $read_only = null) {
+		global $wof_schema_lookup;
+		if (empty($wof_schema_lookup)) {
+			$wof_schema_lookup = wof_load_schemas(array(
+				'whosonfirst.schema',
+				'geojson.schema',
+				'geometry.schema',
+				'bbox.schema'
+			));
+		}
+		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields, $values, $read_only);
+		return $schema_fields;
 	}
-	$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields, $values);
-	return $schema_fields;
-}
 
-function wof_load_schemas($schema_files) {
-	$schemas = array();
-	foreach ($schema_files as $filename) {
-		$path = realpath(FLAMEWORK_INCLUDE_DIR . "../../schema/json/$filename");
-		$json = file_get_contents($path);
-		$schema = json_decode($json, true);
-		$schema_id = $schema['id'];
-		$schemas[$schema_id] = $schema;
+	function wof_load_schemas($schema_files) {
+		$schemas = array();
+		foreach ($schema_files as $filename) {
+			$path = realpath(FLAMEWORK_INCLUDE_DIR . "../../schema/json/$filename");
+			$json = file_get_contents($path);
+			$schema = json_decode($json, true);
+			$schema_id = $schema['id'];
+			$schemas[$schema_id] = $schema;
+		}
+		return $schemas;
 	}
-	return $schemas;
-}
 
-function wof_schema_filter($schema, $ignore_fields = null, $values = null) {
-	if ($schema['allOf']) {
-		foreach ($schema['allOf'] as $part_of) {
-			if ($part_of['$ref']) {
-				$ref_fields = wof_schema_fields($part_of['$ref'], $ignore_fields);
-				$schema = array_merge_recursive($schema, $ref_fields);
-			} else {
-				$schema = array_merge_recursive($schema, $part_of);
+	function wof_schema_filter($schema, $ignore_fields = null, $values = null, $read_only = null) {
+		if ($schema['allOf']) {
+			foreach ($schema['allOf'] as $part_of) {
+				if ($part_of['$ref']) {
+					$ref_fields = wof_schema_fields($part_of['$ref'], $ignore_fields);
+					$schema = array_merge_recursive($schema, $ref_fields);
+				} else {
+					$schema = array_merge_recursive($schema, $part_of);
+				}
 			}
 		}
-	}
-	if ($values) {
-		// Insert values into the field definitions
-		$schema = wof_schema_insert_values($schema, $values);
-	}
-	if ($ignore_fields) {
-		// We don't always want to show all the fields all the time
-		$schema = wof_schema_remove_ignored($schema, $ignore_fields);
-	}
-	return $schema;
-}
-
-function wof_schema_remove_ignored($schema, $ignore_fields) {
-	foreach ($ignore_fields as $key => $field) {
-		if (is_scalar($field)) {
-			unset($schema['properties'][$field]);
-		} else if ($schema['properties'][$key]) {
-			$schema['properties'][$key] = wof_schema_remove_ignored($schema['properties'][$key], $field);
+		if ($values) {
+			// Insert values into the field definitions
+			$schema = wof_schema_insert_values($schema, $values);
 		}
+		if ($ignore_fields) {
+			// We don't always want to show all the fields all the time
+			$schema = wof_schema_remove_ignored($schema, $ignore_fields);
+		}
+		if ($read_only) {
+			// Some fields are not editable
+			$schema = wof_schema_set_read_only($schema, $read_only);
+		}
+		return $schema;
 	}
-	return $schema;
-}
 
-function wof_schema_insert_values($schema, $values) {
-	if (is_array($values)) {
-		foreach ($values as $key => $value) {
-			if (is_scalar($value)) {
-				$schema['properties'][$key]['_value'] = $value;
+	function wof_schema_remove_ignored($schema, $ignore_fields) {
+		foreach ($ignore_fields as $key => $field) {
+			if (is_scalar($field)) {
+				unset($schema['properties'][$field]);
 			} else if ($schema['properties'][$key]) {
-				$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
+				$schema['properties'][$key] = wof_schema_remove_ignored($schema['properties'][$key], $field);
 			}
 		}
+		return $schema;
 	}
-	return $schema;
-}
+
+	function wof_schema_insert_values($schema, $values) {
+		if (is_array($values)) {
+			foreach ($values as $key => $value) {
+				if (is_scalar($value)) {
+					$schema['properties'][$key]['_value'] = $value;
+				} else if ($schema['properties'][$key]) {
+					$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
+				} else {
+					// If a value we find in a GeoJSON file isn't in the schema, and it
+					// is an array or an object, then JSON encode the value and treat
+					// it as "read only." (20160405/dphiffer)
+					$schema['properties'][$key] = array(
+						'type' => 'read_only',
+						'_value' => json_encode($value)
+					);
+				}
+			}
+		}
+		return $schema;
+	}
+
+	function wof_schema_set_read_only($schema, $read_only) {
+		if (is_array($read_only)) {
+			foreach ($read_only as $key => $value) {
+				if (! $schema['properties'][$key]) {
+					$schema['properties'][$key] = array();
+				}
+				if (is_scalar($value)) {
+					$schema['properties'][$key]['_read_only'] = $value;
+				} else if ($schema['properties'][$key]) {
+					$schema['properties'][$key] = wof_schema_set_read_only($schema['properties'][$key], $value);
+				}
+			}
+		}
+		return $schema;
+	}

@@ -25,6 +25,16 @@
 		)
 	);
 
+	$read_only = array(
+		'properties' => array(
+			'geom:hash' => true,
+			'geom:area' => true,
+			'geom:bbox' => true,
+			'wof:lastmodified' => true,
+			'wof:created' => true
+		)
+	);
+
 	$wof_id = get_int64('id');
 
 	$path = wof_utils_id2abspath(
@@ -39,7 +49,7 @@
 	$geojson = file_get_contents($path);
 	$values = json_decode($geojson, true);
 
-	$schema_fields = wof_schema_fields($ref, $ignore_fields, $values);
+	$schema_fields = wof_schema_fields($ref, $ignore_fields, $values, $read_only);
 	//dbug($schema_fields);
 
 	$GLOBALS['smarty']->assign_by_ref("properties", $values['properties']);

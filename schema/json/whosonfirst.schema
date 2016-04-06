@@ -72,6 +72,9 @@
 						"edtf:cessation": {
 							"type": "string"
 						},
+						"wof:created": {
+							"type": "integer"
+						},
 						"wof:lastmodified": {
 							"type": "integer"
 						},
