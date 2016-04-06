@@ -24,7 +24,6 @@
 	while ($worker->work());
 
 	function gearman_save_to_github($job) {
-		//dbug('gearman_worker: save_to_github');
 		$details = $job->workload();
 		$job_id = $job->unique();
 		$details = unserialize($details);
@@ -36,8 +35,7 @@
 		}
 
 		$oauth_token = $github_user['oauth_token'];
-		//$rsp = wof_save_to_github($details['geojson'], $details['geojson_data'], $oauth_token);
-		$rsp = array('ok' => 0);
+		$rsp = wof_save_to_github($details['geojson'], $details['geojson_data'], $oauth_token);
 		if (! $rsp['ok']) {
 			$details = trim(print_r($rsp, true));
 			gearman_log("error $job_id: couldn't save to GitHub\n$details");
@@ -48,7 +46,6 @@
 	}
 
 	function gearman_update_search_index($job) {
-		//dbug('gearman_worker: update_search_index');
 		$details = $job->workload();
 		$job_id = $job->unique();
 		$details = unserialize($details);
