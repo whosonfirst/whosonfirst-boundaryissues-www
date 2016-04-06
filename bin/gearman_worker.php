@@ -3,14 +3,19 @@
 	loadlib('github_users');
 	loadlib('wof_save');
 	loadlib('wof_elasticsearch');
+	loadlib('gearman');
 
-	$worker = new GearmanWorker();
-	$worker->addServer(
-		$GLOBALS['cfg']['gearman_host'],
-		$GLOBALS['cfg']['gearman_port']
-	);
-	$worker->addFunction('save_to_github', 'gearman_save_to_github');
-	$worker->addFunction('update_search_index', 'gearman_update_search_index');
+	/*
+	Note: changes to this file, and any libraries it depends on, will
+	require that you restart the worker process any time a change is made:
+	sudo supervisorctl restart all
+	(20160406/dphiffer)
+	*/
+
+	$worker = gearman_get_worker(array(
+		'save_to_github' => 'gearman_save_to_github',
+		'update_search_index' => 'gearman_update_search_index'
+	));
 	while ($worker->work());
 
 	function gearman_save_to_github($job) {

@@ -19,6 +19,33 @@
 	}
 
 	########################################################################
+	#
+	#  Pass jobs in as an associative array, like this:
+	#  gearman_get_worker(array(
+	#  	'callable_name' => 'handler_callback'
+	#  ));
+	#
+	#  Then you can send the worker background jobs:
+	#  gearman_background_job('callable_name', $args);
+	#
+
+	function gearman_get_worker($jobs) {
+		$gearman_worker = new GearmanWorker();
+		$server_added = $gearman_worker->addServer(
+			$GLOBALS['cfg']['gearman_host'],
+			$GLOBALS['cfg']['gearman_port']
+		);
+		if (! $server_added) {
+			// Couldn't connect to the server
+			return null;
+		}
+		foreach ($jobs as $name => $callback) {
+			$worker->addFunction($name, $callback);
+		}
+		return $gearman_worker;
+	}
+
+	########################################################################
 
 	function gearman_background_job($job_name, $args = null) {
 
@@ -42,6 +69,8 @@
 				'error' => "[$code] $description"
 			);
 		}
+
+		gearman_log("job $job_id: $args");
 
 		return array(
 			'ok' => 1,
@@ -74,6 +103,25 @@
 		// http://php.net/manual/en/gearmanclient.geterrno.php
 		// http://php.net/manual/en/gearmanclient.returncode.php
 		return "Gearman failed: $code";
+	}
+
+	########################################################################
+
+	function gearman_log($message) {
+		if (! $GLOBALS['gearman_log']) {
+			$log_path = $GLOBALS['cfg']['gearman_log'];
+			$GLOBALS['gearman_log'] = fopen($log_path, 'a');
+			register_shutdown_function('gearman_close_log');
+		}
+
+		$date_time = date('Y-m-d H:i:s');
+		fwrite($GLOBALS['gearman_log'], "[$date_time] $message");
+	}
+
+	########################################################################
+
+	function gearman_close_log() {
+		fclose($GLOBALS['gearman_log']);
 	}
 
 	########################################################################
