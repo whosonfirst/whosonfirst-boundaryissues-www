@@ -39,8 +39,9 @@
 			// Couldn't connect to the server
 			return null;
 		}
+		$gearman_worker->addOptions(GEARMAN_WORKER_GRAB_UNIQ);
 		foreach ($jobs as $name => $callback) {
-			$worker->addFunction($name, $callback);
+			$gearman_worker->addFunction($name, $callback);
 		}
 		return $gearman_worker;
 	}
@@ -59,6 +60,9 @@
 
 		$args = serialize($args);
 		$job_id = gearman_generate_job_id($job_name, $args);
+
+		gearman_log("job $job_id\n$args");
+
 		$handle = $gearman_client->doBackground($job_name, $args, $job_id);
 
 		if ($gearman_client->returnCode() != GEARMAN_SUCCESS) {
@@ -69,8 +73,6 @@
 				'error' => "[$code] $description"
 			);
 		}
-
-		gearman_log("job $job_id: $args");
 
 		return array(
 			'ok' => 1,
@@ -115,7 +117,7 @@
 		}
 
 		$date_time = date('Y-m-d H:i:s');
-		fwrite($GLOBALS['gearman_log'], "[$date_time] $message");
+		fwrite($GLOBALS['gearman_log'], "[$date_time] $message\n---\n");
 	}
 
 	########################################################################
