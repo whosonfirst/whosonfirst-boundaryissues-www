@@ -70,6 +70,8 @@ else
 	cd -
 fi
 
-# Setup dbug log
-sudo touch /var/log/boundaryissues.log
-sudo chown www-data:www-data /var/log/boundaryissues.log
+# Setup log files
+sudo touch /var/log/boundaryissues_dbug.log
+sudo touch /var/log/boundaryissues_gearman.log
+sudo chown www-data:www-data /var/log/boundaryissues_dbug.log
+sudo chown www-data:www-data /var/log/boundaryissues_gearman.log
