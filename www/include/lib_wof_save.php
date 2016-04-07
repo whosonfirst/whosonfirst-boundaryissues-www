@@ -97,11 +97,6 @@
 			return $rsp;
 		}
 
-		$rsp = gearman_ping_workers();
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-
 		return array(
 			'ok' => 1,
 			'wof_id' => $wof_id,
