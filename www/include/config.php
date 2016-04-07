@@ -56,6 +56,7 @@
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues_dbug.log';
 	$GLOBALS['cfg']['gearman_log'] = '/var/log/boundaryissues_gearman.log';
+	$GLOBALS['cfg']['gearman_client_timeout'] = 3000;
 
 	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
 	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';

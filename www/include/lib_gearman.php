@@ -13,6 +13,7 @@
 				// Couldn't connect to the server
 				return null;
 			}
+			$gearman_client->setTimeout($GLOBALS['cfg']['gearman_client_timeout']);
 			$GLOBALS['gearman_client'] = $gearman_client;
 		}
 		return $GLOBALS['gearman_client'];
@@ -43,6 +44,7 @@
 		foreach ($jobs as $name => $callback) {
 			$gearman_worker->addFunction($name, $callback);
 		}
+		$gearman_worker->addFunction('ping', 'gearman_ping_callback');
 		return $gearman_worker;
 	}
 
@@ -63,14 +65,14 @@
 
 		gearman_log("job $job_id\n$args");
 
-		$handle = $gearman_client->doBackground($job_name, $args, $job_id);
+		$handle = @$gearman_client->doBackground($job_name, $args, $job_id);
 
 		if ($gearman_client->returnCode() != GEARMAN_SUCCESS) {
-			$code = $gearman_client->returnCode();
-			$description = gearman_error_description($code);
+			$error = gearman_error_description();
+			gearman_log($error);
 			return array(
 				'ok' => 0,
-				'error' => "[$code] $description"
+				'error' => $error
 			);
 		}
 
@@ -79,6 +81,43 @@
 			'job_id' => $job_id,
 			'handle' => $handle
 		);
+	}
+
+	########################################################################
+
+	function gearman_ping_workers() {
+
+		$gearman_client = gearman_get_client();
+		if (! $gearman_client) {
+			return array(
+				'ok' => 0,
+				'error' => "Couldn't connect to the Gearman server."
+			);
+		}
+
+		$start = microtime(true);
+		$result = @$gearman_client->doNormal('ping', $start);
+		gearman_log('ping');
+
+		if ($result != $start) {
+			return array(
+				'ok' => 0,
+				'error' => 'No workers available to process background jobs.'
+			);
+		}
+
+		$elapsed = microtime(true) - $start;
+		return array(
+			'ok' => 1,
+			'elapsed_time' => $elapsed
+		);
+	}
+
+	########################################################################
+
+	function gearman_ping_callback($job) {
+		gearman_log('pong');
+		return $job->workload();
 	}
 
 	########################################################################
@@ -99,12 +138,11 @@
 
 	########################################################################
 
-	function gearman_error_description($code) {
-		// TODO: add more detailed error messages
-		// http://php.net/manual/en/gearmanclient.error.php
-		// http://php.net/manual/en/gearmanclient.geterrno.php
-		// http://php.net/manual/en/gearmanclient.returncode.php
-		return "Gearman failed: $code";
+	function gearman_error_description() {
+		$client = gearman_get_client();
+		$error = $client->error();
+		$errorno = $client->geterrno();
+		return "There was a problem saving your data behind the scenes. Here are some tech details: $error ($errorno)";
 	}
 
 	########################################################################

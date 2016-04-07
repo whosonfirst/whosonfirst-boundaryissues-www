@@ -36,6 +36,7 @@
 
 		$oauth_token = $github_user['oauth_token'];
 		$rsp = wof_save_to_github($details['geojson'], $details['geojson_data'], $oauth_token);
+
 		if (! $rsp['ok']) {
 			$details = trim(print_r($rsp, true));
 			gearman_log("error $job_id: couldn't save to GitHub\n$details");
