@@ -44,7 +44,6 @@
 		foreach ($jobs as $name => $callback) {
 			$gearman_worker->addFunction($name, $callback);
 		}
-		$gearman_worker->addFunction('ping', 'gearman_ping_callback');
 		return $gearman_worker;
 	}
 
@@ -69,7 +68,7 @@
 
 		if ($gearman_client->returnCode() != GEARMAN_SUCCESS) {
 			$error = gearman_error_description();
-			gearman_log($error);
+			gearman_log("error: $error");
 			return array(
 				'ok' => 0,
 				'error' => $error
@@ -81,43 +80,6 @@
 			'job_id' => $job_id,
 			'handle' => $handle
 		);
-	}
-
-	########################################################################
-
-	function gearman_ping_workers() {
-
-		$gearman_client = gearman_get_client();
-		if (! $gearman_client) {
-			return array(
-				'ok' => 0,
-				'error' => "Couldn't connect to the Gearman server."
-			);
-		}
-
-		$start = microtime(true);
-		$result = @$gearman_client->doNormal('ping', $start);
-		gearman_log('ping');
-
-		if ($result != $start) {
-			return array(
-				'ok' => 0,
-				'error' => 'No workers available to process background jobs.'
-			);
-		}
-
-		$elapsed = microtime(true) - $start;
-		return array(
-			'ok' => 1,
-			'elapsed_time' => $elapsed
-		);
-	}
-
-	########################################################################
-
-	function gearman_ping_callback($job) {
-		gearman_log('pong');
-		return $job->workload();
 	}
 
 	########################################################################
