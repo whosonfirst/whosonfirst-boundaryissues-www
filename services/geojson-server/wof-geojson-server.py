@@ -70,6 +70,9 @@ def geojson_save():
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
+	if not path:
+		return jsonify(ok=0, error="File export returned an empty path, maybe check file permissions?")
+
 	# Repeat back the file we just wrote
 	try:
 		gf = open(path, 'r')

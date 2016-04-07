@@ -739,7 +739,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		display_error: function(rsp) {
-			mapzen.whosonfirst.log.error(rsp);
 			var message = 'Argh, it\'s all gone pear-shaped! Check the JavaScript console?';
 			if (rsp.error && rsp.error.message) {
 				message = rsp.error.message;
@@ -747,6 +746,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if (rsp.error && rsp.error.code) {
 				message = '[' + parseInt(rsp.error.code) + '] ' + message;
 			}
+			mapzen.whosonfirst.log.error(message);
 			$status.html(message);
 		},
 
