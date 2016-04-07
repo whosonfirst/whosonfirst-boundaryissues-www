@@ -71,8 +71,15 @@ def geojson_save():
 		return jsonify(ok=0, error=error)
 
 	# Repeat back the file we just wrote
-	gf = open(path, 'r')
-	return jsonify(ok=1, geojson=gf.read())
+	try:
+		gf = open(path, 'r')
+		geojson = gf.read()
+	except Exception, e:
+		error = "failed to read exported geojson, because %s" % e
+		logging.error(error)
+		return jsonify(ok=0, error=error)
+
+	return jsonify(ok=1, geojson=geojson)
 
 @app.route('/pip', methods=['GET'])
 def geojson_hierarchy():
