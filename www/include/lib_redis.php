@@ -1,0 +1,115 @@
+<?php
+
+	# This is not a general purpose Redis library. Or at least it isn't yet.
+	# It is a thin wrapper on top of https://github.com/nrk/predis to make
+	# doing things in Redis a little more Flamework-like (20160408/thisisaaronland)
+
+	require 'Predis/Autoloader.php';
+	Predis\Autoloader::register();
+
+	$GLOBALS['redis_conns'] = array();
+
+	########################################################################
+
+	function redis_client($args=array()){
+
+		$defaults = array(
+			'scheme' => $GLOBALS['cfg']['redis_scheme'],
+			'host' => $GLOBALS['cfg']['redis_host'],
+			'port' => $GLOBALS['cfg']['redis_port'],
+		);
+
+		$args = array_merge($defaults, $args);
+
+		$uri = "{$args['scheme']}://{$args['host']}:{$args['port']}";
+
+		if (! isset($redis_conns[$uri])){
+
+			$client = new Predis\Client($uri);
+
+			try {
+				$now = time();
+				$rsp = $client->echo($now);
+
+				if ($rsp != $now){
+					return array('ok' => 0, 'error' => 'Connection establish but is full of weird');
+				}
+			}
+
+			catch (Exception $e) {
+				return array('ok' => 0, 'error' => $e->getMessage());
+			}
+
+			$GLOBALS['redis_conns'][$uri] = $client;
+		}
+
+		$client = $GLOBALS['redis_conns'][$uri];
+		return array('ok' => 1, 'client' => $client);
+	}
+
+	########################################################################
+
+	# See what's going on here? It's basically what Go does. Because it turns
+	# out that it's not a bad way to do things... (20160408/thisisaaronland)
+
+	function redis_connect($more=array()){
+
+		$rsp = redis_client($more);
+
+		if (! $rsp['ok']){
+			return array(null, $rsp);
+		}
+
+		return array($rsp['client'], null);
+	}
+
+	########################################################################
+
+	function redis_get($key, $more=array()){
+
+		list($client, $err) = redis_connect($more);
+
+		if ($err){
+			return $err;
+		}
+
+		$value = $client->get($key);
+
+		return array('ok' => 1, 'value' => $value);
+	}
+
+	########################################################################
+
+	function redis_set($key, $value, $more=array()){
+
+		list($client, $err) = redis_connect($more);
+
+		if ($err){
+			return $err;
+		}
+
+		# How best to test for errors?
+
+		$client->set($key, $value);
+
+		return array('ok' => 1);
+	}
+
+	########################################################################
+
+	function redis_publish($channel, $msg, $more=array()){
+
+		list($client, $err) = redis_connect($more);
+
+		if ($err){
+			return $err;
+		}
+
+		$client->publish($channel, $msg);
+
+		return array('ok' => 1);
+	}
+
+	########################################################################
+
+	# the end
