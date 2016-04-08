@@ -11,7 +11,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	var map,
 	    marker,
 	    $status,
-	    nearby = {};
+	    nearby = {},
+	    saving_disabled = false;
 
 	var VenueIcon = L.Icon.extend({
 		options: {
@@ -170,6 +171,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#edit-form').submit(function(e) {
 				e.preventDefault();
 
+				if (saving_disabled) {
+					return;
+				}
+
 				var lat = $('input[name="properties.geom:latitude"]').val();
 				var lng = $('input[name="properties.geom:longitude"]').val();
 				var wof_name = $('input[name="properties.wof:name"]').val();
@@ -197,6 +202,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$status = $('#edit-status');
+			self.enable_saving();
 		},
 
 		setup_buttons: function() {
@@ -687,10 +693,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else {
 					$status.html('Saved');
 				}
+				self.enable_saving();
+			};
+
+			var onerror = function(rsp) {
+				self.display_error(rsp);
+				self.enable_saving();
 			};
 
 			$status.html('Saving...');
-			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
+			self.disable_saving();
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, onerror);
 		},
 
 		save_to_github: function() {
@@ -715,8 +728,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, self.display_error);
 		},
 
+		disable_saving: function() {
+			saving_disabled = true;
+			$('#btn-save').attr('disabled', 'disabled');
+		},
+
+		enable_saving: function() {
+			saving_disabled = false;
+			$('#btn-save').attr('disabled', null);
+		},
+
 		display_error: function(rsp) {
-			mapzen.whosonfirst.log.error(rsp);
 			var message = 'Argh, it\'s all gone pear-shaped! Check the JavaScript console?';
 			if (rsp.error && rsp.error.message) {
 				message = rsp.error.message;
@@ -724,6 +746,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if (rsp.error && rsp.error.code) {
 				message = '[' + parseInt(rsp.error.code) + '] ' + message;
 			}
+			mapzen.whosonfirst.log.error(message);
 			$status.html(message);
 		},
 

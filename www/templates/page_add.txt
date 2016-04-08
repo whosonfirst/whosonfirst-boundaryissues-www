@@ -18,7 +18,8 @@
 					<div class="headroom">
 						{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					</div>
-					<button type="submit" class="btn btn-primary">Save</button>
+					<button id="btn-save" type="submit" class="btn btn-primary">Save</button>
+					<div id="edit-status"></div>
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
 					<h3>Hierarchy</h3>
@@ -30,7 +31,6 @@
 				</div>
 			</div>
 		</form>
-		<div id="edit-status"></div>
 	</div>
 </div>
 
