@@ -34,11 +34,7 @@
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
 					{if $cfg.user}
-<<<<<<< HEAD
-					<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
-=======
 						<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
->>>>>>> 45e94abcfa06cb88041bb15a70102773cfcb7672
 					{/if}
 
 					{if $cfg.user}
