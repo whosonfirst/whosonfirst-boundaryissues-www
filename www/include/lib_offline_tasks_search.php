@@ -2,11 +2,15 @@
 
 	loadlib("elasticsearch");
 
+	# THIS IS NOT FINISHED YET. OR WORKING IN SOME CASES...
+	# (20160411/thisisaaronland)
+
 	########################################################################
 
 	function offline_tasks_search_recent($args=array()){
 
 		# These are ES 1.7 -isms...
+		# https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-filtered-query.html
 
 		$match = array("@event" => "offline_tasks");
 		$query = array("match" => $match);
