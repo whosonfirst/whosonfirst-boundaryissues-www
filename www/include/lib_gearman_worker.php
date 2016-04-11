@@ -17,7 +17,11 @@
 		$uri = "tcp://{$host}:{$port}";
 
 		$worker = new GearmanWorker();
-		$worker->addServer($host, $port);
+		$server_added = $worker->addServer($host, $port);
+		$worker->addOptions(GEARMAN_WORKER_GRAB_UNIQ);
+		if (! $server_added){
+			return('ok' => 0, 'error' => "Could not connect to Gearman server.");
+		}
 
 		return array('ok' => 1, 'worker' => $worker);
 	}
@@ -26,7 +30,7 @@
 
 	function gearman_worker($more=array()){
 
-		$rsp = gearman_worker($more);
+		$rsp = gearman_worker_connect($more);
 
 		if (! $rsp['ok']){
 			return array(null, $rsp);
