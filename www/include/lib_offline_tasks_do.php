@@ -1,10 +1,14 @@
 <?php
 
-	$GLOBALS['offline_tasks_do'] = array();
+	# $GLOBALS['offline_tasks_handlers'] is defined in lib_offline_tasks.php
+
+	# Given that we are being explicit about function names in lib_offline_tasks
+	# (offline_tasks_function_name) it's not clear why or what benefit spelling
+	# them out here gets us. But today, we do... (20160411/thisisaaronland)
 
 	########################################################################
 
-	$GLOBALS['offline_tasks_do']['commit'] = 'offline_tasks_do_commit';
+	$GLOBALS['offline_tasks_handlers']['commit'] = 'offline_tasks_do_commit';
 
 	function offline_tasks_do_commit($data){
 
@@ -22,7 +26,7 @@
 
 	########################################################################
 
-	$GLOBALS['offline_tasks_do']['index'] = 'offline_tasks_do_index';
+	$GLOBALS['offline_tasks_handlers']['index'] = 'offline_tasks_do_index';
 
 	function offline_tasks_do_index($data){
 
