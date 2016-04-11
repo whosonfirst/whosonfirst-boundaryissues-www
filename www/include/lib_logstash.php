@@ -29,7 +29,12 @@
 
 		$msg = json_encode($data);
 
-		$rsp = redis_publish($more["logstash_redis_channel"], $msg, $more);
+		$redis_more = array(
+			"host" => $more["logstash_redis_host"],
+			"port" => $more["logstash_redis_port"],
+		);
+
+		$rsp = redis_publish($more["logstash_redis_channel"], $msg, $redis_more);
 		return $rsp;
 	}
 
