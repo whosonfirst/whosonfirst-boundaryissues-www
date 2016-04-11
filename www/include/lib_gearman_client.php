@@ -62,12 +62,12 @@
 
 	function gearman_client_schedule_job($task, $data){
 
-		list($client, $err) = gearman_client($more);
+		list($client, $err) = gearman_client();
 
 		if ($err){
 			return $err;
 		}
-
+		$data = serialize($data);
 		$ok = $client->doBackground($task, $data);
 
 		return array('ok' => $ok);
