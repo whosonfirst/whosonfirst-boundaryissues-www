@@ -9,7 +9,7 @@
 
 	########################################################################
 
-	function logstash_publish($channel, $data, $more=array()){
+	function logstash_publish($event, $data, $more=array()){
 
 		$defaults = array(
 			"logstash_redis_host" => $GLOBALS['cfg']['logstash_redis_host'],
@@ -23,7 +23,7 @@
 			$data = array("data" => $data);
 		}
 
-		$data['channel'] = $channel;
+		$data[ "@event" ] = $event;
 
 		# to do: add call stack information here
 

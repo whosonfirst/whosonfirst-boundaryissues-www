@@ -36,7 +36,7 @@
 		$rsp = call_user_func($hook, $data);
 
 		$event = array(
-			'event' => 'schedule',
+			'type' => 'schedule',
 			'task' => $task,
 			'id' => $uuid,
 			'rsp' => $rsp,
@@ -54,7 +54,7 @@
 		$uuid = $data['uuid'];
 
 		$event = array(
-			'event' => 'execute',
+			'type' => 'execute',
 			'task' => $task,
 			'id' => $uuid,
 			'rsp' => $rsp,
