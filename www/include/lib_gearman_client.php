@@ -34,7 +34,10 @@
 		if (! isset($GLOBALS['gearman_clients'][$uri])){
 
 			$client = new GearmanClient();
-			$client->addServer($host, $port);
+			$server_added = $client->addServer($host, $port);
+			if (! $server_added){
+				return array('ok' => 0, 'error' => 'Could not connect to Gearman server.');
+			}
 
 			$GLOBALS['gearman_clients'][$uri] = $client;
 		}
