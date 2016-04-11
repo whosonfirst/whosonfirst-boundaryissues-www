@@ -2,19 +2,54 @@
 
 	loadlib("elasticsearch");
 
+	# THIS IS NOT FINISHED YET. OR WORKING IN SOME CASES...
+	# (20160411/thisisaaronland)
+
 	########################################################################
 
 	function offline_tasks_search_recent($args=array()){
 
-		$must = array(
-			"term" => array( "@event" => "offline_tasks" )
-		);
+		# These are ES 1.7 -isms...
+		# https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-filtered-query.html
 
-		$query = array(
-			"bool" => array(
-				"must" => $must
-			)
-		);
+		$match = array("@event" => "offline_tasks");
+		$query = array("match" => $match);
+
+		$es_query = array("filtered" => array(
+			"query" => $query, 
+		));
+
+		# These are ES 2.x -isms... because computers?
+
+		# $must = array(
+		# 	"term" => array( "@event" => "offline_tasks" )
+		# );
+		# 
+		# $query = array(
+		# 	"bool" => array(
+		# 		"must" => $must
+		# 	)
+		# );
+
+		if (isset($args['filter'])){
+
+			$filter = null;
+
+			if ($args['filter']['id']){
+
+				$filter = array(
+					"term" => array("id" => $args['filter']['id'])
+				);
+			}
+
+			# What doesn't this work... (20160411/thisissaaronland)
+
+			if ($filter){
+				$es_query["filtered"]["filter"] = array(
+					"bool" => array( "must" => $filter )
+				);
+			}
+		}
 
 		$sort = array(
 			array( "@timestamp" => array( "order" => "desc" ) )

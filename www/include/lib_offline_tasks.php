@@ -26,15 +26,14 @@
 			return array('ok' => 0, 'error' => 'invalid task: ' . $task);
 		}
 
-		$uuid = uuid_v4();
-		$data['uuid'] = $uuid;
+		$task_id = uuid_v4();
 
 		$rsp = call_user_func($hook, $task, $data);
 
 		$event = array(
-			'type' => 'schedule',
+			'action' => 'schedule',
+			'task_id' => $task_id,
 			'task' => $task,
-			'id' => $uuid,
 			'rsp' => $rsp,
 		);
 
@@ -47,12 +46,12 @@
 
 	function offline_tasks_execute_task($task, $data){
 
-		$uuid = $data['uuid'];
+		$task_id = $data['task_id'];
 
 		$event = array(
-			'type' => 'execute',
+			'action' => 'exectute'
 			'task' => $task,
-			'id' => $uuid,
+			'task_id' => $task_id,
 			'rsp' => $rsp,
 		);
 
