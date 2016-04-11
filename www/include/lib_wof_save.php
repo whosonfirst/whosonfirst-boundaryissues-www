@@ -5,6 +5,7 @@
 	loadlib('artisanal_integers');
 	loadlib("github_api");
 	loadlib("github_users");
+	loadlib("gearman");
 
 	function wof_save_file($input_path) {
 
@@ -32,16 +33,7 @@
 
 	function wof_save_string($geojson) {
 
-		if (! $GLOBALS['gearman_client']) {
-			$gearman_client = new GearmanClient();
-			$gearman_client->addServer(
-				$GLOBALS['cfg']['gearman_host'],
-				$GLOBALS['cfg']['gearman_port']
-			);
-			$GLOBALS['gearman_client'] = $gearman_client;
-		} else {
-			$gearman_client = $GLOBALS['gearman_client'];
-		}
+		$gearman_client = gearman_get_client();
 
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {
@@ -89,19 +81,21 @@
 
 		$wof_id = $geojson_data['properties']['wof:id'];
 
-		$github_details = serialize(array(
+		$rsp = gearman_background_job('save_to_github', array(
 			'geojson' => $geojson,
 			'geojson_data' => $geojson_data,
 			'user_id' => $GLOBALS['cfg']['user']['id']
 		));
-		//dbug('gearman_client: save_to_github');
-		$gearman_client->doBackground("save_to_github", $github_details);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
-		$search_details = serialize(array(
+		$rsp = gearman_background_job('update_search_index', array(
 			'geojson_data' => $geojson_data
 		));
-		//dbug('gearman_client: update_search_index');
-		$gearman_client->doBackground("update_search_index", $search_details);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
 		return array(
 			'ok' => 1,

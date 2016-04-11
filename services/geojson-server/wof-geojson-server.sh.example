@@ -38,11 +38,21 @@ case $1 in
         ;;
     start)
 
-    if [ -e "${PID_FILE}" ]; then
-            echo "Error! ${PID_NAME} is currently running!" 1>&2
-            exit 1
-	    fi
+	if [ -e "${PID_FILE}" ]
+	then
 
+	    PID=`cat ${PID_FILE}`
+	    COUNT=`ps -p ${PID} | grep ${PID} | wc -l`
+
+	    if [ ${COUNT} = 0 ]
+	    then
+		rm ${PID_FILE}
+	    else
+		echo "Error! ${PID_NAME} is currently running!" 1>&2
+		exit 1
+	    fi
+	fi
+	
         echo "Starting ${PID_NAME} w/ options: ${GEOJSON_ARGS}"
         PID=`exec sudo -u $GEOJSON_USER $GEOJSON_DAEMON $GEOJSON_ARGS  > /dev/null 2>&1 & echo $!`
 

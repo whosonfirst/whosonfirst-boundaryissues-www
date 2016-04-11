@@ -43,7 +43,7 @@
 	# ON WORK AROUND MULTIPLE REPOSITORIES AND FUSE STUFF AND REPO LOOKUP (BELOW)
 	# (20160405/thisisaaronland)
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data/';
 
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
 
@@ -54,7 +54,12 @@
 	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
 
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
-	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues.log';
+	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues_dbug.log';
+	$GLOBALS['cfg']['gearman_log'] = '/var/log/boundaryissues_gearman.log';
+	$GLOBALS['cfg']['gearman_client_timeout'] = 3000;
+
+	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
+	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 
 	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
 	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
@@ -203,6 +208,8 @@
 		'cache',
 		'dbug',
 		'wof_smarty',
+		'logstash',
+		'redis',
 	);
 
 	# THINGS YOU SHOULD DEFINE IN YOUR secrets.php FILE WHICH IS NOT
@@ -339,4 +346,20 @@
 	$GLOBALS['cfg']['github_api_scope'] = 'user:email,repo';
 	$GLOBALS['cfg']['github_oauth_callback'] = 'auth/';
 
-	# START OF flamework-github-sso stuff
+	# END OF flamework-github-sso stuff
+
+	# START OF flamework-redis stuff
+
+	$GLOBALS['cfg']['redis_scheme'] = 'tcp';
+	$GLOBALS['cfg']['redis_host'] = 'localhost';
+	$GLOBALS['cfg']['redis_port'] = 6379;
+
+	# END OF flamework-redis stuff
+
+	# START OF flamework-logstash stuff
+
+	$GLOBALS['cfg']['logstash_redis_channel'] = 'flogstash';
+	$GLOBALS['cfg']['logstash_redis_host'] = 'localhost';
+	$GLOBALS['cfg']['logstash_redis_port'] = 6379;
+
+	# END OF flamework-logstash stuff

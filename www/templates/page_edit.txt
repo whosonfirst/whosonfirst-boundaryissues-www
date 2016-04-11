@@ -21,9 +21,10 @@
 						{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					</div>
 					{if $cfg.user}
-					<button type="submit" class="btn btn-primary">Save</button>
+						<button id="btn-save" type="submit" class="btn btn-primary">Save</button>
+						<div id="edit-status"></div>
 					{else}
-					<div class="caveat">You need to be logged in to save changes</div>
+						<div class="caveat">You need to be logged in to save changes</div>
 					{/if}
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
@@ -33,7 +34,11 @@
 					<div id="parent" class="headroom"></div>
 					<div id="hierarchy"></div>
 					{if $cfg.user}
+<<<<<<< HEAD
 					<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
+=======
+						<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
+>>>>>>> 45e94abcfa06cb88041bb15a70102773cfcb7672
 					{/if}
 
 					{if $cfg.user}
@@ -62,7 +67,6 @@
 				</div>
 			</div>
 		</form>
-		<div id="edit-status"></div>
 	</div>
 </div>
 

@@ -3,7 +3,7 @@
 	include("include/init.php");
 	loadlib("github_api");
 
-	$redir = $GLOBALS['cfg']['abs_root_url'] . get_str('redir');
+	$redir = get_str('redir');
 
 	# Some basic sanity checking like are you already logged in?
 
@@ -19,7 +19,8 @@
 
 	# TO DO: pass redir around...
 
-	$url = github_api_get_auth_url();
+	$url = github_api_get_auth_url($redir);
+
 	header("location: {$url}");
 	exit();
 ?>

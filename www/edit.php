@@ -3,8 +3,6 @@
 	loadlib('wof_schema');
 	loadlib('wof_utils');
 
-	# login_ensure_loggedin();
-
 	$crumb_venue_fallback = crumb_generate('wof.save');
 	$GLOBALS['smarty']->assign("crumb_save_fallback", $crumb_venue_fallback);
 
@@ -44,9 +42,10 @@
 		$wof_id
 	);
 
-	if (!file_exists($path)) {
+	if (!file_exists($path)){
 		error_404();
 	}
+
 	$geojson = file_get_contents($path);
 	$values = json_decode($geojson, true);
 

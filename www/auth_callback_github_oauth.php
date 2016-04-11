@@ -20,12 +20,13 @@
 	}
 
 	$code = get_str("code");
+	$redir = get_str("redir");
 
 	if (! $code){
 		error_404();
 	}
 
-	$rsp = github_api_get_auth_token($code);
+	$rsp = github_api_get_auth_token($code, $redir);
 
 	if (! $rsp['ok']){
 		$GLOBALS['error']['oauth_access_token'] = 1;
@@ -159,8 +160,6 @@
 
 	# Okay, now finish logging the user in (setting cookies, etc.) and
 	# redirecting them to some specific page if necessary.
-
-	$redir = (isset($extra['redir'])) ? $extra['redir'] : '';
 
 	login_do_login($user, $redir);
 	exit();

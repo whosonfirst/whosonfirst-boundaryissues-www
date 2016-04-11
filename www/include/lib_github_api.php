@@ -9,9 +9,14 @@
 
 	#################################################################
 
-	function github_api_get_auth_url(){
+	function github_api_get_auth_url($redir=''){
 
 		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['github_oauth_callback'];
+
+		if ($redir){
+			$enc_redir = urlencode($redir);
+			$callback .= "?redir={$enc_redir}";
+		}
 
 		$oauth_key = $GLOBALS['cfg']['github_oauth_key'];
 		$oauth_redir = urlencode($callback);
@@ -24,9 +29,15 @@
 
 	#################################################################
 
-	function github_api_get_auth_token($code){
+	function github_api_get_auth_token($code, $redir=""){
 
 		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['github_oauth_callback'];
+
+		if ($redir){
+			$enc_redir = urlencode($redir);
+			$callback .= "?redir={$enc_redir}";
+		}
+
 		$state = crumb_generate('github_auth');
 
 		$args = array(
@@ -40,7 +51,14 @@
 		$query = http_build_query($args);
 
 		$url = "{$GLOBALS['github_oauth_endpoint']}access_token?{$query}";
-		$rsp = http_get($url);
+
+		$headers = array();
+
+		$more = array(
+			'http_timeout' => 10
+		);
+
+		$rsp = http_get($url, $headers, $more);
 
 		if (! $rsp['ok']){
 			return $rsp;
@@ -68,7 +86,7 @@
 	function github_api_call($method, $path, $oauth_token, $args = null) {
 		$more = array(
 			// See: https://developer.github.com/v3/#user-agent-required
-			'user_agent' => 'Mapzen Boundary Issues',
+			'user_agent' => "{$GLOBALS['cfg']['site_name']} GitHub API client",
 			'donotsend_transfer_encoding' => 1,
 			'http_timeout' => 20
 		);
