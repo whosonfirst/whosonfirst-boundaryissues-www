@@ -18,9 +18,9 @@
 {foreach from=$rows item="row"}
 <tr>
 	<td>{$row._timestamp|@escape}</td>
-	<td><a href="">{$row.id|@escape}</a></td>
-	<td>{$row.task|@escape}</td>
-	<td>{$row.type|@escape}</td>
+	<td><a href="{$cfg.abs_root_url}offlinetasks/?id={$row.id|@escape}">{$row.id|@escape}</a></td>
+	<td><a href="{$cfg.abs_root_url}offlinetasks/?task={$row.task|@escape}">{$row.task|@escape}</td>
+	<td><a href="{$cfg.abs_root_url}offlinetasks/?type={$row.type|@escape}">{$row.type|@escape}</a></td>
 	<td>{$row.rsp.ok|@escape}</td>
 </tr>
 <tr style="display:none;">
