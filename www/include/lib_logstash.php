@@ -9,24 +9,34 @@
 
 	########################################################################
 
-	function logstash_publish($channel, $data, $more=array()){
+	function logstash_publish($event, $data, $more=array()){
 
 		$defaults = array(
-			'logstash_redis_host',
-			'logstash_redis_port',
+			"logstash_redis_host" => $GLOBALS['cfg']['logstash_redis_host'],
+			"logstash_redis_port" => $GLOBALS['cfg']['logstash_redist_port'],
+			"logstash_redis_channel" => $GLOBALS['cfg']['logstash_redis_channel'],
 		);
 
 		$more = array_merge($defaults, $more);
 
+		if (! is_array($data)){
+			$data = array("data" => $data);
+		}
+
+		$data[ "@event" ] = $event;
+
+		# to do: add call stack information here
+
 		$msg = json_encode($data);
 
-		$rsp = redis_publish($channel, $msg, $more);
+		$rsp = redis_publish($more["logstash_redis_channel"], $msg, $more);
 		return $rsp;
 	}
 
 	########################################################################
 
 	function omgwtf($data, $more=array()){
+
 		return logstash_publish("omgwtf", $data, $more);
 	}
 
