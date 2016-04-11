@@ -6,7 +6,7 @@
 
 	function gearman_client($more=array()){
 
-		$rsp = gearman_client($more);
+		$rsp = gearman_client_connect($more);
 
 		if (! $rsp['ok']){
 			return array(null, $rsp);
