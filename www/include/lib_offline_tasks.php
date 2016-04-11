@@ -1,5 +1,6 @@
 <?php
 
+	$GLOBALS['offline_tasks_handlers'] = array();
 	loadlib("offline_tasks_do");
 	loadlib("uuid");
 
@@ -7,8 +8,6 @@
 		'schedule' => null,
 		'execute' => null,
 	);
-
-	$GLOBALS['offline_tasks_handlers'] = array();
 
 	########################################################################
 
@@ -25,7 +24,8 @@
 		}
 
 		if (! offline_tasks_is_valid_task($task)){
-			return array('ok' => 0, 'error' => 'invalid task');
+			dbug($GLOBALS['offline_tasks_handlers']);
+			return array('ok' => 0, 'error' => 'invalid task: ' . $task);
 		}
 
 		$uuid = uuid_v4();
@@ -42,7 +42,7 @@
 
 		logstash_publish('offline_tasks', $event);
 
-		return $rsp;		
+		return $rsp;
 	}
 
 	########################################################################
@@ -61,7 +61,7 @@
 		$func = offline_tasks_function_name($task);
 
 		if (! function_exists($func)){
-			$rsp = array("ok" => 0, "error" => "missing handler for {$task}");	
+			$rsp = array("ok" => 0, "error" => "missing handler for {$task}");
 		}
 
 		else {
@@ -69,7 +69,7 @@
 		}
 
 		logstash_publish('offline_tasks', $event);
-		return $rsp;		
+		return $rsp;
 	}
 
 	########################################################################
@@ -77,7 +77,7 @@
 	function offline_tasks_is_valid_task($task){
 
 		if (! isset($GLOBALS['offline_tasks_handlers'][$task])){
-			return 0;		
+			return 0;
 		}
 
 		$func = offline_tasks_function_name($task);

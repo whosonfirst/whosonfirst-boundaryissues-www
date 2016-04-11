@@ -20,7 +20,8 @@
 
 		$oauth_token = $github_user['oauth_token'];
 
-		$rsp = wof_save_to_github($data['geojson'], $data['geojson_data'], $oauth_token);
+		//$rsp = wof_save_to_github($data['geojson'], $data['geojson_data'], $oauth_token);
+		$rsp = array('ok' => 0, 'error' => 'just testing here');
 		return $rsp;
 	}
 
