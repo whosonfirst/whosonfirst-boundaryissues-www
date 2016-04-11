@@ -49,7 +49,7 @@
 		$task_id = $data['task_id'];
 
 		$event = array(
-			'action' => 'exectute'
+			'action' => 'exectute',
 			'task' => $task,
 			'task_id' => $task_id,
 			'rsp' => $rsp,

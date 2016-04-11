@@ -1,12 +1,17 @@
 <?php
 
 	include("init_local.php");
+	loadlib('gearman_worker');
+	loadlib('offline_tasks');
 
-	$worker = gearman_worker();
+	list($worker, $err) = gearman_worker();
+	if ($err) {
+		die("Problem setting up worker.");
+	}
 
 	function handler($job){
 
-		$task = $job->task();
+		$task = $job->functionName();
 		$data = $job->workload();
 		$data = unserialize($data);
 
@@ -15,7 +20,7 @@
 		return $rsp['ok'];
 	}
 
-	foreach ($GLOBALS['offline_tasks_handlers'] as $task => ignore){
+	foreach ($GLOBALS['offline_tasks_do_handlers'] as $task => $ignore){
 		$worker->addFunction($task, 'handler');
 	}
 

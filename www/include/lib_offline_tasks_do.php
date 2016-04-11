@@ -1,5 +1,8 @@
 <?php
 
+	loadlib('github_users');
+	loadlib('wof_elasticsearch');
+
 	$GLOBALS['offline_tasks_do_handlers'] = array();
 
 	########################################################################
@@ -47,8 +50,7 @@
 
 		$oauth_token = $github_user['oauth_token'];
 
-		//$rsp = wof_save_to_github($data['geojson'], $data['geojson_data'], $oauth_token);
-		$rsp = array('ok' => 0, 'error' => 'just testing here');
+		$rsp = wof_save_to_github($data['geojson'], $data['geojson_data'], $oauth_token);
 		return $rsp;
 	}
 
