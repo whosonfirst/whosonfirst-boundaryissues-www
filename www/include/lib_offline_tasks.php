@@ -1,18 +1,12 @@
 <?php
 
 	loadlib("offline_tasks_do");
+	loadlib("uuid");
 
 	$GLOBALS['offline_tasks_hooks'] = array(
 		'schedule' => null,
 		'execute' => null,
 	);
-
-	########################################################################
-	
-	function uuid_v4(){
-		import("random");
-		return random_string(16);
-	}
 
 	########################################################################
 
