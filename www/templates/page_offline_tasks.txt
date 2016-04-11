@@ -1,0 +1,41 @@
+{include file="inc_head.txt"}
+
+<div class="container">
+
+{if $rows|@count}
+
+<table class="table">
+
+<tr>
+	<th>Date</th>
+	<th>UUID</th>
+	<th>Task</th>
+	<th>Type</th>
+	<th>Status</th>
+</tr>
+
+{foreach from=$rows item="row"}
+<tr>
+	<td>{$row._timestamp|@escape}</td>
+	<td><a href="">{$row.id|@escape}</a></td>
+	<td>{$row.task|@escape}</td>
+	<td>{$row.type|@escape}</td>
+	<td>{$row.rsp.ok|@escape}</td>
+</tr>
+<tr style="display:none;">
+	<td colspan="5">
+	{$row|@dumper}
+	</div>
+</tr>
+{/foreach}
+
+</table>
+
+{include file="inc_pagination.txt"}
+
+{/if}
+
+</div>
+
+{include file="inc_foot.txt"}
+

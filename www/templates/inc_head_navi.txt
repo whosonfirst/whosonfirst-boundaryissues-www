@@ -61,5 +61,5 @@
 
 	       <a href="{$cfg.abs_root_url}add/" title="add a new place">+</a>
 	</form>
-	
+
 </div>
