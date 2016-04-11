@@ -105,9 +105,11 @@
 			return $err;
 		}
 
-		$client->publish($channel, $msg);
+		$ok = $client->publish($channel, $msg);
 
-		return array('ok' => 1);
+		# get last error? 
+
+		return array('ok' => $ok);
 	}
 
 	########################################################################

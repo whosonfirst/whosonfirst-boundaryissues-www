@@ -353,6 +353,7 @@
 
 	# START OF flamework-logstash stuff
 
+	$GLOBALS['cfg']['logstash_redis_channel'] = 'flogstash';
 	$GLOBALS['cfg']['logstash_redis_host'] = 'localhost';
 	$GLOBALS['cfg']['logstash_redis_port'] = 6379;
 

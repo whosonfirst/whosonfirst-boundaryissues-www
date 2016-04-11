@@ -14,6 +14,7 @@
 		$defaults = array(
 			"logstash_redis_host" => $GLOBALS['cfg']['logstash_redis_host'],
 			"logstash_redis_port" => $GLOBALS['cfg']['logstash_redist_port'],
+			"logstash_redis_channel" => $GLOBALS['cfg']['logstash_redis_channel'],
 		);
 
 		$more = array_merge($defaults, $more);
@@ -28,7 +29,7 @@
 
 		$msg = json_encode($data);
 
-		$rsp = redis_publish("logstash", $msg, $more);
+		$rsp = redis_publish($more["logstash_redis_channel"], $msg, $more);
 		return $rsp;
 	}
 
