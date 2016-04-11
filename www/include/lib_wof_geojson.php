@@ -41,12 +41,11 @@
 		// Check for connection errors
 		if (! $rsp['ok']) {
 			$rsp['error'] = "Error connecting to GeoJSON service: {$rsp['body']}";
-			return;
+			return $rsp;
 		}
 
 		$rsp = json_decode($rsp['body'], true);
 		if (! $rsp['ok']) {
-			$rsp['error'] = "Error with saving via GeoJSON service: {$rsp['error']}";
 			return $rsp;
 		}
 
