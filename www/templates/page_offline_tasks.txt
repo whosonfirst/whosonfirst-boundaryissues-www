@@ -1,3 +1,4 @@
+{capture assign="page_title"}Offline tasks{/capture}
 {include file="inc_head.txt"}
 
 <div class="container">

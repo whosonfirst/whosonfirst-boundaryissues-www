@@ -168,3 +168,5 @@ RewriteRule ^current(/page([0-9]+))?/?$						current.php?page=$2	[L,QSA]
 
 RewriteRule ^recent(/page([0-9]+))?/?$						recent.php?page=$2	[L,QSA]
 RewriteRule ^recent/created(/page([0-9]+))?/?$					recent.php?created=1&page=$2	[L,QSA]
+
+RewriteRule ^offline-?tasks(/page([0-9]+))?/?$					offline_tasks.php?page=$2	[L,QSA]
