@@ -61,6 +61,9 @@
 	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
 	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
 
+	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
+	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
+
 	$GLOBALS['cfg']['elasticsearch_host'] = 'localhost';
 	$GLOBALS['cfg']['elasticsearch_port'] = '9200';
 	$GLOBALS['cfg']['elasticsearch_http_timeout'] = 10;

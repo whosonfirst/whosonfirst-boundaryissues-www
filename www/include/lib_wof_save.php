@@ -33,7 +33,7 @@
 
 	function wof_save_string($geojson) {
 
-		$gearman_client =
+		$gearman_client = gearman_get_client();
 
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {

@@ -6,7 +6,7 @@
 
 	function gearman_client($more=array()){
 
-		$rsp = gearman_client($more);
+		$rsp = gearman_client_connect($more);
 
 		if (! $rsp['ok']){
 			return array(null, $rsp);
@@ -34,7 +34,10 @@
 		if (! isset($GLOBALS['gearman_clients'][$uri])){
 
 			$client = new GearmanClient();
-			$client->addServer($host, $port);
+			$server_added = $client->addServer($host, $port);
+			if (! $server_added){
+				return array('ok' => 0, 'error' => 'Could not connect to Gearman server.');
+			}
 
 			$GLOBALS['gearman_clients'][$uri] = $client;
 		}
