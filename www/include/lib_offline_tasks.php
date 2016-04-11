@@ -23,7 +23,6 @@
 		}
 
 		if (! offline_tasks_do_is_valid_task($task)){
-			dbug($GLOBALS['offline_tasks_handlers_do']);
 			return array('ok' => 0, 'error' => 'invalid task: ' . $task);
 		}
 

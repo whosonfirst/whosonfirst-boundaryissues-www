@@ -54,7 +54,7 @@
 
 	########################################################################
 
-	$GLOBALS['offline_tasks_handlers']['index'] = 'offline_tasks_do_index';
+	$GLOBALS['offline_tasks_do_handlers']['index'] = 'offline_tasks_do_index';
 
 	function offline_tasks_do_index($data){
 
