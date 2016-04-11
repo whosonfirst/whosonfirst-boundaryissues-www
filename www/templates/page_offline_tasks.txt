@@ -5,26 +5,28 @@
 
 {if $rows|@count}
 
-<table class="table">
+<table class="table" style="margin-top:2em;">
 
 <tr>
 	<th>Date</th>
-	<th>UUID</th>
-	<th>Task</th>
-	<th>Type</th>
 	<th>Status</th>
+	<th>Task</th>
+	<th>Action</th>
+	<th>Task ID</th>
+	<th>Event ID</th>
 </tr>
 
 {foreach from=$rows item="row"}
 <tr>
 	<td>{$row._timestamp|@escape}</td>
-	<td><a href="{$cfg.abs_root_url}offlinetasks/?id={$row.id|@escape}">{$row.id|@escape}</a></td>
+	<td>{if $row.rsp.ok}ok{else}<span style="color:red;">fail</span>{/if}</td>
 	<td><a href="{$cfg.abs_root_url}offlinetasks/?task={$row.task|@escape}">{$row.task|@escape}</td>
-	<td><a href="{$cfg.abs_root_url}offlinetasks/?type={$row.type|@escape}">{$row.type|@escape}</a></td>
-	<td>{$row.rsp.ok|@escape}</td>
+	<td><a href="{$cfg.abs_root_url}offlinetasks/?action={$row.action|@escape}">{$row.action|@escape}</a></td>
+	<td><a href="{$cfg.abs_root_url}offlinetasks/?task_id={$row.task_id|@escape}">{$row.task_id|@escape}</a></td>
+	<td><a href="#" data-event-id="{$row._id|@escape}">{$row._id|@escape}</a></td>
 </tr>
-<tr x-style="display:block;">
-	<td colspan="5">
+<tr id="details-{$row._id|@escape}" style="display:none;">
+	<td colspan="6">
 	{$row|@dumper}
 	</td>
 </tr>

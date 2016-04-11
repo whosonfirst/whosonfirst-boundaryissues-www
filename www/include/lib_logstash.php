@@ -6,6 +6,7 @@
 	# Depends on https://github.com/whosonfirst/flamework-redis
 
 	loadlib("redis");
+	loadlib("uuid");
 
 	########################################################################
 
@@ -23,7 +24,17 @@
 			$data = array("data" => $data);
 		}
 
+		# Things I've learned: keys with a leading underbar like, say "_event"
+		# make Elasticsearch sad... (20160411/thisisaaronland)
+
 		$data[ "@event" ] = $event;
+
+		# Other things I've learned is that ES will try to be clever about keys
+		# like "@event_id" (but not @eventid) and assume they are integers...
+		# (20160411/thisisaaronland)
+
+		$event_id = uuid_v4();
+		$data[ "@id" ] = $event_id;
 
 		# to do: add call stack information here
 
