@@ -23,10 +23,10 @@
 	<td><a href="{$cfg.abs_root_url}offlinetasks/?type={$row.type|@escape}">{$row.type|@escape}</a></td>
 	<td>{$row.rsp.ok|@escape}</td>
 </tr>
-<tr style="display:none;">
+<tr x-style="display:block;">
 	<td colspan="5">
 	{$row|@dumper}
-	</div>
+	</td>
 </tr>
 {/foreach}
 
