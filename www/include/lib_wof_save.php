@@ -5,7 +5,8 @@
 	loadlib('artisanal_integers');
 	loadlib("github_api");
 	loadlib("github_users");
-	loadlib("gearman");
+	loadlib("offline_tasks");
+	loadlib("offline_tasks_gearman");
 
 	function wof_save_file($input_path) {
 
@@ -32,8 +33,6 @@
 	}
 
 	function wof_save_string($geojson) {
-
-		$gearman_client = gearman_get_client();
 
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {
@@ -81,7 +80,7 @@
 
 		$wof_id = $geojson_data['properties']['wof:id'];
 
-		$rsp = gearman_background_job('save_to_github', array(
+		$rsp = offline_tasks_schedule_task('commit', array(
 			'geojson' => $geojson,
 			'geojson_data' => $geojson_data,
 			'user_id' => $GLOBALS['cfg']['user']['id']
@@ -90,7 +89,7 @@
 			return $rsp;
 		}
 
-		$rsp = gearman_background_job('update_search_index', array(
+		$rsp = offline_tasks_schedule_task('index', array(
 			'geojson_data' => $geojson_data
 		));
 		if (! $rsp['ok']) {
