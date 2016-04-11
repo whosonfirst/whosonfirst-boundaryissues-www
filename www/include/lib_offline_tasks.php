@@ -22,14 +22,14 @@
 			return array("ok" => 0, "error" => "offline tasks are misconfigured - invalid 'schedule' hook");
 		}
 
-		if (! offline_tasks_is_valid_task($task)){
+		if (! offline_tasks_do_is_valid_task($task)){
 			dbug($GLOBALS['offline_tasks_handlers_do']);
 			return array('ok' => 0, 'error' => 'invalid task: ' . $task);
 		}
 
 		$task_id = uuid_v4();
 
-		$rsp = call_user_func($hook, $data);
+		$rsp = call_user_func($hook, $task, $data);
 
 		$event = array(
 			'action' => 'schedule',
