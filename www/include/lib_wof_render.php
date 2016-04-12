@@ -44,10 +44,14 @@
 	$GLOBALS['wof_property_classes'] = array(
 		'_default' => array(
 			'visible' => true,
-			'editable' => true
+			'editable' => true,
+			'deletable' => true
 		),
 		'wof:id' => array(
 			'visible' => false
+		),
+		'wof:type' => array(
+			'deletable' => false
 		),
 		'wof:parent_id' => array(
 			'visible' => false
@@ -69,6 +73,9 @@
 		),
 		'wof:country' => array(
 			'visible' => false
+		),
+		'wof:geomhash' => array(
+			'editable' => false
 		),
 		'iso:country' => array(
 			'visible' => false
@@ -128,6 +135,8 @@
 	function wof_render_value(&$property) {
 		if (isset($property['_value'])) {
 			return $property['_value'];
+		} else if (isset($property['default'])) {
+			return $property['default'];
 		}
 		return '';
 	}
