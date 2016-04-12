@@ -202,3 +202,11 @@ th:hover .remove-row {
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 1em;
 }
+
+tr.object-property {
+	display: none;
+}
+
+tr.object-property.property-visible {
+	display: table-row;
+}

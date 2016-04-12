@@ -23,7 +23,7 @@
 			api_output_error(400, "Please include a 'geojson' parameter.");
 		}
 
-		$rsp = wof_save_string($geojson);
+		$rsp = wof_save_feature($geojson);
 
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Error saving WOF record.';

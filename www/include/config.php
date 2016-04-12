@@ -208,6 +208,7 @@
 		'cache',
 		'dbug',
 		'wof_smarty',
+		'wof_render',
 		'logstash',
 		'redis',
 	);

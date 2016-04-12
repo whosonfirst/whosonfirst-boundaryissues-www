@@ -20,7 +20,7 @@
 		}
 
 		$geojson = file_get_contents($input_path);
-		$rsp = wof_save_string($geojson);
+		$rsp = wof_save_feature($geojson);
 
 		// Clean up the uploaded tmp file
 		if (is_uploaded_file($input_path)) {
@@ -32,7 +32,7 @@
 
 	}
 
-	function wof_save_string($geojson) {
+	function wof_save_feature($geojson) {
 
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {
@@ -42,26 +42,7 @@
 			);
 		}
 
-		// Since the editor currently doesn't support *all* properties, we'll
-		// grab the existing file and merge in our changes on top of it. That way
-		// anything that isn't represented in the editor won't be lost.
-		// (20160316/dphiffer)
-		if ($geojson_data['properties']['wof:id']) {
-			$path = wof_utils_id2abspath(
-				$GLOBALS['cfg']['wof_data_dir'],
-				$geojson_data['properties']['wof:id']
-			);
-			if (file_exists($path)) {
-				$existing_geojson = file_get_contents($path);
-				$existing_geojson_data = json_decode($existing_geojson, true);
-				$geojson_data['properties'] = array_merge(
-					$existing_geojson_data['properties'],
-					$geojson_data['properties']
-				);
-				$geojson = json_encode($geojson_data);
-			}
-		}
-
+		// Validation happens on the GeoJSON service side of things
 		$rsp = wof_geojson_save($geojson);
 
 		if (! $rsp['ok']) {
@@ -81,8 +62,7 @@
 		$wof_id = $geojson_data['properties']['wof:id'];
 
 		$rsp = offline_tasks_schedule_task('commit', array(
-			'geojson' => $geojson,
-			'geojson_data' => $geojson_data,
+			'wof_id' => $wof_id,
 			'user_id' => $GLOBALS['cfg']['user']['id']
 		));
 		if (! $rsp['ok']) {
@@ -116,7 +96,7 @@
 					$batch_properties
 				);
 				$updated_geojson = json_encode($existing_feature);
-				$rsp = wof_save_string($updated_geojson);
+				$rsp = wof_save_feature($updated_geojson);
 
 				if (! $rsp['ok']) {
 					$errors[$wof_id] = $rsp['error'];
@@ -145,7 +125,7 @@
 		}
 	}
 
-	function wof_save_to_github($geojson, $geojson_data, $oauth_token = null) {
+	function wof_save_to_github($wof_id, $oauth_token = null) {
 
 		if (! $oauth_token) {
 			// Get the GitHub oauth token if none was specified
@@ -156,18 +136,25 @@
 			$oauth_token = $rsp['oauth_token'];
 		}
 
+		$rel_path = wof_utils_id2relpath($wof_id);
+		$abs_path = wof_utils_id2abspath(
+			$GLOBALS['cfg']['wof_data_dir'],
+			$wof_id
+		);
+
+		$geojson_str = file_get_contents($abs_path);
+		$feature = json_decode($geojson_str, "as hash");
+
 		$owner = $GLOBALS['cfg']['wof_github_owner'];
 		$repo = $GLOBALS['cfg']['wof_github_repo'];
-		$wof_id = $geojson_data['properties']['wof:id'];
-		$wof_name = $geojson_data['properties']['wof:name'];
+		$wof_name = $feature['properties']['wof:name'];
 
-		$path = 'data/' . wof_utils_id2relpath($wof_id);
-		$github_path = "repos/$owner/$repo/contents/$path";
-		$filename = basename($path);
+		$github_path = "repos/$owner/$repo/contents/data/$rel_path";
+		$filename = basename($rel_path);
 
 		$args = array(
-			'path' => $path,
-			'content' => base64_encode($geojson)
+			'path' => "data/$rel_path",
+			'content' => base64_encode($geojson_str)
 		);
 
 		// If the file exists, find its SHA hash
