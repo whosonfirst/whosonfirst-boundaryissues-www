@@ -50,7 +50,7 @@
 		'wof:id' => array(
 			'visible' => false
 		),
-		'wof:type' => array(
+		'wof:placetype' => array(
 			'deletable' => false
 		),
 		'wof:parent_id' => array(

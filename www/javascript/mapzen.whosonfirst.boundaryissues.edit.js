@@ -119,7 +119,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		setup_properties: function() {
 
 			$('.json-schema-object tr').each(function(i, row) {
-				if ($(row).hasClass('add-row')) {
+				if (  $(row).hasClass('add-row') ||
+				    ! $(row).hasClass('property-deletable')) {
 					return;
 				}
 				$(row).find('> th').append('<span class="remove-row">&times;</span>');
