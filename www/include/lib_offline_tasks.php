@@ -28,7 +28,7 @@
 
 		$task_id = uuid_v4();
 
-		$rsp = call_user_func($hook, $task, $data);
+		$rsp = call_user_func($hook, $task, $data, $task_id);
 
 		$event = array(
 			'action' => 'schedule',
@@ -44,16 +44,7 @@
 
 	########################################################################
 
-	function offline_tasks_execute_task($task, $data){
-
-		$task_id = $data['task_id'];
-
-		$event = array(
-			'action' => 'exectute',
-			'task' => $task,
-			'task_id' => $task_id,
-			'rsp' => $rsp,
-		);
+	function offline_tasks_execute_task($task, $data, $task_id){
 
 		$func = offline_tasks_do_function_name($task);
 
@@ -64,6 +55,13 @@
 		else {
 			$rsp = call_user_func($func, $data);
 		}
+
+		$event = array(
+			'action' => 'execute',
+			'task' => $task,
+			'task_id' => $task_id,
+			'rsp' => $rsp,
+		);
 
 		logstash_publish('offline_tasks', $event);
 		return $rsp;

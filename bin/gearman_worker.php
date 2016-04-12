@@ -14,8 +14,9 @@
 		$task = $job->functionName();
 		$data = $job->workload();
 		$data = unserialize($data);
+		$task_id = $job->unique();
 
-		$rsp = offline_tasks_execute_task($task, $data);
+		$rsp = offline_tasks_execute_task($task, $data, $task_id);
 
 		return $rsp['ok'];
 	}

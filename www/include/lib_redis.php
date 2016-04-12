@@ -107,7 +107,7 @@
 
 		$ok = $client->publish($channel, $msg);
 
-		# get last error? 
+		# get last error?
 
 		return array('ok' => $ok);
 	}

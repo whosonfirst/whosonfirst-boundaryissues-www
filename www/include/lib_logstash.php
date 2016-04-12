@@ -14,7 +14,7 @@
 
 		$defaults = array(
 			"logstash_redis_host" => $GLOBALS['cfg']['logstash_redis_host'],
-			"logstash_redis_port" => $GLOBALS['cfg']['logstash_redist_port'],
+			"logstash_redis_port" => $GLOBALS['cfg']['logstash_redis_port'],
 			"logstash_redis_channel" => $GLOBALS['cfg']['logstash_redis_channel'],
 		);
 
@@ -37,7 +37,6 @@
 		$data[ "@id" ] = $event_id;
 
 		# to do: add call stack information here
-
 		$msg = json_encode($data);
 
 		$redis_more = array(
@@ -57,5 +56,5 @@
 	}
 
 	########################################################################
-	
+
 	# the end

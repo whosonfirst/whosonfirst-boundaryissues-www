@@ -60,7 +60,7 @@
 
 	########################################################################
 
-	function gearman_client_schedule_job($task, $data){
+	function gearman_client_schedule_job($task, $data, $task_id){
 
 		list($client, $err) = gearman_client();
 
@@ -68,7 +68,7 @@
 			return $err;
 		}
 		$data = serialize($data);
-		$ok = $client->doBackground($task, $data);
+		$ok = $client->doBackground($task, $data, $task_id);
 
 		return array('ok' => $ok);
 	}
