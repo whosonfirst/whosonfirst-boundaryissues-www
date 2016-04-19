@@ -2,7 +2,7 @@
 
 if [ ! -d /usr/local/mapzen/flamework-logstash ]
 then
-    git clone https://github.com/whosonfirst/flamework-logstash.git
+    git clone https://github.com/whosonfirst/flamework-logstash.git /usr/local/mapzen/flamework-logstash
 fi
 
 cd /usr/local/mapzen/flamework-logstash
