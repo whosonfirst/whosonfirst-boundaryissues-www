@@ -1,20 +1,50 @@
 <?php
 
-	function wof_schema_fields($ref, $ignore_fields = null, $values = null, $read_only = null) {
+	/*
+
+	This is a partial implementation of a JSON Schema parser. The part you
+	probably want to know about is how wof_schema_fields($ref) goes and
+	grabs a data structure from one of the files in the schema/json/ folder,
+	according to that schema's 'id' property.
+
+	So for example:
+
+		$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
+		$schema = wof_schema_fields($ref);
+
+	.. will get you a complete schema for schema/json/whosonfirst.schema.
+	That document includes details from other files, using the 'allOf'
+	property. Basically any time you see a 'ref' it is a way of referencing
+	another document by its 'id'.
+
+	There is some more info about JSON schema (and the GeoJSON schema we
+	modeled our stuff from) over here:
+		http://json-schema.org/
+		https://github.com/fge/sample-json-schemas/tree/master/geojson
+
+	(20160412/dphiffer)
+
+	*/
+
+	########################################################################
+
+	function wof_schema_fields($ref) {
 		global $wof_schema_lookup;
 		if (empty($wof_schema_lookup)) {
-			$wof_schema_lookup = wof_load_schemas(array(
+			$wof_schema_lookup = wof_schema_load(array(
 				'whosonfirst.schema',
 				'geojson.schema',
 				'geometry.schema',
 				'bbox.schema'
 			));
 		}
-		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $ignore_fields, $values, $read_only);
+		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref]);
 		return $schema_fields;
 	}
 
-	function wof_load_schemas($schema_files) {
+	########################################################################
+
+	function wof_schema_load($schema_files) {
 		$schemas = array();
 		foreach ($schema_files as $filename) {
 			$path = realpath(FLAMEWORK_INCLUDE_DIR . "../../schema/json/$filename");
@@ -26,76 +56,23 @@
 		return $schemas;
 	}
 
-	function wof_schema_filter($schema, $ignore_fields = null, $values = null, $read_only = null) {
+	########################################################################
+
+	function wof_schema_filter($schema) {
 		if ($schema['allOf']) {
 			foreach ($schema['allOf'] as $part_of) {
 				if ($part_of['$ref']) {
-					$ref_fields = wof_schema_fields($part_of['$ref'], $ignore_fields);
+					$ref_fields = wof_schema_fields($part_of['$ref']);
 					$schema = array_merge_recursive($schema, $ref_fields);
 				} else {
 					$schema = array_merge_recursive($schema, $part_of);
 				}
 			}
-		}
-		if ($values) {
-			// Insert values into the field definitions
-			$schema = wof_schema_insert_values($schema, $values);
-		}
-		if ($ignore_fields) {
-			// We don't always want to show all the fields all the time
-			$schema = wof_schema_remove_ignored($schema, $ignore_fields);
-		}
-		if ($read_only) {
-			// Some fields are not editable
-			$schema = wof_schema_set_read_only($schema, $read_only);
+			unset($schema['allOf']);
 		}
 		return $schema;
 	}
 
-	function wof_schema_remove_ignored($schema, $ignore_fields) {
-		foreach ($ignore_fields as $key => $field) {
-			if (is_scalar($field)) {
-				unset($schema['properties'][$field]);
-			} else if ($schema['properties'][$key]) {
-				$schema['properties'][$key] = wof_schema_remove_ignored($schema['properties'][$key], $field);
-			}
-		}
-		return $schema;
-	}
+	########################################################################
 
-	function wof_schema_insert_values($schema, $values) {
-		if (is_array($values)) {
-			foreach ($values as $key => $value) {
-				if (is_scalar($value)) {
-					$schema['properties'][$key]['_value'] = $value;
-				} else if ($schema['properties'][$key]) {
-					$schema['properties'][$key] = wof_schema_insert_values($schema['properties'][$key], $value);
-				} else {
-					// If a value we find in a GeoJSON file isn't in the schema, and it
-					// is an array or an object, then JSON encode the value and treat
-					// it as "read only." (20160405/dphiffer)
-					$schema['properties'][$key] = array(
-						'type' => 'read_only',
-						'_value' => json_encode($value)
-					);
-				}
-			}
-		}
-		return $schema;
-	}
-
-	function wof_schema_set_read_only($schema, $read_only) {
-		if (is_array($read_only)) {
-			foreach ($read_only as $key => $value) {
-				if (! $schema['properties'][$key]) {
-					$schema['properties'][$key] = array();
-				}
-				if (is_scalar($value)) {
-					$schema['properties'][$key]['_read_only'] = $value;
-				} else if ($schema['properties'][$key]) {
-					$schema['properties'][$key] = wof_schema_set_read_only($schema['properties'][$key], $value);
-				}
-			}
-		}
-		return $schema;
-	}
+	# the end

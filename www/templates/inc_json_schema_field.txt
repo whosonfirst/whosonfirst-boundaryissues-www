@@ -9,9 +9,7 @@
 				<option>{$option|@escape}</option>
 			{/foreach}
 		</select>
-	{elseif $property.type == 'read_only'}
-		<input type="text" name="{$name|@escape}" value="{$property._value|@escape}" class="property" data-type="read_only" readonly="readonly">
 	{else}
-		<input type="text" name="{$name|@escape}" value="{$property._value|@escape}" class="property" data-type="{$property.type|@escape}"{if $property._read_only} readonly="readonly"{/if}>
+		<input type="text" name="{$name|@escape}" value="{$property|@wof_render_value|@escape}" class="property" data-type="{$property|@wof_render_type|@escape}" disabled="disabled">
 	{/if}
 </div>

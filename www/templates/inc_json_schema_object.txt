@@ -1,7 +1,7 @@
-<div id="json-schema-object-{$context|regex_replace:"/[:.]/":"-"}" class="json-schema-object" data-context="{$context}">
+<div id="{$context|@wof_render_object_id|@escape}" class="json-schema-object" data-context="{$context}">
 	<table>
 		{foreach from=$schema.properties key=name item=property}
-			<tr>
+			<tr class="{$name|@wof_render_property_classes|@escape}">
 				<th>{$name}</th>
 				<td>
 					{assign var="name" value="`$context`.`$name`"}

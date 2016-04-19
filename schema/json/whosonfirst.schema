@@ -25,7 +25,8 @@
 							"type": "string"
 						},
 						"wof:placetype": {
-							"type": "string"
+							"type": "string",
+							"default": "venue"
 						},
 						"geom:latitude": {
 							"type": "number"
@@ -64,13 +65,16 @@
 							"type": "string"
 						},
 						"src:geom": {
-							"type": "string"
+							"type": "string",
+							"default": "mapzen"
 						},
 						"edtf:inception": {
-							"type": "string"
+							"type": "string",
+							"default": "uuuu"
 						},
 						"edtf:cessation": {
-							"type": "string"
+							"type": "string",
+							"default": "uuuu"
 						},
 						"wof:created": {
 							"type": "integer"
@@ -82,7 +86,8 @@
 							"type": "string"
 						},
 						"mz:is_current": {
-							"type": "integer"
+							"type": "integer",
+							"default": 1
 						}
 					},
 					"required": [

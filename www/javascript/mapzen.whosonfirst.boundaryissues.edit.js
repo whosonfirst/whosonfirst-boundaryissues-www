@@ -119,7 +119,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		setup_properties: function() {
 
 			$('.json-schema-object tr').each(function(i, row) {
-				if ($(row).hasClass('add-row')) {
+				if (  $(row).hasClass('add-row') ||
+				    ! $(row).hasClass('property-deletable')) {
 					return;
 				}
 				$(row).find('> th').append('<span class="remove-row">&times;</span>');
@@ -165,6 +166,23 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					}, 0);
 				}
 			});
+
+			if ($('#edit-form').hasClass('add-new-wof')) {
+				// Only show editable fields on the add page
+				$('tr.object-property input').each(function(i, input) {
+					$parent = $(input).closest('tr');
+					if ($parent.hasClass('property-editable')) {
+						input.removeAttribute('disabled');
+					} else {
+						$parent.removeClass('property-visible');
+					}
+				});
+			} else {
+				// Show read-only fields if it's an edit page
+				$('tr.object-property.property-editable input').each(function(i, input) {
+					input.removeAttribute('disabled');
+				});
+			}
 		},
 
 		setup_form: function() {
@@ -628,7 +646,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					value = parseFloat(value);
 				} else if ($(input).data('type') == 'integer') {
 					value = parseInt(value);
-				} else if ($(input).data('type') == 'read_only') {
+				} else if ($(input).data('type') == 'json') {
 					value = JSON.parse(value);
 				}
 				self.assign_property(geojson_obj, name, value);
