@@ -18,6 +18,11 @@ setup:
 	ubuntu/setup-geojson-server.sh
 	ubuntu/setup-mapshaper.sh
 
+setup-offline:
+	ubuntu/setup-redis-server.sh
+	ubuntu/setup-gearmand.sh
+	ubuntu/setup-logstash.sh
+
 templates:
 	php -q ./bin/compile-templates.php
 
