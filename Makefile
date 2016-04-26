@@ -109,3 +109,6 @@ es-reload:
 
 es-index:
 	sudo -u www-data ./ubuntu/setup-elasticsearch-index.sh $(data)
+
+categories:
+	curl -s -o www/meta/categories.json https://raw.githubusercontent.com/whosonfirst/whosonfirst-categories/master/meta/categories.json
