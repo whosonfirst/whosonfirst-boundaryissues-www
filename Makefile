@@ -22,6 +22,7 @@ setup-offline:
 	ubuntu/setup-redis-server.sh
 	ubuntu/setup-gearmand.sh
 	ubuntu/setup-logstash.sh
+	ubuntu/setup-supervisor.sh
 
 templates:
 	php -q ./bin/compile-templates.php

@@ -32,3 +32,5 @@ then
 fi
 
 sudo ln -s ${CONF} /etc/supervisor/conf.d/${PROJECT_NAME}.conf
+
+sudo supervisorctl reload
