@@ -3,6 +3,7 @@
 	loadlib('wof_geojson');
 	loadlib('wof_elasticsearch');
 	loadlib('artisanal_integers');
+	loadlib("git");
 	loadlib("github_api");
 	loadlib("github_users");
 	loadlib("offline_tasks");
@@ -144,13 +145,12 @@
 
 		$geojson_str = file_get_contents($abs_path);
 		$feature = json_decode($geojson_str, "as hash");
+		$wof_name = $feature['properties']['wof:name'];
+		$filename = basename($rel_path);
 
 		$owner = $GLOBALS['cfg']['wof_github_owner'];
 		$repo = $GLOBALS['cfg']['wof_github_repo'];
-		$wof_name = $feature['properties']['wof:name'];
-
 		$github_path = "repos/$owner/$repo/contents/data/$rel_path";
-		$filename = basename($rel_path);
 
 		$args = array(
 			'path' => "data/$rel_path",
@@ -178,5 +178,55 @@
 		return array(
 			'ok' => 1,
 			'url' => $rsp['rsp']['content']['_links']['html']
+		);
+	}
+
+	function wof_save_with_git($wof_id, $oauth_token = null) {
+
+		// Designed to be interchangable, interface-wise, with the
+		// wof_save_to_github function. Basically GitHub's API started
+		// consistently returning 500 errors, so I made this workaround
+		// that uses vanilla `git` calls. (20160429/dphiffer)
+
+		$rel_path = wof_utils_id2relpath($wof_id);
+		$abs_path = wof_utils_id2abspath(
+			$GLOBALS['cfg']['wof_data_dir'],
+			$wof_id
+		);
+
+		$geojson_str = file_get_contents($abs_path);
+		$feature = json_decode($geojson_str, "as hash");
+		$wof_name = $feature['properties']['wof:name'];
+		$filename = basename($rel_path);
+		$message = "Boundary Issues saved $filename ($wof_name)";
+
+		// Retrieve the name/email address from GitHub to sign the
+		// commit message with.
+
+		$rsp = github_users_info($oauth_token);
+		if (! $rsp) {
+			return $rsp;
+		}
+		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
+
+		$rsp = git_add($abs_path);
+		if (! $rsp) {
+			return $rsp;
+		}
+
+		$rsp = git_commit($message, $author);
+		if (! $rsp) {
+			return $rsp;
+		}
+
+		$rsp = git_push();
+		if (! $rsp) {
+			return $rsp;
+		}
+
+		return array(
+			'ok' => 1,
+			'saved' => $rel_path,
+			'output' => $rsp['output']
 		);
 	}

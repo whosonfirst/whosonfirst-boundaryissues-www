@@ -16,7 +16,7 @@
 		$query = array("match" => $match);
 
 		$es_query = array("filtered" => array(
-			"query" => $query, 
+			"query" => $query,
 		));
 
 		# These are ES 2.x -isms... because computers?
@@ -24,7 +24,7 @@
 		# $must = array(
 		# 	"term" => array( "@event" => "offline_tasks" )
 		# );
-		# 
+		#
 		# $query = array(
 		# 	"bool" => array(
 		# 		"must" => $must
@@ -35,30 +35,27 @@
 
 			$filter = null;
 
-			if ($args['filter']['id']){
+			if ($args['filter']['task_id']){
 
 				$filter = array(
-					"term" => array("id" => $args['filter']['id'])
+					"match" => array("task_id" => $args['filter']['task_id'])
 				);
 			}
 
 			# What doesn't this work... (20160411/thisissaaronland)
 
 			if ($filter){
-				$es_query["filtered"]["filter"] = array(
-					"bool" => array( "must" => $filter )
+				$es_query = array(
+					"query" => $filter
 				);
 			}
 		}
 
-		$sort = array(
+		$es_query['sort'] = array(
 			array( "@timestamp" => array( "order" => "desc" ) )
 		);
 
-		$es_query = array(
-			'query' => $query,
-			'sort' => $sort,
-		);
+		dumper(json_encode($es_query));
 
 		return offline_tasks_search($es_query, $more);
 	}
@@ -80,7 +77,7 @@
 		# derived from $GLOBALS['cfg']
 
 		$more['index'] = "offline-tasks";	# sudo make me a config thing
-		
+
 		# pass-by-ref
 	}
 

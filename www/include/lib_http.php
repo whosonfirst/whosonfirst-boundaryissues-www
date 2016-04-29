@@ -291,7 +291,7 @@
 		if (($status < 200) || ($status > 299)){
 
 			$error = "http_failed";
-			
+
 			if (isset($info['curl_error'])){
 				$error .= ": {$info['curl_error']}";
 			}

@@ -12,8 +12,8 @@
 		$args['page'] = $page;
 	}
 
-	if ($id = get_str("id")){
-		$args['filter'] = array("id" => $id);
+	if ($id = get_str("task_id")){
+		$args['filter'] = array("task_id" => $id);
 	}
 
 	else if ($task = get_str("task")){
@@ -25,7 +25,7 @@
 	}
 
 	else {}
-	
+
 	$rsp = offline_tasks_search_recent($args);
 
 	$pagination = $rsp['pagination'];

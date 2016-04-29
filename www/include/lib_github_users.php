@@ -1,5 +1,7 @@
 <?php
 
+	loadlib('github_api');
+
 	#################################################################
 
 	function github_users_get_by_oauth_token($token){
@@ -104,5 +106,25 @@
 	}
 
 	#################################################################
+
+	function github_users_info($oauth_token = null) {
+		if (! $oauth_token) {
+			$rsp = github_users_curr_oauth_token();
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$oauth_token = $rsp['oauth_token'];
+		}
+
+		$rsp = github_api_call('GET', 'user', $oauth_token);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		return array(
+			'ok' => 1,
+			'info' => $rsp['rsp']
+		);
+	}
 
 	# the end
