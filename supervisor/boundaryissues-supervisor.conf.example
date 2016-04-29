@@ -1,0 +1,3 @@
+[program:boundaryissues_gearman_worker]
+command=/usr/bin/php -f /usr/local/mapzen/whosonfirst-www-boundaryissues/bin/gearman_worker.php
+user=www-data
