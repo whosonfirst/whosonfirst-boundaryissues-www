@@ -78,6 +78,7 @@
 			1 => array('pipe', 'w'), // stdout
 			2 => array('pipe', 'w')  // stderr
 		);
+		$pipes = array();
 		$proc = proc_open($cmd, $descriptor, $pipes, $cwd);
 
 		if (! is_resource($proc)) {
