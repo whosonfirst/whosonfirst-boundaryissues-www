@@ -15,7 +15,7 @@ cd -
 if [ ! -d /usr/local/mapzen/redis-tools ]
 then
     git clone https://github.com/whosonfirst/redis-tools.git /usr/local/mapzen/redis-tools
-fi 
+fi
 
 cd /usr/local/mapzen/redis-tools
 git pull origin master
@@ -23,5 +23,3 @@ git pull origin master
 cd -
 
 sudo easy_install redis
-
-exit 1

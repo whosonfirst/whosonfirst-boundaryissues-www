@@ -11,4 +11,3 @@ git pull origin master
 ./ubuntu/setup-gearmand.sh
 
 cd -
-exit 1
