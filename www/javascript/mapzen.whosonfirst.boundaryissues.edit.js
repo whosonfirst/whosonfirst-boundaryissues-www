@@ -803,7 +803,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		if ($('#edit-form').length == 0) {
 			return;
 		}
-		mapzen.whosonfirst.data.endpoint('https://whosonfirst.mapzen.com/data/');
+
+	        // because the nginx configs are still busted... (20160429/thisisaaronland)
+		// mapzen.whosonfirst.data.endpoint('https://whosonfirst.mapzen.com/data/');
+
+		mapzen.whosonfirst.data.endpoint('https://s3.amazonaws.com/whosonfirst.mapzen.com/data/');
+
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_properties();
