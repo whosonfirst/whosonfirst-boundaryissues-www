@@ -1,11 +1,15 @@
 <?php
 
-	loadlib("gearman_client");
-	loadlib("gearman_worker");
+	loadlib("gearman");
 
-	$GLOBALS['offline_tasks_hooks']['schedule'] = 'gearman_client_schedule_job';
-	# $GLOBALS['offline_tasks_hooks']['execute'] = 'gearman_execute_job';
+	function offline_tasks_gearman_init(){
 
-	########################################################################
+		$GLOBALS['offline_tasks_hooks']['schedule'] = 'gearman_client_schedule_job';
+		# $GLOBALS['offline_tasks_hooks']['execute'] = 'gearman_execute_job';
+	}
+
+	offline_tasks_gearman_init();
 	
+	########################################################################
+
 	# the end

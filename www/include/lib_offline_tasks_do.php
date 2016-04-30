@@ -72,4 +72,14 @@
 
 	########################################################################
 
+	$GLOBALS['offline_tasks_do_handlers']['omgwtf'] = 'offline_tasks_do_omgwtf';
+
+	function offline_tasks_do_omgwtf($data){
+
+		$rsp = omgwtf($data);
+		return $rsp;
+	}
+
+	########################################################################
+
 	# the end
