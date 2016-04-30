@@ -28,13 +28,18 @@
 
 		$task_id = uuid_v4();
 
+		list($usec, $sec) = explode(" ", microtime());
+		$now = offline_tasks_microtime();
+
 		$rsp = call_user_func($hook, $task, $data, $task_id);
 
 		$event = array(
 			'action' => 'schedule',
 			'task_id' => $task_id,
 			'task' => $task,
+			'data' => $data,
 			'rsp' => $rsp,
+			'microtime' => $now,
 		);
 
 		logstash_publish('offline_tasks', $event);
@@ -47,6 +52,7 @@
 	function offline_tasks_execute_task($task, $data, $task_id){
 
 		$func = offline_tasks_do_function_name($task);
+		$now = offline_tasks_microtime();
 
 		if (! function_exists($func)){
 			$rsp = array("ok" => 0, "error" => "missing handler for {$task}");
@@ -61,10 +67,19 @@
 			'task' => $task,
 			'task_id' => $task_id,
 			'rsp' => $rsp,
+			'microtime' => $now,
 		);
 
 		logstash_publish('offline_tasks', $event);
 		return $rsp;
+	}
+
+	########################################################################
+
+	function offline_tasks_microtime(){
+
+		list($usec, $sec) = explode(" ", microtime());
+		return (float)$sec + (float)$usec;
 	}
 
 	########################################################################
