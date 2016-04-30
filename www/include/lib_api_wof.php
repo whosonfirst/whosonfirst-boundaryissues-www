@@ -76,7 +76,12 @@
 			'placetype' => post_str('placetype')
 		));
 
-		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/pip/";
+		# Note the absence of the trailing slash - this is relevant because Python
+		# (20160429/thisisaaronland)
+
+		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/pip";
+		# error_log("{$url}?{$query}");
+
 		$rsp = http_get("{$url}?$query");
 
 		if (! $rsp['ok']) {

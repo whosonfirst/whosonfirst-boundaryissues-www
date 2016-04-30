@@ -370,6 +370,6 @@
 
 	$GLOBALS['cfg']['wof_geojson_server_scheme'] = 'http';
 	$GLOBALS['cfg']['wof_geojson_server_host'] = 'localhost';
-	$GLOBALS['cfg']['wof_geojson_server_port'] = 8081;
+	$GLOBALS['cfg']['wof_geojson_server_port'] = 8181;
 
 	# END OF wof-pip stuff
