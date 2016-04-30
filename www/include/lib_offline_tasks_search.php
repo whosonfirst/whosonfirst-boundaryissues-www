@@ -9,43 +9,31 @@
 
 	function offline_tasks_search_recent($args=array()){
 
-		# These are ES 1.7 -isms...
-		# https://www.elastic.co/guide/en/elasticsearch/reference/1.7/query-dsl-filtered-query.html
-
-		$match = array("@event" => "offline_tasks");
-		$query = array("match" => $match);
-
-		$es_query = array("filtered" => array(
-			"query" => $query,
-		));
-
-		# What... why did this work for 1.7.2 (I think...) and not 1.7.5 ???
-		# The following is a patch to just getting something to show up in
-		# advance of actually figuring out what's going on...
-		# (20160429/thisisaaronland)
-
-		$es_query = array();
-
-		# These are ES 2.x -isms... because computers?
-
-		# $must = array(
-		# 	"term" => array( "@event" => "offline_tasks" )
-		# );
-		#
-		# $query = array(
-		# 	"bool" => array(
-		# 		"must" => $must
-		# 	)
-		# );
-
 		if (isset($args['filter'])){
 
 			$filter = null;
+
+			# This will not work as expected yet because it (task_id) needs to be
+			# indexed as an un-analyzed string... (20160429/thisisaaronland)
 
 			if ($args['filter']['task_id']){
 
 				$filter = array(
 					"match" => array("task_id" => $args['filter']['task_id'])
+				);
+			}
+
+			else if ($args['filter']['task']){
+
+				$filter = array(
+					"match" => array("task" => $args['filter']['task'])
+				);
+			}
+
+			else if ($args['filter']['action']){
+
+				$filter = array(
+					"match" => array("action" => $args['filter']['action'])
 				);
 			}
 
@@ -62,11 +50,9 @@
 			array( "@timestamp" => array( "order" => "desc" ) )
 		);
 
-		$more = array(
-			'offline-tasks',
-		);
+		$args['index'] = 'offline-tasks';
 
-		return offline_tasks_search($es_query, $more);
+		return offline_tasks_search($es_query, $args);
 	}
 
 	########################################################################
