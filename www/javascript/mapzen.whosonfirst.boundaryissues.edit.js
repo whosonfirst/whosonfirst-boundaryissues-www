@@ -800,20 +800,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	};
 
 	$(document).ready(function() {
-		if ($('#edit-form').length == 0) {
-			return;
-		}
 
-	        // because the nginx configs are still busted... (20160429/thisisaaronland)
-		// mapzen.whosonfirst.data.endpoint('https://whosonfirst.mapzen.com/data/');
+	    if ($('#edit-form').length == 0) {
+		return;
+	    }
+	    
+	    var data_endpoint = $(document.body).attr("data-data-abs-root-url");
+	    mapzen.whosonfirst.data.endpoint(data_endpoint);
 
-		mapzen.whosonfirst.data.endpoint('https://s3.amazonaws.com/whosonfirst.mapzen.com/data/');
-
-		self.setup_map();
-		self.setup_drawing();
-		self.setup_properties();
-		self.setup_form();
-		self.setup_buttons();
+	    self.setup_map();
+	    self.setup_drawing();
+	    self.setup_properties();
+	    self.setup_form();
+	    self.setup_buttons();
 	});
 
 	return self;
