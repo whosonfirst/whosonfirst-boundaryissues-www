@@ -76,7 +76,11 @@
 			'placetype' => post_str('placetype')
 		));
 
-		$rsp = http_get("http://localhost:8181/pip?$query");
+		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/pip/";
+		$rsp = http_get("{$url}?$query");
+
+		error_log("GET {$url} - {$rsp['ok']}");
+		
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Error talking to the PIP service.';
 			api_output_error(400, $error);

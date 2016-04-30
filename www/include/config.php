@@ -364,3 +364,12 @@
 	$GLOBALS['cfg']['logstash_redis_port'] = 6379;
 
 	# END OF flamework-logstash stuff
+
+	# START OF wof-geojson_server stuff
+	# see also: services/geojson-server
+
+	$GLOBALS['cfg']['wof_geojson_server_scheme'] = 'http';
+	$GLOBALS['cfg']['wof_geojson_server_host'] = 'localhost';
+	$GLOBALS['cfg']['wof_geojson_server_port'] = 8081;
+
+	# END OF wof-pip stuff

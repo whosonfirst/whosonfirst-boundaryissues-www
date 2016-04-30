@@ -144,14 +144,16 @@
 	########################################################################
 
 	function wof_render_object_id($context) {
-		$context = preg_replace('/[:.]/g', '-', $context);
+		# $context = preg_replace('/[:.]/g', '-', $context);
+		$context = preg_replace('/[:.]/', '-', $context);
 		return "json-schema-object-$context";
 	}
 
 	########################################################################
 
 	function wof_render_array_id($context) {
-		$context = preg_replace('/[:.]/g', '-', $context);
+		# $context = preg_replace('/[:.]/g', '-', $context);
+		$context = preg_replace('/[:.]/', '-', $context);
 		return "json-schema-array-$context";
 	}
 
