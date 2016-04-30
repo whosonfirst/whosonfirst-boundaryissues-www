@@ -19,6 +19,13 @@
 			"query" => $query,
 		));
 
+		# What... why did this work for 1.7.2 (I think...) and not 1.7.5 ???
+		# The following is a patch to just getting something to show up in
+		# advance of actually figuring out what's going on...
+		# (20160429/thisisaaronland)
+
+		$es_query = array();
+
 		# These are ES 2.x -isms... because computers?
 
 		# $must = array(
@@ -55,7 +62,9 @@
 			array( "@timestamp" => array( "order" => "desc" ) )
 		);
 
-		# dumper(json_encode($es_query));
+		$more = array(
+			'offline-tasks',
+		);
 
 		return offline_tasks_search($es_query, $more);
 	}
