@@ -28,13 +28,21 @@
 
 	$rsp = offline_tasks_search_recent($args);
 
-	$pagination = $rsp['pagination'];
-	$rows = $rsp['rows'];
+	if ($rsp['ok']){
+		$pagination = $rsp['pagination'];
+		$rows = $rsp['rows'];
 
-	offline_tasks_search_massage_resultset($rows);
+		offline_tasks_search_massage_resultset($rows);
 
-	$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
-	$GLOBALS['smarty']->assign_by_ref("rows", $rows);
+		$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
+		$GLOBALS['smarty']->assign_by_ref("rows", $rows);
+	}
+
+	else {
+
+		$GLOBALS['smarty']->assign("error_rsp", $rsp);
+	}
+
 
 	$GLOBALS['smarty']->display("page_offline_tasks.txt");
 	exit();

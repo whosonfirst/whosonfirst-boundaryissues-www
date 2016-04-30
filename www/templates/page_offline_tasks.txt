@@ -1,6 +1,16 @@
 {capture assign="page_title"}Offline tasks{/capture}
 {include file="inc_head.txt"}
 
+{if $error_rsp}
+
+<div class="container">
+<h2>The computers are SAD and CRANKY...</h2>
+
+<p>This is what they said: <code>{$error_rsp.error|@escape}</code></p>
+</div>
+
+{else}
+
 <div class="container">
 
 {if $rows|@count}
@@ -39,6 +49,8 @@
 {/if}
 
 </div>
+
+{/if}
 
 {include file="inc_foot.txt"}
 

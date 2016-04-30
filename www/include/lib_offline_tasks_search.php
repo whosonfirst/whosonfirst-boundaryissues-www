@@ -55,7 +55,7 @@
 			array( "@timestamp" => array( "order" => "desc" ) )
 		);
 
-		dumper(json_encode($es_query));
+		# dumper(json_encode($es_query));
 
 		return offline_tasks_search($es_query, $more);
 	}
