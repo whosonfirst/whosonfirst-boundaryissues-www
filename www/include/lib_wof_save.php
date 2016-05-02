@@ -65,8 +65,8 @@
 	pending files that are *newer* than the GeoJSON timestamp that was
 	updated for a future save process.
 
-	Thing that are likely to fail in practice.
-	------------------------------------------
+	Things that are likely to fail in practice.
+	-------------------------------------------
 	* There may be conflicts with `git pull --rebase origin master`.
 	* We may get rejected when attempting `git push origin master`.
 	* All updated files from step two will need to be reindexed by
