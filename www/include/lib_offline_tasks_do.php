@@ -52,9 +52,7 @@
 
 		$oauth_token = $github_user['oauth_token'];
 
-		//$rsp = wof_save_to_github($data['wof_id'], $oauth_token);
-		$rsp = wof_save_with_git($data['wof_id'], $oauth_token);
-
+		$rsp = wof_save_to_github($data['wof_id'], $oauth_token);
 		return $rsp;
 	}
 

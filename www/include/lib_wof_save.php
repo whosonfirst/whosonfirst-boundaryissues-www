@@ -1,4 +1,5 @@
 <?php
+
 	loadlib('wof_utils');
 	loadlib('wof_geojson');
 	loadlib('wof_elasticsearch');
@@ -127,6 +128,12 @@
 	}
 
 	function wof_save_to_github($wof_id, $oauth_token = null) {
+
+		// The GitHub API doesn't always like us, so fall back on
+		// plain vanilla `git` if the feature flag hasn't been enabled.
+		if (! $GLOBALS['cfg']['enable_feature_save_via_github_api']) {
+			return wof_save_with_git($data['wof_id'], $oauth_token);
+		}
 
 		if (! $oauth_token) {
 			// Get the GitHub oauth token if none was specified
