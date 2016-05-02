@@ -1,5 +1,72 @@
 <?php
 
+	/*
+
+	How saving works.
+	=================
+
+	Note: each of the backtick commands below are running from the
+	git_execute() command from lib_git.php.
+
+	Another note: this is not describing how things _currently actually_
+	work. Rather, this is describing how saving things _will_ work, very
+	soon. (20160502/dphiffer)
+
+	Step one: save a pending WOF record.
+	------------------------------------
+	When you hit the 'save' button in Boundary Issues, an AJAX request
+	sends off the document to the WOF GeoJSON Service, which in turn saves
+	a copy of the file in {$DIR}/pending (where {$DIR} is the Boundary
+	Issues base dir).
+
+	The pending filename will have the following syntax:
+	{$WOF_ID}-{$UNIX_EPOCH}-{$GIT_HASH}.geojson
+
+	This means at any given time, if you want to read the current state of
+	the WOF data, it will require two steps:
+
+	1. Check {$DIR}/pending for the latest record (if any).
+	2. If a pending record is *not* found, find the record from the
+	   $GLOBALS['cfg']['wof_data_dir'] repo.
+
+	Step two: pull changes from GitHub.
+	-----------------------------------
+	From here onward, these steps are assumed to be invoked as an offline
+	task, perhaps on a crontab. We're also assuming a "clean" repo, with no
+	pending changes in the data directory to interfere with `git pull`.
+
+	This step effectively does the following:
+	`git pull origin master`
+
+	Basically this will just make sure the most recent updates from GitHub
+	get pulled in before we commit on top of them.
+
+	Step three: add pending WOF updates.
+	------------------------------------
+	For each file in {$DIR}/pending, determine the most recent update for a
+	given WOF ID (using the Unix timestamp in the filename). Copy the most
+	recently updated files into the $GLOBALS['cfg']['wof_data_dir'] data
+	tree.
+
+	For each file copied, stage the file for a git commit:
+	`git add {$PATH_TO_UPDATED_WOF}`
+
+	Step four: commit and push.
+	---------------------------
+	Finally, we are ready to commit the changes and push to GitHub.
+
+	`git commit -m "Boundary Issues saved {$LIST_OF_FILES}"`
+	`git push origin master`
+
+	Step five: clean up pending files.
+	----------------------------------
+	For each of the files for a given saved WOF ID, remove all timestamp
+	versions that are older than the version added in step three. Leave any
+	pending files that are *newer* than the GeoJSON timestamp that was
+	updated for a future save process.
+
+	*/
+
 	loadlib('wof_utils');
 	loadlib('wof_geojson');
 	loadlib('wof_elasticsearch');
