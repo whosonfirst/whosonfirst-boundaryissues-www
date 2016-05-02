@@ -3,6 +3,10 @@
 	loadlib('github_users');
 	loadlib('github_api');
 
+	# Aside from the general usefulness of a generic Git library we are using this
+	# because the GitHub API is currently busted for WOF-sized repositories. See notes
+	# in lib_github_api.php for details (20160502/thisisaaronland)
+	
 	########################################################################
 
 	$GLOBALS['git_path'] = '/usr/bin/git';

@@ -2,6 +2,27 @@
 
 	loadlib("http");
 
+	# Basically this doesn't work as of 20160502 because the following.
+	# Use lib_git.php instead... (20160502/thisisaaronland)
+	 
+	# From dphiffer to GitHub (20160428)
+	# 
+	# I'm a developer on the Mapzen Boundary Issues project [1]. I recently discovered that our API calls to
+	# commit via the repos/contents method have stopped working. It seems related to the large size (in terms
+	# of file count) of the repo I'm working with. The same method works just fine on a "small" repo.
+	# Here is a minimal demonstration of the issue using curl commands:
+	# https://gist.github.com/dphiffer/0ab9b7a69510b04f1a189e5df9b43ae3
+
+	# From GitHub (support@ / Ivan Žužak) to dphiffer (20160502)
+	# 
+	# Just wanted to update you on this. The team identified a possible optimization that should help in cases
+	# like these. We hope to include that optimization in a future version of libgit2 (the library we use for
+	# Git operations), in which case all libgit2 users -- including users of the GitHub API -- could benefit
+	# from it. I can't promise when that will happen, though. In the meantime, as I already mentioned -- you
+	# should be able to work around these limitations by adding and committing changes in a local copy of the
+	# repository and sending them to us with git push. And we'll followup with you again when these changes are
+	# made in libgit2 and land in GitHub.
+	
 	#################################################################
 
 	$GLOBALS['github_api_endpoint'] = 'https://api.github.com/';
