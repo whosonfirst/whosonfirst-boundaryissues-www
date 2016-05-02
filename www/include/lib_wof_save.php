@@ -36,7 +36,7 @@
 	pending changes in the data directory to interfere with `git pull`.
 
 	This step effectively does the following:
-	`git pull origin master`
+	`git pull --rebase origin master`
 
 	Basically this will just make sure the most recent updates from GitHub
 	get pulled in before we commit on top of them.
@@ -64,6 +64,13 @@
 	versions that are older than the version added in step three. Leave any
 	pending files that are *newer* than the GeoJSON timestamp that was
 	updated for a future save process.
+
+	Thing that are likely to fail in practice.
+	------------------------------------------
+	* There may be conflicts with `git pull --rebase origin master`.
+	* We may get rejected when attempting `git push origin master`.
+	* All updated files from step two will need to be reindexed by
+	  Elasticsearch.
 
 	*/
 
