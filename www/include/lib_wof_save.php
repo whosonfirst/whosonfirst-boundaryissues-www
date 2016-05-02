@@ -16,10 +16,12 @@
 	------------------------------------
 	When you hit the 'save' button in Boundary Issues, an AJAX request
 	sends off the document to the WOF GeoJSON Service, which in turn saves
-	a copy of the file in {$DIR}/pending (where {$DIR} is the Boundary
-	Issues base dir).
+	a record to {$DIR}/pending (where {$DIR} is the Boundary Issues base
+	dir). The pending directory uses the same folder structure as other
+	WOF data sources.
 
-	The pending filename will have the following syntax:
+	Additionally, a snapshot of the file is added to the {$DIR}/pending/log
+	subdirectory. The filename of that copy has the following syntax:
 	{$WOF_ID}-{$UNIX_EPOCH}-{$GIT_HASH}.geojson
 
 	This means at any given time, if you want to read the current state of
@@ -67,7 +69,8 @@
 
 	Things that are likely to fail in practice.
 	-------------------------------------------
-	* There may be conflicts with `git pull --rebase origin master`.
+	* There may be conflicts with `git pull --rebase origin master`. I will
+	  probably just detect
 	* We may get rejected when attempting `git push origin master`.
 	* All updated files from step two will need to be reindexed by
 	  Elasticsearch.
@@ -136,15 +139,37 @@
 		}
 
 		$wof_id = $geojson_data['properties']['wof:id'];
+		$timestamp = time();
+		$pending_path = wof_utils_id2abspath(
+			$GLOBALS['cfg']['wof_pending_dir'],
+			$wof_id
+		);
 
-		$rsp = offline_tasks_schedule_task('commit', array(
-			'wof_id' => $wof_id,
-			'user_id' => $GLOBALS['cfg']['user']['id']
-		));
+		// Look up the git hash of the pending save
+		$rsp = git_execute("hash-object $pending_path");
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
+		$git_hash = $rsp['error'];
 
+		// Save a snapshot to the pending/log directory
+		$pending_log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log";
+		if (! file_exists($pending_log_dir)) {
+			mkdir($pending_log_dir, 0775, true);
+		}
+		$pending_log_file = "$wof_id-$timestamp-$git_hash.geojson";
+		$pending_log_path = "$pending_log_dir/$pending_log_file";
+		file_put_contents($pending_log_path, $geojson);
+
+		// Make sure the pending log file actually exists
+		if (! file_exists($pending_log_path)) {
+			return array(
+				'ok' => 0,
+				'error' => "Oh no, your pending change wasn't logged."
+			);
+		}
+
+		// Schedule an offline index of the new record
 		$rsp = offline_tasks_schedule_task('index', array(
 			'geojson_data' => $geojson_data
 		));
