@@ -98,6 +98,13 @@
 		fclose($pipes[2]);
 		proc_close($proc);
 
+		// Originally this would return 'ok' => 0 if it got back a non-
+		// empty STDERR value. Then I noticed that `git hash-object` was
+		// using STDERR to return the hash value. Plus, it seems that
+		// STDOUT is used to convey info about a failed `git push` or
+		// `git pull`, so now I pass both values back and expect the
+		// caller to take the right action. (20160502/dphiffer)
+
 		return array(
 			'ok' => 1,
 			'output' => trim($output),
