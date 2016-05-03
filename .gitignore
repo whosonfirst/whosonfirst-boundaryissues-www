@@ -1,7 +1,6 @@
 *~
 .vagrant
 /data
-/pending
 www/include/secrets*.php
 www/include/config_local*.php
 www/include/config_dev.php
