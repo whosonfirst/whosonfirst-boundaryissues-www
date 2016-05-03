@@ -148,7 +148,9 @@
 			)
 		));
 
-		$url = "{$GLOBALS['cfg']['es_base_url']}_search";
+		$es_base_url = $GLOBALS['cfg']['wof_elasticsearch_host'] . ':' .
+		               $GLOBALS['cfg']['wof_elasticsearch_port'];
+		$url = "$es_base_url/_search";
 		$rsp = http_post($url, $query);
 
 		if (! $rsp['ok']) {

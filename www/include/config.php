@@ -59,15 +59,20 @@
 	$GLOBALS['cfg']['gearman_log'] = '/var/log/boundaryissues_gearman.log';
 	$GLOBALS['cfg']['gearman_client_timeout'] = 3000;
 
-	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
-	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
-
-	# DEPRECATED. USE elasticsearch_* BELOW (20160405/thisisaaronland)
-	$GLOBALS['cfg']['es_base_url'] = 'http://localhost:9200/whosonfirst/';
-
+	// Elasticsearch defaults
 	$GLOBALS['cfg']['elasticsearch_host'] = 'localhost';
 	$GLOBALS['cfg']['elasticsearch_port'] = '9200';
 	$GLOBALS['cfg']['elasticsearch_http_timeout'] = 10;
+
+	// WOF-specific ES settings
+	$GLOBALS['cfg']['wof_elasticsearch_index'] = 'whosonfirst';
+	$GLOBALS['cfg']['wof_elasticsearch_host'] = 'localhost';
+	$GLOBALS['cfg']['wof_elasticsearch_port'] = '9200';
+
+	// Offline Tasks-specific ES settings
+	$GLOBALS['cfg']['offline_tasks_elasticsearch_index'] = 'offline_tasks';
+	$GLOBALS['cfg']['offline_tasks_elasticsearch_host'] = 'localhost';
+	$GLOBALS['cfg']['offline_tasks_elasticsearch_port'] = '9200';
 
 	$GLOBALS['cfg']['gearman_host'] = 'localhost';
 	$GLOBALS['cfg']['gearman_port'] = '4730';

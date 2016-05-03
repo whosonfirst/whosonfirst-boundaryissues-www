@@ -24,7 +24,9 @@
 
 	function wof_elasticsearch_append_defaults(&$more){
 
-		$more['index'] = 'whosonfirst';
+		$more['index'] = $GLOBALS['cfg']['wof_elasticsearch_index'];
+		$more['host'] = $GLOBALS['cfg']['wof_elasticsearch_host'];
+		$more['port'] = $GLOBALS['cfg']['wof_elasticsearch_port'];
 
 		# pass-by-ref
 	}

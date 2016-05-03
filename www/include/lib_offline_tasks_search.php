@@ -50,8 +50,6 @@
 			array( "@timestamp" => array( "order" => "desc" ) )
 		);
 
-		$args['index'] = 'offline-tasks';
-
 		return offline_tasks_search($es_query, $args);
 	}
 
@@ -68,10 +66,9 @@
 
 	function offline_tasks_search_append_defaults(&$more){
 
-		# TO DO: offline task specific host/port information
-		# derived from $GLOBALS['cfg']
-
-		$more['index'] = "offline-tasks";	# sudo make me a config thing
+		$more['index'] = $GLOBALS['cfg']['offline_tasks_elasticsearch_index'];
+		$more['host'] = $GLOBALS['cfg']['offline_tasks_elasticsearch_host'];
+		$more['port'] = $GLOBALS['cfg']['offline_tasks_elasticsearch_port'];
 
 		# pass-by-ref
 	}
