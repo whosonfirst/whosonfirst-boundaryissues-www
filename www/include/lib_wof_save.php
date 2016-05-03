@@ -206,7 +206,7 @@
 		// The GitHub API doesn't always like us, so fall back on
 		// plain vanilla `git` if the feature flag hasn't been enabled.
 		if (! $GLOBALS['cfg']['enable_feature_save_via_github_api']) {
-			return wof_save_with_git($data['wof_id'], $oauth_token);
+			return wof_save_with_git($wof_id, $oauth_token);
 		}
 
 		if (! $oauth_token) {
