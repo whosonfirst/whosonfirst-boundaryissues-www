@@ -17,7 +17,7 @@
 		$wof_id
 	);
 
-	if (! file_exists($path)){
+	if (! $path){
 		error_404();
 	}
 
