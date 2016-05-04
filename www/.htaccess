@@ -73,7 +73,7 @@ RewriteRule ^contact/?$			contact.php 		[L,QSA]
 # WOF pages
 RewriteRule ^upload/?$           upload.php         [L,QSA]
 RewriteRule ^add/?$              add.php            [L,QSA]
-RewriteRule ^id/(\d+)/?$         edit.php?id=$1     [L,QSA]
+RewriteRule ^id/(\d+)/?$         id.php?id=$1       [L,QSA]
 RewriteRule ^id/(\d+)\.geojson$  geojson.php?id=$1  [L,QSA]
 RewriteRule ^search/?$           search.php         [L,QSA]
 
