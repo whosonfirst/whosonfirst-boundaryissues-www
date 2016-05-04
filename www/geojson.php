@@ -5,7 +5,11 @@
 
 	$id = get_int64('id');
 	$download = get_int64('download');
-	$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $id);
+	$path = wof_utils_id2abspath(
+		array($GLOBALS['cfg']['wof_pending_dir'],
+		      $GLOBALS['cfg']['wof_data_dir']),
+		$id
+	);
 
 	if (! $id || ! file_exists($path)) {
 		error_404();

@@ -188,8 +188,12 @@
 		$errors = array();
 		$saved = array();
 		foreach ($batch_ids as $wof_id) {
-			$geojson_path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
-			if (file_exists($geojson_path)) {
+			$geojson_path = wof_utils_id2abspath(
+				array($GLOBALS['cfg']['wof_pending_dir'],
+				      $GLOBALS['cfg']['wof_data_dir']),
+				$wof_id
+			);
+			if ($geojson_path) {
 				$existing_geojson = file_get_contents($geojson_path);
 				$existing_feature = json_decode($existing_geojson, true);
 				$existing_feature['properties'] = array_merge(
@@ -245,7 +249,7 @@
 
 		$rel_path = wof_utils_id2relpath($wof_id);
 		$abs_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_data_dir'],
+			$GLOBALS['cfg']['wof_pending_dir'],
 			$wof_id
 		);
 
@@ -296,7 +300,7 @@
 
 		$rel_path = wof_utils_id2relpath($wof_id);
 		$abs_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_data_dir'],
+			$GLOBALS['cfg']['wof_pending_dir'],
 			$wof_id
 		);
 

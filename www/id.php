@@ -1,4 +1,5 @@
 <?php
+
 	include('include/init.php');
 	loadlib('wof_schema');
 	loadlib('wof_utils');
@@ -11,7 +12,8 @@
 	$wof_id = get_int64('id');
 
 	$path = wof_utils_id2abspath(
-		$GLOBALS['cfg']['wof_data_dir'],
+		array($GLOBALS['cfg']['wof_pending_dir'],
+		      $GLOBALS['cfg']['wof_data_dir']),
 		$wof_id
 	);
 

@@ -14,9 +14,22 @@
 
 	function wof_utils_id2abspath($root, $id, $more=array()){
 
-		 $rel = wof_utils_id2relpath($id, $more);
+		$rel = wof_utils_id2relpath($id, $more);
 
-		 return implode(DIRECTORY_SEPARATOR, array($root, $rel));
+		// If $root is an array, check each possible root until one is
+		// found to have the relative path to an existing file.
+
+		if (is_array($root)) {
+			foreach ($root as $r) {
+				$path = wof_utils_id2abspath($r, $id, $more);
+				if (file_exists($path)) {
+					return $path;
+				}
+			}
+			return null; // Not found!
+		} else {
+			return implode(DIRECTORY_SEPARATOR, array($root, $rel));
+		}
 	}
 
 	########################################################################
