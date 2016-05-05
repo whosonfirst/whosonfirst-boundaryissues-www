@@ -148,7 +148,7 @@
 		);
 
 		// Look up the git hash of the pending save
-		$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "hash-object $pending_path");
+		$rsp = git_execute($GLOBALS['cfg']['wof_pending_dir'], "hash-object $pending_path");
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
