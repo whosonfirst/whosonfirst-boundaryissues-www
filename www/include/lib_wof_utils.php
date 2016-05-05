@@ -28,6 +28,9 @@
 			}
 			return null; // Not found!
 		} else {
+			if (substr($root, -1, 1) == DIRECTORY_SEPARATOR) {
+				$root = substr($root, 0, -1);
+			}
 			return implode(DIRECTORY_SEPARATOR, array($root, $rel));
 		}
 	}

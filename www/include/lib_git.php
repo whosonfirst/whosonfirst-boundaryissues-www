@@ -69,8 +69,6 @@
 		}
 
 		$args = "pull $opts $remote $branch";
-		echo "$args\n";
-
 		$rsp = git_execute($cwd, $args);
 
 		if (! $rsp['ok']) {
@@ -80,10 +78,11 @@
 			);
 		}
 
-		$success_regex = "/.{7}\.\..{7}\s+$branch -> $curr_branch/";
-		$no_changes_regex = "/Current branch $curr_branch is up to date./";
-		if (! preg_match($success_regex, $rsp['output']) &&
-		    ! preg_match($no_changes_regex, $rsp['output'])) {
+		$git_pull_output = "{$rsp['error']}{$rsp['output']}";
+		$success_regex = "/.{7}\.\..{7}\s+$branch -> $curr_branch/m";
+		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
+		if (! preg_match($success_regex, $git_pull_output) &&
+		    ! preg_match($no_changes_regex, $git_pull_output)) {
 			return array(
 				'ok' => 0,
 				'error' => "Error from git pull: {$rsp['output']}"

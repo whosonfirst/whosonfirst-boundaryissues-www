@@ -346,7 +346,7 @@
 
 	function wof_save_pending() {
 
-		echo "git pull\n";
+		// Pull changes from GitHub
 		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
 		if (! $rsp['ok']) {
 			return array(
@@ -356,10 +356,10 @@
 		}
 
 		$wof = array();
-		$filename_regex = '/(\d+)-(\d+)-(\d+)-([^.]).geojson/';
+		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
 
 		// Group the pending updates by WOF id
-		$files = glob("{$GLOBALS['cfg']['wof_pending_dir']}*.geojson");
+		$files = glob("{$GLOBALS['cfg']['wof_pending_dir']}log/*.geojson");
 		foreach ($files as $file) {
 			if (! preg_match($filename_regex, $file, $matches)) {
 				continue;
@@ -369,13 +369,12 @@
 				$wof[$wof_id] = array();
 			}
 			array_push($wof[$wof_id], array(
+				'filename' => $filename,
 				'timestamp' => $timestamp,
 				'user_id' => $user_id,
 				'git_hash' => $git_hash
 			));
 		}
-		echo "Grouped pending changes by WOF ID:\n";
-		print_r($wof);
 
 		if (empty($wof)) {
 			return array(
@@ -388,37 +387,75 @@
 
 			// Find the most recent pending changes
 			usort($updates, function($a, $b) {
-				if ($a['timestamp'] > $b['timestamp']) {
+				if ($a['timestamp'] < $b['timestamp']) {
 					return 1;
 				} else {
 					return -1;
 				}
 			});
+			$most_recent = $updates[0];
 
-			$pending = $updates[0];
-
-			echo "Found most recent pending update:\n";
-			print_r($pending);
 			$data_path = wof_utils_id2abspath(
 				$GLOBALS['cfg']['wof_data_dir'],
 				$wof_id
 			);
-			$data_dir = dirname($data_path);
 			$pending_path = wof_utils_id2abspath(
 				$GLOBALS['cfg']['wof_pending_dir'],
 				$wof_id
 			);
 
+			$data_dir = dirname($data_path);
 			if (! file_exists($data_dir)) {
 				mkdir($data_dir, 0775, true);
 			}
-			echo "Copy:\n$pending_path to\n$data_path\n";
-			//copy($pending_path, $data_path);
 
-			echo "git add $data_path\n";
-			//git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+			copy($pending_path, $data_path);
+			git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
 		}
 
+		// We are going to author this commit by whoever saved the
+		// most recent update from the last changed record. It's flawed,
+		// but it simplifies things and also speeds up the commit
+		// process. Maybe we can improve this later? (20160505/dphiffer)
 
+		$github_user = github_users_get_by_user_id($most_recent['user_id']);
+
+		if (! $github_user) {
+			return array("ok" => 0, "error" => "unvalid user ID");
+		}
+
+		$oauth_token = $github_user['oauth_token'];
+		$rsp = github_users_info($oauth_token);
+		if (! $rsp) {
+			return $rsp;
+		}
+		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
+
+		$wof_ids = implode(', ', array_keys($wof));
+		$message = "Boundary Issues saved: $wof_ids";
+
+		// Commit the pending changes
+		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $author);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		// Push to GitHub
+		$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		// Finally we'll clean up the pending log files
+		foreach ($wof as $wof_id => $log_files) {
+			foreach ($log_files as $log_file) {
+				unlink("{$GLOBALS['cfg']['wof_pending_dir']}log/$log_file");
+			}
+			$pending_path = wof_utils_id2abspath(
+				$GLOBALS['cfg']['wof_pending_dir'],
+				$wof_id
+			);
+			unlink($pending_path);
+		}
 
 	}
