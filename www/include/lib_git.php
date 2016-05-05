@@ -79,7 +79,7 @@
 			);
 		}
 
-		$success_regex = "/.{7}\.\..{7}\s+$curr_branch -> $remote/$branch/m";
+		$success_regex = "/.{7}\.\..{7}\s+$curr_branch -> $remote\/$branch/m";
 		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
 		if (! preg_match($success_regex, $git_pull_output) &&
 		    ! preg_match($no_changes_regex, $git_pull_output)) {
