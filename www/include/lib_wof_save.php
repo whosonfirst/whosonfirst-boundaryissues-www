@@ -22,7 +22,7 @@
 
 	Additionally, a snapshot of the file is added to the {$DIR}/pending/log
 	subdirectory. The filename of that copy has the following syntax:
-	{$WOF_ID}-{$UNIX_EPOCH}-{$GIT_HASH}.geojson
+	{$WOF_ID}-{$UNIX_EPOCH}-{$USER_ID}-{$GIT_HASH}.geojson
 
 	This means at any given time, if you want to read the current state of
 	the WOF data, it will require two steps:
@@ -140,24 +140,26 @@
 
 		$wof_id = $geojson_data['properties']['wof:id'];
 		$timestamp = time();
+		$user_id = $GLOBALS['cfg']['user']['id'];
+
 		$pending_path = wof_utils_id2abspath(
 			$GLOBALS['cfg']['wof_pending_dir'],
 			$wof_id
 		);
 
 		// Look up the git hash of the pending save
-		$rsp = git_execute("hash-object $pending_path");
+		$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "hash-object $pending_path");
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$git_hash = $rsp['error'];
+		$git_hash = $rsp['error']; // For some reason `git hash-object` returns on STDERR
 
 		// Save a snapshot to the pending/log directory
 		$pending_log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log";
 		if (! file_exists($pending_log_dir)) {
 			mkdir($pending_log_dir, 0775, true);
 		}
-		$pending_log_file = "$wof_id-$timestamp-$git_hash.geojson";
+		$pending_log_file = "$wof_id-$timestamp-$user_id-$git_hash.geojson";
 		$pending_log_path = "$pending_log_dir/$pending_log_file";
 		file_put_contents($pending_log_path, $geojson);
 
@@ -319,17 +321,17 @@
 		}
 		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
 
-		$rsp = git_add($abs_path);
+		$rsp = git_add($GLOBALS['cfg']['wof_data_dir'], $abs_path);
 		if (! $rsp) {
 			return $rsp;
 		}
 
-		$rsp = git_commit($message, $author);
+		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $author);
 		if (! $rsp) {
 			return $rsp;
 		}
 
-		$rsp = git_push();
+		$rsp = git_push($GLOBALS['cfg']['wof_data_dir']);
 		if (! $rsp) {
 			return $rsp;
 		}
@@ -339,4 +341,84 @@
 			'saved' => $rel_path,
 			'output' => $rsp['output']
 		);
+	}
+
+
+	function wof_save_pending() {
+
+		echo "git pull\n";
+		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
+		if (! $rsp['ok']) {
+			return array(
+				'ok' => 0,
+				'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
+			);
+		}
+
+		$wof = array();
+		$filename_regex = '/(\d+)-(\d+)-(\d+)-([^.]).geojson/';
+
+		// Group the pending updates by WOF id
+		$files = glob("{$GLOBALS['cfg']['wof_pending_dir']}*.geojson");
+		foreach ($files as $file) {
+			if (! preg_match($filename_regex, $file, $matches)) {
+				continue;
+			}
+			list($filename, $wof_id, $timestamp, $user_id, $git_hash) = $matches;
+			if (! $wof[$wof_id]) {
+				$wof[$wof_id] = array();
+			}
+			array_push($wof[$wof_id], array(
+				'timestamp' => $timestamp,
+				'user_id' => $user_id,
+				'git_hash' => $git_hash
+			));
+		}
+		echo "Grouped pending changes by WOF ID:\n";
+		print_r($wof);
+
+		if (empty($wof)) {
+			return array(
+				'ok' => 1,
+				'saved' => array()
+			);
+		}
+
+		foreach ($wof as $wof_id => $updates) {
+
+			// Find the most recent pending changes
+			usort($updates, function($a, $b) {
+				if ($a['timestamp'] > $b['timestamp']) {
+					return 1;
+				} else {
+					return -1;
+				}
+			});
+
+			$pending = $updates[0];
+
+			echo "Found most recent pending update:\n";
+			print_r($pending);
+			$data_path = wof_utils_id2abspath(
+				$GLOBALS['cfg']['wof_data_dir'],
+				$wof_id
+			);
+			$data_dir = dirname($data_path);
+			$pending_path = wof_utils_id2abspath(
+				$GLOBALS['cfg']['wof_pending_dir'],
+				$wof_id
+			);
+
+			if (! file_exists($data_dir)) {
+				mkdir($data_dir, 0775, true);
+			}
+			echo "Copy:\n$pending_path to\n$data_path\n";
+			//copy($pending_path, $data_path);
+
+			echo "git add $data_path\n";
+			//git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+		}
+
+
+
 	}

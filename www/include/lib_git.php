@@ -13,11 +13,11 @@
 
 	########################################################################
 
-	function git_add($path) {
+	function git_add($cwd, $path) {
 
 		$args = "add $path";
 
-		$rsp = git_execute($args);
+		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {
 			return array(
 				'ok' => 0,
@@ -33,7 +33,7 @@
 
 	########################################################################
 
-	function git_commit($message, $author = null) {
+	function git_commit($cwd, $message, $author = null) {
 
 		$esc_message = escapeshellarg($message);
 		$args = "commit -m $esc_message";
@@ -43,7 +43,7 @@
 			$args .= " --author=$esc_author";
 		}
 
-		$rsp = git_execute($args);
+		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {
 			return array(
 				'ok' => 0,
@@ -56,11 +56,58 @@
 
 	########################################################################
 
-	function git_push($remote = 'origin', $branch = 'master') {
+	function git_pull($cwd, $remote = 'origin', $branch = null, $opts = '') {
 
-		$args = "push $remote $branch";
+		$rsp = git_curr_branch($cwd);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
-		$rsp = git_execute($args);
+		$curr_branch = $rsp['branch'];
+		if (! $branch) {
+			$branch = $curr_branch;
+		}
+
+		$args = "pull $opts $remote $branch";
+		echo "$args\n";
+
+		$rsp = git_execute($cwd, $args);
+
+		if (! $rsp['ok']) {
+			return array(
+				'ok' => 0,
+				'error' => "Error from git pull: {$rsp['error']}"
+			);
+		}
+
+		$success_regex = "/.{7}\.\..{7}\s+$branch -> $curr_branch/";
+		$no_changes_regex = "/Current branch $curr_branch is up to date./";
+		if (! preg_match($success_regex, $rsp['output']) &&
+		    ! preg_match($no_changes_regex, $rsp['output'])) {
+			return array(
+				'ok' => 0,
+				'error' => "Error from git pull: {$rsp['output']}"
+			);
+		}
+
+		return $rsp;
+	}
+
+	########################################################################
+
+	function git_push($cwd, $remote = 'origin', $branch = null, $opts = '') {
+
+		if (! $branch) {
+			$rsp = git_curr_branch($cwd);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$branch = $rsp['branch'];
+		}
+
+		$args = "push $opts $remote $branch";
+
+		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {
 			return array(
 				'ok' => 0,
@@ -73,10 +120,31 @@
 
 	########################################################################
 
-	function git_execute($args) {
+	function git_curr_branch($cwd) {
+		$rsp = git_execute($cwd, 'branch');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		if (preg_match('/^\* (.+)$/m', $rsp['error'], $matches)) {
+			return array(
+				'ok' => 1,
+				'branch' => $matches[1]
+			);
+		}
+
+		return array(
+			'ok' => 0,
+			'error' => "Could not determine which branch $cwd is tracking."
+		);
+
+	}
+
+	########################################################################
+
+	function git_execute($cwd, $args) {
 
 		$cmd = "{$GLOBALS['git_path']} $args";
-		$cwd = $GLOBALS['cfg']['wof_data_dir'];
 
 		$descriptor = array(
 			1 => array('pipe', 'w'), // stdout
