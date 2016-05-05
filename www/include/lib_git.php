@@ -70,22 +70,22 @@
 
 		$args = "pull $opts $remote $branch";
 		$rsp = git_execute($cwd, $args);
+		$git_pull_output = "{$rsp['error']}{$rsp['output']}";
 
 		if (! $rsp['ok']) {
 			return array(
 				'ok' => 0,
-				'error' => "Error from git pull: {$rsp['error']}"
+				'error' => "Error from git pull: $git_pull_output"
 			);
 		}
 
-		$git_pull_output = "{$rsp['error']}{$rsp['output']}";
 		$success_regex = "/.{7}\.\..{7}\s+$branch -> $curr_branch/m";
 		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
 		if (! preg_match($success_regex, $git_pull_output) &&
 		    ! preg_match($no_changes_regex, $git_pull_output)) {
 			return array(
 				'ok' => 0,
-				'error' => "Error from git pull: {$rsp['output']}"
+				'error' => "Error from git pull: $git_pull_output"
 			);
 		}
 
@@ -96,21 +96,33 @@
 
 	function git_push($cwd, $remote = 'origin', $branch = null, $opts = '') {
 
+
+		$rsp = git_curr_branch($cwd);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$curr_branch = $rsp['branch'];
 		if (! $branch) {
-			$rsp = git_curr_branch($cwd);
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-			$branch = $rsp['branch'];
+			$branch = $curr_branch;
 		}
 
 		$args = "push $opts $remote $branch";
-
 		$rsp = git_execute($cwd, $args);
+		$git_push_output = "{$rsp['error']}{$rsp['output']}";
+
 		if (! $rsp['ok']) {
 			return array(
 				'ok' => 0,
-				'error' => "Error from git push: {$rsp['error']}"
+				'error' => "Error from git push: $git_push_output"
+			);
+		}
+
+		$success_regex = "/.{7}\.\..{7}\s+$curr_branch -> $branch/m";
+		if (! preg_match($success_regex, $git_push_output)) {
+			return array(
+				'ok' => 0,
+				'error' => "Error from git pull: $git_push_output"
 			);
 		}
 

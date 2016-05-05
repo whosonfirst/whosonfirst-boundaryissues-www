@@ -447,8 +447,9 @@
 		}
 
 		// Finally we'll clean up the pending log files
-		foreach ($wof as $wof_id => $log_files) {
-			foreach ($log_files as $log_file) {
+		foreach ($wof as $wof_id => $updates) {
+			foreach ($updates as $update) {
+				$log_file = $update['filename'];
 				unlink("{$GLOBALS['cfg']['wof_pending_dir']}log/$log_file");
 			}
 			$pending_path = wof_utils_id2abspath(
