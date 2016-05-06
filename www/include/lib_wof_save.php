@@ -481,6 +481,10 @@
 		$num_updates = count($saved);
 		$message = "Boundary Issues: $num_updates updates";
 
+		if ($num_updates == 1) {
+			$message = "Boundary Issues: $num_updates update";
+		}
+
 		// Commit the pending changes
 		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
 		if (! $rsp['ok']) {
