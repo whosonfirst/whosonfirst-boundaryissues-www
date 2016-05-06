@@ -198,7 +198,7 @@
 		$errors = array();
 		$saved = array();
 		foreach ($batch_ids as $wof_id) {
-			$geojson_path = wof_utils_id2abspath(
+			$geojson_path = wof_utils_find_id(
 				array($GLOBALS['cfg']['wof_pending_dir'],
 				      $GLOBALS['cfg']['wof_data_dir']),
 				$wof_id

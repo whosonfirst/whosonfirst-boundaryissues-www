@@ -12,27 +12,40 @@
 
 	########################################################################
 
+	// wof_utils_id2abspath returns an absolute path to the WOF ID,
+	// regardless of whether the file exists. This, of course, is necessary
+	// for the first time you write the file to disk.
+
+	// See also: wof_utils_find_id
+
 	function wof_utils_id2abspath($root, $id, $more=array()){
 
 		$rel = wof_utils_id2relpath($id, $more);
 
-		// If $root is an array, check each possible root until one is
-		// found to have the relative path to an existing file.
-
-		if (is_array($root)) {
-			foreach ($root as $r) {
-				$path = wof_utils_id2abspath($r, $id, $more);
-				if (file_exists($path)) {
-					return $path;
-				}
-			}
-			return null; // Not found!
-		} else {
-			if (substr($root, -1, 1) == DIRECTORY_SEPARATOR) {
-				$root = substr($root, 0, -1);
-			}
-			return implode(DIRECTORY_SEPARATOR, array($root, $rel));
+		// Check $root for a trailing slash, so we don't get two slashes
+		if (substr($root, -1, 1) == DIRECTORY_SEPARATOR) {
+			$root = substr($root, 0, -1);
 		}
+		return implode(DIRECTORY_SEPARATOR, array($root, $rel));
+	}
+
+	########################################################################
+
+	// wof_utils_find_id checks a sequence of possible root directories
+	// until it finds an absolute path for the WOF record. Returns null
+	// if no existing file was found.
+
+	// See also: wof_utils_id2abspath
+
+	function wof_utils_find_id($root_dirs, $id, $more=array()){
+
+		foreach ($root_dirs as $root) {
+			$path = wof_utils_id2abspath($root, $id, $more);
+			if (file_exists($path)) {
+				return $path;
+			}
+		}
+		return null; // Not found!
 	}
 
 	########################################################################

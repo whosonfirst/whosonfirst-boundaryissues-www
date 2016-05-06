@@ -5,7 +5,7 @@
 
 	$id = get_int64('id');
 	$download = get_int64('download');
-	$path = wof_utils_id2abspath(
+	$path = wof_utils_find_id(
 		array($GLOBALS['cfg']['wof_pending_dir'],
 		      $GLOBALS['cfg']['wof_data_dir']),
 		$id
