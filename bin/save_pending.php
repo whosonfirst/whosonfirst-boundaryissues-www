@@ -6,6 +6,14 @@
 	loadlib("uuid");
 	loadlib("logstash");
 
+	$lockfile = "{$GLOBALS['cfg']['pending_log_dir']}SAVE_LOCKFILE";
+	if (file_exists($lockfile)) {
+		die("Looks like save_pending.php might already be running.\n");
+	}
+
+	// Set a lock file so we don't run more than one save at a time
+	touch($lockfile);
+
 	$task_id = uuid_v4();
 	$now = offline_tasks_microtime();
 	$event = array(
@@ -30,6 +38,9 @@
 		'microtime' => $now
 	);
 	logstash_publish('offline_tasks', $event);
+
+	// Delete the lock file; all done!
+	unlink($lockfile);
 
 	exit();
 ?>
