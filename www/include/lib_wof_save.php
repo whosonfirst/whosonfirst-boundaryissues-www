@@ -370,6 +370,28 @@
 			);
 		}
 
+		// Index updated records in Elasticsearch
+		if ($rsp['commit_hashes']) {
+			$commit_hashes_esc = escapeshellarg($rsp['commit_hashes']);
+			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
+			if ($rsp['ok']) {
+				$output = "{$rsp['error']}{$rsp['output']}";
+				preg_match_all('/(\d+)\.geojson/', $output, $matches);
+				foreach ($matches[1] as $wof_id) {
+
+					// Load GeoJSON record data
+					$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
+					$geojson = file_get_contents($path);
+					$feature = json_decode($geojson, 'as hash');
+
+					// Schedule an offline index
+					$rsp = offline_tasks_schedule_task('index', array(
+						'geojson_data' => $feature
+					));
+				}
+			}
+		}
+
 		$wof = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
 
@@ -445,13 +467,17 @@
 			if ($authors[$user_id]) {
 				$author = $authors[$user_id];
 			} else {
-				$author = github_users_get_author_by_user_id($user_id);
-				$authors[$user_id] = $author;
+				$rsp = github_users_get_author_by_user_id($user_id);
+				if ($rsp['ok']) {
+					$author = $rsp['author'];
+					$authors[$user_id] = $author;
+				}
 			}
-			$message = "* $wof_name ($wof_id) saved by $author";
-			$args .= ' --message=' . escapeshellarg($message);
+			$messages[] = "* $wof_name ($wof_id) saved by $author";
 		}
 
+		$messages = implode("\n", $messages);
+		$args .= ' --message=' . escapeshellarg($messages);
 		$num_updates = count($saved);
 		$message = "Boundary Issues: $num_updates updates";
 

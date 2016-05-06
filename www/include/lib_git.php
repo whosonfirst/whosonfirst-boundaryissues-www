@@ -74,14 +74,18 @@
 			);
 		}
 
-		$success_regex = "/.{7}\.\..{7}\s+$curr_branch -> $remote\/$branch/m";
+		$success_regex = "/(.{7}\.\..{7})\s+$curr_branch\s+->\s+$remote\/$branch/m";
 		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
-		if (! preg_match($success_regex, $git_pull_output) &&
+		if (! preg_match($success_regex, $git_pull_output, $success_match) &&
 		    ! preg_match($no_changes_regex, $git_pull_output)) {
 			return array(
 				'ok' => 0,
 				'error' => "Error from git pull: $git_pull_output"
 			);
+		}
+
+		if ($success_match) {
+			$rsp['commit_hashes'] = $success_match[1];
 		}
 
 		return $rsp;
