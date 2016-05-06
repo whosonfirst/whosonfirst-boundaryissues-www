@@ -451,7 +451,7 @@
 			$args .= ' --message=' . escapeshellarg($message);
 		}
 
-		$num_updates = count($saved_ids);
+		$num_updates = count($saved);
 		$message = "Boundary Issues: $num_updates updates";
 
 		// Commit the pending changes
