@@ -384,6 +384,7 @@
 				$wof[$wof_id] = array();
 			}
 			array_push($wof[$wof_id], array(
+				'wof_id' => $wof_id,
 				'filename' => $filename,
 				'timestamp' => $timestamp,
 				'user_id' => $user_id,
@@ -483,6 +484,10 @@
 		$find_path = $GLOBALS['find_path'];
 		exec("$find_path {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete");
 
+		return array(
+			'ok' => 1,
+			'saved' => $saved
+		);
 	}
 
 	# the end
