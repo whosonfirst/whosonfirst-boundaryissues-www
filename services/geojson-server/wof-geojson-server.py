@@ -15,7 +15,7 @@ import mapzen.whosonfirst.pip.utils
 
 # This assumes that a 'pending' folder has been created in the Boundary Issues
 # directory, writable by the www-data user. (20160502/dphiffer)
-root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/pending"
+root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/data"
 app = Flask(__name__)
 
 @app.route('/encode', methods=['POST'])
