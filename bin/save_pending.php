@@ -6,7 +6,7 @@
 	loadlib("uuid");
 	loadlib("logstash");
 
-	$lockfile = "{$GLOBALS['cfg']['pending_log_dir']}SAVE_LOCKFILE";
+	$lockfile = "{$GLOBALS['cfg']['wof_pending_log_dir']}SAVE_LOCKFILE";
 	if (file_exists($lockfile)) {
 		die("Looks like save_pending.php might already be running.\n");
 	}
@@ -21,7 +21,9 @@
 		'task_id' => $task_id,
 		'task' => 'save_pending',
 		'data' => array(),
-		'rsp' => array(),
+		'rsp' => array(
+			'ok' => 1
+		),
 		'microtime' => $now
 	);
 	logstash_publish('offline_tasks', $event);
