@@ -33,15 +33,10 @@
 
 	########################################################################
 
-	function git_commit($cwd, $message, $author = null) {
+	function git_commit($cwd, $message, $args = '') {
 
 		$esc_message = escapeshellarg($message);
-		$args = "commit -m $esc_message";
-
-		if ($author) {
-			$esc_author = escapeshellarg($author);
-			$args .= " --author=$esc_author";
-		}
+		$args = "commit --message=$esc_message $args";
 
 		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {

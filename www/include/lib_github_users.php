@@ -2,7 +2,7 @@
 
 	loadlib('github_api');
 
-	#################################################################
+	########################################################################
 
 	function github_users_get_by_oauth_token($token){
 
@@ -12,7 +12,7 @@
 		return db_single(db_fetch($sql));
 	}
 
-	#################################################################
+	########################################################################
 
 	function github_users_get_by_user_id($user_id){
 
@@ -22,7 +22,7 @@
 		return db_single(db_fetch($sql));
 	}
 
-	#################################################################
+	########################################################################
 
 	function github_users_get_by_github_id($github_id){
 
@@ -32,7 +32,7 @@
 		return db_single(db_fetch($sql));
 	}
 
-	#################################################################
+	########################################################################
 
 	function github_users_create_user($user){
 
@@ -57,7 +57,7 @@
 		return $user;
 	}
 
-	#################################################################
+	########################################################################
 
 	function github_users_update_user(&$github_user, $update){
 
@@ -86,7 +86,7 @@
 		return $rsp;
 	}
 
-	#################################################################
+	########################################################################
 
 	function github_users_curr_oauth_token() {
 		if (! $GLOBALS['cfg']['user']['id']) {
@@ -105,7 +105,7 @@
 		);
 	}
 
-	#################################################################
+	########################################################################
 
 	function github_users_info($oauth_token = null) {
 		if (! $oauth_token) {
@@ -124,6 +124,29 @@
 		return array(
 			'ok' => 1,
 			'info' => $rsp['rsp']
+		);
+	}
+
+	########################################################################
+
+	function github_users_get_author_by_user_id($user_id) {
+
+		$github_user = github_users_get_by_user_id($user_id);
+
+		if (! $github_user) {
+			return array("ok" => 0, "error" => "unvalid user ID");
+		}
+
+		$oauth_token = $github_user['oauth_token'];
+		$rsp = github_users_info($oauth_token);
+		if (! $rsp) {
+			return $rsp;
+		}
+		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
+
+		return array(
+			'ok' => 1,
+			'author' => $author
 		);
 	}
 

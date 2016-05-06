@@ -8,10 +8,6 @@
 	Note: each of the backtick commands below are running from the
 	git_execute() command from lib_git.php.
 
-	Another note: this is not describing how things _currently actually_
-	work. Rather, this is describing how saving things _will_ work, very
-	soon. (20160502/dphiffer)
-
 	Step one: save a pending WOF record.
 	------------------------------------
 	When you hit the 'save' button in Boundary Issues, an AJAX request
@@ -77,6 +73,12 @@
 
 	*/
 
+	########################################################################
+
+	$GLOBALS['find_path'] = '/usr/bin/find';
+
+	########################################################################
+
 	loadlib('wof_utils');
 	loadlib('wof_geojson');
 	loadlib('wof_elasticsearch');
@@ -86,6 +88,8 @@
 	loadlib("github_users");
 	loadlib("offline_tasks");
 	loadlib("offline_tasks_gearman");
+
+	########################################################################
 
 	function wof_save_file($input_path) {
 
@@ -110,6 +114,8 @@
 		return $rsp;
 
 	}
+
+	########################################################################
 
 	function wof_save_feature($geojson) {
 
@@ -155,7 +161,7 @@
 		$git_hash = $rsp['error']; // For some reason `git hash-object` returns on STDERR
 
 		// Save a snapshot to the pending/log directory
-		$pending_log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log";
+		$pending_log_dir = $GLOBALS['cfg']['wof_pending_log_dir'];
 		if (! file_exists($pending_log_dir)) {
 			mkdir($pending_log_dir, 0775, true);
 		}
@@ -185,6 +191,8 @@
 			'geojson' => $geojson_data
 		);
 	}
+
+	########################################################################
 
 	function wof_save_batch($batch_ids, $batch_properties) {
 		$errors = array();
@@ -231,6 +239,8 @@
 			);
 		}
 	}
+
+	########################################################################
 
 	function wof_save_to_github($wof_id, $oauth_token = null) {
 
@@ -293,6 +303,8 @@
 		);
 	}
 
+	########################################################################
+
 	function wof_save_with_git($wof_id, $oauth_token = null) {
 
 		// Designed to be interchangable, interface-wise, with the
@@ -320,13 +332,15 @@
 			return $rsp;
 		}
 		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
+		$esc_author = escapeshellarg($author);
 
 		$rsp = git_add($GLOBALS['cfg']['wof_data_dir'], $abs_path);
 		if (! $rsp) {
 			return $rsp;
 		}
 
-		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $author);
+		$args = "--author=$esc_author";
+		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
 		if (! $rsp) {
 			return $rsp;
 		}
@@ -343,6 +357,7 @@
 		);
 	}
 
+	########################################################################
 
 	function wof_save_pending() {
 
@@ -359,7 +374,7 @@
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
 
 		// Group the pending updates by WOF id
-		$files = glob("{$GLOBALS['cfg']['wof_pending_dir']}log/*.geojson");
+		$files = glob("{$GLOBALS['cfg']['wof_pending_log_dir']}*.geojson");
 		foreach ($files as $file) {
 			if (! preg_match($filename_regex, $file, $matches)) {
 				continue;
@@ -383,6 +398,10 @@
 			);
 		}
 
+		$args = '';
+		$saved = array();
+		$messages = array();
+		$authors = array();
 		foreach ($wof as $wof_id => $updates) {
 
 			// Find the most recent pending changes
@@ -393,7 +412,7 @@
 					return -1;
 				}
 			});
-			$most_recent = $updates[0];
+			$update = $updates[0];
 
 			$data_path = wof_utils_id2abspath(
 				$GLOBALS['cfg']['wof_data_dir'],
@@ -410,32 +429,33 @@
 			}
 
 			copy($pending_path, $data_path);
+			if (! file_exists($data_path)) {
+				continue;
+			}
+
 			git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+			$saved[$wof_id] = $updates;
+
+			$geojson = file_get_contents($data_path);
+			$feature = json_decode($geojson, 'as hash');
+			$wof_name = $feature['properties']['wof:name'];
+			$user_id = $update['user_id'];
+
+			if ($authors[$user_id]) {
+				$author = $authors[$user_id];
+			} else {
+				$author = github_users_get_author_by_user_id($user_id);
+				$authors[$user_id] = $author;
+			}
+			$message = "* $wof_name ($wof_id) saved by $author";
+			$args .= ' --message=' . escapeshellarg($message);
 		}
 
-		// We are going to author this commit by whoever saved the
-		// most recent update from the last changed record. It's flawed,
-		// but it simplifies things and also speeds up the commit
-		// process. Maybe we can improve this later? (20160505/dphiffer)
-
-		$github_user = github_users_get_by_user_id($most_recent['user_id']);
-
-		if (! $github_user) {
-			return array("ok" => 0, "error" => "unvalid user ID");
-		}
-
-		$oauth_token = $github_user['oauth_token'];
-		$rsp = github_users_info($oauth_token);
-		if (! $rsp) {
-			return $rsp;
-		}
-		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
-
-		$wof_ids = implode(', ', array_keys($wof));
-		$message = "Boundary Issues saved: $wof_ids";
+		$num_updates = count($saved_ids);
+		$message = "Boundary Issues: $num_updates updates";
 
 		// Commit the pending changes
-		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $author);
+		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -447,10 +467,10 @@
 		}
 
 		// Finally we'll clean up the pending log files
-		foreach ($wof as $wof_id => $updates) {
+		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
 				$log_file = $update['filename'];
-				unlink("{$GLOBALS['cfg']['wof_pending_dir']}log/$log_file");
+				unlink("{$GLOBALS['cfg']['wof_pending_log_dir']}$log_file");
 			}
 			$pending_path = wof_utils_id2abspath(
 				$GLOBALS['cfg']['wof_pending_dir'],
@@ -459,4 +479,10 @@
 			unlink($pending_path);
 		}
 
+		// Clean up any empty data directories
+		$find_path = $GLOBALS['find_path'];
+		exec("$find_path {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete");
+
 	}
+
+	# the end

@@ -45,6 +45,7 @@
 
 	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data/';
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/data/';
+	$GLOBALS['cfg']['wof_pending_log_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/log/';
 
 	$GLOBALS['cfg']['enable_feature_save_via_github_api'] = false;
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
