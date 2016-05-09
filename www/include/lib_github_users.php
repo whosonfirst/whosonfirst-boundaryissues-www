@@ -142,7 +142,7 @@
 		if (! $rsp) {
 			return $rsp;
 		}
-		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
+		$author = "{$rsp['info']['name']} ({$rsp['info']['login']})";
 
 		return array(
 			'ok' => 1,

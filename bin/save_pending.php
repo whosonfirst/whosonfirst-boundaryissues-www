@@ -26,6 +26,7 @@
 		),
 		'microtime' => $now
 	);
+	dbug('before save_pending:', $event);
 	logstash_publish('offline_tasks', $event);
 
 	$rsp = wof_save_pending();
@@ -39,6 +40,7 @@
 		'rsp' => $rsp,
 		'microtime' => $now
 	);
+	dbug('after save_pending:', $event);
 	logstash_publish('offline_tasks', $event);
 
 	// Delete the lock file; all done!
