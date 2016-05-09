@@ -331,7 +331,7 @@
 		if (! $rsp) {
 			return $rsp;
 		}
-		$author = "{$rsp['info']['name']} <{$rsp['info']['email']}>";
+		$author = "{$rsp['info']['name']} ({$rsp['info']['login']})";
 		$esc_author = escapeshellarg($author);
 
 		$rsp = git_add($GLOBALS['cfg']['wof_data_dir'], $abs_path);
