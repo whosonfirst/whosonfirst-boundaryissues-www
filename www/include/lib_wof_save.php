@@ -406,10 +406,10 @@
 				$wof[$wof_id] = array();
 			}
 			array_push($wof[$wof_id], array(
-				'wof_id' => $wof_id,
+				'wof_id' => intval($wof_id),
 				'filename' => $filename,
-				'timestamp' => $timestamp,
-				'user_id' => $user_id,
+				'timestamp' => intval($timestamp),
+				'user_id' => intval($user_id),
 				'git_hash' => $git_hash
 			));
 		}
@@ -482,7 +482,7 @@
 		$message = "Boundary Issues: $num_updates updates";
 
 		if ($num_updates == 1) {
-			$message = "Boundary Issues: $num_updates update";
+			$message = "Boundary Issues: 1 update";
 		}
 
 		// Commit the pending changes
@@ -498,6 +498,7 @@
 		}
 
 		// Finally we'll clean up the pending log files
+		$updated = array();
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
 				$log_file = $update['filename'];
@@ -508,6 +509,7 @@
 				$wof_id
 			);
 			unlink($pending_path);
+			$updated[] = $updates[0];
 		}
 
 		// Clean up any empty data directories
@@ -516,7 +518,7 @@
 
 		return array(
 			'ok' => 1,
-			'saved' => $saved
+			'updated' => $updated
 		);
 	}
 
