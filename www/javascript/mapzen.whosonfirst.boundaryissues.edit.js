@@ -183,6 +183,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					input.removeAttribute('disabled');
 				});
 			}
+
+			self.setup_category_property();
 		},
 
 		setup_form: function() {
@@ -261,6 +263,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 		},
 
+		setup_category_property: function() {
+			var select = '<select name="properties.wof:category">';
+			$.get('/meta/categories.json', function(categories) {
+				$.each(categories, function(i, cat) {
+					select += '<option value="' + cat.name + '">' + cat.label + '</option>';
+				});
+				select += '</select>';
+				self.category_select_html = select;
+			});
+			self.check_for_category_property();
+		},
+
 		set_marker: function(m) {
 			marker = m;
 			map.addLayer(marker);
@@ -301,6 +315,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$rel.find('input[name="' + context + '.' + key + '"]').val(value);
+			self.check_for_category_property();
 		},
 
 		add_array_item: function($rel, value) {
@@ -795,6 +810,23 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				geojson: self.generate_geojson()
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.encode", data, onsuccess, onerror);
+		},
+
+		check_for_category_property: function() {
+			var $input = $('input[name="properties.wof:category"]');
+			if ($input.length == 0) {
+				return;
+			}
+			var value = $input.val();
+			var $td = $input.closest('td');
+			$td.html(self.category_select_html);
+			var select = $td.find('select').get(0);
+			for (var i = 0; i < select.options.length; i++) {
+				if (select.options[i].value == value) {
+					select.selectedIndex = i;
+					break;
+				}
+			}
 		}
 
 	};
@@ -804,7 +836,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	    if ($('#edit-form').length == 0) {
 		return;
 	    }
-	    
+
 	    var data_endpoint = $(document.body).attr("data-data-abs-root-url");
 	    mapzen.whosonfirst.data.endpoint(data_endpoint);
 
