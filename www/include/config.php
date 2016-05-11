@@ -43,7 +43,7 @@
 	# ON WORK AROUND MULTIPLE REPOSITORIES AND FUSE STUFF AND REPO LOOKUP (BELOW)
 	# (20160405/thisisaaronland)
 
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data-venue-us-new-york/data/';
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data/';
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/data/';
 	$GLOBALS['cfg']['wof_pending_log_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/log/';
 
@@ -54,7 +54,7 @@
 	# RECORD TO A REPO BUT THAT WORK IS NOT DONE YET. ALSO THIS SHOULD PROBABLY
 	# BE STORED IN `config_dev.php` UNTIL THEN (20160405/thisissaaronland)
 
-	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data-venue-us-new-york';
+	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data';
 
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues_dbug.log';
