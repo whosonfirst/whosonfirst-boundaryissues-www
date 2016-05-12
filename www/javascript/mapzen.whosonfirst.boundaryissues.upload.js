@@ -71,6 +71,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					swlat, swlon, nelat, nelon
 				);
 
+				// Clear the map if a feature is already on there
+				map.eachLayer(function(layer) {
+					if (layer.feature) {
+						map.removeLayer(layer);
+					}
+				});
+
 				if (geojson.type == "Feature") {
 					mapzen.whosonfirst.boundaryissues.enmapify.render_feature(map, geojson);
 				} else if (geojson.type == "FeatureCollection") {
