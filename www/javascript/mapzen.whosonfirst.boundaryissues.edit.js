@@ -506,7 +506,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 
 				var root = $(document.body).data("abs-root-url");
-				var href = root + '/belongsto/' + id + '/';
+				var href = root + 'belongsto/' + id + '/';
 
 				html += '<li>' + label + ': <a href="' + href + '" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
 			}
