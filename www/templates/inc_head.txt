@@ -33,7 +33,7 @@
 			<script src="{$cfg.abs_root_url}javascript/html5.js"></script>
 		<![endif]-->
 
-		{assign var=lib_date_time value='20160321181437'}
+		{assign var=lib_date_time value='20160512185423'}
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.data-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.brands-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.geojson-{$lib_date_time}.js"></script>
