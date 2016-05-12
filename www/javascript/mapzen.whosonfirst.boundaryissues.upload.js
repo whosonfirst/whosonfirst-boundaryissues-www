@@ -70,7 +70,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					'upload-preview-map',
 					swlat, swlon, nelat, nelon
 				);
-				mapzen.whosonfirst.boundaryissues.enmapify.render_feature(map, geojson);
+
+				if (geojson.type == "Feature") {
+					mapzen.whosonfirst.boundaryissues.enmapify.render_feature(map, geojson);
+				} else if (geojson.type == "FeatureCollection") {
+					self.show_collection_preview(map, geojson);
+				}
 			}
 
 			// Load up the file to kick off the preview
@@ -79,6 +84,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$result.html('This is just a preview. You still have to hit the upload button.');
 			} else {
 				mapzen.whosonfirst.log.error('No geojson_file to preview.');
+			}
+		},
+
+		show_collection_preview: function(map, collection) {
+			mapzen.whosonfirst.leaflet.fit_map(map, collection);
+			var feature;
+			for (var i = 0; i < collection.features.length; i++) {
+				feature = collection.features[i];
+				mapzen.whosonfirst.leaflet.draw_poly(map, feature, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
 			}
 		},
 
