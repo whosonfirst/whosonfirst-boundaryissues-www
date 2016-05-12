@@ -44,5 +44,5 @@
 	$GLOBALS['smarty']->assign('wof_parent_id', $values['properties']['wof:parent_id']);
 	$GLOBALS['smarty']->assign('wof_hierarchy', json_encode($values['properties']['wof:hierarchy']));
 
-	$GLOBALS['smarty']->display('page_edit.txt');
+	$GLOBALS['smarty']->display('page_id.txt');
 	exit();
