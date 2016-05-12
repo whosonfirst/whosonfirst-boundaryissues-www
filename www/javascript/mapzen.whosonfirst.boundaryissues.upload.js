@@ -11,7 +11,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	var $form,
 	    $result,
 	    $preview_map,
-	    geojson_file;
+	    geojson_file,
+	    upload_is_ready = false;
 
 	var self = {
 
@@ -31,6 +32,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Intercept the form submit event and upload the file via API
 			$form.submit(function(e){
 				e.preventDefault();
+				if (! upload_is_ready) {
+					return;
+				}
 				var crumb = $(this).data("crumb-upload");
 				self.post_file(crumb);
 			});
@@ -45,9 +49,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					var geojson = JSON.parse(reader.result);
 				} catch(e) {
 					$result.html(e);
+					upload_is_ready = false;
 					return;
 				}
 
+				upload_is_ready = true;
 				$preview_map.removeClass('hidden');
 				mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
 
