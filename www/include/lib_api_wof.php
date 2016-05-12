@@ -7,7 +7,8 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$rsp = wof_save($_FILES["upload_file"]["tmp_name"]);
+		$ignore_properties = post_bool('ignore_properties');
+		$rsp = wof_save_file($_FILES["upload_file"]["tmp_name"], $ignore_properties);
 		if (! $rsp['ok'] ||
 		    ! $rsp['geojson_url']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';

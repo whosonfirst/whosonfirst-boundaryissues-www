@@ -54,6 +54,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 
 				upload_is_ready = true;
+				$('#upload-btn').addClass('btn-primary');
+				$('#upload-btn').attr('disabled', false);
+
 				$preview_map.removeClass('hidden');
 				mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
 
@@ -100,6 +103,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var data = new FormData();
 			data.append('crumb', crumb);
 			data.append('upload_file', geojson_file);
+			if ($('input[name="ignore_properties"]').get(0).checked) {
+				data.append('ignore_properties', 1);
+			}
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.upload", data, onsuccess, onerror);
 
 			// Show some user feedback

@@ -91,7 +91,7 @@
 
 	########################################################################
 
-	function wof_save_file($input_path) {
+	function wof_save_file($input_path, $ignore_properties = false) {
 
 		$filename = basename($input_path);
 
@@ -103,7 +103,7 @@
 		}
 
 		$geojson = file_get_contents($input_path);
-		$rsp = wof_save_feature($geojson);
+		$rsp = wof_save_feature($geojson, $ignore_properties);
 
 		// Clean up the uploaded tmp file
 		if (is_uploaded_file($input_path)) {
@@ -117,7 +117,7 @@
 
 	########################################################################
 
-	function wof_save_feature($geojson) {
+	function wof_save_feature($geojson, $ignore_properties = false) {
 
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {
@@ -125,6 +125,10 @@
 				'ok' => 0,
 				'error' => "Could not parse input 'geojson' param."
 			);
+		}
+
+		if ($ignore_properties) {
+			$geojson = wof_save_geometry($geojson);
 		}
 
 		// Validation happens on the GeoJSON service side of things
@@ -238,6 +242,66 @@
 				'saved' => $saved
 			);
 		}
+	}
+
+	########################################################################
+
+	function wof_save_geometry($geojson) {
+
+		$feature = json_decode($geojson, 'as hash');
+		if (! $feature) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not parse GeoJSON.'
+			);
+		}
+
+		$props = $feature['properties'];
+		if (! $props) {
+			// Just in case, check if there's a top-level 'id' param
+			if (! $feature['id']) {
+				return array(
+					'ok' => 0,
+					'error' => 'No GeoJSON properties found (we just need a wof:id).'
+				);
+			}
+		}
+
+		if ($props['wof:id']) {
+			$wof_id = intval($props['wof:id']);
+		} else if ($props['wof_id']) {
+			// ogr2ogr seems to not like colons in property names
+			$wof_id = intval($props['wof_id']);
+		} else if ($feature['id']) {
+			$wof_id = intval($feature['id']);
+		} else {
+			return array(
+				'ok' => 0,
+				'error' => 'No wof:id (or wof_id) property found.'
+			);
+		}
+
+		$existing_geojson_path = wof_utils_id2abspath(
+			$GLOBALS['cfg']['wof_data_dir'],
+			$wof_id
+		);
+		if (! file_exists($existing_geojson_path)) {
+			return array(
+				'ok' => 0,
+				'error' => "wof:id $wof_id not found."
+			);
+		}
+
+		$existing_geojson = file_get_contents($existing_geojson_path);
+		$existing_feature = json_decode($existing_geojson, 'as hash');
+
+		// Update the geometry
+		$existing_feature['geometry'] = $feature['geometry'];
+
+		return array(
+			'ok' => 1,
+			'geojson' => json_encode($existing_feature)
+		);
 	}
 
 	########################################################################

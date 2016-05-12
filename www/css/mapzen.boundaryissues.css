@@ -234,3 +234,9 @@ tr.object-property.property-visible {
 #upload-result {
 	margin-top: 1em;
 }
+
+.checkbox label {
+	/* I don't know why there's a bunch of padding on labels, but it kind
+	   of breaks things. */
+	padding-left: 0;
+}

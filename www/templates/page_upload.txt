@@ -9,7 +9,13 @@
 			Choose GeoJSON file
 			<input type="file" name="geojson_file">
 		</span>
-		<input type="submit" value="Upload" class="btn btn-primary">
+		<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
+		<div class="checkbox">
+			<label>
+				<input type="checkbox" name="ignore_properties" value="1">
+				Ignore properties (only update geometry)
+			</label>
+		</div>
 	</form>
 	<div id="upload-result"></div>
 	<div id="upload-preview-map" class="hidden"></div>
