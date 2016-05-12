@@ -41,7 +41,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Read the file and display a preview map prior to uploading
 			var reader = new FileReader();
 			reader.onload = function(e){
-				var geojson = JSON.parse(reader.result);
+				try {
+					var geojson = JSON.parse(reader.result);
+				} catch(e) {
+					$result.html(e);
+					return;
+				}
 
 				$preview_map.removeClass('hidden');
 				mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
