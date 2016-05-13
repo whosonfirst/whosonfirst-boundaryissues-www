@@ -266,6 +266,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						$row.find('input.add-key').val('');
 						$row.find('input.add-value').val('');
 						$row.find('input.add-value').css('display', 'inline');
+						$row.find('input.add-key').focus();
 					});
 				}
 			});
