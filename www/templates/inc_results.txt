@@ -21,7 +21,8 @@
 					{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
 					{capture assign="is_current"}{$item|@wof_pv:"mz:is_current"}{/capture}
 					{capture assign="deprecated"}{$item|@wof_pv:"edtf:deprecated"}{/capture}
-					<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}">
+					{capture assign="icon"}{$item|@wof_pv:"wof:category"}{/capture}
+					<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}"{if $icon!=''} data-icon="{$item|@wof_pv:"wof:category"|@escape}"{/if}>
 
 						<input type="checkbox" name="select-{$item|@wof_pv:"wof:id"|@escape}">
 

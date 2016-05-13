@@ -21,6 +21,7 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			popupAnchor: new L.Point(0, -42)
 		}
 	});
+	var poi_icon_base = '/images/poi_icons/';
 
 	var self = {
 
@@ -42,13 +43,11 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 
 			var markers = [];
 			$('#search-results > li').each(function(i, result) {
-				marker_style = self.get_venue_marker_style(result);
-				var id = $(result).data('id');
-				var marker = L.circleMarker({
-					lat: parseFloat($(result).data('lat')),
-					lng: parseFloat($(result).data('lng'))
-				}, marker_style);
-				marker._style = marker_style;
+				if ($(result).data('icon')) {
+					var marker = self.setup_icon_marker(result);
+				} else {
+					var marker = self.setup_circle_marker(result);
+				}
 
 				markers.push(marker);
 				marker.on('mouseover', function() {
@@ -64,6 +63,35 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			});
 			var group = L.featureGroup(markers).addTo(map);
 			map.fitBounds(group.getBounds());
+		},
+
+		setup_circle_marker: function(result) {
+			var marker_style = self.get_venue_marker_style(result);
+			var id = $(result).data('id');
+			var marker = L.circleMarker({
+				lat: parseFloat($(result).data('lat')),
+				lng: parseFloat($(result).data('lng'))
+			}, marker_style);
+			marker._style = marker_style;
+			return marker;
+		},
+
+		setup_icon_marker: function(result) {
+			var id = $(result).data('id');
+			var icon_id = 'icon'; // $(result).data('icon');
+			var options = {
+				icon: L.icon({
+					iconRetinaUrl: poi_icon_base + icon_id + '.png',
+					iconSize: [19, 19],
+					iconAnchor: [9, 9],
+					popupAnchor: [-3, -38]
+				})
+			}
+			var marker = L.marker({
+				lat: parseFloat($(result).data('lat')),
+				lng: parseFloat($(result).data('lng'))
+			}, options);
+			return marker;
 		},
 
 		setup_drawing: function() {
