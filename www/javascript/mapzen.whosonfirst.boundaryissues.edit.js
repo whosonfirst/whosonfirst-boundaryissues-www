@@ -24,7 +24,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			popupAnchor: new L.Point(0, -42)
 		}
 	});
-	var poi_icon_base = '/images/poi_icons/';
+	var poi_icon_base = '/images/categories/';
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
@@ -342,7 +342,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		set_marker_icon: function(icon_id) {
-			var icon_id = 'icon'; // override until we get actual icons
 			if (marker) {
 				var icon = L.icon({
 					iconRetinaUrl: poi_icon_base + icon_id + '.png',

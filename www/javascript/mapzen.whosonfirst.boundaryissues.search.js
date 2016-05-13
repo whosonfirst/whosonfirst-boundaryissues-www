@@ -21,7 +21,7 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			popupAnchor: new L.Point(0, -42)
 		}
 	});
-	var poi_icon_base = '/images/poi_icons/';
+	var poi_icon_base = '/images/categories/';
 
 	var self = {
 
@@ -78,7 +78,7 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 
 		setup_icon_marker: function(result) {
 			var id = $(result).data('id');
-			var icon_id = 'icon'; // $(result).data('icon');
+			var icon_id = $(result).data('icon');
 			var options = {
 				icon: L.icon({
 					iconRetinaUrl: poi_icon_base + icon_id + '.png',
