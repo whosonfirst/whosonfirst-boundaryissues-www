@@ -152,15 +152,18 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		show_result: function(rsp) {
 			var esc_html = mapzen.whosonfirst.php.htmlspecialchars;
 			if (rsp.ok) {
-				var feature = rsp.geojson;
-				var wof_id = esc_html(rsp.id);
-				var props = feature.properties;
-				var geojson_link = '<a href="/id/' + wof_id + '"><code>' + wof_id + '</code> ' + props['wof:name'] + '</a>';
-				$result.html('Success: ' + geojson_link);
+				var links = [];
+				$.each(rsp.saved_wof, function(id, name) {
+					var esc_id = esc_html(id);
+					var esc_name = esc_html(name);
+					links.push('<a href="/id/' + esc_id + '"><code>' + esc_id + '</code> ' + esc_name + '</a>');
+				});
+				var list = '<ul><li>' + links.join('</li><li>') + '</li></ul>';
+				$result.html('Success! ' + list);
 				mapzen.whosonfirst.log.debug(rsp);
-			} else if (rsp.error_msg) {
-				$result.html('Error: ' + rsp.error_msg);
-				mapzen.whosonfirst.log.error(rsp);
+			} else if (rsp.error && rsp.error.message) {
+				$result.html('Error: ' + rsp.error.message);
+				mapzen.whosonfirst.log.error(rsp.error.message);
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
 				mapzen.whosonfirst.log.error(rsp);

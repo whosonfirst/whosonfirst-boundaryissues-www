@@ -15,8 +15,13 @@
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';
 			api_output_error(400, $error);
 		} else {
+			$id = intval($rsp['geojson']['properties']['wof:id']);
+			$name = $rsp['geojson']['properties']['wof:name'];
 			api_output_ok(array(
-				'saved_ids' => $rsp['geojson']['properties']['wof:id']
+				'ok' => 1,
+				'saved_wof' => array(
+					$id => $name
+				)
 			));
 		}
 	}
@@ -29,25 +34,29 @@
 
 		$ignore_properties = post_bool('ignore_properties');
 		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
+		$collection = json_decode($geojson, 'as hash');
 		$errors = array();
-		$saved_ids = array();
+		$saved_wof = array();
 
-		foreach ($geojson['features'] as $index => $feature) {
-			$rsp = wof_save_feature($feature, $ignore_properties);
+		foreach ($collection['features'] as $index => $feature) {
+			$geojson = json_encode($feature);
+			$rsp = wof_save_feature($geojson, $ignore_properties);
 			if (! $rsp['ok']) {
 				$errors[] = "Feature $index: {$rsp['error']}";
 			} else {
-				$saved_feature = json_decode($rsp['geojson'], 'as hash');
-				$saved_ids[] = $saved_feature['properties']['wof:id'];
+				$id = intval($rsp['geojson']['properties']['wof:id']);
+				$name = $rsp['geojson']['properties']['wof:name'];
+				$saved_wof[$id] = $name;
 			}
 		}
 
 		if ($errors) {
-
+			$error = implode(', ', $errors);
 			api_output_error(400, $error);
 		} else {
 			api_output_ok(array(
-				'saved_ids' => $saved_ids
+				'ok' => 1,
+				'saved_wof' => $saved_wof
 			));
 		}
 	}
