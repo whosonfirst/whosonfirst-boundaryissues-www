@@ -33,6 +33,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_map: function() {
 			mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
+			var placetype = $('input[name="properties.wof:placetype"]').val();
+			if (placetype == 'venue') {
+				self.setup_map_marker();
+			} else {
+				self.setup_map_geometry();
+			}
+			L.control.geocoder('search-o3YYmTI', {
+				markers: {
+					icon: new VenueIcon()
+				}
+			}).addTo(map);
+			var hash = new L.Hash(map);
+
+			self.show_nearby_results();
+			map.on('dragend', function() {
+				self.show_nearby_results();
+			});
+
+			self.map = map;
+		},
+
+		setup_map_marker: function() {
 			var $latInput = $('input[name="properties.geom:latitude"]');
 			var $lngInput = $('input[name="properties.geom:longitude"]');
 			if ($latInput.val() &&
@@ -71,19 +93,22 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.set_marker(m);
 				}
 			}
-			L.control.geocoder('search-o3YYmTI', {
-				markers: {
-					icon: new VenueIcon()
-				}
-			}).addTo(map);
-			var hash = new L.Hash(map);
+		},
 
-			self.show_nearby_results();
-			map.on('dragend', function() {
-				self.show_nearby_results();
+		setup_map_geometry: function() {
+			// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
+			var lat = 40.73581157695217;
+			var lon = -73.9815902709961;
+			var zoom = 12;
+			map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
+				'map',
+				lat, lon, zoom
+			);
+			var geojson_url = $('#geojson-link').attr('href');
+			$.get(geojson_url, function(feature) {
+				mapzen.whosonfirst.leaflet.fit_map(map, feature);
+				mapzen.whosonfirst.leaflet.draw_poly(map, feature, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
 			});
-
-			self.map = map;
 		},
 
 		setup_drawing: function() {

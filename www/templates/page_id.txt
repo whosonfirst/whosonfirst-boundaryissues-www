@@ -57,7 +57,7 @@
 					{/if}
 
 					<ul id="edit-options">
-						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson">Raw GeoJSON</a></li>
+						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson" id="geojson-link">Raw GeoJSON</a></li>
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download GeoJSON</a></li>
 					</ul>
 				</div>
