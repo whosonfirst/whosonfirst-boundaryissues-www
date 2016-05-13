@@ -1,7 +1,7 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
 <div class="container">
-	<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload="{$crumb_upload|@escape}">
+	<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload-feature="{$crumb_upload_feature|@escape}" data-crumb-upload-collection="{$crumb_upload_collection|@escape}">
 		{$crumb_upload_fallback|crumb_input}
 		<input type="hidden" name="method" value="wof.upload">
 		<input type="hidden" name="access_token" value="{$site_token|@escape}">

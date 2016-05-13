@@ -4,8 +4,20 @@
 
 	$GLOBALS['cfg']['api']['methods'] = array_merge(array(
 
-		"wof.upload" => array (
+		"wof.upload_feature" => array (
 			"description" => "Upload a file to create a WOF record.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
+			)
+		),
+
+		"wof.upload_collection" => array (
+			"description" => "Upload a collection of WOF records.",
 			"documented" => 1,
 			"enabled" => 1,
 			"library" => "api_wof",

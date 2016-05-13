@@ -91,32 +91,6 @@
 
 	########################################################################
 
-	function wof_save_file($input_path, $ignore_properties = false) {
-
-		$filename = basename($input_path);
-
-		if (! file_exists($input_path)){
-			return array(
-				'ok' => 0,
-				'error' => "$filename not found."
-			);
-		}
-
-		$geojson = file_get_contents($input_path);
-		$rsp = wof_save_feature($geojson, $ignore_properties);
-
-		// Clean up the uploaded tmp file
-		if (is_uploaded_file($input_path)) {
-			unlink($input_path);
-		}
-
-		// It worked \o/
-		return $rsp;
-
-	}
-
-	########################################################################
-
 	function wof_save_feature($geojson, $ignore_properties = false) {
 
 		$geojson_data = json_decode($geojson, true);

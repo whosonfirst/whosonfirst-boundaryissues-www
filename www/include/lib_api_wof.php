@@ -1,20 +1,55 @@
 <?php
 	loadlib('wof_save');
 
-	function api_wof_upload() {
+	function api_wof_upload_feature() {
 
 		if (! $_FILES["upload_file"]) {
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
 		$ignore_properties = post_bool('ignore_properties');
-		$rsp = wof_save_file($_FILES["upload_file"]["tmp_name"], $ignore_properties);
-		if (! $rsp['ok'] ||
-		    ! $rsp['geojson_url']) {
+		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
+		$rsp = wof_save_feature($geojson, $ignore_properties);
+
+		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';
 			api_output_error(400, $error);
+		} else {
+			api_output_ok(array(
+				'saved_ids' => $rsp['geojson']['properties']['wof:id']
+			));
 		}
-		api_output_ok($rsp);
+	}
+
+	function api_wof_upload_collection() {
+
+		if (! $_FILES["upload_file"]) {
+			api_output_error(400, 'Please include an upload_file.');
+		}
+
+		$ignore_properties = post_bool('ignore_properties');
+		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
+		$errors = array();
+		$saved_ids = array();
+
+		foreach ($geojson['features'] as $index => $feature) {
+			$rsp = wof_save_feature($feature, $ignore_properties);
+			if (! $rsp['ok']) {
+				$errors[] = "Feature $index: {$rsp['error']}";
+			} else {
+				$saved_feature = json_decode($rsp['geojson'], 'as hash');
+				$saved_ids[] = $saved_feature['properties']['wof:id'];
+			}
+		}
+
+		if ($errors) {
+
+			api_output_error(400, $error);
+		} else {
+			api_output_ok(array(
+				'saved_ids' => $saved_ids
+			));
+		}
 	}
 
 	function api_wof_save() {

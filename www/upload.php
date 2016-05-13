@@ -12,8 +12,11 @@
 	$crumb_upload_fallback = crumb_generate('wof.upload');
 	$GLOBALS['smarty']->assign("crumb_upload_fallback", $crumb_upload_fallback);
 
-	$crumb_upload = crumb_generate('api', 'wof.upload');
-	$GLOBALS['smarty']->assign("crumb_upload", $crumb_upload);
+	$crumb_upload_feature = crumb_generate('api', 'wof.upload_feature');
+	$GLOBALS['smarty']->assign("crumb_upload_feature", $crumb_upload_feature);
+
+	$crumb_upload_collection = crumb_generate('api', 'wof.upload_collection');
+	$GLOBALS['smarty']->assign("crumb_upload_collection", $crumb_upload_collection);
 
 	$GLOBALS['smarty']->display('page_upload.txt');
 	exit();

@@ -12,7 +12,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    $result,
 	    $preview_map,
 	    geojson_file,
-	    upload_is_ready = false;
+	    upload_is_ready = false,
+	    is_collection;
 
 	var self = {
 
@@ -35,8 +36,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (! upload_is_ready) {
 					return;
 				}
-				var crumb = $(this).data("crumb-upload");
-				self.post_file(crumb);
+				self.post_file();
 			});
 		},
 
@@ -79,14 +79,17 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				});
 
 				if (geojson.type == "Feature") {
-					mapzen.whosonfirst.boundaryissues.enmapify.render_feature(map, geojson);
+					is_collection = false;
+					mapzen.whosonfirst.leaflet.fit_map(map, geojson);
+					mapzen.whosonfirst.leaflet.draw_poly(map, geojson, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
 				} else if (geojson.type == "FeatureCollection") {
+					is_collection = true;
 					self.show_collection_preview(map, geojson);
 				}
 			}
 
 			// Load up the file to kick off the preview
-			if (geojson_file){
+			if (geojson_file) {
 				reader.readAsText(geojson_file);
 				$result.html('This is just a preview. You still have to hit the upload button.');
 			} else {
@@ -103,19 +106,32 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 		},
 
-		post_file: function(crumb){
+		post_file: function() {
 
-			var onsuccess = function(rsp){
+			if (! upload_is_ready) {
+				return;
+			}
+
+			if (is_collection) {
+				var crumb = $form.data("crumb-upload-collection");
+				var api_method = 'wof.upload_collection';
+			} else {
+				var crumb = $form.data("crumb-upload-feature");
+				var api_method = 'wof.upload_feature';
+			}
+
+
+			var onsuccess = function(rsp) {
 				self.show_result(rsp);
 				mapzen.whosonfirst.log.debug(rsp);
 			};
-			var onerror = function(rsp){
+			var onerror = function(rsp) {
 				self.show_result(rsp);
 				mapzen.whosonfirst.log.error(rsp);
 			};
 
 			// Make sure we have a geojson_file reference set up
-			if (! geojson_file){
+			if (! geojson_file) {
 				mapzen.whosonfirst.log.error('No geojson_file to post.');
 				return;
 			}
@@ -127,17 +143,20 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			if ($('input[name="ignore_properties"]').get(0).checked) {
 				data.append('ignore_properties', 1);
 			}
-			mapzen.whosonfirst.boundaryissues.api.api_call("wof.upload", data, onsuccess, onerror);
+			mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
 
 			// Show some user feedback
 			$result.html('Uploading...');
 		},
 
-		show_result: function(rsp){
-			if (rsp.ok && rsp.stat == 'ok') {
-				var what_happened = rsp.is_update ? 'Updated ' : 'Created ';
-				var geojson_link = '<a href="' + rsp.geojson_url + '">' + rsp.id + '.geojson</a>';
-				$result.html('Success! ' + what_happened + geojson_link);
+		show_result: function(rsp) {
+			var esc_html = mapzen.whosonfirst.php.htmlspecialchars;
+			if (rsp.ok) {
+				var feature = rsp.geojson;
+				var wof_id = esc_html(rsp.id);
+				var props = feature.properties;
+				var geojson_link = '<a href="/id/' + wof_id + '"><code>' + wof_id + '</code> ' + props['wof:name'] + '</a>';
+				$result.html('Success: ' + geojson_link);
 				mapzen.whosonfirst.log.debug(rsp);
 			} else if (rsp.error_msg) {
 				$result.html('Error: ' + rsp.error_msg);
