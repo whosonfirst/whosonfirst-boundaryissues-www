@@ -249,6 +249,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
 					$('#wof_name').html(esc_title);
 					document.title = title + ' (' + id + ') | Boundary Issues';
+				} else if (property == 'properties.wof:category') {
+					var category = $('select[name="properties.wof:category"]').val();
 				}
 			});
 
@@ -256,17 +258,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (key == 'wof:category') {
 					$row.find('input.add-value').css('display', 'none');
 					var $td = $row.find('input.add-value').closest('td').append(self.category_select_html);
-					var select = $td.find('select').get(0);
-					select.focus();
-					$(select).change(function(e) {
+					var $select = $td.find('select');
+					$select.focus();
+					$select.change(function(e) {
 						var $rel = $row.closest('.json-schema-object');
-						var value = select.options[select.selectedIndex].value;
+						var value = $select.val();
 						self.add_object_row($rel, key, value);
-						$(select).remove();
+						$select.remove();
 						$row.find('input.add-key').val('');
 						$row.find('input.add-value').val('');
 						$row.find('input.add-value').css('display', 'inline');
 						$row.find('input.add-key').focus();
+						$('#edit-form').trigger('propertychanged', ['properties.wof:category', value]);
 					});
 				}
 			});
@@ -870,13 +873,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var value = $input.val();
 			var $td = $input.closest('td');
 			$td.html(self.category_select_html);
-			var select = $td.find('select').get(0);
-			for (var i = 0; i < select.options.length; i++) {
-				if (select.options[i].value == value) {
-					select.selectedIndex = i;
-					break;
-				}
-			}
+			var $select = $td.find('select');
+			$select.val(value);
 		}
 
 	};
