@@ -24,6 +24,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			popupAnchor: new L.Point(0, -42)
 		}
 	});
+	var poi_icon_base = '/images/poi_icons/';
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
@@ -251,6 +252,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					document.title = title + ' (' + id + ') | Boundary Issues';
 				} else if (property == 'properties.wof:category') {
 					var category = $('select[name="properties.wof:category"]').val();
+					self.set_marker_icon(category);
 				}
 			});
 
@@ -317,15 +319,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_category_property: function() {
-			var select = '<select name="properties.wof:category">';
+			var select = '<select name="properties.wof:category" class="property">';
 			$.get('/meta/categories.json', function(categories) {
 				$.each(categories, function(i, cat) {
 					select += '<option value="' + cat.name + '">' + cat.label + '</option>';
 				});
 				select += '</select>';
 				self.category_select_html = select;
+				self.check_for_category_property();
 			});
-			self.check_for_category_property();
 		},
 
 		set_marker: function(m) {
@@ -337,6 +339,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var ll = e.target.getLatLng();
 				self.update_coordinates(ll, true); // Update and reverse geocode
 			});
+		},
+
+		set_marker_icon: function(icon_id) {
+			var icon_id = 'icon'; // override until we get actual icons
+			if (marker) {
+				var icon = L.icon({
+					iconRetinaUrl: poi_icon_base + icon_id + '.png',
+					iconSize: [19, 19],
+					iconAnchor: [9, 9],
+					popupAnchor: [-3, -38]
+				});
+				marker.setIcon(icon);
+			}
 		},
 
 		set_property: function(property, value) {
@@ -707,7 +722,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				properties: {}
 			};
 
-			$('#edit-form').find('input.property').each(function(i, input) {
+			$('#edit-form').find('.property').each(function(i, input) {
 				var name = $(input).attr('name');
 				var value = $(input).val();
 				if ($(input).data('type') == 'number') {
@@ -875,6 +890,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$td.html(self.category_select_html);
 			var $select = $td.find('select');
 			$select.val(value);
+			self.set_marker_icon(value);
 		}
 
 	};
