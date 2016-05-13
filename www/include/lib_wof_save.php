@@ -128,7 +128,11 @@
 		}
 
 		if ($ignore_properties) {
-			$geojson = wof_save_geometry($geojson);
+			$rsp = wof_save_geometry($geojson);
+			if (! $rsp) {
+				return $rsp;
+			}
+			$geojson = $rsp['geojson'];
 		}
 
 		// Validation happens on the GeoJSON service side of things
@@ -202,11 +206,7 @@
 		$errors = array();
 		$saved = array();
 		foreach ($batch_ids as $wof_id) {
-			$geojson_path = wof_utils_find_id(
-				array($GLOBALS['cfg']['wof_pending_dir'],
-				      $GLOBALS['cfg']['wof_data_dir']),
-				$wof_id
-			);
+			$geojson_path = wof_utils_find_id($wof_id);
 			if ($geojson_path) {
 				$existing_geojson = file_get_contents($geojson_path);
 				$existing_feature = json_decode($existing_geojson, true);
@@ -246,6 +246,9 @@
 
 	########################################################################
 
+	// This function finds an existing WOF record and just grafts in the new
+	// geometry from the $geojson argument. (20160513/dphiffer)
+
 	function wof_save_geometry($geojson) {
 
 		$feature = json_decode($geojson, 'as hash');
@@ -281,10 +284,7 @@
 			);
 		}
 
-		$existing_geojson_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_data_dir'],
-			$wof_id
-		);
+		$existing_geojson_path = wof_utils_find_id($wof_id);
 		if (! file_exists($existing_geojson_path)) {
 			return array(
 				'ok' => 0,

@@ -11,11 +11,7 @@
 	$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
 	$wof_id = get_int64('id');
 
-	$path = wof_utils_find_id(
-		array($GLOBALS['cfg']['wof_pending_dir'],
-		      $GLOBALS['cfg']['wof_data_dir']),
-		$wof_id
-	);
+	$path = wof_utils_find_id($wof_id);
 
 	if (! $path){
 		error_404();

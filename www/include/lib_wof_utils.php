@@ -37,7 +37,15 @@
 
 	// See also: wof_utils_id2abspath
 
-	function wof_utils_find_id($root_dirs, $id, $more=array()){
+	function wof_utils_find_id($id, $more=array()){
+
+		$root_dirs = array(
+			$GLOBALS['cfg']['wof_pending_dir'],
+			$GLOBALS['cfg']['wof_data_dir']
+		);
+		if ($more['root_dirs']) {
+			$root_dirs = $more['root_dirs'];
+		}
 
 		foreach ($root_dirs as $root) {
 			$path = wof_utils_id2abspath($root, $id, $more);
