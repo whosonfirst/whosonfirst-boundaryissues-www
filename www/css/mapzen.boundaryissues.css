@@ -244,3 +244,7 @@ tr.object-property.property-visible {
 #toggle-all {
 	margin-right: 5px;
 }
+
+#per-page-group {
+	width: 180px;
+}

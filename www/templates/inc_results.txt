@@ -1,31 +1,43 @@
 		<div id="map"></div>
-
-			<div id="batch-update" data-crumb-save-batch="{$crumb_save_batch|@escape}">
-				<input type="checkbox" id="toggle-all"> Batch update:
-				<div class="btn-group">
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						Status
-						<span class="caret"></span>
-					</a>
-					<ul id="batch-update-status" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-						<li><a tabindex="-1" href="#" data-status="current">Mark <strong>Current</strong></a></li>
-						<li><a tabindex="-1" href="#" data-status="closed">Mark <strong>Closed</strong></a></li>
-						<li><a tabindex="-1" href="#" data-status="deprecated">Mark <strong>Deprecated</strong></a></li>
-						<li><a tabindex="-1" href="#" data-status="funky">Mark <strong>Funky</strong></a></li>
-					</ul>
+			<form action="{$smarty.server.REQUEST_URI}" class="row" id="batch-update" data-crumb-save-batch="{$crumb_save_batch|@escape}">
+				<div class="col-lg-6">
+					<div class="input-group">
+						<input type="checkbox" id="toggle-all"> Batch update:
+						<div class="btn-group">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								Status
+								<span class="caret"></span>
+							</a>
+							<ul id="batch-update-status" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<li><a tabindex="-1" href="#" data-status="current">Mark <strong>Current</strong></a></li>
+								<li><a tabindex="-1" href="#" data-status="closed">Mark <strong>Closed</strong></a></li>
+								<li><a tabindex="-1" href="#" data-status="deprecated">Mark <strong>Deprecated</strong></a></li>
+								<li><a tabindex="-1" href="#" data-status="funky">Mark <strong>Funky</strong></a></li>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+								Category
+								<span class="caret"></span>
+							</a>
+							<ul id="batch-update-category" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								{foreach from=$categories item=category}
+									<li><a tabindex="-1" href="#" data-category="{$category.name|@escape}">Mark <strong>{$category.label|@escape}</strong></a></li>
+								{/foreach}
+							</ul>
+						</div>
+					</div>
 				</div>
-				<div class="btn-group">
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						Category
-						<span class="caret"></span>
-					</a>
-					<ul id="batch-update-category" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-						{foreach from=$categories item=category}
-							<li><a tabindex="-1" href="#" data-category="{$category.name|@escape}">Mark <strong>{$category.label|@escape}</strong></a></li>
-						{/foreach}
-					</ul>
+				<div class="col-lg-6">
+					<div id="per-page-group" class="input-group">
+						<span class="input-group-addon">Per page:</span>
+						<input type="text" class="form-control" name="per_page" value="{$per_page|@escape}">
+					</div>
+					<div class="input-group">
+						<button type="button" class="btn btn-default disabled">Download selected</button>
+					</div>
 				</div>
-			</div>
+			</form>
 
 			<ul id="search-results">
 				{foreach from=$results item=item}

@@ -9,9 +9,16 @@
 
 	$query = get_str('q');
 	$page = get_int32('page');
+	$per_page = get_int32('per_page');
 
 	if ($page){
 		$args['page'] = $page;
+	}
+
+	if ($per_page){
+		$args['per_page'] = $per_page;
+	} else {
+		$per_page = $GLOBALS['cfg']['pagination_per_page'];
 	}
 
 	if ($query){
@@ -91,6 +98,7 @@
 
 	$crumb_save_batch = crumb_generate('api', 'wof.save_batch');
 	$GLOBALS['smarty']->assign("crumb_save_batch", $crumb_save_batch);
+	$GLOBALS['smarty']->assign("per_page", $per_page);
 
 	$GLOBALS['smarty']->display('page_search.txt');
 	exit();
