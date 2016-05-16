@@ -239,6 +239,12 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				};
 				mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
 			});
+
+			$('#toggle-all').change(function(e) {
+				$('.search-result > input[type=checkbox]').each(function(i, input) {
+					input.checked = $('#toggle-all').get(0).checked;
+				});
+			});
 		},
 
 		get_venue_marker_style: function(item) {

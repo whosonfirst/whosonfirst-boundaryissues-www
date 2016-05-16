@@ -1,7 +1,7 @@
 		<div id="map"></div>
 
 			<div id="batch-update" data-crumb-save-batch="{$crumb_save_batch|@escape}">
-				Batch update:
+				<input type="checkbox" id="toggle-all"> Batch update:
 				<div class="btn-group">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 						Status

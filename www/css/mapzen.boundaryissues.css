@@ -240,3 +240,7 @@ tr.object-property.property-visible {
 	   of breaks things. */
 	padding-left: 0;
 }
+
+#toggle-all {
+	margin-right: 5px;
+}
