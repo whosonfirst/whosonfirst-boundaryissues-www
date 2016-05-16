@@ -14,6 +14,17 @@
 						<li><a tabindex="-1" href="#" data-status="funky">Mark <strong>Funky</strong></a></li>
 					</ul>
 				</div>
+				<div class="btn-group">
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+						Category
+						<span class="caret"></span>
+					</a>
+					<ul id="batch-update-category" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						{foreach from=$categories item=category}
+							<li><a tabindex="-1" href="#" data-category="{$category.name|@escape}">Mark <strong>{$category.label|@escape}</strong></a></li>
+						{/foreach}
+					</ul>
+				</div>
 			</div>
 
 			<ul id="search-results">

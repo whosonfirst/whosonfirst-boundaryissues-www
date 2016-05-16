@@ -6,7 +6,7 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 // that decision may change some day but not today
 // (20160121/thisisaaronland)
 
-mapzen.whosonfirst.boundaryissues.search = (function() {
+mapzen.whosonfirst.boundaryissues.results = (function() {
 
 	var map,
 	    batch_update_ids = [];
@@ -130,76 +130,114 @@ mapzen.whosonfirst.boundaryissues.search = (function() {
 			});
 			$('#batch-update-status a').click(function(e) {
 				e.preventDefault();
-				if (batch_update_ids.length > 0) {
-					var data = {
-						crumb: $('#batch-update').data('crumb-save-batch'),
-						ids: batch_update_ids.join(',')
-					};
-					if (e.target.nodeName == 'A') {
-						var $link = $(e.target);
-					} else {
-						var $link = $(e.target).closest('a');
-					}
-					var status = $link.data('status');
-
-					var today = mapzen.whosonfirst.boundaryissues.edit.get_edtf_date(new Date());
-					if (status == 'current') {
-						data.properties = {
-							"mz:is_current": 1,
-							"edtf:cessation": 'uuuu',
-							"edtf:deprecated": 'uuuu'
-						};
-					} else if (status == 'closed') {
-						data.properties = {
-							"mz:is_current": 0,
-							"edtf:cessation": today
-						};
-					} else if (status == 'deprecated') {
-						data.properties = {
-							"mz:is_current": 0,
-							"edtf:deprecated": today
-						};
-					} else if (status == 'funky') {
-						data.properties = {
-							"mz:is_funky": 1
-						};
-					}
-					data.properties = JSON.stringify(data.properties);
-
-					var onsuccess = function(rsp) {
-						var properties = rsp.properties;
-						$.each(rsp.saved, function(i, wof) {
-							var id = wof.properties['wof:id'];
-							console.log(id);
-							var $checkbox = $('input[name="select-' + id + '"]');
-							var $item = $checkbox.closest('li');
-							$checkbox.attr('checked', false);
-							$item.removeClass('iscurrent-yes');
-							$item.removeClass('iscurrent-no');
-							$item.removeClass('iscurrent-unknown');
-							$item.removeClass('deprecated');
-							if (properties['mz:is_current']) {
-								$item.addClass('iscurrent-yes');
-							} else if (properties['mz:is_funky']) {
-								// We don't do anything with is_funky yet
-							} else if (properties['edtf:deprecated']) {
-								$item.addClass('iscurrent-no');
-								$item.addClass('deprected');
-							} else if (properties['edtf:cessation']) {
-								$item.addClass('iscurrent-no');
-							} else {
-								// In theory we should never be uncertain at this point
-								$item.addClass('iscurrent-unknown');
-							}
-						});
-					};
-					var onerror = function(rsp) {
-						mapzen.whosonfirst.log.debug("error with batch saving.");
-						console.log(rsp);
-					};
-
-					mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
+				if (batch_update_ids.length == 0) {
+					return;
 				}
+				var data = {
+					crumb: $('#batch-update').data('crumb-save-batch'),
+					ids: batch_update_ids.join(',')
+				};
+				if (e.target.nodeName == 'A') {
+					var $link = $(e.target);
+				} else {
+					var $link = $(e.target).closest('a');
+				}
+				var status = $link.data('status');
+
+				var today = mapzen.whosonfirst.boundaryissues.edit.get_edtf_date(new Date());
+				if (status == 'current') {
+					data.properties = {
+						"mz:is_current": 1,
+						"edtf:cessation": 'uuuu',
+						"edtf:deprecated": 'uuuu'
+					};
+				} else if (status == 'closed') {
+					data.properties = {
+						"mz:is_current": 0,
+						"edtf:cessation": today
+					};
+				} else if (status == 'deprecated') {
+					data.properties = {
+						"mz:is_current": 0,
+						"edtf:deprecated": today
+					};
+				} else if (status == 'funky') {
+					data.properties = {
+						"mz:is_funky": 1
+					};
+				}
+				data.properties = JSON.stringify(data.properties);
+
+				var onsuccess = function(rsp) {
+					var properties = rsp.properties;
+					$.each(rsp.saved, function(i, wof) {
+						var id = wof.properties['wof:id'];
+						console.log(id);
+						var $checkbox = $('input[name="select-' + id + '"]');
+						var $item = $checkbox.closest('li');
+						$checkbox.attr('checked', false);
+						$item.removeClass('iscurrent-yes');
+						$item.removeClass('iscurrent-no');
+						$item.removeClass('iscurrent-unknown');
+						$item.removeClass('deprecated');
+						if (properties['mz:is_current']) {
+							$item.addClass('iscurrent-yes');
+						} else if (properties['mz:is_funky']) {
+							// We don't do anything with is_funky yet
+						} else if (properties['edtf:deprecated']) {
+							$item.addClass('iscurrent-no');
+							$item.addClass('deprected');
+						} else if (properties['edtf:cessation']) {
+							$item.addClass('iscurrent-no');
+						} else {
+							// In theory we should never be uncertain at this point
+							$item.addClass('iscurrent-unknown');
+						}
+					});
+				};
+				var onerror = function(rsp) {
+					mapzen.whosonfirst.log.debug("error with batch saving.");
+					console.log(rsp);
+				};
+
+				mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
+			});
+
+			$('#batch-update-category a').click(function(e) {
+				e.preventDefault();
+				if (batch_update_ids.length == 0) {
+					return;
+				}
+				var data = {
+					crumb: $('#batch-update').data('crumb-save-batch'),
+					ids: batch_update_ids.join(',')
+				};
+				if (e.target.nodeName == 'A') {
+					var $link = $(e.target);
+				} else {
+					var $link = $(e.target).closest('a');
+				}
+				var category = $link.data('category');
+
+				var today = mapzen.whosonfirst.boundaryissues.edit.get_edtf_date(new Date());
+				data.properties = {
+					"wof:category": category
+				};
+				data.properties = JSON.stringify(data.properties);
+
+				var onsuccess = function(rsp) {
+					var properties = rsp.properties;
+					$.each(rsp.saved, function(i, wof) {
+						var id = wof.properties['wof:id'];
+						var $checkbox = $('input[name="select-' + id + '"]');
+						var $item = $checkbox.closest('li');
+						$checkbox.attr('checked', false);
+					});
+				};
+				var onerror = function(rsp) {
+					mapzen.whosonfirst.log.debug("error with batch saving.");
+				};
+				mapzen.whosonfirst.boundaryissues.api.api_call("wof.save_batch", data, onsuccess, onerror);
 			});
 		},
 

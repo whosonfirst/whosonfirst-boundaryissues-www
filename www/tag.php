@@ -37,7 +37,9 @@
 
 	$pagination = $rsp['pagination'];
 	$results = $rsp['rows'];
+	$categories = json_decode(file_get_contents('meta/categories.json'), 'as hash');
 
+	$GLOBALS['smarty']->assign_by_ref("categories", $categories);
 	$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
 	$GLOBALS['smarty']->assign_by_ref("results", $results);
 
