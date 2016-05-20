@@ -107,6 +107,37 @@
 		api_output_ok($rsp);
 	}
 
+	function api_wof_download_batch() {
+		$ids = post_str('ids');
+		$ids = explode(',', $ids);
+		if (empty($ids)) {
+			api_output_error(400, "Please include an 'ids' parameter.");
+		}
+
+		foreach ($ids as $id) {
+			$id = trim($id);
+			if (! is_numeric($id)) {
+				api_output_error(400, "Invalid ID value: '$id'");
+			}
+		}
+
+		$rsp = wof_collect_features($ids);
+
+		if (! $rsp['ok']) {
+			$error = $rsp['error'] ? $rsp['error'] : 'Error batch-downloading WOF records.';
+			api_output_error(400, $error);
+		}
+
+		$count = count($rsp['collection']['features']);
+		$when = date('Ymd_His');
+		$filename = "wof_{$count}_{$when}.geojson";
+		header('Content-Type: application/json');
+		header("Content-Type: application/octet-stream");
+		header("Content-Transfer-Encoding: Binary");
+		header("Content-disposition: attachment; filename=\"$filename\"");
+		echo json_encode($rsp['collection']);
+	}
+
 	function api_wof_pip() {
 
 		if (! isset($_POST['latitude']) ||

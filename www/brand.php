@@ -71,6 +71,8 @@
 
 	$crumb_save_batch = crumb_generate('api', 'wof.save_batch');
 	$GLOBALS['smarty']->assign("crumb_save_batch", $crumb_save_batch);
+	$crumb_download_batch = crumb_generate('api', 'wof.download_batch');
+	$GLOBALS['smarty']->assign("crumb_download_batch", $crumb_download_batch);
 
 	$GLOBALS['smarty']->display('page_brand.txt');
 	exit();

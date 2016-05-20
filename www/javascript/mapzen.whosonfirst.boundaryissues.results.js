@@ -263,6 +263,23 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				}
 				window.location = location.pathname + q;
 			});
+
+			$('#batch-download').click(function(e) {
+				e.preventDefault();
+				if (batch_update_ids.length == 0) {
+					return;
+				}
+				var ids = batch_update_ids.join(',');
+				var form = document.createElement('form');
+				var input = document.createElement('input');
+				input.name = 'ids';
+				input.value = ids;
+				form.appendChild(input.cloneNode());
+				form.method = 'POST';
+				form.action = '/geojson.php';
+				document.body.appendChild(form);
+				form.submit();
+			});
 		},
 
 		get_venue_marker_style: function(item) {
@@ -292,8 +309,10 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 			}
 			if (batch_update_ids.length > 0) {
 				$('#batch-update li').removeClass('disabled');
+				$('#batch-download').removeClass('disabled');
 			} else {
 				$('#batch-update li').addClass('disabled');
+				$('#batch-download').addClass('disabled');
 			}
 		}
 

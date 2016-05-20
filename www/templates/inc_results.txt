@@ -1,6 +1,6 @@
 		<div id="map"></div>
-		<div id="results-header" class="row" data-crumb-save-batch="{$crumb_save_batch|@escape}">
-			<div id="batch-update" class="col-lg-6">
+		<div id="results-header" class="row" data-crumb-save-batch="{$crumb_save_batch|@escape}" data-crumb-download-batch="{$crumb_download_batch|@escape}">
+			<div id="batch-update" class="col-lg-8">
 				<div class="input-group">
 					<input type="checkbox" id="toggle-all"><label for="toggle-all">Toggle all</label>
 					Batch update:
@@ -27,9 +27,12 @@
 							{/foreach}
 						</ul>
 					</div>
+					<div class="btn-group">
+						<a href="#" class="btn" id="batch-download">Download</a>
+					</div>
 				</div>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-4">
 				<div class="input-group pull-right">
 					<div class="btn-group">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
