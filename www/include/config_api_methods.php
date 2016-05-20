@@ -53,18 +53,6 @@
 			)
 		),
 
-		"wof.download_batch" => array (
-			"description" => "Download multiple WOF records at once.",
-			"documented" => 1,
-			"enabled" => 1,
-			"library" => "api_wof",
-			"requires_crumb" => 1,
-			"request_method" => "POST",
-			"parameters" => array(
-				array("name" => "ids", "description" => "Comma-separated list of WOF IDs to update.", "required" => 1)
-			)
-		),
-
 		"wof.pip" => array (
 			"description" => "Point-in-polygon service.",
 			"documented" => 1,

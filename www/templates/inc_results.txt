@@ -1,5 +1,5 @@
 		<div id="map"></div>
-		<div id="results-header" class="row" data-crumb-save-batch="{$crumb_save_batch|@escape}" data-crumb-download-batch="{$crumb_download_batch|@escape}">
+		<div id="results-header" class="row" data-crumb-save-batch="{$crumb_save_batch|@escape}">
 			<div id="batch-update" class="col-lg-8">
 				<div class="input-group">
 					<input type="checkbox" id="toggle-all"><label for="toggle-all">Toggle all</label>
