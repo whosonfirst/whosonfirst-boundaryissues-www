@@ -235,16 +235,18 @@ tr.object-property.property-visible {
 	margin-top: 1em;
 }
 
-.checkbox label {
-	/* I don't know why there's a bunch of padding on labels, but it kind
-	   of breaks things. */
-	padding-left: 0;
-}
-
 #toggle-all {
 	margin-right: 5px;
 }
 
 #per-page-group {
 	width: 180px;
+}
+
+#upload-options {
+	margin-top: 0.5em;
+}
+
+#upload-options.disabled {
+	opacity: 0.5;
 }

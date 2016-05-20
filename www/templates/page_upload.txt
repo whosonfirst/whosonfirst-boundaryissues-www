@@ -10,11 +10,9 @@
 			<input type="file" name="geojson_file">
 		</span>
 		<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
-		<div class="checkbox">
-			<label>
-				<input type="checkbox" name="ignore_properties" value="1" disabled="disabled" checked="checked">
-				Ignore properties (only update geometry)
-			</label>
+		<div id="upload-options" class="disabled">
+			<input type="checkbox" id="ignore_properties" name="ignore_properties" value="1" disabled="disabled" checked="checked">
+			<label for="ignore_properties">Ignore properties (only update geometry)</label>
 		</div>
 	</form>
 	<div id="upload-result"></div>
