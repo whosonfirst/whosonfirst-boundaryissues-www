@@ -150,8 +150,10 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 						var num = $(cb).data('checkbox-num');
 						if (num > min && num < max) {
 							cb.checked = e.target.checked;
+							self.update_batch(cb);
 						}
 					});
+					self.update_batch(e.target);
 					lastCheckbox = currCheckbox;
 				});
 			});
@@ -199,7 +201,6 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 					var properties = rsp.properties;
 					$.each(rsp.saved, function(i, wof) {
 						var id = wof.properties['wof:id'];
-						console.log(id);
 						var $checkbox = $('input[name="select-' + id + '"]');
 						var $item = $checkbox.closest('li');
 						$checkbox.attr('checked', false);
@@ -270,6 +271,7 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 			$('#toggle-all').change(function(e) {
 				$('.search-result > input[type=checkbox]').each(function(i, input) {
 					input.checked = $('#toggle-all').get(0).checked;
+					self.update_batch(input);
 				});
 			});
 
