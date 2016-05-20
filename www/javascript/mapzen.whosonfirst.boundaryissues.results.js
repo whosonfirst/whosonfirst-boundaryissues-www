@@ -120,12 +120,39 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 		},
 
 		setup_results: function() {
+			var lastCheckbox;
 			$('#search-results > li > input[type=checkbox]').each(function(i, checkbox) {
 				// Check for initial checked state (i.e., reload after selection)
 				self.update_batch(checkbox);
+				$(checkbox).data('checkbox-num', i);
 				$(checkbox).change(function(e) {
 					// Check for change to checked state
 					self.update_batch(e.target);
+				});
+				$(checkbox).click(function(e) {
+					if (typeof lastCheckbox == 'undefined') {
+						lastCheckbox = $(e.target).data('checkbox-num');
+						return;
+					}
+					if (! e.shiftKey) {
+						lastCheckbox = $(e.target).data('checkbox-num');
+						return;
+					}
+					var currCheckbox = $(e.target).data('checkbox-num');
+					if (currCheckbox > lastCheckbox) {
+						var min = lastCheckbox;
+						var max = currCheckbox;
+					} else {
+						var min = currCheckbox;
+						var max = lastCheckbox;
+					}
+					$('#search-results > li > input[type=checkbox]').each(function(j, cb) {
+						var num = $(cb).data('checkbox-num');
+						if (num > min && num < max) {
+							cb.checked = e.target.checked;
+						}
+					});
+					lastCheckbox = currCheckbox;
 				});
 			});
 			$('#batch-update-status a').click(function(e) {
