@@ -26,15 +26,6 @@ nav#header {
 	margin-bottom: 2em;
 }
 
-label {
-	display: block;
-	margin-bottom: 10px;
-}
-
-label input {
-	display: block;
-}
-
 button.marker-option {
 	display: block;
 	width: 200px;
@@ -134,8 +125,23 @@ th:hover .remove-row {
 	padding-left: 0;
 }
 
+#results-header {
+	margin-top: 2em;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 1em;
+}
+
 #search-results li {
 	list-style: none;
+}
+
+.search-result label > code {
+	margin-left: -5px;
+	cursor: pointer;
+}
+
+label[for="select-all"] {
+	cursor: pointer;
 }
 
 #where-parent.is-breach strong {
@@ -195,12 +201,6 @@ th:hover .remove-row {
 
 .hey-look {
     font-weight: 700;
-}
-
-#batch-update {
-	margin-top: 2em;
-	border-bottom: 1px solid #ccc;
-	margin-bottom: 1em;
 }
 
 tr.object-property {

@@ -10,6 +10,13 @@
 	}
 
 	$created = get_isset('created');
+	$per_page = get_int32('per_page');
+
+	if ($per_page && $per_page > 0 && $per_page <= 1000){
+		$args['per_page'] = $per_page;
+	} else {
+		$per_page = $GLOBALS['cfg']['pagination_per_page'];
+	}
 
 	$es_query = array(
 		'query' => array(
@@ -33,6 +40,7 @@
 	$GLOBALS['smarty']->assign_by_ref("categories", $categories);
 	$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
 	$GLOBALS['smarty']->assign_by_ref("results", $results);
+	$GLOBALS['smarty']->assign("per_page", $per_page);
 
 	$pagination_url = $GLOBALS['cfg']['abs_root_url'] . "recent/";
 

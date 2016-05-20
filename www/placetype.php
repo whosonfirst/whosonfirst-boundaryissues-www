@@ -11,6 +11,14 @@
 		$args['page'] = $page;
 	}
 
+	$per_page = get_int32('per_page');
+
+	if ($per_page && $per_page > 0 && $per_page <= 1000){
+		$args['per_page'] = $per_page;
+	} else {
+		$per_page = $GLOBALS['cfg']['pagination_per_page'];
+	}
+
 	$placetype = get_str("placetype");
 
 	if (! $placetype){
@@ -47,6 +55,7 @@
 	$pagination_url = $GLOBALS['cfg']['abs_root_url'] . "placetypes/{$enc_placetype}/";
 	$GLOBALS['smarty']->assign("pagination_url", $pagination_url);
 	$GLOBALS['smarty']->assign("placetype", $placetype);
+	$GLOBALS['smarty']->assign("per_page", $per_page);
 
 	$crumb_save_batch = crumb_generate('api', 'wof.save_batch');
 	$GLOBALS['smarty']->assign("crumb_save_batch", $crumb_save_batch);

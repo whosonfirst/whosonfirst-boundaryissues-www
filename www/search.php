@@ -15,7 +15,7 @@
 		$args['page'] = $page;
 	}
 
-	if ($per_page){
+	if ($per_page && $per_page > 0 && $per_page <= 1000){
 		$args['per_page'] = $per_page;
 	} else {
 		$per_page = $GLOBALS['cfg']['pagination_per_page'];

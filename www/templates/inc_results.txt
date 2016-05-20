@@ -1,103 +1,113 @@
 		<div id="map"></div>
-			<form action="{$smarty.server.REQUEST_URI}" class="row" id="batch-update" data-crumb-save-batch="{$crumb_save_batch|@escape}">
-				<div class="col-lg-6">
-					<div class="input-group">
-						<input type="checkbox" id="toggle-all"> Batch update:
-						<div class="btn-group">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-								Status
-								<span class="caret"></span>
-							</a>
-							<ul id="batch-update-status" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-								<li><a tabindex="-1" href="#" data-status="current">Mark <strong>Current</strong></a></li>
-								<li><a tabindex="-1" href="#" data-status="closed">Mark <strong>Closed</strong></a></li>
-								<li><a tabindex="-1" href="#" data-status="deprecated">Mark <strong>Deprecated</strong></a></li>
-								<li><a tabindex="-1" href="#" data-status="funky">Mark <strong>Funky</strong></a></li>
-							</ul>
-						</div>
-						<div class="btn-group">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-								Category
-								<span class="caret"></span>
-							</a>
-							<ul id="batch-update-category" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-								{foreach from=$categories item=category}
-									<li><a tabindex="-1" href="#" data-category="{$category.name|@escape}">Mark <strong>{$category.label|@escape}</strong></a></li>
-								{/foreach}
-							</ul>
-						</div>
+		<div id="results-header" class="row" data-crumb-save-batch="{$crumb_save_batch|@escape}">
+			<div id="batch-update" class="col-lg-6">
+				<div class="input-group">
+					<input type="checkbox" id="toggle-all"><label for="toggle-all">Toggle all</label>
+					Batch update:
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							Status
+							<span class="caret"></span>
+						</a>
+						<ul id="batch-update-status" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+							<li><a tabindex="-1" href="#" data-status="current">Mark <strong>Current</strong></a></li>
+							<li><a tabindex="-1" href="#" data-status="closed">Mark <strong>Closed</strong></a></li>
+							<li><a tabindex="-1" href="#" data-status="deprecated">Mark <strong>Deprecated</strong></a></li>
+							<li><a tabindex="-1" href="#" data-status="funky">Mark <strong>Funky</strong></a></li>
+						</ul>
+					</div>
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							Category
+							<span class="caret"></span>
+						</a>
+						<ul id="batch-update-category" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+							{foreach from=$categories item=category}
+								<li><a tabindex="-1" href="#" data-category="{$category.name|@escape}">Mark <strong>{$category.label|@escape}</strong></a></li>
+							{/foreach}
+						</ul>
 					</div>
 				</div>
-				<div class="col-lg-6">
-					<div id="per-page-group" class="input-group">
-						<span class="input-group-addon">Per page:</span>
-						<input type="text" class="form-control" name="per_page" value="{$per_page|@escape}">
-					</div>
-					<div class="input-group">
-						<button type="button" class="btn btn-default disabled">Download selected</button>
+			</div>
+			<div class="col-lg-6">
+				<div class="input-group pull-right">
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							Show: {$per_page}
+							<span class="caret"></span>
+						</a>
+						<ul id="per-page" class="dropdown-menu pull-right text-right" role="menu" aria-labelledby="dLabel">
+							<li><a tabindex="-1" href="#" data-per-page="36">Show: <strong>36</strong></a></li>
+							<li><a tabindex="-1" href="#" data-per-page="100">Show: <strong>100</strong></a></li>
+							<li><a tabindex="-1" href="#" data-per-page="200">Show: <strong>200</strong></a></li>
+							<li><a tabindex="-1" href="#" data-per-page="500">Show: <strong>500</strong></a></li>
+							<li><a tabindex="-1" href="#" data-per-page="1000">Show: <strong>1000</strong></a></li>
+						</ul>
 					</div>
 				</div>
-			</form>
+			</div>
+		</div>
 
-			<ul id="search-results">
-				{foreach from=$results item=item}
-					{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
-					{capture assign="is_current"}{$item|@wof_pv:"mz:is_current"}{/capture}
-					{capture assign="deprecated"}{$item|@wof_pv:"edtf:deprecated"}{/capture}
-					{capture assign="icon"}{$item|@wof_pv:"wof:category"}{/capture}
-					<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}"{if $icon!=''} data-icon="{$item|@wof_pv:"wof:category"|@escape}"{/if}>
+		<ul id="search-results">
+			{foreach from=$results item=item}
+				{capture assign="wof_id"}{$item|@wof_pv:"wof:id"}{/capture}
+				{capture assign="is_current"}{$item|@wof_pv:"mz:is_current"}{/capture}
+				{capture assign="deprecated"}{$item|@wof_pv:"edtf:deprecated"}{/capture}
+				{capture assign="icon"}{$item|@wof_pv:"wof:category"}{/capture}
+				<li class="search-result {if $is_current=='1'}iscurrent-yes{elseif $is_current=='0'}iscurrent-no{else}iscurrent-unknown{/if} {if $deprecated and $deprecated!='uuuu'}deprecated{/if}" data-id="{$wof_id|@escape}" data-lat="{$item|@wof_pv:"geom:latitude"|@escape}" data-lng="{$item|@wof_pv:"geom:longitude"|@escape}"{if $icon!=''} data-icon="{$item|@wof_pv:"wof:category"|@escape}"{/if}>
 
-						<input type="checkbox" name="select-{$item|@wof_pv:"wof:id"|@escape}">
-
+					<input type="checkbox" name="select-{$item|@wof_pv:"wof:id"|@escape}" id="select-{$item|@wof_pv:"wof:id"|@escape}">
+					<label for="select-{$item|@wof_pv:"wof:id"|@escape}">
 						<code>{$item|@wof_pv:"wof:id"|@escape}</code>
-						<a href="{$cfg.abs_root_url}id/{$item|@wof_pv:"wof:id"|@escape}/">{$item|@wof_pv:"wof:name"|@escape}</a>
+					</label>
+					<a href="{$cfg.abs_root_url}id/{$item|@wof_pv:"wof:id"|@escape}/">{$item|@wof_pv:"wof:name"|@escape}</a>
 
-						<small>
-						is a <strong>{$item|@wof_pv:"wof:placetype"|@escape}</strong>
+					<small>
+					is a <strong>{$item|@wof_pv:"wof:placetype"|@escape}</strong>
 
-						{if !$skip_brands}
-						{if $item|@wof_pv:"wof:brand_id"} and a <a href="{$cfg.abs_root_url}brands/{$item|@wof_pv:"wof:brand_id"|@escape}" class="hey-look">#brand</a>{/if}
-						{/if}
+					{if !$skip_brands}
+					{if $item|@wof_pv:"wof:brand_id"} and a <a href="{$cfg.abs_root_url}brands/{$item|@wof_pv:"wof:brand_id"|@escape}" class="hey-look">#brand</a>{/if}
+					{/if}
 
-						{if $item|@wof_pv:"wof:placetype"=="venue"}
+					{if $item|@wof_pv:"wof:placetype"=="venue"}
 
-						{if $item|@wof_pv:"addr:full"}
-						 located at <span class="hey-look">{$item|@wof_pv:"addr:full"|@escape}</span>
-						{elseif $item|@wof_pv:"sg:address"}
-						 located at <span class="hey-look">{$item|@wof_pv:"sg:address"|@escape}</span>
-						{else}
-						{/if}
+					{if $item|@wof_pv:"addr:full"}
+					 located at <span class="hey-look">{$item|@wof_pv:"addr:full"|@escape}</span>
+					{elseif $item|@wof_pv:"sg:address"}
+					 located at <span class="hey-look">{$item|@wof_pv:"sg:address"|@escape}</span>
+					{else}
+					{/if}
 
-						{/if}
+					{/if}
 
-						{if !$skip_belongsto}
-						{if $item|@wof_pv:"wof:parent_id" != -1}
+					{if !$skip_belongsto}
+					{if $item|@wof_pv:"wof:parent_id" != -1}
 
-						{if $item|@wof_pv:"wof_parent_name"}
-						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look">{$item|@wof_pv:"wof:parent_name"|@escape}</a>
-						{else}
-						in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look wof-namify" data-wof-id="{$item|@wof_pv:"wof:parent_id"|@escape}">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
-						{/if}
+					{if $item|@wof_pv:"wof_parent_name"}
+					in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look">{$item|@wof_pv:"wof:parent_name"|@escape}</a>
+					{else}
+					in <a href="{$cfg.abs_root_url}belongsto/{$item|@wof_pv:"wof:parent_id"|@escape}" class="hey-look wof-namify" data-wof-id="{$item|@wof_pv:"wof:parent_id"|@escape}">{$item|@wof_pv:"wof:parent_id"|@escape}</a>
+					{/if}
 
-						{if 0}{$item|@wof_ancestor:"locality"|@escape}{/if}
+					{if 0}{$item|@wof_ancestor:"locality"|@escape}{/if}
 
-						{else}
-						in <span class="caveat">a place of uncertainty</span>
-						{/if}
+					{else}
+					in <span class="caveat">a place of uncertainty</span>
+					{/if}
 
-						{/if}
+					{/if}
 
-						{if $show_lastmodified}
-						that was last modifed <span class="hey-look">{$item|@wof_pv:"wof:lastmodified"|@date_format|@escape}</span>
-						{/if}
+					{if $show_lastmodified}
+					that was last modifed <span class="hey-look">{$item|@wof_pv:"wof:lastmodified"|@date_format|@escape}</span>
+					{/if}
 
-						</small>
-					</li>
-				{/foreach}
-			</ul>
+					</small>
+				</li>
+			{/foreach}
+		</ul>
 
-			{include file="inc_pagination.txt"}
+		{include file="inc_pagination.txt"}
 
-			{if ! $skip_belongsto}
-			{include file="inc_js_namify.txt"}
-			{/if}
+		{if ! $skip_belongsto}
+		{include file="inc_js_namify.txt"}
+		{/if}

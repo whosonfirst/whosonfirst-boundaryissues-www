@@ -29,6 +29,14 @@
 		$args['page'] = $page;
 	}
 
+	$per_page = get_int32('per_page');
+
+	if ($per_page && $per_page > 0 && $per_page <= 1000){
+		$args['per_page'] = $per_page;
+	} else {
+		$per_page = $GLOBALS['cfg']['pagination_per_page'];
+	}
+
 	$es_query = array(
 		'query' => array('filtered' => array(
 			'query' => array(
@@ -58,6 +66,7 @@
 
 	$pagination_url = $GLOBALS['cfg']['abs_root_url'] . "belongsto/{$enc_wof}/";
 	$GLOBALS['smarty']->assign("pagination_url", $pagination_url);
+	$GLOBALS['smarty']->assign("per_page", $per_page);
 
 	$GLOBALS['smarty']->assign_by_ref("ancestor", $ancestor);
 

@@ -245,6 +245,24 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 					input.checked = $('#toggle-all').get(0).checked;
 				});
 			});
+
+			$('#per-page a').click(function(e) {
+				e.preventDefault();
+				if (e.target.nodeName == 'A') {
+					var $link = $(e.target);
+				} else {
+					var $link = $(e.target).closest('a');
+				}
+				var per_page = $link.data('per-page');
+				if (location.search.match(/per_page=\d+/)) {
+					var q = location.search.replace(/per_page=\d+/, 'per_page=' + per_page);
+				} else if (location.search) {
+					var q = location.search + '&per_page=' + per_page;
+				} else {
+					var q = '?per_page=' + per_page;
+				}
+				window.location = location.pathname + q;
+			});
 		},
 
 		get_venue_marker_style: function(item) {
