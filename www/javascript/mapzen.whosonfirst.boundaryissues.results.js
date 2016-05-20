@@ -57,6 +57,7 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 					this.setStyle(this._style);
 				});
 				marker.on('click', function() {
+					var id = $(result).data('id');
 					location.href = '/id/' + parseInt(id) + '/';
 				});
 				marker.bindLabel($(result).find('a').html());
