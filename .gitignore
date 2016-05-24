@@ -13,3 +13,4 @@ coverage/
 certified
 *.bak
 .DS_Store
+/git
