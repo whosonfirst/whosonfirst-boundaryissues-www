@@ -67,7 +67,7 @@
 	$GLOBALS['cfg']['elasticsearch_http_timeout'] = 10;
 
 	// WOF-specific ES settings
-	$GLOBALS['cfg']['wof_elasticsearch_index'] = 'whosonfirst';
+	$GLOBALS['cfg']['wof_elasticsearch_index'] = 'boundaryissues';
 	$GLOBALS['cfg']['wof_elasticsearch_host'] = 'localhost';
 	$GLOBALS['cfg']['wof_elasticsearch_port'] = '9200';
 

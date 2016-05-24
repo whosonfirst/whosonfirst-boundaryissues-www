@@ -4,7 +4,7 @@
 	loadlib("elasticsearch");
 
 	$args = array(
-		'index' => 'whosonfirst'
+		'index' => $GLOBALS['cfg']['wof_elasticsearch_index']
 	);
 
 	$query = get_str('q');
