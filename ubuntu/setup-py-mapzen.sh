@@ -15,8 +15,13 @@ then
 else
     git clone git@github.com:whosonfirst/py-mapzen-whosonfirst.git /usr/local/mapzen/py-mapzen-whosonfirst
     cd /usr/local/mapzen/py-mapzen-whosonfirst
-fi 
+fi
 
 sudo python ./setup.py install
+
+# Install pip so we can avoid SSL warnings when running wof-pylibs
+sudo apt-get update
+sudo apt-get install -y python-pip
+sudo pip install pyopenssl ndg-httpsclient pyasn1
 
 cd -
