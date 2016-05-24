@@ -7,6 +7,8 @@ htusers:
 
 setup:
 	ubuntu/setup-ubuntu.sh
+	ubuntu/setup-git.sh
+	ubuntu/setup-git-lfs.sh
 	ubuntu/setup-flamework.sh
 	ubuntu/setup-certified.sh
 	sudo ubuntu/setup-certified-ca.sh
@@ -14,7 +16,6 @@ setup:
 	ubuntu/setup-apache.sh
 	bin/configure_secrets.php .
 	ubuntu/setup-db.sh boundaryissues boundaryissues
-	ubuntu/setup-pip-server.sh microhood neighbourhood locality
 	ubuntu/setup-geojson-server.sh
 	ubuntu/setup-mapshaper.sh
 
@@ -23,6 +24,9 @@ setup-offline:
 	ubuntu/setup-gearmand.sh
 	ubuntu/setup-logstash.sh
 	ubuntu/setup-supervisor.sh
+
+setup-pip:
+	ubuntu/setup-pip-server.sh microhood neighbourhood locality
 
 templates:
 	php -q ./bin/compile-templates.php
