@@ -22,7 +22,7 @@ make configure
 ./configure
 make all doc
 
-sudo apt-get remove git
+sudo apt-get remove -y git
 sudo make install install-doc install-html
 
 cd -
