@@ -1,7 +1,7 @@
 <?php
 
 	include('include/init.php');
-	loadlib("elasticsearch");
+	loadlib("wof_elasticsearch");
 
 	$args = array(
 		'index' => $GLOBALS['cfg']['wof_elasticsearch_index']
@@ -70,7 +70,7 @@
 			)
 		);
 
-		$rsp = elasticsearch_search($es_query, $args);
+		$rsp = wof_elasticsearch_search($es_query, $args);
 
 		if ($rsp['ok']){
 
