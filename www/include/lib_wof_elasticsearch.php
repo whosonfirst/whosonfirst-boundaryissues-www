@@ -18,7 +18,7 @@
 			if (empty($GLOBALS['cfg']['search_query_filter'])) {
 				return array(
 					'ok' => 0,
-					'error' => 'No search query filter configured! Do that in your local_config_*.php.'
+					'error' => 'No search query filter configured! Do that in your config_local_*.php.'
 				);
 			}
 			$curr_query = $query['query'];
