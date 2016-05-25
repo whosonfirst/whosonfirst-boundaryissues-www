@@ -8,7 +8,7 @@ PROJECT=`dirname $PARENT`
 
 sudo ${PARENT}/setup-git-lfs-deb.sh
 
-sudo apt-get install git-lfs
+sudo apt-get install -y git-lfs
 
 # Y U NO WORK WITH git 2.8.0 ????
 # git install lfs
