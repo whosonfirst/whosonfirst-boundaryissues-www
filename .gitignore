@@ -14,3 +14,4 @@ certified
 *.bak
 .DS_Store
 /git
+/supervisor/whosonfirst-www-boundaryissues.conf
