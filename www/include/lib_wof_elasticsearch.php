@@ -8,6 +8,28 @@
 
 	function wof_elasticsearch_search($query, $more=array()){
 
+		// See also: the comment in config.php. Basically if the feature
+		// flag is enabled, we require that a filter is configured
+		// for this app. All incoming ES queries are filtered so that
+		// only the subset of records we care about show up.
+		// (20160525/dphiffer)
+
+		if ($GLOBALS['cfg']['enable_feature_filter_search']) {
+			if (empty($GLOBALS['cfg']['search_query_filter'])) {
+				return array(
+					'ok' => 0,
+					'error' => 'No search query filter configured! Do that in your local_config_*.php.'
+				);
+			}
+			$curr_query = $query['query'];
+			$query['query'] = array(
+				'filtered' => array(
+					'query' => $curr_query,
+					'filter' => $GLOBALS['cfg']['search_query_filter']
+				)
+			);
+		}
+
 		wof_elasticsearch_append_defaults($more);
 		return elasticsearch_search($query, $more);
 	}

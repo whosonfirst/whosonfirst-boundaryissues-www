@@ -79,6 +79,16 @@
 	$GLOBALS['cfg']['gearman_host'] = 'localhost';
 	$GLOBALS['cfg']['gearman_port'] = '4730';
 
+
+	// This search query filtering business is here because we've moved
+	// all our Elasticsearch business onto a single common index, but each
+	// application is only set up to edit a subset of the documents. The
+	// 'search_query_filter' config can let us ensure only the parts we
+	// actually want show up in the results. (20160525/dphiffer)
+
+	$GLOBALS['cfg']['enable_feature_filter_search'] = 1;
+	$GLOBALS['cfg']['search_query_filter'] = array(); # specify this in local_config_*.php
+
 	# hard coding this URL will ensure it works in cron mode too
 
 	$GLOBALS['cfg']['server_scheme'] = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ? 'https' : 'http';
