@@ -86,6 +86,25 @@
 	// 'search_query_filter' config can let us ensure only the parts we
 	// actually want show up in the results. (20160525/dphiffer)
 
+	/* Here's what you might put into the query filter:
+
+	$GLOBALS['cfg']['search_query_filter'] = array(
+		"bool" => array(
+			"must" => array(
+				"and" => array(
+					array("term" => array(
+						"wof:belongsto" => 85688637
+					)),
+					array("term" => array(
+						"wof:placetype" => "venue"
+					))
+				)
+			)
+		)
+	);
+
+	*/
+
 	$GLOBALS['cfg']['enable_feature_filter_search'] = 1;
 	$GLOBALS['cfg']['search_query_filter'] = array(); # specify this in local_config_*.php
 
