@@ -55,20 +55,17 @@
 
 	########################################################################
 
-	function wof_elasticsearch_update_document($wof) {
+	function wof_elasticsearch_update_document($wof, $more=array()) {
 
+		wof_elasticsearch_append_defaults($more);
 		$props = $wof['properties'];
-		$index = 'whosonfirst';
-		$type = $props['wof:placetype'];
 		$id = $props['wof:id'];
-		$more = array(
-			'id_field' => 'wof:id'
-		);
+		$type = $props['wof:placetype'];
+		$index = $more['index'];
+		$more['type'] = $type;
+		$more['id_field'] = 'wof:id';
 
-		$existing_es_record = elasticsearch_get_index_record($id, array(
-			'index' => $index,
-			'type' => $type
-		));
+		$existing_es_record = elasticsearch_get_index_record($id, $more);
 		if ($existing_es_record) {
 			$rsp = elasticsearch_update_document($index, $type, $id, $props);
 		} else {
