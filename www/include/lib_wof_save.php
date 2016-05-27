@@ -63,13 +63,10 @@
 	pending files that are *newer* than the GeoJSON timestamp that was
 	updated for a future save process.
 
-	Things that are likely to fail in practice.
-	-------------------------------------------
-	* There may be conflicts with `git pull --rebase origin master`. I will
-	  probably just detect
-	* We may get rejected when attempting `git push origin master`.
-	* All updated files from step two will need to be reindexed by
-	  Elasticsearch.
+	Step six: send the updates to Amazon S3.
+	----------------------------------------
+	Each file also gets beamed up to The Cloud so all the things stay in
+	sync.
 
 	*/
 
@@ -535,7 +532,7 @@
 			return $rsp;
 		}
 
-		// Finally we'll clean up the pending log files
+		// Clean up the pending log files
 		$updated = array();
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
@@ -553,6 +550,13 @@
 		// Clean up any empty data directories
 		$find_path = $GLOBALS['find_path'];
 		exec("$find_path {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete");
+
+		// Schedule S3 updates
+		foreach ($saved as $wof_id => $updates) {
+			offline_tasks_schedule_task('update_s3', array(
+				'wof_id' => $wof_id
+			));
+		}
 
 		return array(
 			'ok' => 1,
