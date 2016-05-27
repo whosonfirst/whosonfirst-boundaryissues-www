@@ -115,6 +115,15 @@
 					$schema['properties'][$key] = array();
 				}
 				$schema['properties'][$key]['_value'] = $value;
+				if (! $schema['properties'][$key]['type']) {
+					$type = 'string';
+					if (preg_match('/^[0-9]+$/', $value)) {
+						$type = 'integer';
+					} else if (is_numeric($value)) {
+						$type = 'number';
+					}
+					$schema['properties'][$key]['type'] = $type;
+				}
 			} else if ($schema['properties'][$key]) {
 				// If the field is in the schema, recurse!
 				$schema['properties'][$key] = wof_render_insert_values(
