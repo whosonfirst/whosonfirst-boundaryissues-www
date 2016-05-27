@@ -39,6 +39,7 @@
 	$GLOBALS['smarty']->assign('wof_name', $values['properties']['wof:name']);
 	$GLOBALS['smarty']->assign('wof_parent_id', $values['properties']['wof:parent_id']);
 	$GLOBALS['smarty']->assign('wof_hierarchy', json_encode($values['properties']['wof:hierarchy']));
+	$GLOBALS['smarty']->assign('geometry', json_encode($values['geometry']));
 
 	$GLOBALS['smarty']->display('page_id.txt');
 	exit();

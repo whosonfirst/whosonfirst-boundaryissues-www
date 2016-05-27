@@ -702,22 +702,31 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		generate_geojson: function() {
-			var lat = $('input[name="properties.geom:latitude"]').val();
-			var lng = $('input[name="properties.geom:longitude"]').val();
 
-			if (! lat || ! lng) {
-				return null;
+			var placetype = $('input[name="properties.wof:placetype"]').val();
+
+			if (placetype == 'venue') {
+				var lat = $('input[name="properties.geom:latitude"]').val();
+				var lng = $('input[name="properties.geom:longitude"]').val();
+
+				if (! lat || ! lng) {
+					return null;
+				}
+				lat = parseFloat(lat);
+				lng = parseFloat(lng);
+				var geometry = {
+					type: 'Point',
+					coordinates: [lng, lat]
+				};
+			} else {
+				var geometry_json = $('input[name="geometry"]').val();
+				var geometry = JSON.parse(geometry_json);
 			}
-			lat = parseFloat(lat);
-			lng = parseFloat(lng);
 
 			var geojson_obj = {
 				type: 'Feature',
 				bbox: [lng, lat, lng, lat],
-				geometry: {
-					type: 'Point',
-					coordinates: [lng, lat]
-				},
+				geometry: geometry,
 				properties: {}
 			};
 
