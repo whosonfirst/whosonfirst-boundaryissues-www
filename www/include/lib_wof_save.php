@@ -394,35 +394,58 @@
 
 	########################################################################
 
-	function wof_save_pending() {
+	function wof_save_pending($options) {
 
-		// Pull changes from GitHub
-		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
-		if (! $rsp['ok']) {
-			return array(
-				'ok' => 0,
-				'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
-			);
+		$defaults = array(
+			'verbose' => false,
+			'dry_run' => false
+		);
+		$options = array_merge($defaults, $options);
+
+		if ($options['verbose']) {
+			echo "wof_save_pending\n";
+			echo "----------------\n";
+			var_export($options);
+			echo "\n";
 		}
 
-		// Index updated records in Elasticsearch
-		if ($rsp['commit_hashes']) {
-			$commit_hashes_esc = escapeshellarg($rsp['commit_hashes']);
-			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
-			if ($rsp['ok']) {
-				$output = "{$rsp['error']}{$rsp['output']}";
-				preg_match_all('/(\d+)\.geojson/', $output, $matches);
-				foreach ($matches[1] as $wof_id) {
+		if ($options['verbose']) {
+			echo "git pull --rebase origin master\n";
+		}
 
-					// Load GeoJSON record data
-					$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
-					$geojson = file_get_contents($path);
-					$feature = json_decode($geojson, 'as hash');
+		if (! $options['dry_run']) {
+			// Pull changes from GitHub
+			$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
+			if (! $rsp['ok']) {
+				return array(
+					'ok' => 0,
+					'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
+				);
+			}
 
-					// Schedule an offline index
-					$rsp = offline_tasks_schedule_task('index', array(
-						'geojson_data' => $feature
-					));
+			// Index updated records in Elasticsearch
+			if ($rsp['commit_hashes']) {
+				$commit_hashes_esc = escapeshellarg($rsp['commit_hashes']);
+				$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
+				if ($rsp['ok']) {
+					$output = "{$rsp['error']}{$rsp['output']}";
+					preg_match_all('/(\d+)\.geojson/', $output, $matches);
+					foreach ($matches[1] as $wof_id) {
+
+						// Load GeoJSON record data
+						$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
+						$geojson = file_get_contents($path);
+						$feature = json_decode($geojson, 'as hash');
+
+						if ($options['verbose']) {
+							echo "schedule index: $wof_id\n";
+						}
+
+						// Schedule an offline index
+						$rsp = offline_tasks_schedule_task('index', array(
+							'geojson_data' => $feature
+						));
+					}
 				}
 			}
 		}
@@ -483,18 +506,40 @@
 
 			$data_dir = dirname($data_path);
 			if (! file_exists($data_dir)) {
-				mkdir($data_dir, 0775, true);
+				if ($options['verbose']) {
+					echo "mkdir -p $data_dir\n";
+				}
+				if (! $options['dry_run']) {
+					mkdir($data_dir, 0775, true);
+				}
 			}
 
-			copy($pending_path, $data_path);
-			if (! file_exists($data_path)) {
+			if ($options['verbose']) {
+				echo "cp $pending_path $data_path\n";
+			}
+			if (! $options['dry_run']) {
+				copy($pending_path, $data_path);
+			}
+
+			if (! file_exists($data_path) &&
+			    ! $options['dry_run']) {
+				if ($options['verbose']) {
+					echo "not found: $data_path\n";
+				}
 				continue;
 			}
 
-			git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+
+			if ($options['verbose']) {
+				echo "git add $data_path\n";
+			}
+
+			if (! $options['dry_run']) {
+				git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+			}
 			$saved[$wof_id] = $updates;
 
-			$geojson = file_get_contents($data_path);
+			$geojson = file_get_contents($pending_path);
 			$feature = json_decode($geojson, 'as hash');
 			$wof_name = $feature['properties']['wof:name'];
 			$user_id = $update['user_id'];
@@ -520,16 +565,30 @@
 			$message = "Boundary Issues: 1 update";
 		}
 
-		// Commit the pending changes
-		$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
-		if (! $rsp['ok']) {
-			return $rsp;
+		if ($options['verbose']) {
+			echo "git commit \"$message\" $args\n";
 		}
 
-		// Push to GitHub
-		$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master');
-		if (! $rsp['ok']) {
-			return $rsp;
+		if (! $options['dry_run']) {
+
+			// Commit the pending changes
+			$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		}
+
+		if ($options['verbose']) {
+			echo "git push origin master\n";
+		}
+
+		if (! $options['dry_run']) {
+
+			// Push to GitHub
+			$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master');
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
 		}
 
 		// Clean up the pending log files
@@ -537,25 +596,50 @@
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
 				$log_file = $update['filename'];
-				unlink("{$GLOBALS['cfg']['wof_pending_log_dir']}$log_file");
+				if ($options['verbose']) {
+					echo "rm {$GLOBALS['cfg']['wof_pending_log_dir']}$log_file\n";
+				}
+				if (! $options['dry_run']) {
+					unlink("{$GLOBALS['cfg']['wof_pending_log_dir']}$log_file");
+				}
 			}
 			$pending_path = wof_utils_id2abspath(
 				$GLOBALS['cfg']['wof_pending_dir'],
 				$wof_id
 			);
-			unlink($pending_path);
+			if ($options['verbose']) {
+				echo "rm $pending_path\n";
+			}
+			if (! $options['dry_run']) {
+				unlink($pending_path);
+			}
 			$updated[] = $updates[0];
 		}
 
 		// Clean up any empty data directories
 		$find_path = $GLOBALS['find_path'];
-		exec("$find_path {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete");
+		if ($options['verbose']) {
+			echo "find {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete\n";
+		}
+		if (! $options['dry_run']) {
+			exec("$find_path {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete");
+		}
 
 		// Schedule S3 updates
 		foreach ($saved as $wof_id => $updates) {
-			offline_tasks_schedule_task('update_s3', array(
-				'wof_id' => $wof_id
-			));
+
+			if ($options['verbose']) {
+				echo "schedule update_s3: $wof_id\n";
+			}
+
+			if (! $options['dry_run']) {
+				$rsp = offline_tasks_schedule_task('update_s3', array(
+					'wof_id' => $wof_id
+				));
+				if ($options['verbose']) {
+					var_export($rsp);
+				}
+			}
 		}
 
 		return array(

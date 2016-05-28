@@ -1,5 +1,6 @@
 <?php
 
+	loadlib("offline_tasks");
 	loadlib("gearman");
 
 	function offline_tasks_gearman_init(){
@@ -9,7 +10,7 @@
 	}
 
 	offline_tasks_gearman_init();
-	
+
 	########################################################################
 
 	# the end

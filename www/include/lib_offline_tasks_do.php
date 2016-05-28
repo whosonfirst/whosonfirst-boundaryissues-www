@@ -4,6 +4,7 @@
 	loadlib('github_users');
 	loadlib('wof_elasticsearch');
 	loadlib('wof_save');
+	loadlib('wof_s3');
 
 	$GLOBALS['offline_tasks_do_handlers'] = array();
 
