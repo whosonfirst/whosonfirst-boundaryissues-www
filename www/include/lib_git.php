@@ -136,7 +136,7 @@
 			return $rsp;
 		}
 
-		if (preg_match('/^\* (.+)$/m', $rsp['error'], $matches)) {
+		if (preg_match('/^\* (.+)$/m', $rsp['rsp'], $matches)) {
 			return array(
 				'ok' => 1,
 				'branch' => $matches[1]
@@ -186,6 +186,7 @@
 		return array(
 			'ok' => 1,
 			'output' => trim($output),
-			'error' => trim($error)
+			'error' => trim($error),
+			'rsp' => trim($error) . trim($output)
 		);
 	}

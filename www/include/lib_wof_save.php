@@ -137,7 +137,7 @@
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$git_hash = $rsp['error']; // For some reason `git hash-object` returns on STDERR
+		$git_hash = $rsp['rsp'];
 
 		// Save a snapshot to the pending/log directory
 		$pending_log_dir = $GLOBALS['cfg']['wof_pending_log_dir'];
