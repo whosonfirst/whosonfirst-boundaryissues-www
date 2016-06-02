@@ -13,7 +13,8 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 
 	var self = {
 		setup_websocket: function() {
-			socket = new WebSocket('wss://localhost:8991');
+			var protocol = location.protocol == 'https:' ? 'wss:' : 'ws:';
+			socket = new WebSocket(protocol + '//' + location.host + '/ws/');
 			socket.onmessage = self.handle_message;
 			$(window).on('beforeunload', function() {
 				socket.close();

@@ -82,9 +82,9 @@
 		# This isn't being used yet... but might be so rather than
 		# digging around try to remember what the syntax is...
 		# (20160208/thisisaaronland)
-		#
-		# ProxyRequests Off
-		# ProxyPass "/ws/"  "ws://localhost:8080/"
+		
+		ProxyRequests Off
+		ProxyPass "/ws/"  "ws://localhost:8080/"
 
 		ErrorLog ${APACHE_LOG_DIR}/error.log
 		CustomLog ${APACHE_LOG_DIR}/access.log combined
