@@ -22,38 +22,61 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 		},
 
 		handle_message: function(rsp) {
-			var data = rsp['data'];
-			data = JSON.parse(data);
-			var message = self.format_message(data);
-			if (data.action == 'execute') {
-				// Only notify on 'execute'
-				self.request_notification(message);
+			var data = JSON.parse(rsp['data']);
+			if (data.details && data.details.user_ids) {
+
+				// This is not a particularly safe or private
+				// way to handle user-specific notifications,
+				// but it will do for our current needs.
+				// (20160603/dphiffer)
+
+				var user_id = $(document.body).data('user-id');
+				user_id = parseInt(user_id);
+
+				if (! user_id) {
+					// Not signed in
+					return;
+				}
+
+				if (data.details.user_ids.indexOf(user_id) == -1) {
+					// Not for us
+					return;
+				}
 			}
-			// Log everything
-			mapzen.whosonfirst.log.info(data.action + ' ' + message);
+
+			if (! data.title ||
+			    ! data.body) {
+				mapzen.whosonfirst.log.error('Invalid notification: ' + JSON.stringify(data));
+			} else {
+				self.request_notification(data);
+
+				// Log it!
+				var log_msg = data.title + ' / ' + data.body;
+				if (data.details) {
+					log_msg += ' / ' + JSON.stringify(data.details);
+				}
+				mapzen.whosonfirst.log.info(log_msg);
+			}
 		},
 
-		format_message: function(data) {
-			return data.task + ' ' + data.task_id;
-		},
-
-		request_notification: function(message) {
+		request_notification: function(data) {
 			if (! ("Notification" in window)) {
+				// Not supported
 				return;
 			} else if (Notification.permission == "granted") {
-				self.send_notification(message);
+				self.send_notification(data);
 			} else if (Notification.permission != "denied") {
 				Notification.requestPermission(function(permission) {
 					if (permission == "granted") {
-						self.send_notification(message);
+						self.send_notification(data);
 					}
 				});
 			}
 		},
 
-		send_notification: function(message) {
-			var n = new Notification('Boundary Issues', {
-				body: message,
+		send_notification: function(data) {
+			var n = new Notification(data.title, {
+				body: data.body,
 				icon: notification_icon
 			});
 		}
