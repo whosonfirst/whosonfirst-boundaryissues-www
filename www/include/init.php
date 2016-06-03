@@ -250,8 +250,6 @@
 			$server_port = $_SERVER['SERVER_PORT'];
 		}
 
-		$server_port = $_SERVER['SERVER_PORT'];
-
 		if ($server_port) {
 			$scheme = (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) ? 'https' : 'http';
 			$server_url = "{$scheme}://{$_SERVER['SERVER_NAME']}:{$server_port}";
@@ -263,10 +261,6 @@
 		$server_url = "{$scheme}://{$_SERVER['SERVER_NAME']}";
 	}
 
-	$cwd = '';
-
-	# TO DO: account for things being run out of a ~directory or equivalent
-
 	# See this? We expect that abs_root_url always have a trailing slash.
 	# Really it's just about being consistent. It doesn't really matter which
 	# one you choose because either way it's going to be pain or a nuisance
@@ -274,8 +268,72 @@
 
 	$GLOBALS['cfg']['abs_root_url'] = rtrim($server_url, '/') . "/";
 
-	if ($cwd){
-		$GLOBALS['cfg']['abs_root_url'] .= $cwd . "/";
+	# Because sometimes you can't run your Flamework project off of the root path
+	# of a domain and need to do stuff like this in your httpd.conf file
+	#
+	# DocumentRoot /usr/local/mapzen/whosonfirst-www-boundaryissues/www
+	# Alias /boundaryissues/ca /usr/local/mapzen/whosonfirst-www-boundaryissues/www
+	#
+	# Because you're doing stuff like this:
+	#
+	# location /boundaryissues/ca {
+	#    proxy_pass https://upstream_bi_ca;
+	#    proxy_set_header Host $http_host;
+	#    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	#    proxy_set_header X-Proxy-Path "/boundaryissues/ca";
+	# }
+	#
+	# Which isn't awesome but then again all of this stuff was designed around running
+	# out of root so this isn't really that big a deal in the end. Or you could do this
+	# in either your httpd.conf or .htaccess file, like this:
+	#
+	# SetEnv FLAMEWORK_SUFFIX "/boundaryissues/ca"
+	# 
+	# The problem with doing that is if you're just _actually_ running your Flamework project
+	# on / but serving it up on a nested path (and probably a different domain) via something
+	# like nginx then by setting the environment locally then there is no way to introspect the
+	# host that hosting this code without the URLs getting all fubar-ed. Good times...
+	#
+	# $GLOBALS['cfg']['enable_feature_abs_root_suffix'] = 1;
+	# $GLOBALS['cfg']['abs_root_suffix'] = "";
+	# $GLOBALS['cfg']['abs_root_suffix_env'] = 'HTTP_X_PROXY_PATH';
+	# 
+	# (20160603/thisisaaronland)
+
+	# dumper($_SERVER);
+
+	if ($GLOBALS['cfg']['enable_feature_abs_root_suffix']){
+
+		$suffix = $GLOBALS['cfg']['abs_root_suffix'];
+		$env = $GLOBALS['cfg']['abs_root_suffix_env'];
+
+		if ((! $suffix) && (isset($_SERVER[ $env ]))){
+
+			$suffix = $_SERVER[ $env ];
+			$suffix = trim($suffix, '/');
+
+			$parts = array();
+			$ok = 1;
+
+			foreach (explode("/", $suffix) as $chunk){
+		
+				if (chunk == ".."){
+					$ok = 0;
+					break;
+				}
+
+				$parts[] = urlencode($chunk);
+			}
+
+			if ($ok){
+				$GLOBALS['cfg']['abs_root_suffix'] = implode("/", $parts);
+			}
+		}
+
+		if ($suffix = $GLOBALS['cfg']['abs_root_suffix']){
+			$GLOBALS['cfg']['abs_root_url'] .= trim($suffix, '/') . "/";
+		}
+
 	}
 
 	# $GLOBALS['cfg']['auth_cookie_domain'] = parse_url($GLOBALS['cfg']['abs_root_url'], 1);

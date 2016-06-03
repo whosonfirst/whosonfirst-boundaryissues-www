@@ -116,7 +116,13 @@
 	$GLOBALS['cfg']['abs_root_url']		= "{$GLOBALS['cfg']['server_scheme']}://{$GLOBALS['cfg']['server_name']}/";
 	$GLOBALS['cfg']['safe_abs_root_url']	= $GLOBALS['cfg']['abs_root_url'];
 
-	# ecause the nginx configs are still busted... (20160429/thisisaaronland)
+	# See notes in include/init.php
+
+	$GLOBALS['cfg']['enable_feature_abs_root_suffix'] = 1;
+	$GLOBALS['cfg']['abs_root_suffix'] = "";
+	$GLOBALS['cfg']['abs_root_suffix_env'] = 'HTTP_X_PROXY_PATH';	# ignored if 'abs_root_suffix' is not empty
+
+	# Because the nginx configs are still busted... (20160429/thisisaaronland)
 	# $GLOBALS['cfg']['data_abs_root_url'] = "https://whosonfirst.mapzen.com/data/";
 	$GLOBALS['cfg']['data_abs_root_url'] = "https://s3.amazonaws.com/whosonfirst.mapzen.com/data/";
 

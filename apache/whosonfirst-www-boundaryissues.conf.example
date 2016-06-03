@@ -52,6 +52,10 @@
 
 		DocumentRoot __PROJECT_ROOT__/www
 
+		# For example
+		# Alias /boundaryissues/ca /usr/local/mapzen/whosonfirst-www-boundaryissues/www
+		# Alias __PROJECT_PATH__	__PROJECT_ROOT__
+
 		<Directory />
 			Options FollowSymLinks
 			AllowOverride None
