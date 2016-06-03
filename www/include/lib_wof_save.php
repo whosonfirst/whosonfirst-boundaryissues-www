@@ -85,6 +85,7 @@
 	loadlib("github_users");
 	loadlib("offline_tasks");
 	loadlib("offline_tasks_gearman");
+	loadlib("notifications");
 
 	########################################################################
 
@@ -483,6 +484,8 @@
 		$saved = array();
 		$messages = array();
 		$authors = array();
+		$notifications = array();
+
 		foreach ($wof as $wof_id => $updates) {
 
 			// Find the most recent pending changes
@@ -554,6 +557,11 @@
 				}
 			}
 			$messages[] = "* $wof_name ($wof_id) saved by $author";
+
+			if (! $notifications[$user_id]) {
+				$notifications[$user_id] = array();
+			}
+			array_push($notifications[$user_id], $wof_name);
 		}
 
 		$messages = implode("\n", $messages);
@@ -640,6 +648,22 @@
 					var_export($rsp);
 				}
 			}
+		}
+
+		// Send out notifications
+		foreach ($notifications as $user_id => $wof_updates) {
+			$count = count($wof_updates);
+			if ($count == 1) {
+				$title = "Published {$wof_updates[0]}";
+				$body = '...'; // something something
+			} else {
+				$title = "Published $count updates";
+				$body = implode(', ', $wof_updates);
+			}
+			$details = array(
+				'user_ids' => array($user_id)
+			);
+			notifications_publish($title, $body, $details);
 		}
 
 		return array(
