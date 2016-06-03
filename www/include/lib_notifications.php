@@ -26,7 +26,7 @@
 
 	function notifications_publish($title, $body, $details = null) {
 		$payload = array(
-			'title' => $title,
+			'title' => emoji_alpha_filter($title),
 			'body' => emoji_alpha_filter($body)
 		);
 		if ($details) {
