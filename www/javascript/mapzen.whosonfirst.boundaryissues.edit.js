@@ -14,8 +14,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	    nearby = {},
 	    saving_disabled = false;
 
+        // these need to wait until the page has loaded to be able to call
+        // mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify so that
+        // document.body is set or moved to the HTML footer 
+        // (20160603/thisisaaronland)
+
+        // Also this is the same code that's in mapzen.whosonfirst.boundaryissues.results
+        // so it's probably time to merge them (20160603/thisisaaronland)
+
 	var VenueIcon = L.Icon.extend({
 		options: {
+		    // iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
+		    // iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
+
 			iconUrl: '/images/marker-icon.png',
 			iconRetinaUrl: '/images/marker-icon-2x.png',
 			shadowUrl: null,
@@ -24,6 +35,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			popupAnchor: new L.Point(0, -42)
 		}
 	});
+
+	// var poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 	var poi_icon_base = '/images/categories/';
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
@@ -33,7 +46,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	var self = {
 
 		setup_map: function() {
-			mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
+
+		    var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+		    mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
+		    
 			var placetype = $('input[name="properties.wof:placetype"]').val();
 			if (placetype == 'venue') {
 				self.setup_map_marker();
@@ -548,7 +564,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var placetype = esc_str(parent.Placetype);
 				$('input[name="properties.wof:parent_id"]').val(id);
 				$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
-				$('#parent').html('Parent: <a href="/id/' + id + '/">' + name + ' <code><small>' + id + '</small></code></a>');
+
+			    var url = '/id/' + id + '/';
+			    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+
+				$('#parent').html('Parent: <a href="' + url + '">' + name + ' <code><small>' + id + '</small></code></a>');
 			}
 		},
 
@@ -573,9 +593,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 
 				var root = $(document.body).data("abs-root-url");
-				var href = root + 'belongsto/' + id + '/';
 
-				html += '<li>' + label + ': <a href="' + href + '" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
+			    var url = root + 'belongsto/' + id + '/';
+			    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+
+				html += '<li>' + label + ': <a href="' + url + '" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
 			}
 			html += '</ul>';
 			$('#hierarchy').append(html);
@@ -687,7 +709,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 					m.bindLabel(item._source['wof:name']);
 					m.on('click', function() {
-						location.href = '/id/' + id + '/';
+					    var url = '/id/' + id + '/';
+					    url = mapzen.whosonfirst.boundaryissues.abs_root_urlify(url);
+
+					    location.href = url;
 					});
 					m.on('mouseover', function() {
 						this.setStyle(mapzen.whosonfirst.leaflet.styles.venue_hover());
@@ -798,7 +823,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$status.html('Error saving GeoJSON: Bad response from server.');
 				} else if ($('input[name="wof_id"]').length == 0) {
 					var wof_id = parseInt(rsp['wof_id']);
-					location.href = '/id/' + wof_id + '/';
+
+				    var url = '/id/' + wof_id + '/';
+				    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+					location.href = url;
 				} else {
 					$status.html('Saved');
 				}

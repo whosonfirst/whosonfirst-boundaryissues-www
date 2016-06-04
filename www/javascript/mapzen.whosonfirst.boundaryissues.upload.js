@@ -58,7 +58,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$('#upload-btn').attr('disabled', false);
 
 				$preview_map.removeClass('hidden');
-				mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
+
+			        var scene  = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+				mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
 				var swlat = 37.70120736474139;
 				var swlon = -122.68707275390624;
@@ -156,7 +158,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$.each(rsp.saved_wof, function(id, name) {
 					var esc_id = esc_html(id);
 					var esc_name = esc_html(name);
-					links.push('<a href="/id/' + esc_id + '"><code>' + esc_id + '</code> ' + esc_name + '</a>');
+
+				    	var url = '/id/' + esc_id;
+				    	url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+
+					links.push('<a href="' + url + '"><code>' + esc_id + '</code> ' + esc_name + '</a>');
 				});
 				var list = '<ul><li>' + links.join('</li><li>') + '</li></ul>';
 				$result.html('Success! ' + list);

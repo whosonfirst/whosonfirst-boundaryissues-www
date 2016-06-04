@@ -11,17 +11,26 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 	var map,
 	    batch_update_ids = [];
 
+        // these need to wait until the page has loaded to be able to call
+        // mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify so that
+        // document.body is set or moved to the HTML footer 
+        // (20160603/thisisaaronland)
+
 	var VenueIcon = L.Icon.extend({
 		options: {
-			iconUrl: '/images/marker-icon.png',
-			iconRetinaUrl: '/images/marker-icon-2x.png',
-			shadowUrl: null,
-			iconAnchor: new L.Point(13, 42),
-			iconSize: new L.Point(25, 42),
-			popupAnchor: new L.Point(0, -42)
+		    // iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
+		    // iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
+		    iconUrl: '/images/marker-icon.png',
+		    iconRetinaUrl: '/images/marker-icon-2x.png',
+		    shadowUrl: null,
+		    iconAnchor: new L.Point(13, 42),
+		    iconSize: new L.Point(25, 42),
+		    popupAnchor: new L.Point(0, -42)
 		}
 	});
-	var poi_icon_base = '/images/categories/';
+
+	// var poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
+    	var poi_icon_base = '/images/categories/';
 
 	var self = {
 
@@ -29,7 +38,10 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 			var lat = 40.73581157695217;
 			var lon = -73.9815902709961;
 			var zoom = 12;
-			mapzen.whosonfirst.leaflet.tangram.scenefile('/tangram/refill.yaml');
+
+		    	var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+			mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
+
 			map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
 				'map',
 				lat, lon, zoom
@@ -58,7 +70,9 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				});
 				marker.on('click', function() {
 					var id = $(result).data('id');
-					location.href = '/id/' + parseInt(id) + '/';
+					var url = '/id/' + parseInt(id) + '/';
+
+					location.href = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 				});
 				marker.bindLabel($(result).find('a').html());
 			});
@@ -116,7 +130,8 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				var lng = parseFloat(ll.lng).toFixed(6);
 				var zoom = 16;
 				var url = '/add/#' + zoom + '/' + lat + '/' + lng;
-				location.href = url;
+			    
+				location.href = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 			});
 		},
 
