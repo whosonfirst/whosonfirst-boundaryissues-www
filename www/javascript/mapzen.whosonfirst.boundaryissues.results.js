@@ -9,28 +9,9 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 mapzen.whosonfirst.boundaryissues.results = (function() {
 
 	var map,
-	    batch_update_ids = [];
-
-        // these need to wait until the page has loaded to be able to call
-        // mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify so that
-        // document.body is set or moved to the HTML footer 
-        // (20160603/thisisaaronland)
-
-	var VenueIcon = L.Icon.extend({
-		options: {
-		    // iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
-		    // iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
-		    iconUrl: '/images/marker-icon.png',
-		    iconRetinaUrl: '/images/marker-icon-2x.png',
-		    shadowUrl: null,
-		    iconAnchor: new L.Point(13, 42),
-		    iconSize: new L.Point(25, 42),
-		    popupAnchor: new L.Point(0, -42)
-		}
-	});
-
-	// var poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
-    	var poi_icon_base = '/images/categories/';
+	    batch_update_ids = [],
+	    VenueIcon,
+	    poi_icon_base;
 
 	var self = {
 
@@ -130,7 +111,7 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				var lng = parseFloat(ll.lng).toFixed(6);
 				var zoom = 16;
 				var url = '/add/#' + zoom + '/' + lat + '/' + lng;
-			    
+
 				location.href = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 			});
 		},
@@ -367,6 +348,26 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 		if ($('#search-results').length == 0) {
 			return;
 		}
+
+		// We need to wait until the page has loaded before we can make
+		// calls to mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify.
+		// (20160606/dphiffer)
+
+		VenueIcon = L.Icon.extend({
+			options: {
+			    iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
+			    iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
+			    iconUrl: '/images/marker-icon.png',
+			    iconRetinaUrl: '/images/marker-icon-2x.png',
+			    shadowUrl: null,
+			    iconAnchor: new L.Point(13, 42),
+			    iconSize: new L.Point(25, 42),
+			    popupAnchor: new L.Point(0, -42)
+			}
+		});
+
+		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
+
 		self.setup_map();
 		self.setup_drawing();
 		self.setup_results();
