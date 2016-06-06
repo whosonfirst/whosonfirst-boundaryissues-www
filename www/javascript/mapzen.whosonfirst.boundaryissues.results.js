@@ -355,14 +355,14 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 
 		VenueIcon = L.Icon.extend({
 			options: {
-			    iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
-			    iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
-			    iconUrl: '/images/marker-icon.png',
-			    iconRetinaUrl: '/images/marker-icon-2x.png',
-			    shadowUrl: null,
-			    iconAnchor: new L.Point(13, 42),
-			    iconSize: new L.Point(25, 42),
-			    popupAnchor: new L.Point(0, -42)
+				iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
+				iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
+				iconUrl: '/images/marker-icon.png',
+				iconRetinaUrl: '/images/marker-icon-2x.png',
+				shadowUrl: null,
+				iconAnchor: new L.Point(13, 42),
+				iconSize: new L.Point(25, 42),
+				popupAnchor: new L.Point(0, -42)
 			}
 		});
 

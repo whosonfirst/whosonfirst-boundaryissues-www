@@ -98,7 +98,7 @@ th:hover .remove-row {
     position: fixed;
     top: 0;
     z-index: 3501;
-    background: url(/images/stripes_bg.gif);
+    background: url(../images/stripes_bg.gif);
     background-color: #fff;
     font-family: monospace;
     width: 100%;

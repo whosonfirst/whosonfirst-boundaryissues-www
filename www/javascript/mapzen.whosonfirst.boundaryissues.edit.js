@@ -24,8 +24,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_map: function() {
 
-		    var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
-		    mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
+			var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+			mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
 			var placetype = $('input[name="properties.wof:placetype"]').val();
 			if (placetype == 'venue') {
@@ -686,10 +686,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 					m.bindLabel(item._source['wof:name']);
 					m.on('click', function() {
-					    var url = '/id/' + id + '/';
-					    url = mapzen.whosonfirst.boundaryissues.abs_root_urlify(url);
+						var url = '/id/' + id + '/';
+						url = mapzen.whosonfirst.boundaryissues.abs_root_urlify(url);
 
-					    location.href = url;
+						location.href = url;
 					});
 					m.on('mouseover', function() {
 						this.setStyle(mapzen.whosonfirst.leaflet.styles.venue_hover());
