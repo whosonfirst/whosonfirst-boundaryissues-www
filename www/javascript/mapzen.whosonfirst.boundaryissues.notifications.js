@@ -13,9 +13,10 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 
 	var self = {
 		setup_websocket: function() {
-			var protocol = location.protocol == 'https:' ? 'wss:' : 'ws:';
-			var path = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/ws/');
-			socket = new WebSocket(protocol + '//' + location.host + path);
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/ws/');
+			url = url.replace(/^http:/, 'ws:');
+			url = url.replace(/^https:/, 'wss:');
+			socket = new WebSocket(url);
 			socket.onmessage = self.handle_message;
 			$(window).on('beforeunload', function() {
 				socket.close();
