@@ -655,7 +655,7 @@
 			$count = count($wof_updates);
 			if ($count == 1) {
 				$title = "Published {$wof_updates[0]}";
-				$body = '...'; // something something
+				$body = 'Your updates are on GitHub now.';
 			} else {
 				$title = "Published $count updates";
 				$body = implode(', ', $wof_updates);
