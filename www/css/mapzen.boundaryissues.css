@@ -250,3 +250,7 @@ tr.object-property.property-visible {
 #upload-options.disabled {
 	opacity: 0.5;
 }
+
+.leaflet-container a.btn-primary {
+	color: #fff;
+}

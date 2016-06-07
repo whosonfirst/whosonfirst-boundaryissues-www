@@ -33,7 +33,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			} else {
 				self.setup_map_geometry();
 			}
-			L.control.geocoder('search-o3YYmTI', {
+			var geocoder = L.control.geocoder('search-o3YYmTI', {
 				markers: {
 					icon: new VenueIcon()
 				}
@@ -46,6 +46,41 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			self.map = map;
+
+			geocoder.on('select', function(e) {
+				var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
+				var popup = geocoder.marker.bindPopup(html).openPopup();
+				var props = e.feature.properties;
+				$('#geocoder-marker-select').click(function(e) {
+					e.preventDefault();
+					popup.closePopup();
+					geocoder.collapse();
+					var ll = geocoder.marker.getLatLng();
+					self.lookup_hierarchy(ll.lat, ll.lng);
+					self.update_coordinates(ll, true);
+					self.set_marker(geocoder.marker);
+					if (props.label) {
+						self.set_property('addr:full', props.label);
+					}
+					if (props.housenumber) {
+						self.set_property('addr:housenumber', props.housenumber);
+					}
+					if (props.street) {
+						self.set_property('addr:street', props.street);
+					}
+					if (props.postalcode) { // Seeing postAL code coming from Pelias, but we prefer 'postcode'
+						self.set_property('addr:postcode', props.postalcode);
+					}
+					if (props.postcode) {
+						self.set_property('addr:postcode', props.postcode);
+					}
+				});
+				$('#geocoder-marker-cancel').click(function(e) {
+					e.preventDefault();
+					popup.closePopup();
+					map.removeLayer(geocoder.marker);
+				});
+			});
 		},
 
 		setup_map_marker: function() {
@@ -324,6 +359,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		set_marker: function(m) {
+			if (marker) {
+				map.removeLayer(marker);
+			}
 			marker = m;
 			map.addLayer(marker);
 			self.update_coordinates(marker.getLatLng());
