@@ -9,12 +9,15 @@
 
 	########################################################################
 
-	if (file_exists('/usr/local/bin/git')) {
-		$GLOBALS['git_path'] = '/usr/local/bin/git';
-	} else if (file_exists('/usr/bin/git')) {
-		$GLOBALS['git_path'] = '/usr/bin/git';
-	} else {
-		die('OMGWTF WHERE IS GIT??');
+	$GLOBALS['git_path'] = `which git`;
+	if (! file_exists($GLOBALS['git_path'])) {
+		if (file_exists('/usr/local/bin/git')) {
+			$GLOBALS['git_path'] = '/usr/local/bin/git';
+		} else if (file_exists('/usr/bin/git')) {
+			$GLOBALS['git_path'] = '/usr/bin/git';
+		} else {
+			die('OMGWTF WHERE IS GIT??');
+		}
 	}
 
 	########################################################################
