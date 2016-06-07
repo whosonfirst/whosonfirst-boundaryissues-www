@@ -82,13 +82,9 @@
 		# ZOMG... this is the bloody crux of it... turning proxy
 		# requests off... so you can do proxy requests... because...
 		# http://blog.revathskumar.com/2015/09/proxy-websocket-via-apache.html
-
-		# This isn't being used yet... but might be so rather than
-		# digging around try to remember what the syntax is...
-		# (20160208/thisisaaronland)
 		
 		ProxyRequests Off
-		ProxyPass "/ws/"  "ws://localhost:8080/"
+		ProxyPass "__PROJECT_PATH__/ws/"  "ws://localhost:8080/"
 
 		ErrorLog ${APACHE_LOG_DIR}/error.log
 		CustomLog ${APACHE_LOG_DIR}/access.log combined
