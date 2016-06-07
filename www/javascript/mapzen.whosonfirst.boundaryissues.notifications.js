@@ -14,7 +14,7 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 	var self = {
 		setup_websocket: function() {
 			//var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/ws/');
-			var url = '/bi/ws/';
+			var url = 'https://whosonfirst.mapzen.com/boundaryissues/bi/ws/';
 			url = url.replace(/^http:/, 'ws:');
 			url = url.replace(/^https:/, 'wss:');
 			socket = new WebSocket(url);
