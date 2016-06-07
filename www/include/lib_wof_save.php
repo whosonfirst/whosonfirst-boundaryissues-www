@@ -626,11 +626,12 @@
 
 		// Clean up any empty data directories
 		$find_path = $GLOBALS['find_path'];
+		$pending_dir = realpath($GLOBALS['cfg']['wof_pending_dir']);
 		if ($options['verbose']) {
-			echo "find {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete\n";
+			echo "find $pending_dir -type d -empty -delete\n";
 		}
 		if (! $options['dry_run']) {
-			exec("$find_path {$GLOBALS['cfg']['wof_pending_dir']} -type d -empty -delete");
+			exec("$find_path $pending_dir -type d -empty -delete");
 		}
 
 		// Schedule S3 updates
