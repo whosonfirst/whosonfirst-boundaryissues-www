@@ -1,5 +1,5 @@
 {if $cfg.pagination_touch_shortcuts}
-<script type="text/javascript" src="/javascript/jquery.touchwipe.min.js"></script>
+<script type="text/javascript" src="{$cfg.abs_root_url}javascript/jquery.touchwipe.min.js"></script>
 {/if}
 <script type="text/javascript">{literal}
 
