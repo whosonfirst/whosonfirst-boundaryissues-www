@@ -26,7 +26,8 @@
 		//$GLOBALS['cfg']['api_abs_root_url'] = "{$GLOBALS['cfg']['api_server_scheme']}://{$GLOBALS['cfg']['api_server_name']}" . "/";
 
 		// This might be a wrongheaded way to approach this, but we do
-		// need to account for the abs_root_suffix somehow.
+		// need to account for the abs_root_suffix somehow. Also, here is
+		// a GitHub issue to fix it: https://github.com/whosonfirst/whosonfirst-www-boundaryissues/issues/131
 		// (20160608/dphiffer)
 		$GLOBALS['cfg']['api_abs_root_url'] = $GLOBALS['cfg']['abs_root_url'];
 
