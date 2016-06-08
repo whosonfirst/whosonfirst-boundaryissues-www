@@ -348,7 +348,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_category_property: function() {
 			var select = '<select name="properties.wof:category" class="property">';
-			$.get('/meta/categories.json', function(categories) {
+			var categories_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
+			$.get(categories_url, function(categories) {
 				$.each(categories, function(i, cat) {
 					select += '<option value="' + cat.name + '">' + cat.label + '</option>';
 				});
