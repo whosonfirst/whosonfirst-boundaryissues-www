@@ -18,6 +18,12 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 			url = url.replace(/^https:/, 'wss:');
 			socket = new WebSocket(url);
 			socket.onmessage = self.handle_message;
+			socket.onclose(function() {
+				console.log('WebSocket: onclose');
+			});
+			socket.onerror(function() {
+				console.log('WebSocket: onerror');
+			});
 			$(window).on('beforeunload', function() {
 				socket.close();
 			});
