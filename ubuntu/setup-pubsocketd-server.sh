@@ -25,7 +25,7 @@ fi
 if [ -z "$1" ]
 then
 	echo "You can specify an origin argument like this: setup-pubsocket-server.sh [origin]"
-	PUBSOCKETD_ORIGIN="https://localhost:8990"
+	PUBSOCKETD_ORIGIN="https://whosonfirst.mapzen.com"
 	echo "Defaulting to ${PUBSOCKETD_ORIGIN}"
 else
 	PUBSOCKETD_ORIGIN="$1"
