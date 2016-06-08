@@ -20,3 +20,7 @@ sudo /etc/init.d/wof-pubsocketd-server.sh restart
 
 # Make sure we have the latest WOF Python libraries
 wof-pylibs
+
+if [ $? -eq 1 ] ; then
+  echo "Oh hey, you should update your Python libraries!"
+fi
