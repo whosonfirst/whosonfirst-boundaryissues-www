@@ -67,7 +67,7 @@
 
 		$existing_es_record = elasticsearch_get_index_record($id, $more);
 		if ($existing_es_record) {
-			$rsp = elasticsearch_update_document($index, $type, $id, $props);
+			$rsp = elasticsearch_update_document($index, $type, $id, $props, $more);
 		} else {
 			$docs = array(
 				$props
