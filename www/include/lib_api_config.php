@@ -23,7 +23,12 @@
 
 		# Build the 'api_abs_root_url' based on everything above
 
-		$GLOBALS['cfg']['api_abs_root_url'] = "{$GLOBALS['cfg']['api_server_scheme']}://{$GLOBALS['cfg']['api_server_name']}" . "/";
+		//$GLOBALS['cfg']['api_abs_root_url'] = "{$GLOBALS['cfg']['api_server_scheme']}://{$GLOBALS['cfg']['api_server_name']}" . "/";
+
+		// This might be a wrongheaded way to approach this, but we do
+		// need to account for the abs_root_suffix somehow.
+		// (20160608/dphiffer)
+		$GLOBALS['cfg']['api_abs_root_url'] = $GLOBALS['cfg']['abs_root_url'];
 
 		# If I have an API specific subdomain/prefix then check to see if I am already
 		# running on that host; if I am then update the 'site_abs_root_url' config and
