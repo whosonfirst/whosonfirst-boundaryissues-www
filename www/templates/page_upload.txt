@@ -1,7 +1,7 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
-<div class="container">
-	<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload-feature="{$crumb_upload_feature|@escape}" data-crumb-upload-collection="{$crumb_upload_collection|@escape}">
+<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload-feature="{$crumb_upload_feature|@escape}" data-crumb-upload-collection="{$crumb_upload_collection|@escape}">
+	<div class="container">
 		{$crumb_upload_fallback|crumb_input}
 		<input type="hidden" name="method" value="wof.upload">
 		<input type="hidden" name="access_token" value="{$site_token|@escape}">
@@ -10,10 +10,11 @@
 			<input type="file" name="geojson_file">
 		</span>
 		<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
-	</form>
-	<div id="upload-result"></div>
-	<div id="upload-preview-map" class="hidden"></div>
-	<div id="upload-preview-props"></div>
-</div>
+		<div id="upload-result"></div>
+		<div id="upload-preview-map" class="hidden"></div>
+		<div id="upload-preview-props"></div>
+	</div>
+</form>
+
 
 {include file='inc_foot.txt'}

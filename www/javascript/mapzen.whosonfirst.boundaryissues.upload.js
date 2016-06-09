@@ -128,11 +128,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		show_props_preview: function(geojson) {
+			var props = self.get_geojson_props(geojson);
+			if (! props) {
+				return;
+			}
+
 			var html = '<h3>Include properties</h3>';
 			html += '<ul id="upload-properties">';
-			var props = self.get_geojson_props(geojson);
 			$.each(props, function(i, prop) {
-				html += '<li><input type="checkbox" class="property" id="property-' + prop + '"><label for="property-' + prop + '"><code>' + prop + '</code></label></li>';
+				html += '<li><input type="checkbox" class="property" id="property-' + prop + '" name="include_property_' + prop + '" value="1"><label for="property-' + prop + '"><code>' + prop + '</code></label></li>';
 			});
 			html += '</ul>';
 
@@ -143,8 +147,18 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			if (geojson.type == 'Feature') {
 				return Object.keys(geojson.properties);
 			} else if (geojson.features) {
-				// Do the FeatureCollection properties
+				var properties = [];
+				$.each(geojson.features, function(i, feature) {
+					var keys = Object.keys(feature.properties);
+					$.each(keys, function(j, key) {
+						if (properties.indexOf(key) == -1) {
+							properties.push(key);
+						}
+					});
+				});
+				return properties;
 			}
+			return null;
 		},
 
 		post_file: function() {
@@ -181,6 +195,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var data = new FormData();
 			data.append('crumb', crumb);
 			data.append('upload_file', geojson_file);
+			$('#upload-properties input').each(function(i, prop) {
+				if ($(prop).attr('name').match(/^include_property_/) &&
+				    prop.checked) {
+					var name = $(prop).attr('name');
+					var value = $(prop).val();
+					data.append(name, value);
+				}
+			});
+
 			mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
 
 			// Show some user feedback
