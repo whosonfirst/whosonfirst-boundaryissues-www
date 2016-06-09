@@ -254,3 +254,12 @@ tr.object-property.property-visible {
 .leaflet-container a.btn-primary {
 	color: #fff;
 }
+
+#upload-properties {
+	margin-top: 1em;
+	padding-left: 0;
+}
+
+#upload-properties li {
+	list-style: none;
+}

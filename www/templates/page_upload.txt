@@ -10,13 +10,10 @@
 			<input type="file" name="geojson_file">
 		</span>
 		<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
-		<div id="upload-options" class="disabled">
-			<input type="checkbox" id="ignore_properties" name="ignore_properties" value="1" disabled="disabled" checked="checked">
-			<label for="ignore_properties">Ignore properties (only update geometry)</label>
-		</div>
 	</form>
 	<div id="upload-result"></div>
 	<div id="upload-preview-map" class="hidden"></div>
+	<div id="upload-preview-props"></div>
 </div>
 
 {include file='inc_foot.txt'}

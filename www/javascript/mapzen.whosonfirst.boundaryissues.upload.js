@@ -11,9 +11,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	var $form,
 	    $result,
 	    $preview_map,
+	    $preview_props,
 	    geojson_file,
 	    upload_is_ready = false,
-	    is_collection;
+	    is_collection,
+	    VenueIcon,
+	    poi_icon_base;
 
 	var self = {
 
@@ -23,6 +26,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			$form = $('#upload-form');
 			$result = $('#upload-result');
 			$preview_map = $('#upload-preview-map');
+			$preview_props = $('#upload-preview-props');
 
 			// Grab a reference to the file input's data when its onchange fires
 			$form.find('input[name=geojson_file]').on('change', function(e){
@@ -59,7 +63,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 				$preview_map.removeClass('hidden');
 
-			        var scene  = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+				var scene  = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 				mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
 				var swlat = 37.70120736474139;
@@ -83,10 +87,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (geojson.type == "Feature") {
 					is_collection = false;
 					mapzen.whosonfirst.leaflet.fit_map(map, geojson);
-					mapzen.whosonfirst.leaflet.draw_poly(map, geojson, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
+					self.show_feature_preview(map, geojson);
+					self.show_props_preview(geojson);
 				} else if (geojson.type == "FeatureCollection") {
 					is_collection = true;
 					self.show_collection_preview(map, geojson);
+					self.show_collection_props_preview(geojson);
 				}
 			}
 
@@ -104,7 +110,40 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var feature;
 			for (var i = 0; i < collection.features.length; i++) {
 				feature = collection.features[i];
-				mapzen.whosonfirst.leaflet.draw_poly(map, feature, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
+				self.show_feature_preview(map, feature);
+			}
+		},
+
+		show_feature_preview: function(map, feature) {
+			if (feature.properties['wof:placetype'] == 'venue') {
+				var lat = parseFloat(feature.properties['geom:latitude']);
+				var lng = parseFloat(feature.properties['geom:longitude']);
+				marker = new L.Marker([lat, lng], {
+					icon: new VenueIcon()
+				}).addTo(map);
+			} else {
+				var style = mapzen.whosonfirst.leaflet.styles.consensus_polygon();
+				mapzen.whosonfirst.leaflet.draw_poly(map, feature, style);
+			}
+		},
+
+		show_props_preview: function(geojson) {
+			var html = '<h3>Include properties</h3>';
+			html += '<ul id="upload-properties">';
+			var props = self.get_geojson_props(geojson);
+			$.each(props, function(i, prop) {
+				html += '<li><input type="checkbox" class="property" id="property-' + prop + '"><label for="property-' + prop + '"><code>' + prop + '</code></label></li>';
+			});
+			html += '</ul>';
+
+			$preview_props.html(html);
+		},
+
+		get_geojson_props: function(geojson) {
+			if (geojson.type == 'Feature') {
+				return Object.keys(geojson.properties);
+			} else if (geojson.features) {
+				// Do the FeatureCollection properties
 			}
 		},
 
@@ -142,9 +181,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var data = new FormData();
 			data.append('crumb', crumb);
 			data.append('upload_file', geojson_file);
-			if ($('input[name="ignore_properties"]').get(0).checked) {
-				data.append('ignore_properties', 1);
-			}
 			mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
 
 			// Show some user feedback
@@ -159,8 +195,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					var esc_id = esc_html(id);
 					var esc_name = esc_html(name);
 
-				    	var url = '/id/' + esc_id;
-				    	url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+					var url = '/id/' + esc_id;
+					url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 
 					links.push('<a href="' + url + '"><code>' + esc_id + '</code> ' + esc_name + '</a>');
 				});
@@ -179,6 +215,20 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	};
 
 	$(document).ready(function(){
+
+		VenueIcon = L.Icon.extend({
+			options: {
+				iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
+				iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
+				shadowUrl: null,
+				iconAnchor: new L.Point(13, 42),
+				iconSize: new L.Point(25, 42),
+				popupAnchor: new L.Point(0, -42)
+			}
+		});
+
+		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
+
 		self.setup_upload();
 	});
 
