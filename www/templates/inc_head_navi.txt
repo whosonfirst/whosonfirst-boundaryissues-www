@@ -39,7 +39,7 @@
 					<a href="#" id="navi-account" class="dropdown-toggle navi-label" data-toggle="dropdown" role="button">You <b class="caret caret-ch"></b></a>
 
 					<ul class="dropdown-menu" aria-labelledby="account-navi" role="menu">
-						<li id="signin"><a href="{$cfg.abs_root_url}signin/">Sign in with GitHub</a></li>
+						<li id="signin"><a href="{$cfg.abs_root_url}signin/?redir={$smarty.server.REQUEST_URI|@escape}">Sign in with GitHub</a></li>
 					</ul>
 
 				</li>
@@ -56,7 +56,7 @@
 	       <div class="form-group">
          	       <input type="text" class="form-control" placeholder="Search for a place" name="q" value="{$query|@escape}" id="search-input-x" />
        	       </div>
-	       
+
 	       {if 0}<small>🔍 or</small> <a href="{$cfg.abs_root_url}add/" title="add a new place">🖍</a>{/if}
 
 	       <a href="{$cfg.abs_root_url}add/" title="add a new place">+</a>
