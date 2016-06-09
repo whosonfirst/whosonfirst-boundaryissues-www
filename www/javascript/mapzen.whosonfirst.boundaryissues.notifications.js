@@ -16,22 +16,8 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/ws/');
 			url = url.replace(/^http:/, 'ws:');
 			url = url.replace(/^https:/, 'wss:');
-			var done = false;
-
-			var connect = function() {
-				if (! done) {
-					socket = new WebSocket(url);
-					socket.onmessage = self.handle_message;
-					socket.onclose = function() {
-						connect();
-					};
-					socket.onerror = function(e) {
-						console.log('WebSocket: onerror', e);
-					};
-				}
-			};
-			connect();
-
+			socket = new ReconnectingWebSocket(url);
+			socket.onmessage = self.handle_message;
 			$(window).on('beforeunload', function() {
 				done = true;
 				socket.close();
