@@ -18,6 +18,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    VenueIcon,
 	    poi_icon_base;
 
+	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
+
 	var self = {
 
 		setup_upload: function(){
@@ -136,7 +138,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var html = '<h3>Include properties</h3>';
 			html += '<ul id="upload-properties">';
 			$.each(props, function(i, prop) {
-				html += '<li><input type="checkbox" class="property" id="property-' + prop + '" name="include_property_' + prop + '" value="1"><label for="property-' + prop + '"><code>' + prop + '</code></label></li>';
+				var prop_esc = esc_str(prop);
+				html += '<li><input type="checkbox" class="property" id="property-' + prop_esc + '" name="properties[]" value="' + prop_esc + '"><label for="property-' + prop_esc + '"><code>' + prop_esc + '</code></label></li>';
 			});
 			html += '</ul>';
 
@@ -196,7 +199,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			data.append('crumb', crumb);
 			data.append('upload_file', geojson_file);
 			$('#upload-properties input').each(function(i, prop) {
-				if ($(prop).attr('name').match(/^include_property_/) &&
+				if ($(prop).attr('name') == 'properties[]' &&
 				    prop.checked) {
 					var name = $(prop).attr('name');
 					var value = $(prop).val();

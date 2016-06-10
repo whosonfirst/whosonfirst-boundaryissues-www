@@ -89,7 +89,7 @@
 
 	########################################################################
 
-	function wof_save_feature($geojson, $ignore_properties = false) {
+	function wof_save_feature($geojson, $selected_properties = null) {
 
 		$geojson_data = json_decode($geojson, true);
 		if (! $geojson_data) {
@@ -99,8 +99,8 @@
 			);
 		}
 
-		if ($ignore_properties) {
-			$rsp = wof_save_geometry($geojson);
+		if (is_array($selected_properties)) {
+			$rsp = wof_save_merged($geojson, $selected_properties);
 			if (! $rsp) {
 				return $rsp;
 			}
@@ -219,9 +219,9 @@
 	########################################################################
 
 	// This function finds an existing WOF record and just grafts in the new
-	// geometry from the $geojson argument. (20160513/dphiffer)
+	// geometry/properties from the $geojson argument. (20160513/dphiffer)
 
-	function wof_save_geometry($geojson) {
+	function wof_save_merged($geojson, $selected_properties = null) {
 
 		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
@@ -269,6 +269,13 @@
 
 		// Update the geometry
 		$existing_feature['geometry'] = $feature['geometry'];
+
+		if ($selected_properties) {
+			foreach ($selected_properties as $prop) {
+				$value = $feature['properties'][$prop];
+				$existing_feature['properties'][$prop] = $value;
+			}
+		}
 
 		return array(
 			'ok' => 1,

@@ -7,9 +7,14 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$ignore_properties = post_bool('ignore_properties');
+		$selected_properties = array();
+		if ($_POST['properties']) {
+			foreach ($_POST['properties'] as $property) {
+				$selected_properties[] = sanitize($property, 'str');
+			}
+		}
 		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
-		$rsp = wof_save_feature($geojson, $ignore_properties);
+		$rsp = wof_save_feature($geojson, $selected_properties);
 
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';
