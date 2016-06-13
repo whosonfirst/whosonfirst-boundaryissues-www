@@ -2,7 +2,6 @@
 	"name": "wof:name",
 	"id": "wof:id",
 	"placetype": "wof:placetype",
-	"placetype": "wof:placetype",
 	"parent_id": "wof:parent_id",
 	"parent": "wof:parent_id",
 	"wof_country": "wof:country",
