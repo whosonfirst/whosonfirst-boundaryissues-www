@@ -175,7 +175,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			html += '<div class="headroom"><input type="checkbox" class="property" id="upload-geometry" name="geometry" value="1" checked="checked"><label for="upload-geometry">Update geometry</label></div>';
 
 			$.each(groups, function(i, group) {
-				console.log(group);
 				if (group != '_no_group_' &&
 				    group_props[group].length == 1) {
 					group_props._no_group_.push(group_props[group][0]);
@@ -185,11 +184,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 				group_props[group].sort();
 				html += '<div class="property-group col-md-4 headroom">';
-				if (group == '_no_group_') {
-					html += '<strong>Other properties</strong>';
-				} else {
-					html += '<strong>' + group + ' properties</strong>';
-				}
+				var group_select = '<input type="checkbox" id="group-select-' + group + '">';
+				var group_text = (group == '_no_group_') ? 'Other properties' : group + ' properties';
+				var group_label = '<label for="group-select-' + group + '">' + group_text + '</label>';
+				html += '<div class="group-select">' + group_select + group_label + '</div>';
 				html += '<ul class="upload-properties">';
 				$.each(group_props[group], function(j, item) {
 					html += '<li>' + item + '</li>';
@@ -199,6 +197,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 
 			$preview_props.html(html);
+			$preview_props.find('.group-select input').change(function(e) {
+				var parent = $(e.target).closest('.property-group');
+				parent.find('.upload-properties input').each(function(i, checkbox) {
+					checkbox.checked = e.target.checked;
+				});
+			});
 		},
 
 		get_geojson_props: function(geojson) {

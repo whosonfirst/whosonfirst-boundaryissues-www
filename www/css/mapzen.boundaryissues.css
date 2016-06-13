@@ -259,14 +259,21 @@ tr.object-property.property-visible {
 	float: left;
 	margin-top: 0.5em;
 	padding-left: 0;
-	height: 190px;
+	max-height: 190px;
+	width: 100%;
 	overflow-y: auto;
 }
 
 .upload-properties li {
 	list-style: none;
+	padding-left: 12px;
 }
 
 .upload-properties li small {
 	color: #808080;
+}
+
+.group-select {
+	margin-left: -15px;
+	border-bottom: 1px solid #ccc;
 }
