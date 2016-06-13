@@ -231,13 +231,34 @@
 
 	function api_wof_property_list() {
 
-		// Returns a list of properties selected on the WOF upload
-		// page.
+		// Returns a list of properties selected from the WOF upload
+		// page, in the format:
+		//
+		//   array(
+		//      'source_key' => 'target_key'
+		//   )
+		//
+		// The source_key is where we find the *value* within the file
+		// upload. The target_key is where we'll merge it in the
+		// existing WOF record. The source_key can sometimes be modified
+		// when the other tools don't like colons in the property names.
+		//
+		// See also: wof_save_merged()
+		// (20160613/dphiffer)
 
 		$properties = array();
 		if ($_POST['properties']) {
+			$lookup = $_POST['properties_lookup'];
+			if (! $lookup) {
+				$lookup = array();
+			}
 			foreach ($_POST['properties'] as $property) {
-				$properties[] = sanitize($property, 'str');
+				$key = sanitize($property, 'str');
+				$value = $key;
+				if ($lookup[$key]) {
+					$value = sanitize($lookup[$key], 'str');
+				}
+				$properties[$key] = $value;
 			}
 		}
 		return $properties;

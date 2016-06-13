@@ -39,5 +39,6 @@
 	"phone": "sg:phone",
 	"postcode": "sg:postcode",
 	"province": "sg:province",
-	"tags": "sg:tags"
+	"tags": "sg:tags",
+	"label": "wof:label"
 }

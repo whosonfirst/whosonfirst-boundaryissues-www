@@ -207,7 +207,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var group_label = '<label for="group-select-' + group + '">' + group_text + '</label>';
 				html += '<div class="group-select">' + group_select + group_label + '</div>';
 				html += '<ul class="upload-properties">';
-				$.each(group_props[group], function(j, item) {
+				$.each(group_props[group], function(i, item) {
 					html += '<li>' + item + '</li>';
 				});
 				html += '</ul>';
@@ -251,16 +251,18 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 		get_property_html: function(prop, orig_prop) {
 			var attrs = '';
+			var hidden = '';
 			var prop_esc = esc_str(prop);
 			var orig_esc = esc_str(orig_prop);
 			var aside = '';
 			if (prop != orig_prop) {
 				aside = ' <small><i>' + orig_esc + '</i></small>';
+				hidden = '<input type="hidden" name="properties_lookup[' + orig_esc + ']" value="' + prop_esc + '">';
 			}
 			if (prop == 'wof:id') {
 				attrs = ' checked="checked" disabled="disabled"';
 			}
-			return '<input type="checkbox" class="property" id="property-' + prop_esc + '" name="properties[]" value="' + prop_esc + '"' + attrs + '><label for="property-' + prop_esc + '"><code>' + prop_esc + '</code>' + aside + '</label>';
+			return '<input type="checkbox" class="property" id="property-' + orig_esc + '" name="properties[]" value="' + prop_esc + '"' + attrs + '><label for="property-' + orig_esc + '"><code>' + prop_esc + '</code>' + aside + '</label>' + hidden;
 		},
 
 		post_file: function() {

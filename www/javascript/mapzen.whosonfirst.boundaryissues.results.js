@@ -20,7 +20,7 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 			var lon = -73.9815902709961;
 			var zoom = 12;
 
-		    	var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+			var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 			mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
 			map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(

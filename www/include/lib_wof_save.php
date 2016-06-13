@@ -247,6 +247,9 @@
 		} else if ($props['wof_id']) {
 			// ogr2ogr seems to not like colons in property names
 			$wof_id = intval($props['wof_id']);
+		} else if ($props['id']) {
+			// ogr2ogr seems to not like colons in property names
+			$wof_id = intval($props['id']);
 		} else if ($feature['id']) {
 			$wof_id = intval($feature['id']);
 		} else {
@@ -274,9 +277,9 @@
 
 		// Update selected properties
 		if ($selected_properties) {
-			foreach ($selected_properties as $prop) {
-				$value = $feature['properties'][$prop];
-				$existing_feature['properties'][$prop] = $value;
+			foreach ($selected_properties as $prop_source => $prop_target) {
+				$value = $feature['properties'][$prop_source];
+				$existing_feature['properties'][$prop_target] = $value;
 			}
 		}
 
