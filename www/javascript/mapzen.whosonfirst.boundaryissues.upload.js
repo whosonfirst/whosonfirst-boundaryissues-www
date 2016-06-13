@@ -73,38 +73,21 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$('#upload-btn').addClass('btn-primary');
 				$('#upload-btn').attr('disabled', false);
 
-				$preview_map.removeClass('hidden');
-
-				var scene  = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
-				mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
-
-				var swlat = 37.70120736474139;
-				var swlon = -122.68707275390624;
-				var nelat = 37.80924146650164;
-				var nelon = -122.21912384033203;
-
-				// Show the preview map
-				var map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
-					'upload-preview-map',
-					swlat, swlon, nelat, nelon
-				);
-
-				// Clear the map if a feature is already on there
-				map.eachLayer(function(layer) {
-					if (layer.feature) {
-						map.removeLayer(layer);
-					}
-				});
+				var map = self.setup_map_preview(geojson);
 
 				if (geojson.type == "Feature") {
 					is_collection = false;
-					mapzen.whosonfirst.leaflet.fit_map(map, geojson);
-					self.show_feature_preview(map, geojson);
+					if (map) {
+						mapzen.whosonfirst.leaflet.fit_map(map, geojson);
+						self.show_feature_preview(map, geojson);
+					}
 					self.show_props_preview(geojson);
 				} else if (geojson.type == "FeatureCollection") {
 					is_collection = true;
-					self.show_collection_preview(map, geojson);
-					self.show_collection_props_preview(geojson);
+					if (map) {
+						self.show_collection_preview(map, geojson);
+					}
+					self.show_props_preview(geojson);
 				}
 			}
 
@@ -115,6 +98,38 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			} else {
 				mapzen.whosonfirst.log.error('No geojson_file to preview.');
 			}
+		},
+
+		setup_map_preview: function(geojson) {
+
+			if (! self.has_geometry(geojson)) {
+				return null;
+			}
+
+			$preview_map.removeClass('hidden');
+
+			var scene  = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
+			mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
+
+			var swlat = 37.70120736474139;
+			var swlon = -122.68707275390624;
+			var nelat = 37.80924146650164;
+			var nelon = -122.21912384033203;
+
+			// Show the preview map
+			var map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
+				'upload-preview-map',
+				swlat, swlon, nelat, nelon
+			);
+
+			// Clear the map if a feature is already on there
+			map.eachLayer(function(layer) {
+				if (layer.feature) {
+					map.removeLayer(layer);
+				}
+			});
+
+			return map;
 		},
 
 		show_collection_preview: function(map, collection) {
@@ -171,8 +186,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				groups.push('_no_group_');
 			}
 
-			var html = '<h3>Include properties</h3>';
-			html += '<div class="headroom"><input type="checkbox" class="property" id="upload-geometry" name="geometry" value="1" checked="checked"><label for="upload-geometry">Update geometry</label></div>';
+			var html = '';
+
+			if (self.has_geometry(geojson)) {
+				html += '<div class="headroom"><input type="checkbox" class="property" id="upload-geometry" name="geometry" value="1" checked="checked"><label for="upload-geometry">Update geometry</label></div>';
+			}
 
 			$.each(groups, function(i, group) {
 				if (group != '_no_group_' &&
@@ -232,13 +250,17 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		get_property_html: function(prop, orig_prop) {
+			var attrs = '';
 			var prop_esc = esc_str(prop);
 			var orig_esc = esc_str(orig_prop);
 			var aside = '';
 			if (prop != orig_prop) {
 				aside = ' <small><i>' + orig_esc + '</i></small>';
 			}
-			return '<input type="checkbox" class="property" id="property-' + prop_esc + '" name="properties[]" value="' + prop_esc + '"><label for="property-' + prop_esc + '"><code>' + prop_esc + '</code>' + aside + '</label>';
+			if (prop == 'wof:id') {
+				attrs = ' checked="checked" disabled="disabled"';
+			}
+			return '<input type="checkbox" class="property" id="property-' + prop_esc + '" name="properties[]" value="' + prop_esc + '"' + attrs + '><label for="property-' + prop_esc + '"><code>' + prop_esc + '</code>' + aside + '</label>';
 		},
 
 		post_file: function() {
@@ -278,17 +300,20 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var empty = true;
 
-			if ($('#upload-geometry').get(0).checked) {
+			if ($('#upload-geometry').length > 0 &&
+			    $('#upload-geometry').get(0).checked) {
 				data.append('geometry', 1);
 				empty = false;
 			}
-			$('#upload-properties input').each(function(i, prop) {
+			$('.upload-properties input').each(function(i, prop) {
 				if ($(prop).attr('name') == 'properties[]' &&
 				    prop.checked) {
 					var name = $(prop).attr('name');
 					var value = $(prop).val();
 					data.append(name, value);
-					empty = false;
+					if (value != 'wof:id') {
+						empty = false;
+					}
 				}
 			});
 
@@ -325,6 +350,22 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
 				mapzen.whosonfirst.log.error(rsp);
+			}
+		},
+
+		has_geometry: function(geojson) {
+			if (geojson.type == 'Feature') {
+				return !! geojson.geometry;
+			} else if (geojson.type == 'FeatureCollection') {
+				var has_geometry = false;
+				$.each(geojson.features, function(i, feature) {
+					if (geojson.geometry) {
+						has_geometry = true;
+					}
+				});
+				return has_geometry;
+			} else {
+				return false;
 			}
 		}
 
