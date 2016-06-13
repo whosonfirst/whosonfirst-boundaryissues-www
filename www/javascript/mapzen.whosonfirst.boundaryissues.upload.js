@@ -136,6 +136,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 
 			var html = '<h3>Include properties</h3>';
+			html += '<div class="headroom"><input type="checkbox" class="property" id="upload-geometry" name="geometry" value="1" checked="checked"><label for="upload-geometry">Update geometry</label></div>';
 			html += '<ul id="upload-properties">';
 			$.each(props, function(i, prop) {
 				var prop_esc = esc_str(prop);
@@ -178,7 +179,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var api_method = 'wof.upload_feature';
 			}
 
-
 			var onsuccess = function(rsp) {
 				self.show_result(rsp);
 				mapzen.whosonfirst.log.debug(rsp);
@@ -198,14 +198,27 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var data = new FormData();
 			data.append('crumb', crumb);
 			data.append('upload_file', geojson_file);
+
+			var empty = true;
+
+			if ($('#upload-geometry').get(0).checked) {
+				data.append('geometry', 1);
+				empty = false;
+			}
 			$('#upload-properties input').each(function(i, prop) {
 				if ($(prop).attr('name') == 'properties[]' &&
 				    prop.checked) {
 					var name = $(prop).attr('name');
 					var value = $(prop).val();
 					data.append(name, value);
+					empty = false;
 				}
 			});
+
+			if (empty) {
+				$result.html("You haven't selected anything to update.");
+				return;
+			}
 
 			mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
 

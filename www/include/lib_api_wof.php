@@ -1,5 +1,8 @@
 <?php
+
 	loadlib('wof_save');
+
+	########################################################################
 
 	function api_wof_upload_feature() {
 
@@ -7,14 +10,10 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$selected_properties = array();
-		if ($_POST['properties']) {
-			foreach ($_POST['properties'] as $property) {
-				$selected_properties[] = sanitize($property, 'str');
-			}
-		}
 		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
-		$rsp = wof_save_feature($geojson, $selected_properties);
+		$geometry = post_bool('geometry');
+		$properties = api_wof_property_list();
+		$rsp = wof_save_feature($geojson, $geometry, $properties);
 
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';
@@ -31,21 +30,26 @@
 		}
 	}
 
+	########################################################################
+
 	function api_wof_upload_collection() {
 
 		if (! $_FILES["upload_file"]) {
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$ignore_properties = post_bool('ignore_properties');
 		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
 		$collection = json_decode($geojson, 'as hash');
+
+		$geometry = post_bool('geometry');
+		$properties = api_wof_property_list();
+
 		$errors = array();
 		$saved_wof = array();
 
 		foreach ($collection['features'] as $index => $feature) {
 			$geojson = json_encode($feature);
-			$rsp = wof_save_feature($geojson, $ignore_properties);
+			$rsp = wof_save_feature($geojson, $geometry, $properties);
 			if (! $rsp['ok']) {
 				$errors[] = "Feature $index: {$rsp['error']}";
 			} else {
@@ -66,6 +70,8 @@
 		}
 	}
 
+	########################################################################
+
 	function api_wof_save() {
 
 		$geojson = post_str('geojson');
@@ -81,6 +87,8 @@
 		}
 		api_output_ok($rsp);
 	}
+
+	########################################################################
 
 	function api_wof_save_batch() {
 
@@ -111,6 +119,8 @@
 		}
 		api_output_ok($rsp);
 	}
+
+	########################################################################
 
 	function api_wof_pip() {
 
@@ -143,6 +153,8 @@
 		api_output_ok($results);
 	}
 
+	########################################################################
+
 	function api_wof_encode() {
 
 		$geojson = post_str('geojson');
@@ -160,6 +172,8 @@
 			'encoded' => $rsp['encoded']
 		));
 	}
+
+	########################################################################
 
 	function api_wof_search() {
 
@@ -212,3 +226,21 @@
 			'results' => $body['hits']['hits']
 		));
 	}
+
+	########################################################################
+
+	function api_wof_property_list() {
+
+		// Returns a list of properties selected on the WOF upload
+		// page.
+
+		$properties = array();
+		if ($_POST['properties']) {
+			foreach ($_POST['properties'] as $property) {
+				$properties[] = sanitize($property, 'str');
+			}
+		}
+		return $properties;
+	}
+
+	# the end
