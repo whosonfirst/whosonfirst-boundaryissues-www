@@ -14,6 +14,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    $preview_props,
 	    geojson_file,
 	    upload_is_ready = false,
+	    properties_are_ready = false,
 	    is_collection,
 	    VenueIcon,
 	    poi_icon_base;
@@ -39,10 +40,19 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Intercept the form submit event and upload the file via API
 			$form.submit(function(e){
 				e.preventDefault();
-				if (! upload_is_ready) {
+				if (! upload_is_ready ||
+				    ! properties_are_ready) {
 					return;
 				}
 				self.post_file();
+			});
+		},
+
+		setup_properties_lookup: function() {
+			var lookup_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/properties_lookup.json');
+			$.get(lookup_url, function(lookup) {
+				self.properties_lookup = lookup;
+				properties_are_ready = true;
 			});
 		},
 
@@ -134,15 +144,59 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			if (! props) {
 				return;
 			}
+			var groups = [];
+			var group_props = {};
+			$.each(props, function(i, orig_prop) {
+				var prop = self.get_translated_property(orig_prop);
+				var group = '_no_group_';
+				var group_match = prop.match(/^([a-z0-9_]+)\:/i);
+				if (group_match) {
+					group = group_match[1];
+				}
+				if (! group_props[group]) {
+					group_props[group] = [];
+					groups.push(group);
+				}
+				var html = self.get_property_html(prop, orig_prop);
+				group_props[group].push(html);
+			});
+
+			groups.sort();
+			if (! group_props._no_group_) {
+				group_props._no_group_ = [];
+				groups.push('_no_group_');
+			} else {
+				// Always put the "Other" properties last
+				groups.shift();
+				groups.push('_no_group_');
+			}
 
 			var html = '<h3>Include properties</h3>';
 			html += '<div class="headroom"><input type="checkbox" class="property" id="upload-geometry" name="geometry" value="1" checked="checked"><label for="upload-geometry">Update geometry</label></div>';
-			html += '<ul id="upload-properties">';
-			$.each(props, function(i, prop) {
-				var prop_esc = esc_str(prop);
-				html += '<li><input type="checkbox" class="property" id="property-' + prop_esc + '" name="properties[]" value="' + prop_esc + '"><label for="property-' + prop_esc + '"><code>' + prop_esc + '</code></label></li>';
+
+			$.each(groups, function(i, group) {
+				console.log(group);
+				if (group != '_no_group_' &&
+				    group_props[group].length == 1) {
+					group_props._no_group_.push(group_props[group][0]);
+					return;
+				} else if (group_props[group].length == 0) {
+					return;
+				}
+				group_props[group].sort();
+				html += '<div class="property-group col-md-4 headroom">';
+				if (group == '_no_group_') {
+					html += '<strong>Other properties</strong>';
+				} else {
+					html += '<strong>' + group + ' properties</strong>';
+				}
+				html += '<ul class="upload-properties">';
+				$.each(group_props[group], function(j, item) {
+					html += '<li>' + item + '</li>';
+				});
+				html += '</ul>';
+				html += '</div>';
 			});
-			html += '</ul>';
 
 			$preview_props.html(html);
 		},
@@ -165,9 +219,28 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			return null;
 		},
 
+		get_translated_property: function(prop) {
+			if (self.properties_lookup[prop]) {
+				return self.properties_lookup[prop];
+			} else {
+				return prop;
+			}
+		},
+
+		get_property_html: function(prop, orig_prop) {
+			var prop_esc = esc_str(prop);
+			var orig_esc = esc_str(orig_prop);
+			var aside = '';
+			if (prop != orig_prop) {
+				aside = ' <small><i>' + orig_esc + '</i></small>';
+			}
+			return '<input type="checkbox" class="property" id="property-' + prop_esc + '" name="properties[]" value="' + prop_esc + '"><label for="property-' + prop_esc + '"><code>' + prop_esc + '</code>' + aside + '</label>';
+		},
+
 		post_file: function() {
 
-			if (! upload_is_ready) {
+			if (! upload_is_ready ||
+			    ! properties_are_ready) {
 				return;
 			}
 
@@ -269,6 +342,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 
 		self.setup_upload();
+		self.setup_properties_lookup();
 	});
 
 	return self;

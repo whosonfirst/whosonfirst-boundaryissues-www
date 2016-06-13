@@ -255,11 +255,18 @@ tr.object-property.property-visible {
 	color: #fff;
 }
 
-#upload-properties {
-	margin-top: 1em;
+.upload-properties {
+	float: left;
+	margin-top: 0.5em;
 	padding-left: 0;
+	height: 190px;
+	overflow-y: auto;
 }
 
-#upload-properties li {
+.upload-properties li {
 	list-style: none;
+}
+
+.upload-properties li small {
+	color: #808080;
 }
