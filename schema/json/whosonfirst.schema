@@ -76,9 +76,6 @@
 							"type": "string",
 							"default": "uuuu"
 						},
-						"wof:created": {
-							"type": "integer"
-						},
 						"wof:lastmodified": {
 							"type": "integer"
 						},
