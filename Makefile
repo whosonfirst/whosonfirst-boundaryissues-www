@@ -1,6 +1,7 @@
 TIMESTAMP = $(shell date +%Y%m%d%H%M%S)
 JS_GITHUB = https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master
 JSON_SCHEMA_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-json-schema/master
+WOF_PROPERTY_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-properties/master
 
 htusers:
 	htpasswd -c -B apache/.htusers mapzen
@@ -65,6 +66,10 @@ update_json_schema:
 	curl -s -o ./schema/json/geojson.schema $(JSON_SCHEMA_GITHUB)/schema/geojson.schema
 	curl -s -o ./schema/json/bbox.schema $(JSON_SCHEMA_GITHUB)/schema/bbox.schema
 	curl -s -o ./schema/json/geometry.schema $(JSON_SCHEMA_GITHUB)/schema/geometry.schema
+
+update_property_aliases:
+	rm -rf ./www/meta/property_aliases.json
+	curl -s -o ./www/meta/property_aliases.json $(WOF_PROPERTY_GITHUB)/aliases/property_aliases.json
 
 localforage:
 	curl -s -o www/javascript/localforage.js https://raw.githubusercontent.com/mozilla/localForage/master/dist/localforage.js

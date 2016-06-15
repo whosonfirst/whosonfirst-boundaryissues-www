@@ -48,10 +48,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
-		setup_properties_lookup: function() {
-			var lookup_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/properties_lookup.json');
-			$.get(lookup_url, function(lookup) {
-				self.properties_lookup = lookup;
+		setup_property_aliases: function() {
+			var property_alias_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/property_aliases.json');
+			$.get(property_alias_url, function(aliases) {
+				self.property_aliases = aliases;
 				properties_are_ready = true;
 			});
 		},
@@ -242,8 +242,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		get_translated_property: function(prop) {
-			if (self.properties_lookup[prop]) {
-				return self.properties_lookup[prop];
+			if (self.property_aliases[prop]) {
+				return self.property_aliases[prop];
 			} else {
 				return prop;
 			}
@@ -257,7 +257,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var aside = '';
 			if (prop != orig_prop) {
 				aside = ' <small><i>' + orig_esc + '</i></small>';
-				hidden = '<input type="hidden" name="properties_lookup[' + orig_esc + ']" value="' + prop_esc + '">';
+				hidden = '<input type="hidden" name="property_aliases[' + orig_esc + ']" value="' + prop_esc + '">';
 			}
 			if (prop == 'wof:id') {
 				attrs = ' checked="checked" disabled="disabled"';
@@ -389,7 +389,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 
 		self.setup_upload();
-		self.setup_properties_lookup();
+		self.setup_property_aliases();
 	});
 
 	return self;

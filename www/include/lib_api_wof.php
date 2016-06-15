@@ -248,15 +248,15 @@
 
 		$properties = array();
 		if ($_POST['properties']) {
-			$lookup = $_POST['properties_lookup'];
-			if (! $lookup) {
-				$lookup = array();
+			$aliases = $_POST['property_aliases'];
+			if (! $aliases) {
+				$aliases = array();
 			}
 			foreach ($_POST['properties'] as $property) {
 				$key = sanitize($property, 'str');
 				$value = $key;
-				if ($lookup[$key]) {
-					$value = sanitize($lookup[$key], 'str');
+				if ($aliases[$key]) {
+					$value = sanitize($aliases[$key], 'str');
 				}
 				$properties[$key] = $value;
 			}
