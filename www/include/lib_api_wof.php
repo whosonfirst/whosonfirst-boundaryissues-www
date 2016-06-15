@@ -1,6 +1,7 @@
 <?php
 
 	loadlib('wof_save');
+	loadlib('uuid');
 
 	########################################################################
 
@@ -19,8 +20,8 @@
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';
 			api_output_error(400, $error);
 		} else {
-			$id = intval($rsp['geojson']['properties']['wof:id']);
-			$name = $rsp['geojson']['properties']['wof:name'];
+			$id = intval($rsp['feature']['properties']['wof:id']);
+			$name = $rsp['feature']['properties']['wof:name'];
 			api_output_ok(array(
 				'ok' => 1,
 				'saved_wof' => array(
@@ -38,36 +39,43 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$geojson = file_get_contents($_FILES["upload_file"]["tmp_name"]);
-		$collection = json_decode($geojson, 'as hash');
+		$timestamp = time();
+		$user_id = $GLOBALS['user']['id'];
+		$uuid = uuid_v4();
+		$filename = "$timestamp-$user_id-$uuid.geojson";
 
-		$geometry = post_bool('geometry');
-		$properties = api_wof_property_list();
+		$upload_file = $_FILES["upload_file"]["tmp_name"];
+		$upload_dir = "{$GLOBALS['cfg']['wof_pending_dir']}upload/";
+		$upload_path = "$upload_dir$filename";
 
-		$errors = array();
-		$saved_wof = array();
-
-		foreach ($collection['features'] as $index => $feature) {
-			$geojson = json_encode($feature);
-			$rsp = wof_save_feature($geojson, $geometry, $properties);
-			if (! $rsp['ok']) {
-				$errors[] = "Feature $index: {$rsp['error']}";
-			} else {
-				$id = intval($rsp['geojson']['properties']['wof:id']);
-				$name = $rsp['geojson']['properties']['wof:name'];
-				$saved_wof[$id] = $name;
-			}
+		if (! file_exists($upload_dir)) {
+			mkdir($upload_dir, 0775, true);
 		}
 
-		if ($errors) {
-			$error = implode(', ', $errors);
-			api_output_error(400, $error);
-		} else {
-			api_output_ok(array(
-				'ok' => 1,
-				'saved_wof' => $saved_wof
-			));
+		move_uploaded_file($upload_file, $upload_path);
+
+		if (! file_exists($upload_path)) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not save pending uploaded file.'
+			);
 		}
+
+		$rsp = offline_tasks_schedule_task('process_feature_collection', array(
+			'upload_path' => $upload_path,
+			'geometry' => post_bool('geometry'),
+			'properties' => api_wof_property_list(),
+			'collection_uuid' => $uuid
+		));
+
+		if (! $rsp['ok']) {
+			api_output_error(400, 'Could not schedule a task to process the feature collection.');
+		}
+
+		api_output_ok(array(
+			'ok' => 1,
+			'collection_uuid' => $uuid
+		));
 	}
 
 	########################################################################

@@ -20,7 +20,7 @@
 	}
 
 	if (! $options['dry_run']) {
-		$lockfile = "{$GLOBALS['cfg']['wof_pending_log_dir']}SAVE_LOCKFILE";
+		$lockfile = "{$GLOBALS['cfg']['wof_pending_dir']}SAVE_LOCKFILE";
 		if (file_exists($lockfile)) {
 			die("Looks like save_pending.php might already be running.\n");
 		}

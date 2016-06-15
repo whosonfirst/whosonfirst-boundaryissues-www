@@ -83,24 +83,23 @@
 	loadlib("git");
 	loadlib("github_api");
 	loadlib("github_users");
-	loadlib("offline_tasks");
 	loadlib("offline_tasks_gearman");
 	loadlib("notifications");
 
 	########################################################################
 
-	function wof_save_feature($geojson, $geometry = null, $selected_properties = null) {
+	function wof_save_feature($geojson, $geometry = null, $properties = null, $collection_uuid = null) {
 
-		$geojson_data = json_decode($geojson, true);
-		if (! $geojson_data) {
+		$feature = json_decode($geojson, true);
+		if (! $feature) {
 			return array(
 				'ok' => 0,
 				'error' => "Could not parse input 'geojson' param."
 			);
 		}
 
-		if (is_array($selected_properties)) {
-			$rsp = wof_save_merged($geojson, $geometry, $selected_properties);
+		if (is_array($properties)) {
+			$rsp = wof_save_merged($geojson, $geometry, $properties);
 			if (! $rsp) {
 				return $rsp;
 			}
@@ -116,59 +115,59 @@
 		}
 
 		$geojson = $rsp['geojson'];
-		$geojson_data = json_decode($geojson, true);
-		if (! $geojson_data) {
+		$feature = json_decode($geojson, true);
+		if (! $feature) {
 			return array(
 				'ok' => 0,
 				'error' => 'GeoJSON was saved to disk, but it seems to be unparseable.'
 			);
 		}
 
-		$wof_id = $geojson_data['properties']['wof:id'];
+		$wof_id = $feature['properties']['wof:id'];
 		$timestamp = time();
 		$user_id = $GLOBALS['cfg']['user']['id'];
+		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
 
-		$pending_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_pending_dir'],
-			$wof_id
-		);
+		$pending_path = wof_utils_id2abspath($data_dir, $wof_id);
 
 		// Look up the git hash of the pending save
-		$rsp = git_execute($GLOBALS['cfg']['wof_pending_dir'], "hash-object $pending_path");
+		$rsp = git_execute($data_dir, "hash-object $pending_path");
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 		$git_hash = $rsp['rsp'];
 
 		// Save a snapshot to the pending/log directory
-		$pending_log_dir = $GLOBALS['cfg']['wof_pending_log_dir'];
-		if (! file_exists($pending_log_dir)) {
-			mkdir($pending_log_dir, 0775, true);
+		$pending_index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
+		if (! file_exists($pending_index_dir)) {
+			mkdir($pending_index_dir, 0775, true);
 		}
-		$pending_log_file = "$wof_id-$timestamp-$user_id-$git_hash.geojson";
-		$pending_log_path = "$pending_log_dir/$pending_log_file";
-		file_put_contents($pending_log_path, $geojson);
+		$pending_index_file = "$wof_id-$timestamp-$user_id-$git_hash.geojson";
+		$pending_index_path = "$pending_index_dir$pending_index_file";
+		file_put_contents($pending_index_path, $geojson);
 
 		// Make sure the pending log file actually exists
-		if (! file_exists($pending_log_path)) {
+		if (! file_exists($pending_index_path)) {
 			return array(
 				'ok' => 0,
-				'error' => "Oh no, your pending change wasn't logged."
+				'error' => "Oh no, your pending change wasn't saved."
 			);
 		}
 
 		// Schedule an offline index of the new record
 		$rsp = offline_tasks_schedule_task('index', array(
-			'geojson_data' => $geojson_data
+			'feature' => $feature
 		));
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
+		// Something something $collection_uuid...
+
 		return array(
 			'ok' => 1,
 			'wof_id' => $wof_id,
-			'geojson' => $geojson_data
+			'feature' => $feature
 		);
 	}
 
@@ -192,7 +191,7 @@
 				if (! $rsp['ok']) {
 					$errors[$wof_id] = $rsp['error'];
 				} else {
-					$saved[] = $rsp['geojson'];
+					$saved[] = $rsp['feature'];
 				}
 			} else {
 				$errors[$wof_id] = "Could not find WOF GeoJSON file.";
@@ -308,11 +307,10 @@
 			$oauth_token = $rsp['oauth_token'];
 		}
 
+		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
+
 		$rel_path = wof_utils_id2relpath($wof_id);
-		$abs_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_pending_dir'],
-			$wof_id
-		);
+		$abs_path = wof_utils_id2abspath($data_dir, $wof_id);
 
 		$geojson_str = file_get_contents($abs_path);
 		$feature = json_decode($geojson_str, "as hash");
@@ -361,11 +359,10 @@
 		// consistently returning 500 errors, so I made this workaround
 		// that uses vanilla `git` calls. (20160429/dphiffer)
 
+		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
+
 		$rel_path = wof_utils_id2relpath($wof_id);
-		$abs_path = wof_utils_id2abspath(
-			$GLOBALS['cfg']['wof_pending_dir'],
-			$wof_id
-		);
+		$abs_path = wof_utils_id2abspath($data_dir, $wof_id);
 
 		$geojson_str = file_get_contents($abs_path);
 		$feature = json_decode($geojson_str, "as hash");
@@ -466,9 +463,12 @@
 
 		$wof = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
+		$index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
+		$date = date('Ymd');
+		$log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/log/$date/";
 
 		// Group the pending updates by WOF id
-		$files = glob("{$GLOBALS['cfg']['wof_pending_log_dir']}*.geojson");
+		$files = glob("{$index_dir}*.geojson");
 		foreach ($files as $file) {
 			if (! preg_match($filename_regex, $file, $matches)) {
 				continue;
@@ -516,7 +516,7 @@
 				$wof_id
 			);
 			$pending_path = wof_utils_id2abspath(
-				$GLOBALS['cfg']['wof_pending_dir'],
+				"{$GLOBALS['cfg']['wof_pending_dir']}data/",
 				$wof_id
 			);
 
@@ -612,20 +612,25 @@
 			}
 		}
 
-		// Clean up the pending log files
+		// Clean up the pending index files
 		$updated = array();
+
+		if (! file_exists($log_dir)) {
+			mkdir($log_dir, 0775, true);
+		}
+
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
-				$log_file = $update['filename'];
+				$filename = $update['filename'];
 				if ($options['verbose']) {
-					echo "rm {$GLOBALS['cfg']['wof_pending_log_dir']}$log_file\n";
+					echo "mv $index_dir$filename $log_dir$filename\n";
 				}
 				if (! $options['dry_run']) {
-					unlink("{$GLOBALS['cfg']['wof_pending_log_dir']}$log_file");
+					rename("$index_dir$filename", "$log_dir$filename");
 				}
 			}
 			$pending_path = wof_utils_id2abspath(
-				$GLOBALS['cfg']['wof_pending_dir'],
+				"{$GLOBALS['cfg']['wof_pending_dir']}data/",
 				$wof_id
 			);
 			if ($options['verbose']) {
@@ -639,7 +644,7 @@
 
 		// Clean up any empty data directories
 		$find_path = $GLOBALS['find_path'];
-		$pending_dir = realpath($GLOBALS['cfg']['wof_pending_dir']);
+		$pending_dir = realpath("{$GLOBALS['cfg']['wof_pending_dir']}data/");
 		if ($options['verbose']) {
 			echo "find $pending_dir -type d -empty -delete\n";
 		}
@@ -684,6 +689,46 @@
 			'ok' => 1,
 			'updated' => $updated
 		);
+	}
+
+	########################################################################
+
+	function wof_save_feature_collection($path, $geometry, $properties, $collection_uuid) {
+
+		$geojson = file_get_contents($path);
+		$collection = json_decode($geojson, 'as hash');
+		$errors = array();
+
+		foreach ($collection['features'] as $index => $feature) {
+			$geojson = json_encode($feature);
+			$rsp = offline_tasks_schedule_task('process_feature', array(
+				'feature' => $feature,
+				'geometry' => $geometry,
+				'properties' => $properties,
+				'collection_uuid' => $collection_uuid
+			));
+			if (! $rsp['ok']) {
+				$errors[] = "Scheduling feature $index: {$rsp['error']}";
+			}
+		}
+
+		if ($errors) {
+			if (count($errors) > 5) {
+				// Don't go into detail about more than 5 errors
+				$errors = array_slice($errors, 0, 5);
+			}
+			$error = implode(', ', $errors);
+			return array(
+				'ok' => 0,
+				'error' => $error,
+				'collection_uuid' => $collection_uuid
+			);
+		} else {
+			return array(
+				'ok' => 1,
+				'collection_uuid' => $collection_uuid
+			);
+		}
 	}
 
 	# the end

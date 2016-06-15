@@ -63,7 +63,7 @@
 
 	function offline_tasks_do_index($data){
 
-		$doc = $data['geojson_data'];
+		$doc = $data['feature'];
 
 		$rsp = wof_elasticsearch_update_document($doc);
 		return $rsp;
@@ -80,6 +80,36 @@
 		$path = wof_utils_id2relpath($wof_id);
 
 		$rsp = wof_s3_put_file($rel, $path);
+		return $rsp;
+	}
+
+	########################################################################
+
+	$GLOBALS['offline_tasks_do_handlers']['process_feature_collection'] = 'offline_tasks_do_process_feature_collection';
+
+	function offline_tasks_do_process_feature_collection($data){
+
+		$path = $data['upload_path'];
+		$geometry = $data['geometry'];
+		$properties = $data['properties'];
+		$collection_uuid = $data['collection_uuid'];
+
+		$rsp = wof_save_feature_collection($path, $geometry, $properties, $collection_uuid);
+		return $rsp;
+	}
+
+	########################################################################
+
+	$GLOBALS['offline_tasks_do_handlers']['process_feature'] = 'offline_tasks_do_process_feature';
+
+	function offline_tasks_do_process_feature($data){
+
+		$feature = json_decode($data['feature'], 'as hash');
+		$geometry = $data['geometry'];
+		$properties = $data['properties'];
+		$collection_uuid = $data['collection_uuid'];
+
+		$rsp = wof_save_feature($feature, $geometry, $properties, $collection_uuid);
 		return $rsp;
 	}
 

@@ -40,7 +40,7 @@
 	function wof_utils_find_id($id, $more=array()){
 
 		$root_dirs = array(
-			$GLOBALS['cfg']['wof_pending_dir'],
+			"{$GLOBALS['cfg']['wof_pending_dir']}data/",
 			$GLOBALS['cfg']['wof_data_dir']
 		);
 		if ($more['root_dirs']) {
