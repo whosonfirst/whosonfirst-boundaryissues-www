@@ -7,13 +7,14 @@
 		die("Usage: php notify.php announcement [user id]");
 	}
 
-	$title = 'Announcement';
-	$body = $argv[1];
-	$details = array();
+	$payload = array(
+		'title' => 'Announcement',
+		'body' => $argv[1]
+	);
 
 	if (count($argv) > 2) {
-		$title = 'Private message';
-		$details['user_ids'] = array(intval($argv[2]));
+		$payload['title'] = 'Private message';
+		$payload['user_ids'] = array(intval($argv[2]));
 	}
 
-	$rsp = notifications_publish($title, $body, $details);
+	$rsp = notifications_publish($payload);

@@ -679,10 +679,12 @@
 				$title = "Published $count updates";
 				$body = implode(', ', $wof_updates);
 			}
-			$details = array(
+			$payload = array(
+				'title' => $title,
+				'body' => $body,
 				'user_ids' => array($user_id)
 			);
-			notifications_publish($title, $body, $details);
+			notifications_publish($payload);
 		}
 
 		return array(

@@ -17,20 +17,19 @@
 	//   to not be online when the notification is emited, you just don't
 	//   receive it.
 	// * Keeping a read/unread status. Currently a notification is just a
-	//   title/body/details JSON payload that gets blurted out and shown
-	//   if the user is on a BI page.
+	//   JSON payload that gets blurted out and shown if the user is on a BI
+	//   page.
 	//
 	// (20160603/dphiffer)
 
 	########################################################################
 
-	function notifications_publish($title, $body, $details = null) {
-		$payload = array(
-			'title' => emoji_alpha_filter($title),
-			'body' => emoji_alpha_filter($body)
-		);
-		if ($details) {
-			$payload['details'] = $details;
+	function notifications_publish($payload) {
+		if ($payload['title']) {
+			$payload['title'] = emoji_alpha_filter($payload['title']);
+		}
+		if ($payload['body']) {
+			$payload['body'] = emoji_alpha_filter($payload['body']);
 		}
 		$payload = json_encode($payload);
 		$rsp = redis_publish($GLOBALS['notifications_channel'], $payload);

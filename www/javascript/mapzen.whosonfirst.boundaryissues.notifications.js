@@ -47,10 +47,7 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 				}
 			}
 
-			if (! data.title ||
-			    ! data.body) {
-				mapzen.whosonfirst.log.error('Invalid notification: ' + JSON.stringify(data));
-			} else {
+			if (data.title && data.body) {
 				self.request_notification(data);
 
 				// Log it!
