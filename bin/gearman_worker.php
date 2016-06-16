@@ -2,7 +2,7 @@
 
 	include("init_local.php");
 	loadlib('gearman_worker');
-	loadlib('offline_tasks');
+	loadlib('offline_tasks_gearman');
 
 	list($worker, $err) = gearman_worker();
 	if ($err) {

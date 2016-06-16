@@ -702,7 +702,7 @@
 		foreach ($collection['features'] as $index => $feature) {
 			$geojson = json_encode($feature);
 			$rsp = offline_tasks_schedule_task('process_feature', array(
-				'feature' => $feature,
+				'geojson' => $geojson,
 				'geometry' => $geometry,
 				'properties' => $properties,
 				'collection_uuid' => $collection_uuid

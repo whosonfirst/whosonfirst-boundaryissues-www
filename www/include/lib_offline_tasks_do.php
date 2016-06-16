@@ -104,12 +104,12 @@
 
 	function offline_tasks_do_process_feature($data){
 
-		$feature = json_decode($data['feature'], 'as hash');
+		$geojson = $data['geojson'];
 		$geometry = $data['geometry'];
 		$properties = $data['properties'];
 		$collection_uuid = $data['collection_uuid'];
 
-		$rsp = wof_save_feature($feature, $geometry, $properties, $collection_uuid);
+		$rsp = wof_save_feature($geojson, $geometry, $properties, $collection_uuid);
 		return $rsp;
 	}
 
