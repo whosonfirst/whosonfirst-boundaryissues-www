@@ -16,17 +16,14 @@
 		$properties = api_wof_property_list();
 		$rsp = wof_save_feature($geojson, $geometry, $properties);
 
-		if (! $rsp['ok']) {
+		if (! $rsp['ok'] ||
+		    ! $rsp['feature']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Upload failed for some reason.';
 			api_output_error(400, $error);
 		} else {
-			$id = intval($rsp['feature']['properties']['wof:id']);
-			$name = $rsp['feature']['properties']['wof:name'];
 			api_output_ok(array(
 				'ok' => 1,
-				'saved_wof' => array(
-					$id => $name
-				)
+				'feature' => $rsp['feature']
 			));
 		}
 	}
@@ -40,7 +37,7 @@
 		}
 
 		$timestamp = time();
-		$user_id = $GLOBALS['user']['id'];
+		$user_id = $GLOBALS['cfg']['user']['id'];
 		$uuid = uuid_v4();
 		$filename = "$timestamp-$user_id-$uuid.geojson";
 
@@ -65,7 +62,8 @@
 			'upload_path' => $upload_path,
 			'geometry' => post_bool('geometry'),
 			'properties' => api_wof_property_list(),
-			'collection_uuid' => $uuid
+			'collection_uuid' => $uuid,
+			'user_id' => $user_id
 		));
 
 		if (! $rsp['ok']) {

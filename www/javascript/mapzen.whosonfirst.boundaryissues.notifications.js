@@ -56,6 +56,8 @@ mapzen.whosonfirst.boundaryissues.notifications = (function() {
 					log_msg += ' / ' + JSON.stringify(data.details);
 				}
 				mapzen.whosonfirst.log.info(log_msg);
+			} else {
+				$(document.body).trigger('notification', [data]);
 			}
 		},
 

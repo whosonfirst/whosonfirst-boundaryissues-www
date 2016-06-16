@@ -93,8 +93,9 @@
 		$geometry = $data['geometry'];
 		$properties = $data['properties'];
 		$collection_uuid = $data['collection_uuid'];
+		$user_id = $data['user_id'];
 
-		$rsp = wof_save_feature_collection($path, $geometry, $properties, $collection_uuid);
+		$rsp = wof_save_feature_collection($path, $geometry, $properties, $collection_uuid, $user_id);
 		return $rsp;
 	}
 
@@ -108,8 +109,9 @@
 		$geometry = $data['geometry'];
 		$properties = $data['properties'];
 		$collection_uuid = $data['collection_uuid'];
+		$user_id = $data['user_id'];
 
-		$rsp = wof_save_feature($geojson, $geometry, $properties, $collection_uuid);
+		$rsp = wof_save_feature($geojson, $geometry, $properties, $collection_uuid, $user_id);
 		return $rsp;
 	}
 

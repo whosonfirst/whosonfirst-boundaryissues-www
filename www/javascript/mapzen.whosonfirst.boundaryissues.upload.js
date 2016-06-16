@@ -16,6 +16,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    upload_is_ready = false,
 	    properties_are_ready = false,
 	    is_collection,
+	    feature_count,
 	    VenueIcon,
 	    poi_icon_base;
 
@@ -45,6 +46,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					return;
 				}
 				self.post_file();
+			});
+
+			// Listen for updates on FeatureCollection uploads
+			$(document.body).on('notification', function(e, data) {
+				self.collection_update(data);
 			});
 		},
 
@@ -281,6 +287,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 
 			var onsuccess = function(rsp) {
+
 				self.show_result(rsp);
 				mapzen.whosonfirst.log.debug(rsp);
 			};
@@ -331,27 +338,48 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		show_result: function(rsp) {
-			var esc_html = mapzen.whosonfirst.php.htmlspecialchars;
 			if (rsp.ok) {
-				var links = [];
-				$.each(rsp.saved_wof, function(id, name) {
-					var esc_id = esc_html(id);
-					var esc_name = esc_html(name);
-
-					var url = '/id/' + esc_id;
-					url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
-
-					links.push('<a href="' + url + '"><code>' + esc_id + '</code> ' + esc_name + '</a>');
-				});
-				var list = '<ul><li>' + links.join('</li><li>') + '</li></ul>';
-				$result.html('Success! ' + list);
-				mapzen.whosonfirst.log.debug(rsp);
+				var list = '<ul id="saved-wof"></ul>';
+				if (rsp.collection_uuid) {
+					var esc_uuid = esc_str(rsp.collection_uuid);
+					$result.html('<span id="collection-' + esc_uuid + '">Processing features...</span> ' + list);
+				} else if (rsp.feature) {
+					$result.html('Success! ' + list);
+					var wof_id = rsp.feature.properties['wof:id'];
+					var wof_name = rsp.feature.properties['wof:name'];
+					self.show_saved_wof_result(wof_id, wof_name);
+					mapzen.whosonfirst.log.debug(rsp);
+				}
 			} else if (rsp.error && rsp.error.message) {
 				$result.html('Error: ' + rsp.error.message);
 				mapzen.whosonfirst.log.error(rsp.error.message);
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
 				mapzen.whosonfirst.log.error(rsp);
+			}
+		},
+
+		show_saved_wof_result: function(id, name) {
+			var esc_id = esc_str(id);
+			var esc_name = esc_str(name);
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + esc_id);
+			$('#saved-wof').append('<li><a href="' + url + '"><code>' + esc_id + '</code> ' + esc_name + '</a></li>');
+		},
+
+		collection_update: function(data) {
+			if (data.feature_count) {
+				feature_count = parseInt(data.feature_count);
+			} else if (data.wof_id && data.wof_name) {
+				self.show_saved_wof_result(data.wof_id, data.wof_name);
+				if (feature_count) {
+					var $status = $('#collection-' + esc_str(data.collection_uuid));
+					var num = $('#saved-wof li').length;
+					if (num == feature_count) {
+						$status.html('Finished!');
+					} else {
+						$status.html('Saved ' + num + ' of ' + feature_count + '...');
+					}
+				}
 			}
 		},
 

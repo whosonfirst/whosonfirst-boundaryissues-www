@@ -18,7 +18,7 @@
 
 	Additionally, a snapshot of the file is added to the {$DIR}/pending/log
 	subdirectory. The filename of that copy has the following syntax:
-	{$WOF_ID}-{$UNIX_EPOCH}-{$USER_ID}-{$GIT_HASH}.geojson
+	{$UNIX_EPOCH}-{$USER_ID}-{$WOF_ID}-{$GIT_HASH}.geojson
 
 	This means at any given time, if you want to read the current state of
 	the WOF data, it will require two steps:
@@ -88,7 +88,7 @@
 
 	########################################################################
 
-	function wof_save_feature($geojson, $geometry = null, $properties = null, $collection_uuid = null) {
+	function wof_save_feature($geojson, $geometry = null, $properties = null, $collection_uuid = null, $user_id = null) {
 
 		$feature = json_decode($geojson, true);
 		if (! $feature) {
@@ -115,7 +115,7 @@
 		}
 
 		$geojson = $rsp['geojson'];
-		$feature = json_decode($geojson, true);
+		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
 			return array(
 				'ok' => 0,
@@ -125,7 +125,9 @@
 
 		$wof_id = $feature['properties']['wof:id'];
 		$timestamp = time();
-		$user_id = $GLOBALS['cfg']['user']['id'];
+		if (! $user_id) {
+			$user_id = $GLOBALS['cfg']['user']['id'];
+		}
 		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
 
 		$pending_path = wof_utils_id2abspath($data_dir, $wof_id);
@@ -142,7 +144,7 @@
 		if (! file_exists($pending_index_dir)) {
 			mkdir($pending_index_dir, 0775, true);
 		}
-		$pending_index_file = "$wof_id-$timestamp-$user_id-$git_hash.geojson";
+		$pending_index_file = "$timestamp-$user_id-$wof_id-$git_hash.geojson";
 		$pending_index_path = "$pending_index_dir$pending_index_file";
 		file_put_contents($pending_index_path, $geojson);
 
@@ -162,11 +164,16 @@
 			return $rsp;
 		}
 
-		// Something something $collection_uuid...
+		if ($collection_uuid) {
+			notifications_publish(array(
+				'collection_uuid' => $collection_uuid,
+				'wof_id' => $feature['properties']['wof:id'],
+				'wof_name' => $feature['properties']['wof:name']
+			));
+		}
 
 		return array(
 			'ok' => 1,
-			'wof_id' => $wof_id,
 			'feature' => $feature
 		);
 	}
@@ -464,8 +471,6 @@
 		$wof = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
 		$index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
-		$date = date('Ymd');
-		$log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/log/$date/";
 
 		// Group the pending updates by WOF id
 		$files = glob("{$index_dir}*.geojson");
@@ -473,7 +478,7 @@
 			if (! preg_match($filename_regex, $file, $matches)) {
 				continue;
 			}
-			list($filename, $wof_id, $timestamp, $user_id, $git_hash) = $matches;
+			list($filename, $timestamp, $user_id, $wof_id, $git_hash) = $matches;
 			if (! $wof[$wof_id]) {
 				$wof[$wof_id] = array();
 			}
@@ -615,10 +620,6 @@
 		// Clean up the pending index files
 		$updated = array();
 
-		if (! file_exists($log_dir)) {
-			mkdir($log_dir, 0775, true);
-		}
-
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
 				$filename = $update['filename'];
@@ -626,7 +627,7 @@
 					echo "mv $index_dir$filename $log_dir$filename\n";
 				}
 				if (! $options['dry_run']) {
-					rename("$index_dir$filename", "$log_dir$filename");
+					wof_save_log("$index_dir$filename");
 				}
 			}
 			$pending_path = wof_utils_id2abspath(
@@ -695,7 +696,7 @@
 
 	########################################################################
 
-	function wof_save_feature_collection($path, $geometry, $properties, $collection_uuid) {
+	function wof_save_feature_collection($path, $geometry, $properties, $collection_uuid, $user_id) {
 
 		$geojson = file_get_contents($path);
 		$collection = json_decode($geojson, 'as hash');
@@ -707,7 +708,8 @@
 				'geojson' => $geojson,
 				'geometry' => $geometry,
 				'properties' => $properties,
-				'collection_uuid' => $collection_uuid
+				'collection_uuid' => $collection_uuid,
+				'user_id' => $user_id
 			));
 			if (! $rsp['ok']) {
 				$errors[] = "Scheduling feature $index: {$rsp['error']}";
@@ -726,11 +728,35 @@
 				'collection_uuid' => $collection_uuid
 			);
 		} else {
+
+			// Announce how many features we are processing
+			notifications_publish(array(
+				'collection_uuid' => $collection_uuid,
+				'feature_count' => count($collection['features'])
+			));
+
+			// Move the FeatureCollection geojson to the log dir
+			wof_save_log($path);
+
 			return array(
 				'ok' => 1,
 				'collection_uuid' => $collection_uuid
 			);
 		}
+	}
+
+	########################################################################
+
+	# Move a pending geojson file into the log directory, organized by date.
+
+	function wof_save_log($path) {
+		$date = date('Ymd');
+		$log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log/$date/";
+		if (! file_exists($log_dir)) {
+			mkdir($log_dir, 0775, true);
+		}
+		$filename = basename($path);
+		rename($path, "$log_dir$filename");
 	}
 
 	# the end
