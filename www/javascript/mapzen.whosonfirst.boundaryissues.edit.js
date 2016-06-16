@@ -835,10 +835,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			};
 
 			var onsuccess = function(rsp) {
-				if (! rsp['wof_id']) {
+				if (! rsp['feature']) {
 					$status.html('Error saving GeoJSON: Bad response from server.');
 				} else if ($('input[name="wof_id"]').length == 0) {
-					var wof_id = parseInt(rsp['wof_id']);
+					var wof_id = parseInt(rsp.feature.properties['wof:id']);
 
 				    var url = '/id/' + wof_id + '/';
 				    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
