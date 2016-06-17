@@ -76,15 +76,14 @@
 
 	########################################################################
 
-	loadlib('wof_utils');
-	loadlib('wof_geojson');
-	loadlib('wof_elasticsearch');
-	loadlib('artisanal_integers');
+	loadlib("wof_utils");
+	loadlib("wof_geojson");
 	loadlib("git");
 	loadlib("github_api");
 	loadlib("github_users");
 	loadlib("offline_tasks_gearman");
 	loadlib("notifications");
+	loadlib("wof_schema");
 
 	########################################################################
 
@@ -281,10 +280,17 @@
 			$existing_feature['geometry'] = $feature['geometry'];
 		}
 
+		$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
+		$schema = wof_schema_fields($ref);
+
 		// Update selected properties
 		if ($selected_properties) {
 			foreach ($selected_properties as $prop_source => $prop_target) {
 				$value = $feature['properties'][$prop_source];
+
+				// Apply some type coersion to incoming values
+				$value = wof_save_schema_value($schema, $prop_target, $value);
+
 				$existing_feature['properties'][$prop_target] = $value;
 			}
 		}
@@ -757,6 +763,28 @@
 		}
 		$filename = basename($path);
 		rename($path, "$log_dir$filename");
+	}
+
+	########################################################################
+
+	# Apply type coersion based on JSON schema
+
+	function wof_save_schema_value($schema, $prop, $value) {
+
+		// Read this next line in the voice of an excited Steve Balmer
+		$props = $schema['properties']['properties']['properties'];
+
+		if (! $props[$prop]['type']) {
+			return $value;
+		} else if ($props[$prop]['type'] == 'integer') {
+			return intval($value);
+		} else if ($props[$prop]['type'] == 'number') {
+			return floatval($value);
+		} else if ($props[$prop]['type'] == 'string') {
+			return "$value";
+		} else {
+			return $value;
+		}
 	}
 
 	# the end
