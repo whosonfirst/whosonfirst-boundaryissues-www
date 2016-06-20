@@ -84,6 +84,7 @@
 	loadlib("offline_tasks_gearman");
 	loadlib("notifications");
 	loadlib("wof_schema");
+	loadlib("wof_events");
 
 	########################################################################
 
@@ -169,6 +170,14 @@
 				'wof_id' => $feature['properties']['wof:id'],
 				'wof_name' => $feature['properties']['wof:name']
 			));
+		} else {
+			$wof_ids = array(
+				$feature['properties']['wof:id']
+			);
+			$details = array(
+				'filename' => $pending_index_file
+			);
+			wof_events_publish('save_feature', $details, $wof_ids, $user_id);
 		}
 
 		return array(
