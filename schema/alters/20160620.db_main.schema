@@ -1,0 +1,8 @@
+CREATE TABLE `users_events` (
+	`id` int(11) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`user_id` int(10) unsigned NOT NULL,
+	`event` text,
+	`created` int(10) unsigned NOT NULL,
+	KEY `by_user` (`user_id`),
+	KEY `by_timestamp` (`created`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
