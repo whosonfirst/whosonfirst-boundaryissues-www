@@ -1,4 +1,4 @@
-CREATE TABLE `users_events` (
+CREATE TABLE `boundaryissues_events` (
 	`id` int(11) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`user_id` int(10) unsigned NOT NULL,
 	`wof_id` int(10) unsigned,
