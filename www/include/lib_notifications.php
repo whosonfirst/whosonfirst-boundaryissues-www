@@ -2,6 +2,7 @@
 
 	loadlib("redis");
 	loadlib("emoji_alpha");
+	loadlib("wof_events");
 	$GLOBALS['notifications_channel'] = 'notifications';
 
 	// This is a work in progress. There are a few issues that I'm not even
@@ -31,8 +32,18 @@
 		if ($payload['body']) {
 			$payload['body'] = emoji_alpha_filter($payload['body']);
 		}
-		$payload = json_encode($payload);
-		$rsp = redis_publish($GLOBALS['notifications_channel'], $payload);
+		$payload_json = json_encode($payload);
+		$rsp = redis_publish($GLOBALS['notifications_channel'], $payload_json);
+
+		if (! empty($payload['user_ids'])) {
+			$wof_ids = null;
+			if ($payload['wof_ids']) {
+				$wof_ids = $payload['wof_ids'];
+			}
+			foreach ($payload['user_ids'] as $user_id) {
+				wof_events_publish("notification", $payload, $wof_ids, $user_id);
+			}
+		}
 
 		return $rsp;
 	}

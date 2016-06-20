@@ -2,10 +2,6 @@
 
 	function wof_events_publish($type, $details, $wof_ids = null, $user_id = null) {
 
-		if (! $user_id) {
-			$user_id = $GLOBALS['cfg']['user']['id'];
-		}
-
 		$enc_type = addslashes($type);
 		$enc_details = addslashes(json_encode($details));
 		$enc_created = addslashes(time());

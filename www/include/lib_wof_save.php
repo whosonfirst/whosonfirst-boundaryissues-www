@@ -463,7 +463,8 @@
 				if ($rsp['ok']) {
 					$output = "{$rsp['error']}{$rsp['output']}";
 					preg_match_all('/(\d+)\.geojson/', $output, $matches);
-					foreach ($matches[1] as $wof_id) {
+					$wof_ids = $matches[1];
+					foreach ($wof_ids as $wof_id) {
 
 						// Load GeoJSON record data
 						$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
@@ -479,6 +480,11 @@
 							'geojson_data' => $feature
 						));
 					}
+
+					$details = array(
+						'commit_hashes' => $rsp['commit_hashes']
+					);
+					wof_events_publish('git_pull_update', $details, $wof_ids);
 				}
 			}
 		}
@@ -594,7 +600,7 @@
 			if (! $notifications[$user_id]) {
 				$notifications[$user_id] = array();
 			}
-			array_push($notifications[$user_id], $wof_name);
+			$notifications[$user_id][$wof_id] = $wof_name;
 		}
 
 		$messages = implode("\n", $messages);
@@ -691,6 +697,10 @@
 			if ($count == 1) {
 				$title = "Published {$wof_updates[0]}";
 				$body = 'Your updates are on GitHub now.';
+			} else if ($count > 5) {
+				$title = "Published $count updates";
+				$wof_updates = array_slice($wof_updates, 0, 5);
+				$body = implode(', ', $wof_updates) . '...';
 			} else {
 				$title = "Published $count updates";
 				$body = implode(', ', $wof_updates);
@@ -698,7 +708,8 @@
 			$payload = array(
 				'title' => $title,
 				'body' => $body,
-				'user_ids' => array($user_id)
+				'user_ids' => array($user_id),
+				'wof_ids' => array_keys($wof_updates)
 			);
 			notifications_publish($payload);
 		}

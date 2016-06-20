@@ -2,7 +2,7 @@ CREATE TABLE `events_users` (
 	`id` int(11) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`event_type` varchar(255),
 	`event_details` text,
-	`user_id` int(10) unsigned NOT NULL,
+	`user_id` int(10) unsigned,
 	`created` int(10) unsigned NOT NULL,
 	KEY `by_user` (`user_id`),
 	KEY `by_timestamp` (`created`)
