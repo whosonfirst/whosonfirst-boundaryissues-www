@@ -62,12 +62,14 @@
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download GeoJSON</a></li>
 					</ul>
 
-					<h4>Stuff that happened before</h4>
-					<ul>
-						{foreach from=$events item=event}
-							<li>{if $event.username}{$event.username}: {/if}{$event.summary}</li>
-						{/foreach}
-					</ul>
+					{if $events}
+						<h4>Event log</h4>
+						<ul>
+							{foreach from=$events item=event}
+								<li>{if $event.username}{$event.username}: {/if}{$event.summary}</li>
+							{/foreach}
+						</ul>
+					{/if}
 				</div>
 			</div>
 		</form>

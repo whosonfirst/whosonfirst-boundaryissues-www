@@ -48,7 +48,6 @@
 			SELECT summary, details
 			FROM boundaryissues_events
 			WHERE user_id = $esc_user_id
-			   OR user_id = 0
 			ORDER BY created DESC
 			LIMIT 30
 		");
@@ -68,19 +67,21 @@
 	function wof_events_for_id($wof_id) {
 		$esc_wof_id = addslashes($wof_id);
 		$rsp = db_fetch("
-			SELECT summary, details, user_id, username
+			SELECT summary, details, user_id
 			FROM boundaryissues_events,
-			     boundaryissues_events_wof,
-			     users
+			     boundaryissues_events_wof
 			WHERE boundaryissues_events_wof.wof_id = $esc_wof_id
 			  AND boundaryissues_events_wof.event_id = boundaryissues_events.id
-			  AND boundaryissues_events.user_id = users.id
 			ORDER BY boundaryissues_events.created DESC
 			LIMIT 30
 		");
 		if ($rsp['ok']) {
 			$events = array_map(function($row) {
 				$row['details'] = json_decode($event['details'], 'as hash');
+				if ($row['user_id']) {
+					$user = users_get_by_id($row['user_id']);
+					$row['username'] = $user['username'];
+				}
 				return $row;
 			}, $rsp['rows']);
 			return $events;

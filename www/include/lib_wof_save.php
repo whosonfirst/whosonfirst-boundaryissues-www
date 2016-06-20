@@ -459,12 +459,13 @@
 
 			// Index updated records in Elasticsearch
 			if ($rsp['commit_hashes']) {
-				$commit_hashes_esc = escapeshellarg($rsp['commit_hashes']);
+				$commit_hashes = $rsp['commit_hashes'];
+				$commit_hashes_esc = escapeshellarg($commit_hashes);
 				$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
 				if ($rsp['ok']) {
 					$output = "{$rsp['error']}{$rsp['output']}";
 					preg_match_all('/(\d+)\.geojson/', $output, $matches);
-					$wof_ids = $matches[1];
+					$wof_ids = array_map('intval', $matches[1]);
 					foreach ($wof_ids as $wof_id) {
 
 						// Load GeoJSON record data
@@ -483,12 +484,12 @@
 					}
 
 					$details = array(
-						'commit_hashes' => $rsp['commit_hashes'],
+						'commit_hashes' => $commit_hashes,
 						'wof_ids' => $wof_ids
 					);
 					$count = count($wof_ids);
 					$s = ($count == 1) ? '' : 's';
-					wof_events_publish("Updated {$count} record{$s} from git pull", $details, $wof_ids, 0);
+					wof_events_publish("Updated {$count} record{$s} from git pull", $details, $wof_ids);
 				}
 			}
 		}

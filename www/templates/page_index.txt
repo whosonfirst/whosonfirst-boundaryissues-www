@@ -16,8 +16,8 @@
 		<li><a href="{$cfg.abs_root}tags/">All the tags</a></li>
 		<li><a href="{$cfg.abs_root}placetypes/">All the placetypes</a></li>
 	</ul>
-	{if $cfg.user}
-		<h3>Things that have happened recently</h3>
+	{if $cfg.user and $events}
+		<h3>Your event log</h3>
 		<ul>
 			{foreach from=$events item=event}
 				<li>{$event.summary}</li>
