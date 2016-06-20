@@ -171,13 +171,14 @@
 				'wof_name' => $feature['properties']['wof:name']
 			));
 		} else {
-			$wof_ids = array(
-				$feature['properties']['wof:id']
-			);
+			$summary = "Saved {$feature['properties']['wof:name']}";
 			$details = array(
 				'filename' => $pending_index_file
 			);
-			wof_events_publish('save_feature', $details, $wof_ids, $user_id);
+			$wof_ids = array(
+				$feature['properties']['wof:id']
+			);
+			wof_events_publish($summary, $details, $wof_ids, $user_id);
 		}
 
 		return array(
@@ -482,9 +483,12 @@
 					}
 
 					$details = array(
-						'commit_hashes' => $rsp['commit_hashes']
+						'commit_hashes' => $rsp['commit_hashes'],
+						'wof_ids' => $wof_ids
 					);
-					wof_events_publish('git_pull_update', $details, $wof_ids);
+					$count = count($wof_ids);
+					$s = ($count == 1) ? '' : 's';
+					wof_events_publish("Updated {$count} record{$s} from git pull", $details, $wof_ids, 0);
 				}
 			}
 		}
@@ -695,14 +699,14 @@
 		foreach ($notifications as $user_id => $wof_updates) {
 			$count = count($wof_updates);
 			if ($count == 1) {
-				$title = "Published {$wof_updates[0]}";
-				$body = 'Your updates are on GitHub now.';
+				$title = "Published {$wof_updates[0]} to GitHub";
+				$body = null;
 			} else if ($count > 5) {
-				$title = "Published $count updates";
+				$title = "Published $count updates to GitHub";
 				$wof_updates = array_slice($wof_updates, 0, 5);
 				$body = implode(', ', $wof_updates) . '...';
 			} else {
-				$title = "Published $count updates";
+				$title = "Published $count updates to GitHub";
 				$body = implode(', ', $wof_updates);
 			}
 			$payload = array(

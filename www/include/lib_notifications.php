@@ -36,12 +36,16 @@
 		$rsp = redis_publish($GLOBALS['notifications_channel'], $payload_json);
 
 		if (! empty($payload['user_ids'])) {
+			$summary = $payload['title'];
+			if (!empty($payload['summary'])) {
+				$summary = $payload['summary'];
+			}
 			$wof_ids = null;
 			if ($payload['wof_ids']) {
 				$wof_ids = $payload['wof_ids'];
 			}
 			foreach ($payload['user_ids'] as $user_id) {
-				wof_events_publish("notification", $payload, $wof_ids, $user_id);
+				wof_events_publish($summary, $payload, $wof_ids, $user_id);
 			}
 		}
 

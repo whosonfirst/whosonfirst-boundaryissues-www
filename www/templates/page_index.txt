@@ -16,6 +16,14 @@
 		<li><a href="{$cfg.abs_root}tags/">All the tags</a></li>
 		<li><a href="{$cfg.abs_root}placetypes/">All the placetypes</a></li>
 	</ul>
+	{if $cfg.user}
+		<h3>Things that have happened recently</h3>
+		<ul>
+			{foreach from=$events item=event}
+				<li>{$event.summary}</li>
+			{/foreach}
+		</ul>
+	{/if}
 </div>
 
 {include file='inc_foot.txt'}
