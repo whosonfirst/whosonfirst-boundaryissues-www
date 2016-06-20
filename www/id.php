@@ -4,6 +4,7 @@
 	loadlib('wof_schema');
 	loadlib('wof_utils');
 	loadlib('wof_render');
+	loadlib('wof_events');
 
 	$crumb_venue_fallback = crumb_generate('wof.save');
 	$GLOBALS['smarty']->assign("crumb_save_fallback", $crumb_venue_fallback);
@@ -40,6 +41,9 @@
 	$GLOBALS['smarty']->assign('wof_parent_id', $values['properties']['wof:parent_id']);
 	$GLOBALS['smarty']->assign('wof_hierarchy', json_encode($values['properties']['wof:hierarchy']));
 	$GLOBALS['smarty']->assign('geometry', json_encode($values['geometry']));
+
+	$events = wof_events_for_id($wof_id);
+	$GLOBALS['smarty']->assign_by_ref('events', $events);
 
 	$GLOBALS['smarty']->display('page_id.txt');
 	exit();

@@ -63,4 +63,30 @@
 		}
 	}
 
+	########################################################################
+
+	function wof_events_for_id($wof_id) {
+		$esc_wof_id = addslashes($wof_id);
+		$rsp = db_fetch("
+			SELECT summary, details, user_id, username
+			FROM boundaryissues_events,
+			     boundaryissues_events_wof,
+			     users
+			WHERE boundaryissues_events_wof.wof_id = $esc_wof_id
+			  AND boundaryissues_events_wof.event_id = boundaryissues_events.id
+			  AND boundaryissues_events.user_id = users.id
+			ORDER BY boundaryissues_events.created DESC
+			LIMIT 30
+		");
+		if ($rsp['ok']) {
+			$events = array_map(function($row) {
+				$row['details'] = json_decode($event['details'], 'as hash');
+				return $row;
+			}, $rsp['rows']);
+			return $events;
+		} else {
+			return array();
+		}
+	}
+
 	# the end
