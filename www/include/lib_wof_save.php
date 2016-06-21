@@ -173,7 +173,8 @@
 		} else {
 			$summary = "Saved {$feature['properties']['wof:name']}";
 			$details = array(
-				'filename' => $pending_index_file
+				'filename' => $pending_index_file,
+				'url' => "/id/{$feature['properties']['wof:id']}/?rev=$pending_index_file"
 			);
 			$wof_ids = array(
 				$feature['properties']['wof:id']

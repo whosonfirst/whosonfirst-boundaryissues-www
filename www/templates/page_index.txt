@@ -17,12 +17,8 @@
 		<li><a href="{$cfg.abs_root}placetypes/">All the placetypes</a></li>
 	</ul>
 	{if $cfg.user and $events}
-		<h3>Your event log</h3>
-		<ul>
-			{foreach from=$events item=event}
-				<li>{$event.summary}</li>
-			{/foreach}
-		</ul>
+		<h4>Your event log</h4>
+		{include file='inc_event_log.txt'}
 	{/if}
 </div>
 

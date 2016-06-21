@@ -11,8 +11,13 @@
 
 	$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
 	$wof_id = get_int64('id');
+	$rev = get_str('rev');
 
-	$path = wof_utils_find_id($wof_id);
+	if ($rev) {
+		$path = wof_utils_find_revision($rev);
+	} else {
+		$path = wof_utils_find_id($wof_id);
+	}
 
 	if (! $path){
 		error_404();
@@ -34,6 +39,10 @@
 	if ($GLOBALS['cfg']['user']){
 		$crumb_save = crumb_generate('api', 'wof.save');
 		$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
+	}
+
+	if ($rev) {
+		$GLOBALS['smarty']->assign('rev', $rev);
 	}
 
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);

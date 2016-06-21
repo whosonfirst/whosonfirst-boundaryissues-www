@@ -277,3 +277,25 @@ tr.object-property.property-visible {
 	margin-left: -15px;
 	border-bottom: 1px solid #ccc;
 }
+
+ul.event-log {
+	padding-left: 0 !important;
+}
+
+li.event {
+	list-style: none;
+}
+
+li.event .avatar {
+	width: 24px;
+	height: auto;
+}
+
+li.event small {
+	color: #808080;
+	margin-left: 5px;
+}
+
+.wof-revision {
+	margin-top: 1em;
+}

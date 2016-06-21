@@ -148,6 +148,13 @@
 
 	#################################################################
 
+	function users_get_gravatar($email) {
+		$md5 = md5($email);
+		return "https://s.gravatar.com/avatar/$md5?s=48&r=pg";
+	}
+
+	#################################################################
+
 	function users_is_email_taken($email){
 
 		$enc_email = AddSlashes($email);

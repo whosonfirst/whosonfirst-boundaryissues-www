@@ -58,6 +58,25 @@
 
 	########################################################################
 
+	function wof_utils_find_revision($rev, $more=array()){
+		if (! preg_match('/^(\d+)-(\d+)-(\d+)-(.+)\.geojson$/', $rev, $matches)) {
+			return null;
+		}
+		list(, $timestamp, $user_id, $wof_id, $hash) = $matches;
+		$date = date('Ymd', $timestamp);
+		$index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
+		$log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log/$date/";
+		if (file_exists("$index_dir$rev")) {
+			return "$index_dir$rev";
+		} else if (file_exists("$log_dir$rev")) {
+			return "$log_dir$rev";
+		} else {
+			return null;
+		}
+	}
+
+	########################################################################
+
 	function wof_utils_id2fname($id, $more=array()){
 
 		 # PLEASE WRITE: all the alt/display name stuff

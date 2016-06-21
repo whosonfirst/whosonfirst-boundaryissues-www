@@ -6,6 +6,13 @@
 		<h2>Edit <span id="wof_name">{$wof_name|@escape}</span></h2>
 		<small>{$wof_id|@wof_utils_id2relpath|@escape}</small>
 	</div>
+	{if $rev}
+		<div class="wof-revision row">
+			<div class="alert alert-info">
+				This is an archived revision of the WOF record.
+			</div>
+		</div>
+	{/if}
 	<div class="row">
 		<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}">
 		  {$crumb_save_fallback|crumb_input}
@@ -64,11 +71,7 @@
 
 					{if $events}
 						<h4>Event log</h4>
-						<ul>
-							{foreach from=$events item=event}
-								<li>{if $event.username}{$event.username}: {/if}{$event.summary}</li>
-							{/foreach}
-						</ul>
+						{include file='inc_event_log.txt'}
 					{/if}
 				</div>
 			</div>

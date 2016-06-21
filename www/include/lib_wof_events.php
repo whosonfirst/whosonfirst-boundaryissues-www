@@ -45,18 +45,14 @@
 	function wof_events_for_user($user_id) {
 		$esc_user_id = addslashes($user_id);
 		$rsp = db_fetch("
-			SELECT summary, details
+			SELECT summary, details, user_id, created
 			FROM boundaryissues_events
 			WHERE user_id = $esc_user_id
 			ORDER BY created DESC
 			LIMIT 30
 		");
 		if ($rsp['ok']) {
-			$events = array_map(function($row) {
-				$row['details'] = json_decode($event['details'], 'as hash');
-				return $row;
-			}, $rsp['rows']);
-			return $events;
+			return array_map('wof_events_row', $rsp['rows']);
 		} else {
 			return array();
 		}
@@ -67,7 +63,7 @@
 	function wof_events_for_id($wof_id) {
 		$esc_wof_id = addslashes($wof_id);
 		$rsp = db_fetch("
-			SELECT summary, details, user_id
+			SELECT summary, details, user_id, created
 			FROM boundaryissues_events,
 			     boundaryissues_events_wof
 			WHERE boundaryissues_events_wof.wof_id = $esc_wof_id
@@ -76,18 +72,24 @@
 			LIMIT 30
 		");
 		if ($rsp['ok']) {
-			$events = array_map(function($row) {
-				$row['details'] = json_decode($event['details'], 'as hash');
-				if ($row['user_id']) {
-					$user = users_get_by_id($row['user_id']);
-					$row['username'] = $user['username'];
-				}
-				return $row;
-			}, $rsp['rows']);
-			return $events;
+			return array_map('wof_events_row', $rsp['rows']);
 		} else {
 			return array();
 		}
+	}
+
+	########################################################################
+
+	function wof_events_row($row) {
+		$row['details'] = json_decode($row['details'], 'as hash');
+		if ($row['user_id']) {
+			$user = users_get_by_id($row['user_id']);
+			$row['user'] = array(
+				'username' => $user['username'],
+				'avatar' => users_get_gravatar($user['email'])
+			);
+		}
+		return $row;
 	}
 
 	# the end
