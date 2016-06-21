@@ -484,9 +484,14 @@
 						));
 					}
 
+					$owner = $GLOBALS['cfg']['wof_github_owner'];
+					$repo = $GLOBALS['cfg']['wof_github_repo'];
+					$range = str_replace('..', '...', $commit_hashes);
+					$url = "https://github.com/$owner/$repo/compare/$range";
 					$details = array(
 						'commit_hashes' => $commit_hashes,
-						'wof_ids' => $wof_ids
+						'wof_ids' => $wof_ids,
+						'url' => $url
 					);
 					$count = count($wof_ids);
 					$s = ($count == 1) ? '' : 's';
@@ -629,6 +634,9 @@
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
+			if (preg_match('/^\[\w+\s+(.+?)\]/', $rsp['rsp'], $matches)) {
+				$commit_hash = $matches[1];
+			}
 		}
 
 		if ($options['verbose']) {
@@ -700,23 +708,32 @@
 		// Send out notifications
 		foreach ($notifications as $user_id => $wof_updates) {
 			$count = count($wof_updates);
+			$wof_ids = array_keys($wof_updates);
+			$wof_names = array_values($wof_updates);
 			if ($count == 1) {
-				$title = "Published {$wof_updates[0]} to GitHub";
-				$body = null;
+				$title = "Published {$wof_names[0]} to GitHub";
+				$body = ":sparkles::floppy_disk::sparkles:";
 			} else if ($count > 5) {
 				$title = "Published $count updates to GitHub";
-				$wof_updates = array_slice($wof_updates, 0, 5);
-				$body = implode(', ', $wof_updates) . '...';
+				$wof_updates = array_slice($wof_names, 0, 5);
+				$body = implode(', ', $wof_names) . '...';
 			} else {
 				$title = "Published $count updates to GitHub";
-				$body = implode(', ', $wof_updates);
+				$body = implode(', ', $wof_names);
 			}
 			$payload = array(
 				'title' => $title,
 				'body' => $body,
 				'user_ids' => array($user_id),
-				'wof_ids' => array_keys($wof_updates)
+				'wof_ids' => $wof_ids
 			);
+			if ($commit_hash) {
+				$owner = $GLOBALS['cfg']['wof_github_owner'];
+				$repo = $GLOBALS['cfg']['wof_github_repo'];
+				$url = "https://github.com/$owner/$repo/commit/$commit_hash";
+				$payload['commit_hash'] = $commit_hash;
+				$payload['url'] = $url;
+			}
 			notifications_publish($payload);
 		}
 

@@ -47,7 +47,7 @@
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/';
 
 	$GLOBALS['cfg']['enable_feature_save_via_github_api'] = false;
-	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
+	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst';
 
 	# ULTIMATELY THIS WILL/SHOULD BE REPLACED BY A FUNCTION THAT MAPS ANY GIVEN
 	# RECORD TO A REPO BUT THAT WORK IS NOT DONE YET. ALSO THIS SHOULD PROBABLY
