@@ -14,7 +14,9 @@ mapzen.whosonfirst.boundaryissues.events = (function() {
 				}
 				$(item).find('a').each(function(j, link) {
 					var url = $(link).attr('href');
-					$(link).attr('href', mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url));
+					if (url.match(/^\//)) {
+						$(link).attr('href', mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url));
+					}
 				});
 			});
 		}
