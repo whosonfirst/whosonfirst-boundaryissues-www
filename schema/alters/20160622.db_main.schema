@@ -1,0 +1,6 @@
+CREATE TABLE `users_settings` (
+	`user_id` int(11) unsigned,
+	`name` varchar(255) unique NOT NULL,
+	`value` text,
+	KEY `by_user` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
