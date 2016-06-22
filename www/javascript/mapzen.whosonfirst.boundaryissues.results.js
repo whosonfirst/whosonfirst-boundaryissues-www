@@ -302,7 +302,7 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				input.value = ids;
 				form.appendChild(input.cloneNode());
 				form.method = 'POST';
-				form.action = '/geojson.php';
+				form.action = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/geojson.php');
 				document.body.appendChild(form);
 				form.submit();
 			});
