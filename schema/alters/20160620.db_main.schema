@@ -1,15 +1,15 @@
 CREATE TABLE `boundaryissues_events` (
-	`id` int(11) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	`id` bigint(20) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`summary` varchar(255),
 	`details` text,
-	`user_id` int(10) unsigned,
+	`user_id` int(11) unsigned,
 	`created` int(10) unsigned NOT NULL,
 	KEY `by_user` (`user_id`),
 	KEY `by_timestamp` (`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `boundaryissues_events_wof` (
-	`event_id` int(11) unsigned,
-	`wof_id` int(10),
+	`event_id` bigint(20) unsigned,
+	`wof_id` bigint(20),
 	KEY `by_wof` (`wof_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
