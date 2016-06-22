@@ -13,13 +13,7 @@
 			return;
 		}
 
-		if (! $redir){
-			$redir = $_SERVER['REQUEST_URI'];
-		}
-
-		$enc_redir = urlencode($redir);
-
-		header("location: {$GLOBALS['cfg']['abs_root_url']}signin/?redir={$redir}");
+		header("location: {$GLOBALS['signin_url']}");
 		exit;
 	}
 
