@@ -175,10 +175,10 @@
 	# Local is by hostname. Dev is local to a specific machine or
 	# instance where you may not know or have a hostname...
 	# (20160404/thisisaaronland)
-	
+
 	$global_config = FLAMEWORK_INCLUDE_DIR . "config.php";
 	$global_secrets = FLAMEWORK_INCLUDE_DIR . "secrets.php";
-	
+
 	$local_config = FLAMEWORK_INCLUDE_DIR . "config_local_{$host}.php";
 	$local_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_local_{$host}.php";
 
@@ -288,7 +288,7 @@
 	# in either your httpd.conf or .htaccess file, like this:
 	#
 	# SetEnv FLAMEWORK_SUFFIX "/boundaryissues/ca"
-	# 
+	#
 	# The problem with doing that is if you're just _actually_ running your Flamework project
 	# on / but serving it up on a nested path (and probably a different domain) via something
 	# like nginx then by setting the environment locally then there is no way to introspect the
@@ -297,7 +297,7 @@
 	# $GLOBALS['cfg']['enable_feature_abs_root_suffix'] = 1;
 	# $GLOBALS['cfg']['abs_root_suffix'] = "";
 	# $GLOBALS['cfg']['abs_root_suffix_env'] = 'HTTP_X_PROXY_PATH';
-	# 
+	#
 	# (20160603/thisisaaronland)
 
 	# dumper($_SERVER);
@@ -316,7 +316,7 @@
 			$ok = 1;
 
 			foreach (explode("/", $suffix) as $chunk){
-		
+
 				if (chunk == ".."){
 					$ok = 0;
 					break;
@@ -582,6 +582,12 @@
 				$GLOBALS['smarty']->assign_by_ref("site_token", $token['access_token']);
 			}
 		}
+
+		$root_url = parse_url($GLOBALS['cfg']['abs_root_url']);
+		$redirect = str_replace($root_url['path'], '/', $_SERVER['REQUEST_URI']);
+		$redirect = rawurlencode($redirect);
+		$GLOBALS['signin_url'] = "{$GLOBALS['cfg']['abs_root_url']}signin/?redir=$redirect";
+		$GLOBALS['smarty']->assign("signin_url", $GLOBALS['signin_url']);
 	}
 
 	# end of flamework-api stuff for API site keys
