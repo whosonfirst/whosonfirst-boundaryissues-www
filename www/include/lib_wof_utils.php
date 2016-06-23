@@ -1,5 +1,7 @@
 <?php
 
+	loadlib('users_settings');
+
 	########################################################################
 
 	function wof_utils_id2relpath($id, $more=array()){
@@ -40,7 +42,7 @@
 	function wof_utils_find_id($id, $more=array()){
 
 		$root_dirs = array(
-			"{$GLOBALS['cfg']['wof_pending_dir']}data/",
+			wof_utils_pending_dir('data'),
 			$GLOBALS['cfg']['wof_data_dir']
 		);
 		if ($more['root_dirs']) {
@@ -64,8 +66,8 @@
 		}
 		list(, $timestamp, $user_id, $wof_id, $hash) = $matches;
 		$date = date('Ymd', $timestamp);
-		$index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
-		$log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log/$date/";
+		$index_dir = wof_utils_pending_dir('index');
+		$log_dir = wof_utils_pending_dir("log/$date/");
 		if (file_exists("$index_dir$rev")) {
 			return "$index_dir$rev";
 		} else if (file_exists("$log_dir$rev")) {
@@ -103,5 +105,32 @@
 	}
 
 	########################################################################
+
+	function wof_utils_pending_dir($subdir = '', $user_id = null) {
+
+		$branch = 'master';
+		$base_dir = $GLOBALS['cfg']['wof_pending_dir'];
+
+		if ($user_id) {
+			$user = users_get_by_id($user_id);
+			$branch = users_settings_get_single($user, 'branch');
+		} else if ($GLOBALS['cfg']['user']) {
+			$branch = users_settings_get_single($GLOBALS['cfg']['user'], 'branch');
+		}
+
+		// No funny business with the branch names
+		if (! preg_match('/^[a-z0-9-_]+$/i', $branch)) {
+			$branch = 'master';
+		}
+
+		$pending_dir = "{$base_dir}{$branch}/$subdir";
+
+		// Make sure we have a trailing slash
+		if (substr($pending_dir, -1, 1) != '/') {
+			$pending_dir .= '/';
+		}
+
+		return $pending_dir;
+	}
 
 	# the end

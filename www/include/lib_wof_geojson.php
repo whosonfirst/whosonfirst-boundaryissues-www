@@ -31,11 +31,12 @@
 
 	########################################################################
 
-	function wof_geojson_save($geojson) {
+	function wof_geojson_save($geojson, $branch = 'master') {
 
 		// Save a GeoJSON file to disk
 		$rsp = http_post("{$GLOBALS['cfg']['geojson_base_url']}/save", array(
-			'geojson' => $geojson
+			'geojson' => $geojson,
+			'branch' => $branch
 		));
 
 		// Check for connection errors

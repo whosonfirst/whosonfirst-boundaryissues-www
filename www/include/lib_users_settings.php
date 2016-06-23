@@ -61,7 +61,7 @@
 		$enc_user_id = addslashes($user['id']);
 		$enc_name = addslashes($name);
 
-		$rsp = db_fetch_users("
+		$rsp = db_fetch("
 			SELECT *
 			FROM users_settings
 			WHERE user_id = $enc_user_id

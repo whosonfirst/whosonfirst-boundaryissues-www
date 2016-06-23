@@ -85,6 +85,7 @@
 	loadlib("notifications");
 	loadlib("wof_schema");
 	loadlib("wof_events");
+	loadlib("users_settings");
 
 	########################################################################
 
@@ -98,6 +99,16 @@
 			);
 		}
 
+		if (! $user_id &&
+		    ! $GLOBALS['cfg']['user']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Cannot save feature without a user.'
+			);
+		} else if ($GLOBALS['cfg']['user']) {
+			$user_id = $GLOBALS['cfg']['user']['id'];
+		}
+
 		if (is_array($properties)) {
 			$rsp = wof_save_merged($geojson, $geometry, $properties);
 			if (! $rsp) {
@@ -106,8 +117,11 @@
 			$geojson = $rsp['geojson'];
 		}
 
+		$user = users_get_by_id($user_id);
+		$branch = users_settings_get_single($user, 'branch');
+
 		// Validation happens on the GeoJSON service side of things
-		$rsp = wof_geojson_save($geojson);
+		$rsp = wof_geojson_save($geojson, $branch);
 
 		if (! $rsp['ok']) {
 			$rsp['error'] = "Error saving via GeoJSON service: {$rsp['error']}";
@@ -128,7 +142,7 @@
 		if (! $user_id) {
 			$user_id = $GLOBALS['cfg']['user']['id'];
 		}
-		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
+		$data_dir = wof_utils_pending_dir('data', $user_id);
 
 		$pending_path = wof_utils_id2abspath($data_dir, $wof_id);
 
@@ -139,8 +153,8 @@
 		}
 		$git_hash = $rsp['rsp'];
 
-		// Save a snapshot to the pending/log directory
-		$pending_index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
+		// Save a snapshot to the pending index directory
+		$pending_index_dir = wof_utils_pending_dir('index', $user_id);
 		if (! file_exists($pending_index_dir)) {
 			mkdir($pending_index_dir, 0775, true);
 		}
@@ -331,8 +345,7 @@
 			$oauth_token = $rsp['oauth_token'];
 		}
 
-		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
-
+		$data_dir = wof_utils_pending_dir('data');
 		$rel_path = wof_utils_id2relpath($wof_id);
 		$abs_path = wof_utils_id2abspath($data_dir, $wof_id);
 
@@ -383,7 +396,7 @@
 		// consistently returning 500 errors, so I made this workaround
 		// that uses vanilla `git` calls. (20160429/dphiffer)
 
-		$data_dir = "{$GLOBALS['cfg']['wof_pending_dir']}data/";
+		$data_dir = wof_utils_pending_dir('data');
 
 		$rel_path = wof_utils_id2relpath($wof_id);
 		$abs_path = wof_utils_id2abspath($data_dir, $wof_id);
@@ -502,7 +515,7 @@
 
 		$wof = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
-		$index_dir = "{$GLOBALS['cfg']['wof_pending_dir']}index/";
+		$index_dir = wof_utils_pending_dir('index');
 
 		// Group the pending updates by WOF id
 		$files = glob("{$index_dir}*.geojson");
@@ -553,7 +566,7 @@
 				$wof_id
 			);
 			$pending_path = wof_utils_id2abspath(
-				"{$GLOBALS['cfg']['wof_pending_dir']}data/",
+				wof_utils_pending_dir('data'),
 				$wof_id
 			);
 
@@ -666,7 +679,7 @@
 				}
 			}
 			$pending_path = wof_utils_id2abspath(
-				"{$GLOBALS['cfg']['wof_pending_dir']}data/",
+				wof_utils_pending_dir('data'),
 				$wof_id
 			);
 			if ($options['verbose']) {
@@ -680,7 +693,7 @@
 
 		// Clean up any empty data directories
 		$find_path = $GLOBALS['find_path'];
-		$pending_dir = realpath("{$GLOBALS['cfg']['wof_pending_dir']}data/");
+		$pending_dir = realpath(wof_utils_pending_dir('data'));
 		if ($options['verbose']) {
 			echo "find $pending_dir -type d -empty -delete\n";
 		}
@@ -800,7 +813,7 @@
 
 	function wof_save_log($path) {
 		$date = date('Ymd');
-		$log_dir = "{$GLOBALS['cfg']['wof_pending_dir']}log/$date/";
+		$log_dir = wof_utils_pending_dir("log/$date/");
 		if (! file_exists($log_dir)) {
 			mkdir($log_dir, 0775, true);
 		}

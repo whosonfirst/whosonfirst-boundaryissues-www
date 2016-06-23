@@ -3,6 +3,8 @@
 import StringIO
 import sys
 import logging
+import os
+import re
 from flask import Flask, request, jsonify
 
 import geojson
@@ -15,7 +17,7 @@ import mapzen.whosonfirst.pip.utils
 
 # This assumes that a 'pending' folder has been created in the Boundary Issues
 # directory, writable by the www-data user. (20160502/dphiffer)
-root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/data"
+root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/"
 app = Flask(__name__)
 
 @app.route('/encode', methods=['POST'])
@@ -49,10 +51,15 @@ def geojson_save():
 
 	try:
 		g = request.form['geojson']
+		branch = request.form['branch']
 		f = geojson.loads(g)
 	except Exception, e:
 		err = "failed to load geojson, because %s" % e
 		return jsonify(ok=0, error=err)
+
+	p = re.compile('^[a-zA-Z0-9-_]+$')
+	if not p.match(branch):
+		return jsonify(ok=0, error='Invalid branch name: %s' % branch)
 
 	# Does the input pass the smell check?
 	validation = geojson.is_valid(f)
@@ -63,7 +70,10 @@ def geojson_save():
 		return jsonify(ok=0, error=error)
 
 	try:
-		ff = mapzen.whosonfirst.export.flatfile(root, debug=False)
+		data_dir = "%s%s/data" % (root, branch)
+		if not os.path.exists(data_dir):
+			os.makedirs(data_dir, 0775)
+		ff = mapzen.whosonfirst.export.flatfile(data_dir, debug=False)
 		path = ff.export_feature(f)
 	except Exception, e:
 		error = "failed to export geojson, because %s" % e

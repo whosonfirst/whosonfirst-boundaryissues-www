@@ -1,5 +1,6 @@
 <?php
 
+	loadlib('wof_utils');
 	loadlib('wof_save');
 	loadlib('uuid');
 
@@ -42,7 +43,7 @@
 		$filename = "$timestamp-$user_id-$uuid.geojson";
 
 		$upload_file = $_FILES["upload_file"]["tmp_name"];
-		$upload_dir = "{$GLOBALS['cfg']['wof_pending_dir']}upload/";
+		$upload_dir = wof_utils_pending_dir('upload');
 		$upload_path = "$upload_dir$filename";
 
 		if (! file_exists($upload_dir)) {
