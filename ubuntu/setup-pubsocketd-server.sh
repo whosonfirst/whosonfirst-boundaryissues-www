@@ -31,7 +31,7 @@ else
 	PUBSOCKETD_ORIGIN="$1"
 fi
 
-PUBSOCKETD_ARGS="-ws-origin=${PUBSOCKETD_ORIGIN} -rs-channel=notifications"
+PUBSOCKETD_ARGS="-ws-origin=${PUBSOCKETD_ORIGIN} -ws-heartbeat -rs-channel=notifications"
 
 cp ${PUBSOCKETD_INITD}.example ${PUBSOCKETD_INITD}
 chmod 755 ${PUBSOCKETD_INITD}
