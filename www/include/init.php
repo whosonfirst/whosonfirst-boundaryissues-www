@@ -588,6 +588,19 @@
 		$redirect = urlencode($redirect);
 		$GLOBALS['signin_url'] = "{$GLOBALS['cfg']['abs_root_url']}signin/?redir=$redirect";
 		$GLOBALS['smarty']->assign("signin_url", $GLOBALS['signin_url']);
+
+		if ($GLOBALS['cfg']['user']) {
+			$branches = array('master');
+			foreach (glob("{$GLOBALS['cfg']['wof_pending_dir']}*") as $b) {
+				if (is_dir($b) &&
+				    ! in_array(basename($b), $branches)) {
+					$branches[] = basename($b);
+				}
+			}
+			$curr_branch = users_settings_get_single($GLOBALS['cfg']['user'], 'branch');
+			$GLOBALS['smarty']->assign("branches", $branches);
+			$GLOBALS['smarty']->assign("curr_branch", $curr_branch);
+		}
 	}
 
 	# end of flamework-api stuff for API site keys

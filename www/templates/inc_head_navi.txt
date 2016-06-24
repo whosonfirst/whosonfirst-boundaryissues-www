@@ -9,6 +9,20 @@
 				<span class="icon-bar"></span>
 			</button>
 			<a class="navbar-brand" href="{$cfg.abs_root_url}">{$cfg.site_name|escape}</a>
+			{if $branches}
+				<div class="dropdown" id="navi-branch-dropdown">
+					<a href="#" id="navi-branch" class="dropdown-toggle navi-label" data-toggle="dropdown" role="button"><span class="branch-label">{$curr_branch|escape}</span> <b class="caret caret-ch"></b></a>
+					<ul class="dropdown-menu" aria-labelledby="navi-branch" role="menu">
+						<li><span class="dropdown-label hey-look">git branch</span></li>
+						<li class="divider"></li>
+						{foreach from=$branches item=b}
+							<li><a href="#" data-branch="{$b|escape}" class="branch{if $curr_branch == $b} hey-look{/if}">{$b|escape}</a></li>
+						{/foreach}
+						<li class="divider"></li>
+						<li><a href="#" id="navi-branch-create"><i>Checkout new branch</i></a></li>
+					</ul>
+				</div>
+			{/if}
 		</div>
 
 	{if !$cfg.site_disabled}
@@ -20,7 +34,7 @@
 			{if $cfg.user}
 				<li class="dropdown">
 					<a href="#" id="navi-account" class="dropdown-toggle navi-label" data-toggle="dropdown" role="button">Hi, {$cfg.user.username|escape} <b class="caret caret-ch"></b></a>
-					<ul class="dropdown-menu" aria-labelledby="account-navi" role="menu">
+					<ul class="dropdown-menu" aria-labelledby="navi-account" role="menu">
 						<li><a href="#" onclick="return false;">Hi <span class="hey-look">{$cfg.user.username|escape}</span></a></li>
 						{if "bookmarks"|@features_is_enabled and $cfg.user and "bookmarks"|@auth_has_role:$cfg.user.id}
 							<li id="bookmarks"><a href="{$cfg.abs_root_url}me/bookmarks/" title="Your bookmarks">Your bookmarks</a></li>

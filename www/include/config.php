@@ -257,6 +257,7 @@
 		'wof_render',
 		'logstash',
 		'redis',
+		'users_settings',
 	);
 
 	# THINGS YOU SHOULD DEFINE IN YOUR secrets.php FILE WHICH IS NOT
