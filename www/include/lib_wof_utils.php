@@ -106,21 +106,23 @@
 
 	########################################################################
 
-	function wof_utils_pending_dir($subdir = '', $user_id = null) {
+	function wof_utils_pending_dir($subdir = '', $user_id = null, $branch = null) {
 
-		$branch = 'master';
 		$base_dir = $GLOBALS['cfg']['wof_pending_dir'];
+		if (! $branch) {
+			$branch = 'master';
 
-		if ($user_id) {
-			$user = users_get_by_id($user_id);
-			$branch = users_settings_get_single($user, 'branch');
-		} else if ($GLOBALS['cfg']['user']) {
-			$branch = users_settings_get_single($GLOBALS['cfg']['user'], 'branch');
+			if ($user_id) {
+				$user = users_get_by_id($user_id);
+				$branch = users_settings_get_single($user, 'branch');
+			} else if ($GLOBALS['cfg']['user']) {
+				$branch = users_settings_get_single($GLOBALS['cfg']['user'], 'branch');
+			}
 		}
 
 		// No funny business with the branch names
 		if (! preg_match('/^[a-z0-9-_]+$/i', $branch)) {
-			$branch = 'master';
+			return null;
 		}
 
 		$pending_dir = "{$base_dir}{$branch}/$subdir";

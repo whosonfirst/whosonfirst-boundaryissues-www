@@ -161,6 +161,26 @@
 
 	########################################################################
 
+	function git_branches($cwd) {
+		$rsp = git_execute($cwd, 'branch');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$branches = array();
+		preg_match_all('/^\*?\s*(.+)$/m', $rsp['rsp'], $matches);
+		foreach ($matches as $match) {
+			$branches[] = $match[1];
+		}
+
+		return array(
+			'ok' => 1,
+			'branches' => $branches
+		);
+	}
+
+	########################################################################
+
 	function git_execute($cwd, $args) {
 
 		$cmd = "{$GLOBALS['git_path']} $args";

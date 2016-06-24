@@ -462,60 +462,39 @@
 		}
 
 		if (! $options['dry_run']) {
-			// Pull changes from GitHub
-			$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
+			$rsp = wof_save_pending_pull();
 			if (! $rsp['ok']) {
-				return array(
-					'ok' => 0,
-					'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
-				);
-			}
-
-			// Index updated records in Elasticsearch
-			if ($rsp['commit_hashes']) {
-				$commit_hashes = $rsp['commit_hashes'];
-				$commit_hashes_esc = escapeshellarg($commit_hashes);
-				$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
-				if ($rsp['ok']) {
-					$output = "{$rsp['error']}{$rsp['output']}";
-					preg_match_all('/(\d+)\.geojson/', $output, $matches);
-					$wof_ids = array_map('intval', $matches[1]);
-					foreach ($wof_ids as $wof_id) {
-
-						// Load GeoJSON record data
-						$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
-						$geojson = file_get_contents($path);
-						$feature = json_decode($geojson, 'as hash');
-
-						if ($options['verbose']) {
-							echo "schedule index: $wof_id\n";
-						}
-
-						// Schedule an offline index
-						$rsp = offline_tasks_schedule_task('index', array(
-							'geojson_data' => $feature
-						));
-					}
-
-					$owner = $GLOBALS['cfg']['wof_github_owner'];
-					$repo = $GLOBALS['cfg']['wof_github_repo'];
-					$range = str_replace('..', '...', $commit_hashes);
-					$url = "https://github.com/$owner/$repo/compare/$range";
-					$details = array(
-						'commit_hashes' => $commit_hashes,
-						'wof_ids' => $wof_ids,
-						'url' => $url
-					);
-					$count = count($wof_ids);
-					$s = ($count == 1) ? '' : 's';
-					wof_events_publish("Updated {$count} record{$s} from git pull", $details, $wof_ids);
-				}
+				return $rsp;
 			}
 		}
 
+		$saved = array();
+		$branches = glob("{$GLOBALS['cfg']['wof_pending_dir']}*");
+		foreach ($branches as $branch) {
+			if (! is_dir($branch)) {
+				continue;
+			}
+			$branch = basename($branch);
+			$rsp = wof_save_pending_branch($branch, $options);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$saved = array_merge($saved, $rsp['saved']);
+		}
+
+		return array(
+			'ok' => 1,
+			'saved' => $saved
+		);
+	}
+
+	########################################################################
+
+	function wof_save_pending_branch($branch, $options) {
+
 		$wof = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
-		$index_dir = wof_utils_pending_dir('index');
+		$index_dir = wof_utils_pending_dir('index', null, $branch);
 
 		// Group the pending updates by WOF id
 		$files = glob("{$index_dir}*.geojson");
@@ -543,6 +522,22 @@
 			);
 		}
 
+		$rsp = git_branches($GLOBALS['cfg']['wof_data_dir']);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		if (! in_array($branch, $rsp['branches'])) {
+			$new_branch = '-b ';
+		}
+
+		if ($options['verbose']) {
+			echo "git checkout {$new_branch}$branch\n";
+		}
+		if (! $options['dry_run']) {
+			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "checkout {$new_branch}$branch");
+		}
+
 		$args = '';
 		$saved = array();
 		$messages = array();
@@ -566,7 +561,7 @@
 				$wof_id
 			);
 			$pending_path = wof_utils_id2abspath(
-				wof_utils_pending_dir('data'),
+				wof_utils_pending_dir('data', null, $branch),
 				$wof_id
 			);
 
@@ -581,10 +576,10 @@
 			}
 
 			if ($options['verbose']) {
-				echo "cp $pending_path $data_path\n";
+				echo "mv $pending_path $data_path\n";
 			}
 			if (! $options['dry_run']) {
-				copy($pending_path, $data_path);
+				rename($pending_path, $data_path);
 			}
 
 			if (! file_exists($data_path) &&
@@ -653,13 +648,13 @@
 		}
 
 		if ($options['verbose']) {
-			echo "git push origin master\n";
+			echo "git push origin $branch\n";
 		}
 
 		if (! $options['dry_run']) {
 
 			// Push to GitHub
-			$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master');
+			$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -678,22 +673,12 @@
 					wof_save_log("$index_dir$filename");
 				}
 			}
-			$pending_path = wof_utils_id2abspath(
-				wof_utils_pending_dir('data'),
-				$wof_id
-			);
-			if ($options['verbose']) {
-				echo "rm $pending_path\n";
-			}
-			if (! $options['dry_run']) {
-				unlink($pending_path);
-			}
 			$updated[] = $updates[0];
 		}
 
 		// Clean up any empty data directories
 		$find_path = $GLOBALS['find_path'];
-		$pending_dir = realpath(wof_utils_pending_dir('data'));
+		$pending_dir = realpath(wof_utils_pending_dir('', null, $branch));
 		if ($options['verbose']) {
 			echo "find $pending_dir -type d -empty -delete\n";
 		}
@@ -752,7 +737,65 @@
 
 		return array(
 			'ok' => 1,
-			'updated' => $updated
+			'saved' => $updated
+		);
+	}
+
+	########################################################################
+
+	function wof_save_pending_pull() {
+		// Pull changes from GitHub
+		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
+		if (! $rsp['ok']) {
+			return array(
+				'ok' => 0,
+				'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
+			);
+		}
+
+		// Index updated records in Elasticsearch
+		if ($rsp['commit_hashes']) {
+			$commit_hashes = $rsp['commit_hashes'];
+			$commit_hashes_esc = escapeshellarg($commit_hashes);
+			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
+			if (! $rsp['ok']) {
+				return array(
+					'ok' => 0,
+					'error' => "Could not determine changed files from $commit_hashes_esc."
+				);
+			}
+			$output = "{$rsp['error']}{$rsp['output']}";
+			preg_match_all('/(\d+)\.geojson/', $output, $matches);
+			$wof_ids = array_map('intval', $matches[1]);
+			foreach ($wof_ids as $wof_id) {
+
+				// Load GeoJSON record data
+				$path = wof_utils_id2abspath($GLOBALS['cfg']['wof_data_dir'], $wof_id);
+				$geojson = file_get_contents($path);
+				$feature = json_decode($geojson, 'as hash');
+
+				// Schedule an offline index
+				$rsp = offline_tasks_schedule_task('index', array(
+					'geojson_data' => $feature
+				));
+			}
+
+			$owner = $GLOBALS['cfg']['wof_github_owner'];
+			$repo = $GLOBALS['cfg']['wof_github_repo'];
+			$range = str_replace('..', '...', $commit_hashes);
+			$url = "https://github.com/$owner/$repo/compare/$range";
+			$details = array(
+				'commit_hashes' => $commit_hashes,
+				'wof_ids' => $wof_ids,
+				'url' => $url
+			);
+			$count = count($wof_ids);
+			$s = ($count == 1) ? '' : 's';
+			wof_events_publish("Updated {$count} record{$s} from git pull", $details, $wof_ids);
+		}
+
+		return array(
+			'ok' => 1
 		);
 	}
 
