@@ -3,6 +3,7 @@
 	loadlib('wof_utils');
 	loadlib('wof_save');
 	loadlib('uuid');
+	loadlib('users_settings');
 
 	########################################################################
 
@@ -269,6 +270,37 @@
 			}
 		}
 		return $properties;
+	}
+
+	########################################################################
+
+	function api_wof_checkout_branch() {
+
+		$user = $GLOBALS['cfg']['user'];
+		if (! $user) {
+			api_output_error(400, 'You must be logged in to checkout a branch.');
+		}
+
+		$branch = post_str('branch');
+		if (! $branch) {
+			api_output_error(400, 'Please select a branch.');
+		}
+
+		if (! preg_match('/^[a-z0-9-_]+$/', $branch)) {
+			api_output_error(400, 'Invalid branch name. Please stick to alphanumerics, dashes, and underbars.');
+		}
+
+		users_settings_set($user, 'branch', $branch);
+
+		if (! file_exists("{$GLOBALS['cfg']['wof_pending_dir']}$branch")) {
+			mkdir("{$GLOBALS['cfg']['wof_pending_dir']}$branch", 0775, true);
+		}
+
+		// Something something Elasticsearch index
+
+		api_output_ok(array(
+			'branch' => $branch
+		));
 	}
 
 	# the end

@@ -10,11 +10,15 @@ mapzen.whosonfirst.boundaryissues.branch = (function() {
 
 	var self = {
 		init: function() {
-			$('#navi-branch-dropdown li a.branch').click(self.checkout_existing);
+			$('#navi-branch-dropdown').click(self.checkout_existing);
 			$('#navi-branch-create').click(self.checkout_new);
 		},
 
 		checkout_existing: function(e) {
+			if (e.target.nodeName != 'A' ||
+			    ! $(e.target).hasClass('branch')) {
+				return;
+			}
 			e.preventDefault();
 			var branch = $(e.target).data('branch');
 			$('#navi-branch .branch-label').html(branch);
@@ -25,9 +29,6 @@ mapzen.whosonfirst.boundaryissues.branch = (function() {
 
 		checkout_new: function(e) {
 			e.preventDefault();
-			if (! confirm('Checking out a new branch will incur lots of processing on the server. Are you sure?')) {
-				return;
-			}
 			var branch = prompt('What should we call your new branch?');
 			if (typeof branch != 'string') {
 				return;
@@ -38,13 +39,22 @@ mapzen.whosonfirst.boundaryissues.branch = (function() {
 			}
 			$('#navi-branch-dropdown li a.hey-look').removeClass('hey-look');
 			var divider = $('#navi-branch-dropdown li.divider').get(1);
-			$('<li><a href="#" class="branch hey-look">' + branch + '</a></li>').insertBefore(divider);
+			$('<li><a href="#" class="branch hey-look" data-branch="' + branch + '">' + branch + '</a></li>').insertBefore(divider);
 			$('#navi-branch .branch-label').html(branch);
 			self.checkout_branch(branch);
 		},
 
 		checkout_branch: function(branch) {
-			console.log('ok: ' + branch);
+			var onsuccess = function(rsp) {
+				mapzen.whosonfirst.log.info('checked out ' + rsp.branch);
+			};
+			var onerror = function(rsp) {
+				alert('There was a problem checking out ' + branch + '.');
+				mapzen.whosonfirst.log.info('could not check out ' + branch);
+			};
+			mapzen.whosonfirst.boundaryissues.api.api_call('wof.checkout_branch', {
+				branch: branch
+			}, onsuccess, onerror);
 		}
 	};
 

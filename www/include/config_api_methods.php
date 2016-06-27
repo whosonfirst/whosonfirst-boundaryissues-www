@@ -90,6 +90,18 @@
 			)
 		),
 
+		"wof.checkout_branch" => array (
+			"description" => "Check out a branch in git.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "branch", "description" => "The branch name.", "required" => 1)
+			)
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,
