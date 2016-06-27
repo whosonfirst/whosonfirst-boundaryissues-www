@@ -296,11 +296,20 @@
 			mkdir("{$GLOBALS['cfg']['wof_pending_dir']}$branch", 0775, true);
 		}
 
-		// Something something Elasticsearch index
-
-		api_output_ok(array(
+		$rsp = array(
 			'branch' => $branch
-		));
+		);
+
+		$index = "{$GLOBALS['cfg']['wof_elasticsearch_index']}_$branch";
+		if (! wof_elasticsearch_index_exists($index) &&
+		      $branch != 'master') {
+			offline_tasks_schedule_task('setup_index', array(
+				'index' => $index
+			));
+			$rsp['scheduled_index_setup'] = $index;
+		}
+
+		api_output_ok($rsp);
 	}
 
 	# the end

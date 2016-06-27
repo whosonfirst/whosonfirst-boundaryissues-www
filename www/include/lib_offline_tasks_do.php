@@ -5,6 +5,7 @@
 	loadlib('wof_elasticsearch');
 	loadlib('wof_save');
 	loadlib('wof_s3');
+	loadlib('http');
 
 	$GLOBALS['offline_tasks_do_handlers'] = array();
 
@@ -113,6 +114,65 @@
 
 		$rsp = wof_save_feature($geojson, $geometry, $properties, $collection_uuid, $user_id);
 		return $rsp;
+	}
+
+	########################################################################
+
+	$GLOBALS['offline_tasks_do_handlers']['setup_index'] = 'offline_tasks_do_setup_index';
+
+	function offline_tasks_do_setup_index($data){
+		if (wof_elasticsearch_index_exists($data['index'])) {
+			return array(
+				'ok' => 0,
+				'error' => 'Index already exists.'
+			);
+		}
+
+		if (! preg_match('/^[a-zA-Z0-9-_]+$/', $data['index'])) {
+			return array(
+				'ok' => 0,
+				'error' => "Invalid index: {$data['index']}"
+			);
+		}
+
+		$more = array();
+		wof_elasticsearch_append_defaults($more);
+
+		$server = "http://{$more['host']}:{$more['port']}";
+		$source = "$server/{$more['index']}";
+		$target = "$server/{$data['index']}";
+
+		// Copy mappings from existing index
+		$rsp = http_get("$source/_mappings");
+		if (! $rsp) {
+			return $rsp;
+		}
+		$body = json_decode($rsp['body'], 'as hash');
+
+		foreach ($body as $top_level => $mappings) {
+			// There should only be one item, but the index name is
+			// not predictable
+			$mappings = json_encode($mappings);
+			break;
+		}
+		$rsp = http_put($target, $mappings);
+
+		// stream2es is kind of a large-ish binary. We might want to
+		// reference it from the es-whosonfirst-schema repo, but it
+		// isn't currently set up by default. (20160627/dphiffer)
+		$stream2es = dirname(dirname(FLAMEWORK_INCLUDE_DIR)) . '/bin/stream2es';
+
+		$output = array();
+		$source = escapeshellarg($source);
+		$target = escapeshellarg($target);
+		exec("$stream2es es --source $source --target $target", $output);
+
+		// do something with the output?
+
+		return array(
+			'ok' => 1,
+			'index' => $data['index']
+		);
 	}
 
 	########################################################################

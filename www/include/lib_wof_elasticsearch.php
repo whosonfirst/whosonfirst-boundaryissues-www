@@ -2,6 +2,7 @@
 
 	loadlib("elasticsearch");
 	loadlib("users_settings");
+	loadlib("http");
 
 	# https://github.com/whosonfirst/whosonfirst-www-boundaryissues/wiki/Updating-ES-schema
 
@@ -51,9 +52,11 @@
 		$more['host'] = $GLOBALS['cfg']['wof_elasticsearch_host'];
 		$more['port'] = $GLOBALS['cfg']['wof_elasticsearch_port'];
 
-		$branch = users_settings_get_single($GLOBAL['cfg']['user'], 'branch');
-		if ($branch != 'master') {
-			$more['index'] = "{$more['index']}_$branch";
+		if ($GLOBAL['cfg']['user']) {
+			$branch = users_settings_get_single($GLOBAL['cfg']['user'], 'branch');
+			if ($branch != 'master') {
+				$more['index'] = "{$more['index']}_$branch";
+			}
 		}
 
 		# pass-by-ref
@@ -85,5 +88,13 @@
 	}
 
 	########################################################################
+
+	function wof_elasticsearch_index_exists($index, $more=array()) {
+		wof_elasticsearch_append_defaults($more);
+		$url = "http://{$more['host']}:{$more['port']}/$index";
+		$rsp = http_head($url);
+		$index_exists = ($rsp['info']['http_code'] == 200);
+		return $index_exists;
+	}
 
 	# the end
