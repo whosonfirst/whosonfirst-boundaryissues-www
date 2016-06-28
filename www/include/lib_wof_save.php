@@ -111,7 +111,7 @@
 
 		if (is_array($properties)) {
 			$rsp = wof_save_merged($geojson, $geometry, $properties);
-			if (! $rsp) {
+			if (! $rsp['ok']) {
 				return $rsp;
 			}
 			$geojson = $rsp['geojson'];
@@ -290,7 +290,8 @@
 		}
 
 		$existing_geojson_path = wof_utils_find_id($wof_id);
-		if (! file_exists($existing_geojson_path)) {
+		if (! $existing_geojson_path ||
+                    ! file_exists($existing_geojson_path)) {
 			return array(
 				'ok' => 0,
 				'error' => "wof:id $wof_id not found."
