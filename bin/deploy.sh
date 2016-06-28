@@ -22,5 +22,12 @@ sudo /etc/init.d/wof-pubsocketd-server.sh restart
 wof-pylibs
 
 if [ $? -eq 1 ] ; then
-  echo "Oh hey, you should update your Python libraries!"
+  cd /usr/local/mapzen/py-mapzen-whosonfirst
+  git pull origin master
+  sudo python setup.py install
+
+  # This is because pip-utils is still on a separate branch
+  cd /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
+  git pull
+  sudo python setup.py install
 fi
