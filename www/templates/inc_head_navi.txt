@@ -13,7 +13,7 @@
 				<div class="dropdown" id="navi-branch-dropdown">
 					<a href="#" id="navi-branch" class="dropdown-toggle navi-label" data-toggle="dropdown" role="button"><span class="branch-label">{$curr_branch|escape}</span> <b class="caret caret-ch"></b></a>
 					<ul class="dropdown-menu" aria-labelledby="navi-branch" role="menu">
-						<li><span class="dropdown-label hey-look">git branch</span></li>
+						<li><span class="dropdown-label">git branch</span></li>
 						<li class="divider"></li>
 						{foreach from=$branches item=b}
 							<li><a href="#" data-branch="{$b|escape}" class="branch{if $curr_branch == $b} hey-look{/if}">{$b|escape}</a></li>
@@ -40,6 +40,7 @@
 							<li id="bookmarks"><a href="{$cfg.abs_root_url}me/bookmarks/" title="Your bookmarks">Your bookmarks</a></li>
 						{/if}
 						<li class="divider"></li>
+						<li id="toggle-git-branch"><a href="#">{if $show_git_branch}Hide{else}Show{/if} git branch</a></li>
 						<li id="account"><a href="{$cfg.abs_root_url}account/" title="hello, {$cfg.user.username|escape}">Your account</a></li>
 						<li id="signout"><a href="{$cfg.abs_root_url}signout/">Sign out</a></li>
 						{if "admin"|@auth_has_role:$cfg.user.id}

@@ -1,7 +1,8 @@
 <?php
 
 	$GLOBALS['users_settings_defaults'] = array(
-		'branch' => 'master'
+		'branch' => 'master',
+		'show_git_branch' => 0
 	);
 
 	$GLOBALS['users_settings_cache'] = array();

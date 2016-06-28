@@ -598,7 +598,9 @@
 				}
 			}
 			$curr_branch = users_settings_get_single($GLOBALS['cfg']['user'], 'branch');
+			$show_git_branch = users_settings_get_single($GLOBALS['cfg']['user'], 'show_git_branch');
 			$GLOBALS['smarty']->assign("branches", $branches);
+			$GLOBALS['smarty']->assign("show_git_branch", $show_git_branch);
 			$GLOBALS['smarty']->assign("curr_branch", $curr_branch);
 		}
 	}

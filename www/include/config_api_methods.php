@@ -102,6 +102,19 @@
 			)
 		),
 
+		"wof.users_settings_set" => array (
+			"description" => "Set a users setting.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "name", "description" => "The setting name.", "required" => 1),
+				array("name" => "value", "description" => "The setting value.", "required" => 1)
+			)
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,

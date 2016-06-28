@@ -301,8 +301,12 @@ li.event small {
 }
 
 #navi-branch-dropdown {
-	display: inline-block;
+	display: none;
 	padding: 8px 15px;
+}
+
+body.show-git-branch #navi-branch-dropdown {
+	display: inline-block;
 }
 
 #navi-branch {

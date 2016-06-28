@@ -12,6 +12,29 @@ mapzen.whosonfirst.boundaryissues.branch = (function() {
 		init: function() {
 			$('#navi-branch-dropdown').click(self.checkout_existing);
 			$('#navi-branch-create').click(self.checkout_new);
+			$('#toggle-git-branch a').click(function(e) {
+				e.preventDefault();
+				if ($(document.body).hasClass('show-git-branch')) {
+					$(document.body).removeClass('show-git-branch');
+					$('#toggle-git-branch a').html('Show git branch');
+					var show = 0;
+				} else {
+					$(document.body).addClass('show-git-branch');
+					$('#toggle-git-branch a').html('Hide git branch');
+					var show = 1;
+				}
+				var onsuccess = function(rsp) {
+					mapzen.whosonfirst.log.info('set show_git_branch to ' + show);
+				};
+				var onerror = function(rsp) {
+					mapzen.whosonfirst.log.info('could not set show_git_branch');
+				};
+				mapzen.whosonfirst.boundaryissues.api.api_call('wof.users_settings_set', {
+					name: 'show_git_branch',
+					value: show
+				}, onsuccess, onerror);
+			});
+
 		},
 
 		checkout_existing: function(e) {

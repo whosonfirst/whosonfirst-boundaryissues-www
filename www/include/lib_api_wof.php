@@ -312,4 +312,21 @@
 		api_output_ok($rsp);
 	}
 
+	########################################################################
+
+	function api_wof_users_settings_set() {
+
+		$user = $GLOBALS['cfg']['user'];
+		if (! $user) {
+			api_output_error(400, 'You must be logged in to set a users setting.');
+		}
+
+		$name = post_str('name');
+		$value = post_str('value');
+		$rsp = users_settings_set($user, $name, $value);
+
+		api_output_ok($rsp);
+
+	}
+
 	# the end
