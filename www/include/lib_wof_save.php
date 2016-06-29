@@ -458,17 +458,6 @@
 			echo "\n";
 		}
 
-		if ($options['verbose']) {
-			echo "git pull --rebase origin master\n";
-		}
-
-		if (! $options['dry_run']) {
-			$rsp = wof_save_pending_pull();
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-		}
-
 		$saved = array();
 		$branches = glob("{$GLOBALS['cfg']['wof_pending_dir']}*");
 		foreach ($branches as $branch) {
@@ -537,6 +526,18 @@
 		}
 		if (! $options['dry_run']) {
 			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "checkout {$new_branch}$branch");
+		}
+
+		// Pull down changes from origin
+		if ($options['verbose']) {
+			echo "git pull --rebase origin $branch\n";
+		}
+
+		if (! $options['dry_run']) {
+			$rsp = wof_save_pending_pull($branch);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
 		}
 
 		$args = '';
@@ -744,9 +745,9 @@
 
 	########################################################################
 
-	function wof_save_pending_pull() {
+	function wof_save_pending_pull($branch) {
 		// Pull changes from GitHub
-		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', 'master', '--rebase');
+		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch, '--rebase');
 		if (! $rsp['ok']) {
 			return array(
 				'ok' => 0,
