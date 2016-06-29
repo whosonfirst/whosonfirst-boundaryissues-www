@@ -126,11 +126,13 @@
 			);
 		}
 
-		$success_regex = "/.{7}\.\..{7}\s+$curr_branch -> $branch/m";
-		if (! preg_match($success_regex, $git_push_output)) {
+		$update_regex = "/.{7}\.\..{7}\s+$curr_branch -> $branch/m";
+		$new_repo_regex = "/\[new branch\]\s+$curr_branch -> $branch/m";
+		if (! preg_match($update_regex, $git_push_output) &&
+		    ! preg_match($new_repo_regex, $git_push_output)) {
 			return array(
 				'ok' => 0,
-				'error' => "Error from git pull: $git_push_output"
+				'error' => "Error from git push: $git_push_output"
 			);
 		}
 

@@ -567,6 +567,11 @@
 				$wof_id
 			);
 
+			$geojson = file_get_contents($pending_path);
+			$feature = json_decode($geojson, 'as hash');
+			$wof_name = $feature['properties']['wof:name'];
+			$user_id = $update['user_id'];
+
 			$data_dir = dirname($data_path);
 			if (! file_exists($data_dir)) {
 				if ($options['verbose']) {
@@ -601,11 +606,6 @@
 				git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
 			}
 			$saved[$wof_id] = $updates;
-
-			$geojson = file_get_contents($pending_path);
-			$feature = json_decode($geojson, 'as hash');
-			$wof_name = $feature['properties']['wof:name'];
-			$user_id = $update['user_id'];
 
 			if ($authors[$user_id]) {
 				$author = $authors[$user_id];
@@ -749,7 +749,7 @@
 		// Pull changes from GitHub
 		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch, '--rebase');
 		if (! $rsp['ok'] &&
-		    strpos($rsp['rsp'], "Couldn't find remote ref $branch") === false) {
+		    strpos($rsp['rsp'], "Couldn\\'t find remote ref $branch") !== false) {
 			// We are okay with the "branch doesn't exist yet on GitHub" error
 			return array(
 				'ok' => 0,
