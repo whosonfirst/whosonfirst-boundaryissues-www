@@ -748,7 +748,9 @@
 	function wof_save_pending_pull($branch) {
 		// Pull changes from GitHub
 		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch, '--rebase');
-		if (! $rsp['ok']) {
+		if (! $rsp['ok'] &&
+		    strpos($rsp['rsp'], "Couldn't find remote ref $branch") === false) {
+			// We are okay with the "branch doesn't exist yet on GitHub" error
 			return array(
 				'ok' => 0,
 				'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
