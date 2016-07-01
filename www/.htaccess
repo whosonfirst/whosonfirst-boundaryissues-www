@@ -156,6 +156,9 @@ RewriteRule  ^auth/?$			/auth_callback_github_oauth.php?%{QUERY_STRING} [L]
 RewriteRule ^tags(/page([0-9]+))?/?$						tags.php?page=$2	[L,QSA]
 RewriteRule ^tags/([^/]+)(/page([0-9]+))?/?$					tag.php?tag=$1&page=$3	[L,QSA]
 
+RewriteRule ^categories(/page([0-9]+))?/?$					categories.php?page=$2	[L,QSA]
+RewriteRule ^categories/([^/]+)(/page([0-9]+))?/?$				category.php?category=$1&page=$3	[L,QSA]
+
 RewriteRule ^brands(/page([0-9]+))?/?$						brands.php?page=$2	[L,QSA]
 RewriteRule ^brands/([0-9]+)(/page([0-9]+))?/?$					brand.php?id=$1&page=$3	[L,QSA]
 

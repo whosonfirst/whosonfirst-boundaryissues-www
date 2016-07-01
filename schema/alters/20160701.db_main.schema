@@ -1,0 +1,24 @@
+CREATE TABLE `boundaryissues_categories` (
+  `id` int(11) unsigned NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `uri` varchar(255) NOT NULL DEFAULT '',
+  `rank` int(11) unsigned NOT NULL DEFAULT '999',
+  `domain_id` int(11) unsigned DEFAULT NULL,
+  `domain_uri` varchar(255) DEFAULT NULL,
+  `domain_rank` int(11) unsigned DEFAULT NULL,
+  `subdomain_id` int(11) unsigned DEFAULT NULL,
+  `subdomain_uri` varchar(255) DEFAULT NULL,
+  `subdomain_rank` int(11) unsigned DEFAULT NULL,
+  `group_id` int(11) unsigned DEFAULT NULL,
+  `group_uri` varchar(255) DEFAULT NULL,
+  `group_rank` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `type_uri` (`type`,`uri`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `boundaryissues_categories_meta` (
+  `category_id` int(11) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(255) DEFAULT NULL,
+  KEY `category_id` (`category_id`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
