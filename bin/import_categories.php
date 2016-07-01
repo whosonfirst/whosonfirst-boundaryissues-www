@@ -1,7 +1,7 @@
 <?php
 
 	include(__DIR__ . "/init_local.php");
-	loadlib('artisinal_integers');
+	loadlib('artisanal_integers');
 
 	// This is all designed around a CSV file that's included in the schema
 	// directory: categories.csv. It's designed to run iteratively to
@@ -214,6 +214,9 @@
 
 			// Cache it!
 			$id = $rsp['insert_id'];
+			if (! $categories[$type]) {
+				$categories[$type] = array();
+			}
 			$categories[$type][$uri] = $id;
 
 		} else {
