@@ -17,13 +17,24 @@
 		die("Usage: php bin/import_categories.php schema/categories.csv\n");
 	}
 
+	// The CSV file refers to things differently:
+	$type_translation = array(
+		'domain' => 'namespace',
+		'subdomain' => 'predicate',
+		'name' => 'value'
+	);
+
 	// This is all pretty straightforward: we populate a couple globals
 	// that reflect state in the current database...
 	setup_categories();
 	setup_meta();
 
 	// And then we check the CSV file for anything new.
-	import_from_csv($argv[1]);
+	$rsp = import_from_csv($argv[1]);
+	if (! $rsp['ok']) {
+		print_r($rsp);
+		die("\n");
+	}
 
 	function import_from_csv($filename) {
 
@@ -41,8 +52,14 @@
 			}
 
 			// Then do some other stuff....
-			import_row($row);
+			$rsp = import_row($row);
+			if (! $rsp['ok']) {
+				return $rsp;
+				break;
+			}
 		}
+
+		return array('ok' => 1);
 	}
 
 	function setup_categories() {
@@ -90,47 +107,41 @@
 
 	function import_row($row) {
 
-		// We'll import the high-level categories first. These exist
-		// in the same database table, but with a different 'type.'
+		// The category types are stored with this structure in mind:
+		//    namespace:predicate = value
 
-		// Basically there are two hierarchies:
-		//    domain -> subdomain -> category
-		//    group -> category
+		// I'm ignoring "aliases" and "groups" for now, but we can get
+		// to those later.
 
-		// I'm ignoring "aliases" for now, but we can get to them later.
+		// We'll import the high-level types first.
 
+		// Namespace (aka domain)
 		$rsp = import_category($row, 'domain');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$domain_id = $rsp['id'];
+		$namespace_id = $rsp['id'];
 
+		// Predicate (aka subdomain)
 		$rsp = import_category($row, 'subdomain');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$subdomain_id = $rsp['id'];
+		$predicate_id = $rsp['id'];
 
-		$rsp = import_category($row, 'group');
+		// The value (aka name)
+		$rsp = import_category($row, 'name');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$group_id = $rsp['id'];
-
-		// Then the "category" category.
-		$rsp = import_category($row, 'category');
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-		$category_id = $rsp['id'];
+		$value_id = $rsp['id'];
 
 		// The 'label_en' property is the English name. Maybe this
 		// should be called something else, along the lines of BCP-47?
 
-		category_meta($category_id, 'label_en', $row['name']);
-		category_meta($subdomain_id, 'label_en', $row['subdomain']);
-		category_meta($domain_id, 'label_en', $row['domain']);
-		category_meta($group_id, 'label_en', $row['group']);
+		category_meta($namespace_id, 'label_en', $row['domain']);
+		category_meta($predicate_id, 'label_en', $row['subdomain']);
+		category_meta($value_id, 'label_en', $row['name']);
 
 		// We don't need to do anything with these columns, since they
 		// are already reflected in the data.
@@ -153,22 +164,21 @@
 
 	function import_category($row, $type) {
 
-		global $categories;
+		global $categories, $type_translation;
 
-		// Note: I'm using the type "category" instead of the CSV file
-		// convention of "name." The word "name" just seems too generic.
+		$uri = $row["{$type}_uri"];
+		$rank_col = "{$type}_rank";
 
-		if ($type == 'category') {
-			$uri = $row["name_uri"];
+		if ($type == 'name') {
 			$rank_col = "rank4";
-		} else {
-			$uri = $row["{$type}_uri"];
-			$rank_col = "{$type}_rank";
 		}
+
+		// We are storing things machinetags-style
+		$translated_type = $type_translation[$type];
 
 		// This is what we're inserting into the DB.
 		$category = array(
-			'type' => addslashes($type),
+			'type' => $translated_type,
 			'uri' => addslashes($uri)
 		);
 
@@ -177,34 +187,30 @@
 			$category['rank'] = addslashes($row[$rank_col]);
 		}
 
-		// Add in domain metadata.
-		if ($type == 'category' || $type == 'subdomain') {
-			$domain_uri = $row['domain_uri'];
-			$category['domain_id'] = $categories['domain'][$domain_uri];
-			$category['domain_uri'] = $domain_uri;
-			$category['domain_rank'] = $row['domain_rank'];
+		// Add in namespace metadata.
+		if ($type == 'name' || $type == 'subdomain') {
+			$namespace_uri = $row['domain_uri'];
+			$category['namespace_id'] = $categories['namespace'][$namespace_uri];
+			$category['namespace_uri'] = $namespace_uri;
+			$category['namespace_rank'] = $row['domain_rank'];
 		}
 
-		// Add in subdomain and group metadata.
-		if ($type == 'category') {
-			$subdomain_uri = $row['subdomain_uri'];
-			$category['subdomain_id'] = $categories['subdomain'][$subdomain_uri];
-			$category['subdomain_uri'] = $subdomain_uri;
-			$category['subdomain_rank'] = $row['subdomain_rank'];
-			$group_uri = $row['group_uri'];
-			$category['group_id'] = $categories['group'][$group_uri];
-			$category['group_uri'] = $group_uri;
-			$category['group_rank'] = $row['group_rank'];
+		// Add in predicate metadata.
+		if ($type == 'name') {
+			$predicate_uri = $row['subdomain_uri'];
+			$category['predicate_id'] = $categories['predicate'][$predicate_uri];
+			$category['predicate_uri'] = $predicate_uri;
+			$category['predicate_rank'] = $row['subdomain_rank'];
 		}
 
-		if (empty($categories[$type][$uri])) {
+		if (empty($categories[$translated_type][$uri])) {
 
 			// Mint an artisanal integer
-			$rsp = artisanal_integers_create();
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-			$category['id'] = $rsp['integer'];
+			//$rsp = artisanal_integers_create();
+			//if (! $rsp['ok']) {
+			//	return $rsp;
+			//}
+			//$category['id'] = $rsp['integer'];
 
 			// Insert it!
 			$rsp = db_insert('boundaryissues_categories', $category);
@@ -214,15 +220,15 @@
 
 			// Cache it!
 			$id = $rsp['insert_id'];
-			if (! $categories[$type]) {
-				$categories[$type] = array();
+			if (! $categories[$translated_type]) {
+				$categories[$translated_type] = array();
 			}
-			$categories[$type][$uri] = $id;
+			$categories[$translated_type][$uri] = $id;
 
 		} else {
 
 			// Look up the ID
-			$id = $categories[$type][$uri];
+			$id = $categories[$translated_type][$uri];
 
 			// Update it!
 			$where = "id = " . addslashes($id);
@@ -243,21 +249,26 @@
 		global $meta;
 
 		if (! isset($meta[$category_id][$name])) {
-			db_insert('boundaryissues_categories_meta', array(
+			$rsp = db_insert('boundaryissues_categories_meta', array(
 				'category_id' => addslashes($category_id),
 				'name' => addslashes($name),
 				'value' => addslashes($value)
 			));
 		} else {
 			$where = "category_id = " . addslashes($category_id);
-			db_update('boundaryissues_categories_meta', array(
+			$rsp = db_update('boundaryissues_categories_meta', array(
 				'name' => addslashes($name),
 				'value' => addslashes($value)
 			), $where);
+		}
+
+		if (! $rsp['ok']) {
+			return $rsp;
 		}
 
 		if (! $meta[$category_id]) {
 			$meta[$category_id] = array();
 		}
 		$meta[$category_id][$name] = $value;
+
 	}
