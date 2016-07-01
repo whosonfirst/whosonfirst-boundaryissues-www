@@ -32,8 +32,7 @@
 	// And then we check the CSV file for anything new.
 	$rsp = import_from_csv($argv[1]);
 	if (! $rsp['ok']) {
-		print_r($rsp);
-		die("\n");
+		die(var_export($rsp) . "\n");
 	}
 
 	function import_from_csv($filename) {
@@ -55,7 +54,6 @@
 			$rsp = import_row($row);
 			if (! $rsp['ok']) {
 				return $rsp;
-				break;
 			}
 		}
 
@@ -139,9 +137,20 @@
 		// The 'label_en' property is the English name. Maybe this
 		// should be called something else, along the lines of BCP-47?
 
-		category_meta($namespace_id, 'label_en', $row['domain']);
-		category_meta($predicate_id, 'label_en', $row['subdomain']);
-		category_meta($value_id, 'label_en', $row['name']);
+		$rsp = category_meta($namespace_id, 'label_en', $row['domain']);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = category_meta($predicate_id, 'label_en', $row['subdomain']);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = category_meta($value_id, 'label_en', $row['name']);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
 		// We don't need to do anything with these columns, since they
 		// are already reflected in the data.
@@ -157,9 +166,14 @@
 			// Iterate over all the columns.
 
 			if (! in_array($key, $ignore_cols)) {
-				category_meta($category_id, $key, $value);
+				$rsp = category_meta($value_id, $key, $value);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
 			}
 		}
+		
+		return array('ok' => 1);
 	}
 
 	function import_category($row, $type) {
@@ -202,7 +216,7 @@
 			$category['predicate_uri'] = $predicate_uri;
 			$category['predicate_rank'] = $row['subdomain_rank'];
 		}
-
+		
 		if (empty($categories[$translated_type][$uri])) {
 
 			// Mint an artisanal integer
@@ -261,7 +275,7 @@
 				'value' => addslashes($value)
 			), $where);
 		}
-
+		
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -270,5 +284,7 @@
 			$meta[$category_id] = array();
 		}
 		$meta[$category_id][$name] = $value;
+		
+		return array('ok' => 1);
 
 	}

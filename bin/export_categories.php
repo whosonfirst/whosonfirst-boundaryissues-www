@@ -58,10 +58,23 @@
 	}
 
 	function export_categories($dir) {
-
+		
+		// Exports each category item to a JSON file.
+		
+		global $categories;
+		
 		foreach ($categories as $cat) {
 			$type = $cat['type'];
-			
+			$uri = $cat['uri'];
+			$path = "$dir/$type/$uri.json";
+			$json = json_encode(array(
+				'id' => intval($cat['id']),
+				'name' => $uri,
+				'label' => $cat['label_en']
+			), JSON_PRETTY_PRINT);
+			if (! file_exists("$dir/$type")) {
+				mkdir("$dir/$type", 0755, true);
+			}
+			file_put_contents($path, $json);
 		}
-
 	}
