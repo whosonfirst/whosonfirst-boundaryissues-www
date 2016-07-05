@@ -14,7 +14,7 @@
 	// (20160701/dphiffer)
 
 	if (! $argv[1]) {
-		die("Usage: php bin/import_categories.php schema/categories.csv\n");
+		die("Usage: php bin/import_categories.php target [start]\n  - (required) target can be either .csv or a JSON schema directory\n  - (optional) start is the .csv row number to skip to");
 	}
 
 	// The CSV file refers to things differently:
@@ -29,20 +29,46 @@
 	setup_categories();
 	setup_meta();
 
-	// And then we check the CSV file for anything new.
-	$rsp = import_from_csv($argv[1]);
-	if (! $rsp['ok']) {
-		die(var_export($rsp) . "\n");
+	if (substr($argv[1], -4, 4) == '.csv') {
+
+		$start = 0;
+		if ($argv[2]) {
+			$start = intval($argv[2]);
+		}
+
+		// And then we check the CSV file for anything new.
+		$rsp = import_from_csv($argv[1], $start);
+		if (! $rsp['ok']) {
+			die(var_export($rsp) . "\n");
+		}
+
+	} else {
+
+		// ... Or we iterate over a JSON schema directory tree
+		$rsp = import_from_json($argv[1]);
+		if (! $rsp['ok']) {
+			die(var_export($rsp) . "\n");
+		}
+
 	}
 
-	function import_from_csv($filename) {
+	function import_from_csv($filename, $start = 0) {
 
 		$fh = fopen($filename, 'r');
 
 		// The first row is assumed to be column names
 		$cols = fgetcsv($fh);
+		$row_num = 0;
 
 		while ($data = fgetcsv($fh)) {
+
+			$row_num++;
+
+			// $start lets us skip to a specific row in the CSV
+			if ($row_num < $start) {
+				continue;
+			}
+
 			$row = array();
 
 			// Use the first row to assign named properties
@@ -52,6 +78,49 @@
 
 			// Then do some other stuff....
 			$rsp = import_row($row);
+			if (! $rsp['ok']) {
+				$rsp['row_num'] = $row_num; // where did we leave off?
+				return $rsp;
+			}
+		}
+
+		return array('ok' => 1);
+	}
+
+	function import_from_json($dir) {
+
+		$rsp = import_from_json_type_dir($dir, 'namespace');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = import_from_json_type_dir($dir, 'predicate');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = import_from_json_type_dir($dir, 'value');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		return array('ok' => 1);
+	}
+
+	function import_from_json_type_dir($dir, $type) {
+
+		if (! file_exists("$dir/$type")) {
+			return array(
+				'ok' => 0,
+				'error' => "No '$type' folder found."
+			);
+		}
+
+		$files = glob("$dir/$type/*.json");
+		foreach ($files as $file) {
+			$json = file_get_contents($file);
+			$item = json_decode($json, 'as hash');
+			$rsp = import_json_item($item, $type);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -172,7 +241,7 @@
 				}
 			}
 		}
-		
+
 		return array('ok' => 1);
 	}
 
@@ -216,15 +285,15 @@
 			$category['predicate_uri'] = $predicate_uri;
 			$category['predicate_rank'] = $row['subdomain_rank'];
 		}
-		
+
 		if (empty($categories[$translated_type][$uri])) {
 
 			// Mint an artisanal integer
-			//$rsp = artisanal_integers_create();
-			//if (! $rsp['ok']) {
-			//	return $rsp;
-			//}
-			//$category['id'] = $rsp['integer'];
+			$rsp = artisanal_integers_create();
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$category['id'] = $rsp['integer'];
 
 			// Insert it!
 			$rsp = db_insert('boundaryissues_categories', $category);
@@ -233,7 +302,7 @@
 			}
 
 			// Cache it!
-			$id = $rsp['insert_id'];
+			$id = $category['id'];
 			if (! $categories[$translated_type]) {
 				$categories[$translated_type] = array();
 			}
@@ -258,6 +327,41 @@
 		);
 	}
 
+	function import_json_item($item, $type) {
+
+		global $categories;
+
+		$id = intval($item['id']);
+		$uri = $item['name'];
+		$label = $item['label'];
+
+		$category = array(
+			'id' => $id,
+			'type' => addslashes($type),
+			'uri' => addslashes($uri)
+		);
+
+		if ($categories[$type][$uri]) {
+			$where = "id = " . addslashes($id);
+			$rsp = db_update('boundaryissues_categories', $category, $where);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		} else {
+			$rsp = db_insert('boundaryissues_categories', $category);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		}
+
+		$rsp = category_meta($id, 'label_en', $label);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		return array('ok' => 1);
+	}
+
 	function category_meta($category_id, $name, $value) {
 
 		global $meta;
@@ -275,7 +379,7 @@
 				'value' => addslashes($value)
 			), $where);
 		}
-		
+
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -284,7 +388,7 @@
 			$meta[$category_id] = array();
 		}
 		$meta[$category_id][$name] = $value;
-		
+
 		return array('ok' => 1);
 
 	}
