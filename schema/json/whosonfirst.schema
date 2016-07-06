@@ -85,6 +85,9 @@
 						"mz:is_current": {
 							"type": "integer",
 							"default": 1
+						},
+						"mz:categories": {
+							"type": "array"
 						}
 					},
 					"required": [

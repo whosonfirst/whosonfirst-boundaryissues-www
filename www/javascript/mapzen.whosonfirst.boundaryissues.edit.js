@@ -20,6 +20,41 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	var esc_int = parseInt;
 	var esc_float = parseFloat;
 
+	// Return null (okay) or a string (error)
+	var validations = [
+		function() {
+			var lat = $('input[name="properties.geom:latitude"]').val();
+			var lng = $('input[name="properties.geom:longitude"]').val();
+			if (! lat || ! lng) {
+				return 'Please set <span class=\"hey-look\">geom:latitude</span> and <span class=\"hey-look\">geom:longitude</span>.';
+			}
+			return null;
+		},
+		function() {
+			var wof_name = $('input[name="properties.wof:name"]').val();
+			if (! wof_name) {
+				return 'Please set <span class=\"hey-look\">wof:name</span>.';
+			}
+			return null;
+		},
+		function () {
+			var categories = [];
+			var index = 0;
+			while ($('input[name="properties.mz:categories[' + index + ']"]').length > 0) {
+				var category = $('input[name="properties.mz:categories[' + index + ']"]').val();
+				var match = category.match(/([a-z0-9-_]+):([a-z0-9-_]+)=.+/i);
+				if (! match) {
+					return "<span class=\"hey-look\">mz:categories</span> value <code>" + category + "</code> does not conform to the pattern <code>namespace:predicate=value</code>."
+				}
+
+				// Something something check namespace/predicate
+
+				index++;
+			}
+			return null;
+		}
+	];
+
 	var self = {
 
 		setup_map: function() {
@@ -255,14 +290,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 
-				var lat = $('input[name="properties.geom:latitude"]').val();
-				var lng = $('input[name="properties.geom:longitude"]').val();
-				var wof_name = $('input[name="properties.wof:name"]').val();
-
-				if (! lat || ! lng) {
-					$status.html('Please set geom:latitude and geom:longitude.');
-				} else if (! wof_name) {
-					$status.html('Please set wof:name.');
+				var errors = [];
+				$.each(validations, function(i, validate) {
+					var result = validate();
+					console.log(result);
+					if (result) {
+						errors.push(result);
+					}
+				});
+				if (errors.length > 0) {
+					if (errors.length == 1) {
+						$status.html('<div class="alert alert-danger">Just one thing before you can save that: ' + errors[0] + '</div>');
+					} else {
+						$status.html('<div class="alert alert-danger">There are some problems you need to fix first:<ul><li>' + errors.join('</li><li>') + '</li></ul></div>');
+					}
 				} else {
 					self.save_to_server(self.generate_geojson());
 				}

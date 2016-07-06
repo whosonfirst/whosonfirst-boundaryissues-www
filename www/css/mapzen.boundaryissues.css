@@ -326,3 +326,8 @@ nav #navi-branch-dropdown li {
 	display: block;
 	padding: 3px 20px;
 }
+
+.alert code {
+	color: inherit;
+	background-color: rgba(0, 0, 0, 0.1);
+}
