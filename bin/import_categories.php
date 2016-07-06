@@ -226,8 +226,7 @@
 		$ignore_cols = array(
 			'name', 'name_uri', 'rank4',
 			'subdomain', 'subdomain_uri', 'subdomain_rank',
-			'domain', 'domain_uri', 'domain_rank',
-			'group', 'group_uri', 'group_rank'
+			'domain', 'domain_uri', 'domain_rank'
 		);
 
 		foreach ($row as $key => $value) {
@@ -373,7 +372,8 @@
 				'value' => addslashes($value)
 			));
 		} else {
-			$where = "category_id = " . addslashes($category_id);
+			$where = "category_id = " . addslashes($category_id) .
+			         " AND name = '"  . addslashes($name) . "'";
 			$rsp = db_update('boundaryissues_categories_meta', array(
 				'name' => addslashes($name),
 				'value' => addslashes($value)
