@@ -68,6 +68,11 @@
 	Each file also gets beamed up to The Cloud so all the things stay in
 	sync.
 
+	Note: this used to work differently, first by making calls to the GitHub
+	      API and then by creating git commits upon hitting save. You can
+	      find the old code at: 1c0bd7a5e33d133741c7496c2239cabfbc05a2c3
+	      (20160711/dphiffer)
+
 	*/
 
 	########################################################################
