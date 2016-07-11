@@ -374,25 +374,40 @@
 	function wof_save_pending_branch($branch, $options) {
 
 		$wof = array();
+		$existing = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
 		$index_dir = wof_utils_pending_dir('index', null, $branch);
 
 		// Group the pending updates by WOF id
-		$files = glob("{$index_dir}*.geojson");
-		foreach ($files as $file) {
-			if (! preg_match($filename_regex, $file, $matches)) {
+		$geojson_files = glob("{$index_dir}*.geojson");
+		foreach ($geojson_files as $path) {
+			if (! preg_match($filename_regex, $path, $matches)) {
 				continue;
 			}
 			list($filename, $timestamp, $user_id, $wof_id, $git_hash) = $matches;
 			if (! $wof[$wof_id]) {
 				$wof[$wof_id] = array();
+				$existing_path = wof_utils_id2abspath(
+					$GLOBALS['cfg']['wof_data_dir'],
+					$wof_id
+				);
+				$existing_geojson = file_get_contents($existing_path);
+				$existing[$wof_id] = json_decode($existing_geojson, 'as hash');
 			}
+
+			// Figure out which properties changed
+			$pending_geojson = file_get_contents($path);
+			$pending = json_decode($pending_geojson, 'as hash');
+			$diff = wof_save_pending_diff($existing[$wof_id], $pending);
+
 			array_push($wof[$wof_id], array(
+				'path' => $path,
 				'wof_id' => intval($wof_id),
 				'filename' => $filename,
 				'timestamp' => intval($timestamp),
 				'user_id' => intval($user_id),
-				'git_hash' => $git_hash
+				'git_hash' => $git_hash,
+				'diff' => $diff
 			));
 		}
 
@@ -477,7 +492,8 @@
 				echo "mv $pending_path $data_path\n";
 			}
 			if (! $options['dry_run']) {
-				rename($pending_path, $data_path);
+				save_pending_apply_diff($pending_path, $update['diff'], $data_path);
+				//rename($pending_path, $data_path);
 			}
 
 			if (! file_exists($data_path) &&
@@ -558,12 +574,11 @@
 
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
-				$filename = $update['filename'];
 				if ($options['verbose']) {
-					echo "mv $index_dir$filename $log_dir$filename\n";
+					echo "mv {$update['path']} $log_dir$filename\n";
 				}
 				if (! $options['dry_run']) {
-					wof_save_log("$index_dir$filename");
+					wof_save_log($update['path']);
 				}
 			}
 			$updated[] = $updates[0];
@@ -636,6 +651,50 @@
 
 	########################################################################
 
+	// Returns a list of properties that changed.
+
+	function wof_save_pending_diff($existing, $pending) {
+
+		$diff = array();
+
+		// Check for property updates
+		foreach ($pending['properties'] as $key => $pending_value) {
+			$existing_value = $existing['properties'][$key];
+			if (wof_save_pending_diff_value($existing_value, $pending_value)) {
+				$diff[] = $key;
+			}
+		}
+
+		// Check for property deletions
+		foreach ($existing['properties'] as $key => $existing_value) {
+			if (! isset($pending['properties'][$key])) {
+				$diff[] = $key;
+			}
+		}
+		return $diff;
+	}
+
+	########################################################################
+
+	function wof_save_pending_diff_value($existing, $pending) {
+
+		if (is_scalar($existing) &&
+		    is_scalar($pending) &&
+		    $existing === $pending) {
+			return false;
+		} else {
+			$diff = false;
+			foreach ($existing as $key => $existing_value) {
+				$pending_value = $pending[$key];
+				$diff = $diff && wof_save_pending_diff_value($existing_value, $pending_value);
+			}
+			return $diff;
+		}
+		return true;
+	}
+
+	########################################################################
+
 	function wof_save_pending_pull($branch) {
 		// Pull changes from GitHub
 		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch, '--rebase');
@@ -692,6 +751,31 @@
 		return array(
 			'ok' => 1
 		);
+	}
+
+	########################################################################
+
+	function save_pending_apply_diff($pending_path, $diff, $existing_path) {
+
+		$pending_json = file_get_contents($pending_path);
+		$pending = json_decode($pending_json, 'as hash');
+
+		$existing_json = file_get_contents($existing_path);
+		$existing = json_decode($existing_json, 'as hash');
+
+		foreach ($diff as $key) {
+			if (isset($pending['properties'][$key])) {
+				$existing['properties'][$key] = $pending['properties'][$key];
+			} else {
+				unset($existing['properties'][$key]);
+			}
+			if ($key == 'wof:geomhash') {
+				$existing['geometry'] = $pending['geometry'];
+			}
+		}
+
+		$geojson = json_encode($existing);
+		file_put_contents($existing_path, $geojson);
 	}
 
 	########################################################################
