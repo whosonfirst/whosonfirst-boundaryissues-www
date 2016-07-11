@@ -293,7 +293,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var errors = [];
 				$.each(validations, function(i, validate) {
 					var result = validate();
-					console.log(result);
 					if (result) {
 						errors.push(result);
 					}

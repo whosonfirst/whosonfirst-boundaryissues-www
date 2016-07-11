@@ -389,7 +389,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			} else if (geojson.type == 'FeatureCollection') {
 				var has_geometry = false;
 				$.each(geojson.features, function(i, feature) {
-					if (geojson.geometry) {
+					if (feature.geometry) {
 						has_geometry = true;
 					}
 				});
