@@ -22,6 +22,28 @@
 
 	########################################################################
 
+	function git_clone($cwd, $url) {
+
+		$args = "clone $url";
+
+		$rsp = git_execute($cwd, $args);
+		if (! $rsp['ok']) {
+			return array(
+				'ok' => 0,
+				'error' => "Error from git clone: {$rsp['error']}"
+			);
+		}
+
+		// Should this handle GitHub redirects?
+
+		return array(
+			'ok' => 1,
+			'cloned' => $url
+		);
+	}
+
+	########################################################################
+
 	function git_add($cwd, $path) {
 
 		$args = "add $path";
