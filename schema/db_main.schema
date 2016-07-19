@@ -148,3 +148,12 @@ CREATE TABLE `boundaryissues_categories_meta` (
   `value` varchar(255) DEFAULT NULL,
   KEY `category_id_name` (`category_id`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `boundaryissues_categories_struct`;
+
+CREATE TABLE `boundaryissues_categories_struct` (
+  `source_id` int(11) NOT NULL,
+  `target_id` int(11) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  KEY `source_id` (`source_id`,`target_id`,`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
