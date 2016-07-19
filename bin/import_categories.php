@@ -17,17 +17,9 @@
 		die("Usage: php bin/import_categories.php target [start]\n  - (required) target can be either .csv or a JSON schema directory\n  - (optional) start is the .csv row number to skip to");
 	}
 
-	// The CSV file refers to things differently:
-	$type_translation = array(
-		'domain' => 'namespace',
-		'subdomain' => 'predicate',
-		'name' => 'value'
-	);
-
 	// This is all pretty straightforward: we populate a couple globals
 	// that reflect state in the current database...
 	setup_categories();
-	setup_meta();
 
 	if (substr($argv[1], -4, 4) == '.csv') {
 
@@ -150,28 +142,6 @@
 		}
 	}
 
-	function setup_meta() {
-
-		// This populates a $meta global that we can use to
-		// find meta properties for each category.
-
-		global $meta;
-		$meta = array();
-		$existing_meta = db_fetch("
-			SELECT *
-			FROM boundaryissues_categories_meta
-		");
-		foreach ($existing_meta['rows'] as $item) {
-			$id = $item['category_id'];
-			$name = $item['name'];
-			$value = $item['value'];
-			if (! $meta[$id]) {
-				$meta[$id] = array();
-			}
-			$meta[$id][$name] = $value;
-		}
-	}
-
 	function import_row($row) {
 
 		// The category types are stored with this structure in mind:
@@ -182,41 +152,54 @@
 
 		// We'll import the high-level types first.
 
-		// Namespace (aka domain)
-		$rsp = import_category($row, 'domain');
+		// Namespace
+		$rsp = import_category($row, 'namespace');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 		$namespace_id = $rsp['id'];
 
-		// Predicate (aka subdomain)
-		$rsp = import_category($row, 'subdomain');
+		// Predicate
+		$rsp = import_category($row, 'predicate');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 		$predicate_id = $rsp['id'];
 
-		// The value (aka name)
-		$rsp = import_category($row, 'name');
+		// The value
+		$rsp = import_category($row, 'value');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 		$value_id = $rsp['id'];
 
+		// Reset meta and struct tables for each imported category
+		$esc_namespace_id = intval($namespace_id);
+		$esc_predicate_id = intval($predicate_id);
+		$esc_value_id = intval($value_id);
+		db_write("
+			DELETE FROM boundaryissues_categories_meta
+			WHERE category_id IN ($esc_namespace_id, $esc_predicate_id, $esc_value_id)
+		");
+		db_write("
+			DELETE FROM boundaryissues_categories_struct
+			WHERE source_id IN ($esc_namespace_id, $esc_predicate_id, $esc_value_id)
+		");
+
 		// The 'label_en' property is the English name. Maybe this
 		// should be called something else, along the lines of BCP-47?
 
-		$rsp = category_meta($namespace_id, 'label_en', $row['domain']);
+		$rsp = category_meta($namespace_id, 'label_en', $row['namespace']);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
-		$rsp = category_meta($predicate_id, 'label_en', $row['subdomain']);
+		$rsp = category_meta($predicate_id, 'label_en', $row['predicate']);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
-		$rsp = category_meta($value_id, 'label_en', $row['name']);
+		$rsp = category_meta($value_id, 'label_en', $row['value']);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -224,9 +207,9 @@
 		// We don't need to do anything with these columns, since they
 		// are already reflected in the data.
 		$ignore_cols = array(
-			'name', 'name_uri', 'rank4',
-			'subdomain', 'subdomain_uri', 'subdomain_rank',
-			'domain', 'domain_uri', 'domain_rank'
+			'namespace', 'namespace_uri', 'namespace_rank',
+			'predicate', 'predicate_uri', 'predicate_rank',
+			'value', 'value_uri', 'value_rank'
 		);
 
 		foreach ($row as $key => $value) {
@@ -241,26 +224,21 @@
 			}
 		}
 
+		category_structure($predicate_id, 'predicate', $row);
+		category_structure($value_id, 'value', $row);
+
 		return array('ok' => 1);
 	}
 
 	function import_category($row, $type) {
 
-		global $categories, $type_translation;
+		global $categories;
 
 		$uri = $row["{$type}_uri"];
 		$rank_col = "{$type}_rank";
 
-		if ($type == 'name') {
-			$rank_col = "rank4";
-		}
-
-		// We are storing things machinetags-style
-		$translated_type = $type_translation[$type];
-
-		// This is what we're inserting into the DB.
 		$category = array(
-			'type' => $translated_type,
+			'type' => $type,
 			'uri' => addslashes($uri)
 		);
 
@@ -269,30 +247,15 @@
 			$category['rank'] = addslashes($row[$rank_col]);
 		}
 
-		// Add in namespace metadata.
-		if ($type == 'name' || $type == 'subdomain') {
-			$namespace_uri = $row['domain_uri'];
-			$category['namespace_id'] = $categories['namespace'][$namespace_uri];
-			$category['namespace_uri'] = $namespace_uri;
-			$category['namespace_rank'] = $row['domain_rank'];
-		}
-
-		// Add in predicate metadata.
-		if ($type == 'name') {
-			$predicate_uri = $row['subdomain_uri'];
-			$category['predicate_id'] = $categories['predicate'][$predicate_uri];
-			$category['predicate_uri'] = $predicate_uri;
-			$category['predicate_rank'] = $row['subdomain_rank'];
-		}
-
-		if (empty($categories[$translated_type][$uri])) {
+		if (empty($categories[$type][$uri])) {
 
 			// Mint an artisanal integer
-			$rsp = artisanal_integers_create();
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-			$category['id'] = $rsp['integer'];
+			// (Use auto_increment for testing)
+			//$rsp = artisanal_integers_create();
+			//if (! $rsp['ok']) {
+			//	return $rsp;
+			//}
+			//$category['id'] = $rsp['integer'];
 
 			// Insert it!
 			$rsp = db_insert('boundaryissues_categories', $category);
@@ -301,16 +264,17 @@
 			}
 
 			// Cache it!
-			$id = $category['id'];
-			if (! $categories[$translated_type]) {
-				$categories[$translated_type] = array();
+			//$id = $category['id'];
+			$id = $rsp['insert_id'];
+			if (! $categories[$type]) {
+				$categories[$type] = array();
 			}
-			$categories[$translated_type][$uri] = $id;
+			$categories[$type][$uri] = $id;
 
 		} else {
 
 			// Look up the ID
-			$id = $categories[$translated_type][$uri];
+			$id = $categories[$type][$uri];
 
 			// Update it!
 			$where = "id = " . addslashes($id);
@@ -363,32 +327,53 @@
 
 	function category_meta($category_id, $name, $value) {
 
-		global $meta;
+		// This assumes that the meta table has been reset already
 
-		if (! isset($meta[$category_id][$name])) {
-			$rsp = db_insert('boundaryissues_categories_meta', array(
-				'category_id' => addslashes($category_id),
-				'name' => addslashes($name),
-				'value' => addslashes($value)
-			));
-		} else {
-			$where = "category_id = " . addslashes($category_id) .
-			         " AND name = '"  . addslashes($name) . "'";
-			$rsp = db_update('boundaryissues_categories_meta', array(
-				'name' => addslashes($name),
-				'value' => addslashes($value)
-			), $where);
-		}
+		$rsp = db_insert('boundaryissues_categories_meta', array(
+			'category_id' => addslashes($category_id),
+			'name' => addslashes($name),
+			'value' => addslashes($value)
+		));
 
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
-		if (! $meta[$category_id]) {
-			$meta[$category_id] = array();
+		return array('ok' => 1);
+
+	}
+
+	function category_structure($id, $type, $row) {
+
+		// This assumes that the struct table has been reset already
+
+		global $categories;
+
+		if ($type == 'predicate') {
+			$parent_uri = $row['namespace_uri'];
+			$parent_id = $categories['namespace'][$parent_uri];
+			$rsp = db_insert('boundaryissues_categories_struct', array(
+				'source_id' => addslashes($id),
+				'target_id' => addslashes($parent_id),
+				'type' => 'parent'
+			));
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		} else if ($type == 'value') {
+			$parent_uri = $row['predicate_uri'];
+			$parent_id = $categories['predicate'][$parent_uri];
+			$rsp = db_insert('boundaryissues_categories_struct', array(
+				'source_id' => addslashes($id),
+				'target_id' => addslashes($parent_id),
+				'type' => 'parent'
+			));
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
 		}
-		$meta[$category_id][$name] = $value;
 
 		return array('ok' => 1);
+
 
 	}
