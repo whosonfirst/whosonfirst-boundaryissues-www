@@ -249,7 +249,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			// Add new properties to an array by changing the 'Add an item' field
-			$('input.add-item').change(function(e) {
+			/*$('input.add-item').change(function(e) {
 				var $item = $(e.target);
 				if ($item.val()) {
 					var $rel = $(e.target).closest('.json-schema-array');
@@ -260,7 +260,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						$item.focus();
 					}, 0);
 				}
-			});
+			});*/
 
 			if ($('#edit-form').hasClass('add-new-wof')) {
 				// Only show editable fields on the add page
@@ -280,9 +280,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 
 			var categories = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
-			$.get(categories, function(rsp) {
+			$.get(categories, function(meta) {
 				$('.json-schema-array[data-context="properties.mz:categories"] input').typeahead({
-					source: rsp
+					source: Object.keys(meta.tags),
+					afterSelect: function(item) {
+						if (item.match(/^[^:]+:$/)) {
+							this.source = Object.keys(meta.tags[item]);
+						} else if (item.match(/^([^:]+):[^=]+=$/)) {
+							var match = item.match(/^([^:]+:)[^=]+=/);
+							var namespace = match[1];
+							this.source = meta.tags[namespace][item];
+						}
+					}
 				});
 			});
 

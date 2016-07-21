@@ -4,6 +4,7 @@
 
 	setup_categories();
 	setup_categories_struct();
+	setup_categories_icons();
 	export_meta_json();
 
 	function setup_categories() {
@@ -38,38 +39,69 @@
 		}
 	}
 
+	function setup_categories_icons() {
+
+		// This populates a $categories global.
+
+		global $categories;
+		$rsp = db_fetch("
+			SELECT *
+			FROM boundaryissues_categories_meta
+			WHERE name = 'mapzen_icon'
+			  AND value != ''
+		");
+		foreach ($rsp['rows'] as $item) {
+			$id = $item['category_id'];
+			$categories[$id]['icon'] = $item['value'];
+		}
+	}
+
 	function export_meta_json() {
 
 		global $categories;
-		$machine_tags = array();
+		$categories_meta = array(
+			'tags' => array(),
+			'icons' => array()
+		);
 
 		// Namespace
 		foreach ($categories as $id => $item) {
 			if ($item['type'] == 'namespace') {
-				$machine_tags[] = "{$item['uri']}:";
+				$namespace_uri = $item['uri'];
+				$categories_meta['tags']["$namespace_uri:"] = array();
 			}
 		}
 
 		// Predicate
 		foreach ($categories as $id => $item) {
 			if ($item['type'] == 'predicate') {
-				$parent_id = $item['parent_id'];
-				$parent = $categories[$parent_id];
-				$machine_tags[] = "{$parent['uri']}:{$item['uri']}=";
+				$namespace_id = $item['parent_id'];
+				$namespace_cat = $categories[$namespace_id];
+				$namespace_uri = $namespace_cat['uri'];
+				$predicate_uri = $item['uri'];
+				$categories_meta['tags']["$namespace_uri:"]["$namespace_uri:$predicate_uri="] = array();
 			}
 		}
 
 		// Value
 		foreach ($categories as $id => $item) {
 			if ($item['type'] == 'value') {
-				$parent_id = $item['parent_id'];
-				$parent = $categories[$parent_id];
-				$grandparent_id = $parent['parent_id'];
-				$grandparent = $categories[$grandparent_id];
-				$machine_tags[] = "{$grandparent['uri']}:{$parent['uri']}={$item['uri']}";
+				$predicate_id = $item['parent_id'];
+				$predicate_cat = $categories[$predicate_id];
+				$namespace_id = $predicate_cat['parent_id'];
+				$namespace_cat = $categories[$namespace_id];
+				$namespace_uri = $namespace_cat['uri'];
+				$predicate_uri = $predicate_cat['uri'];
+				$value_uri = $item['uri'];
+				$tag = "$namespace_uri:$predicate_uri=$value_uri";
+				$categories_meta['tags']["$namespace_uri:"]["$namespace_uri:$predicate_uri="][] = $tag;
+				if (! empty($item['icon'])) {
+
+					$categories_meta['icons'][$tag] = $item['icon'];
+				}
 			}
 		}
 
-		$categories_json = json_encode($machine_tags);
+		$categories_json = json_encode($categories_meta);
 		file_put_contents(__DIR__ . '/../www/meta/categories.json', $categories_json);
 	}
