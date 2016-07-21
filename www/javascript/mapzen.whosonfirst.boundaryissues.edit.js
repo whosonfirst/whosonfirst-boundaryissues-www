@@ -279,6 +279,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			}
 
+			var categories = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
+			$.get(categories, function(rsp) {
+				$('.json-schema-array[data-context="properties.mz:categories"] input').typeahead({
+					source: rsp
+				});
+			});
+
 			self.setup_category_property();
 		},
 
