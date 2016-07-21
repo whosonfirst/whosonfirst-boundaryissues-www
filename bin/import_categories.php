@@ -173,17 +173,32 @@
 		}
 		$value_id = $rsp['id'];
 
+		if (! empty($row['detail'])) {
+			// Optional: detail
+			$rsp = import_category($row, 'detail');
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$detail_id = $rsp['id'];
+		}
+
 		// Reset meta and struct tables for each imported category
 		$esc_namespace_id = intval($namespace_id);
 		$esc_predicate_id = intval($predicate_id);
 		$esc_value_id = intval($value_id);
+		$esc_ids = "$esc_namespace_id, $esc_predicate_id, $esc_value_id";
+		if (! empty($detail_id)) {
+			$esc_detail_id = intval($detail_id);
+			$esc_ids .= ", $esc_detail_id";
+		}
+
 		db_write("
 			DELETE FROM boundaryissues_categories_meta
-			WHERE category_id IN ($esc_namespace_id, $esc_predicate_id, $esc_value_id)
+			WHERE category_id IN ($esc_ids)
 		");
 		db_write("
 			DELETE FROM boundaryissues_categories_struct
-			WHERE source_id IN ($esc_namespace_id, $esc_predicate_id, $esc_value_id)
+			WHERE source_id IN ($esc_ids)
 		");
 
 		// The 'label_en' property is the English name. Maybe this
@@ -204,20 +219,29 @@
 			return $rsp;
 		}
 
+		if (! empty($detail_id)) {
+			$rsp = category_meta($detail_id, 'label_en', $row['detail']);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		}
+
 		// We don't need to do anything with these columns, since they
 		// are already reflected in the data.
 		$ignore_cols = array(
 			'namespace', 'namespace_uri', 'namespace_rank',
 			'predicate', 'predicate_uri', 'predicate_rank',
-			'value', 'value_uri', 'value_rank'
+			'value', 'value_uri', 'value_rank',
+			'detail'
 		);
 
 		foreach ($row as $key => $value) {
 
 			// Iterate over all the columns.
 
+			$meta_id = empty($detail_id) ? $value_id : $detail_id;
 			if (! in_array($key, $ignore_cols)) {
-				$rsp = category_meta($value_id, $key, $value);
+				$rsp = category_meta($meta_id, $key, $value);
 				if (! $rsp['ok']) {
 					return $rsp;
 				}
@@ -226,6 +250,9 @@
 
 		category_structure($predicate_id, 'predicate', $row);
 		category_structure($value_id, 'value', $row);
+		if (! empty($detail_id)) {
+			category_structure($detail_id, 'detail', $row);
+		}
 
 		return array('ok' => 1);
 	}
@@ -234,8 +261,13 @@
 
 		global $categories;
 
-		$uri = $row["{$type}_uri"];
-		$rank_col = "{$type}_rank";
+		if ($type == 'detail') {
+			$uri = category_uriify($row['detail']);
+			$rank_col = "value_rank";
+		} else {
+			$uri = $row["{$type}_uri"];
+			$rank_col = "{$type}_rank";
+		}
 
 		$category = array(
 			'type' => $type,
@@ -272,6 +304,12 @@
 			$categories[$type][$uri] = $id;
 
 		} else {
+
+			if ($type == 'value' && empty($row['detail'])) {
+				echo "Warning: duplicate for value {$row['value']}\n";
+			} else if ($type == 'detail') {
+				echo "Warning: duplicate for detail {$row['detail']}\n";
+			}
 
 			// Look up the ID
 			$id = $categories[$type][$uri];
@@ -350,30 +388,34 @@
 		global $categories;
 
 		if ($type == 'predicate') {
-			$parent_uri = $row['namespace_uri'];
-			$parent_id = $categories['namespace'][$parent_uri];
-			$rsp = db_insert('boundaryissues_categories_struct', array(
-				'source_id' => addslashes($id),
-				'target_id' => addslashes($parent_id),
-				'type' => 'parent'
-			));
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
+			$parent_type = 'namespace';
 		} else if ($type == 'value') {
-			$parent_uri = $row['predicate_uri'];
-			$parent_id = $categories['predicate'][$parent_uri];
-			$rsp = db_insert('boundaryissues_categories_struct', array(
-				'source_id' => addslashes($id),
-				'target_id' => addslashes($parent_id),
-				'type' => 'parent'
-			));
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
+			$parent_type = 'predicate';
+		} else if ($type == 'detail') {
+			$parent_type = 'value';
+		} else {
+			return array('ok' => 1);
+		}
+
+		$parent_uri = $row["{$parent_type}_uri"];
+		$parent_id = $categories[$parent_type][$parent_uri];
+		$rsp = db_insert('boundaryissues_categories_struct', array(
+			'source_id' => addslashes($id),
+			'target_id' => addslashes($parent_id),
+			'type' => 'parent'
+		));
+		if (! $rsp['ok']) {
+			return $rsp;
 		}
 
 		return array('ok' => 1);
 
 
+	}
+
+	function category_uriify($text) {
+		$uri = strtolower($text);
+		$uri = str_replace('&', 'and', $uri);
+		$uri = preg_replace('/[^a-z0-9_-]+/', '_', $uri);
+		return $uri;
 	}
