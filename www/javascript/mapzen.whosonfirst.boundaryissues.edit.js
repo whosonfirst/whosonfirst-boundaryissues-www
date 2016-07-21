@@ -231,14 +231,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			// Add new properties to an object by changing the 'Value' field
-			$('input.add-value').change(function(e) {
-				if ($(e.target).val()) {
-					var $rel = $(e.target).closest('.json-schema-object');
-					var $row = $rel.find('> table > tbody > .add-row');
-					var $key = $row.find('.add-key');
-					var $value = $row.find('.add-value');
-					var key = $key.val();
-					var value = $value.val();
+			$('.btn-add-value').click(function(e) {
+				e.preventDefault();
+				var $rel = $(e.target).closest('.json-schema-object');
+				var $row = $rel.find('> table > tbody > .add-row');
+				var $key = $row.find('.add-key');
+				var $value = $row.find('.add-value');
+				var key = $key.val();
+				var value = $value.val();
+				if (key && value) {
 					self.add_object_row($rel, key, value);
 					$key.val('');
 					$value.val('');
@@ -249,18 +250,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			// Add new properties to an array by changing the 'Add an item' field
-			/*$('input.add-item').change(function(e) {
-				var $item = $(e.target);
-				if ($item.val()) {
-					var $rel = $(e.target).closest('.json-schema-array');
-					var value = $item.val();
+			$('.btn-add-item').click(function(e) {
+				e.preventDefault();
+				var $rel = $(e.target).closest('.json-schema-array');
+				var $item = $rel.find('.add-item');
+				var value = $item.val();
+				if (value) {
 					self.add_array_item($rel, value);
 					$item.val('');
 					setTimeout(function() {
 						$item.focus();
 					}, 0);
 				}
-			});*/
+			});
 
 			if ($('#edit-form').hasClass('add-new-wof')) {
 				// Only show editable fields on the add page
@@ -475,15 +477,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		add_array_item: function($rel, value) {
 			var context = $rel.data('context');
-			var remove = '<span class="remove-row">&times;</span>';
+			var remove = '<button class="btn btn-remove-item">-</button>';
 			var index = $rel.find('> ul > li').length;
 			$rel.find('> ul').append(
 				'<li>' +
-					'<input name="' + context + '[' + index + ']" class="property"></td>' +
-				'</tr>'
+					'<input name="' + context + '[' + index + ']" class="property">' + remove + '</td>' +
+				'</li>'
 			);
 			var $new_item = $rel.find('> ul > li').last();
-			$new_item.find('.remove-row').click(function(e) {
+			$new_item.find('.btn-remove-item').click(function(e) {
+				e.preventDefault();
 				$new_item.remove();
 			});
 			$new_item.find('.property').val(value);

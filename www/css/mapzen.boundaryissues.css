@@ -36,6 +36,11 @@ button.marker-option {
 	border-radius: 5px;
 }
 
+#edit-form button.btn-add {
+	padding: 3px 8px;
+	margin-top: 0;
+}
+
 .json-schema-object td,
 .json-schema-object th {
 	vertical-align: top;
@@ -81,6 +86,11 @@ th:hover .remove-row {
 
 #edit-form .btn {
 	margin-top: 10px;
+}
+
+#edit-form .btn-remove-item {
+	margin-top: 0;
+	padding: 3px 8px;
 }
 
 #edit-status {

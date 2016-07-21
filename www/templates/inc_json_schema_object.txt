@@ -12,7 +12,7 @@
 
 		<tr class="add-row">
 			<th><input type="text" class="add-key" placeholder="Key"></th>
-			<td><input type="text" class="add-value" placeholder="Value"></td>
+			<td><input type="text" class="add-value" placeholder="Value"><button class="btn btn-add btn-add-value">+</button></td>
 		</tr>
 
 	</table>

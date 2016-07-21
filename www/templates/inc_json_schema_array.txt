@@ -5,5 +5,5 @@
 			<li>{include file="inc_json_schema_field.txt" name=$name property=$item context=$name}</li>
 		{/foreach}
 	</ul>
-	<input type="text" class="add-item" placeholder="Add an item">
+	<input type="text" class="add-item" placeholder="Add an item"><button class="btn btn-add btn-add-item">+</button>
 </div>
