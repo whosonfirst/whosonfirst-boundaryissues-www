@@ -14,7 +14,7 @@
 		</div>
 	{/if}
 	<div class="row">
-		<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}" data-crumb-property-suggest="{$crumb_property_suggest|@escape}">
+		<form action="{$cfg.abs_root_url}edit/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}">
 		  {$crumb_save_fallback|crumb_input}
 		  <input type="hidden" name="method" value="wof.save">
 		  <input type="hidden" name="access_token" value="{$site_token|@escape}">
