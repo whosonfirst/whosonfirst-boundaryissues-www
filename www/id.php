@@ -54,8 +54,5 @@
 	$events = wof_events_for_id($wof_id);
 	$GLOBALS['smarty']->assign_by_ref('events', $events);
 
-	$crumb_property_suggest = crumb_generate('wof.property_suggest');
-	$GLOBALS['smarty']->assign("crumb_property_suggest", $crumb_property_suggest);
-
 	$GLOBALS['smarty']->display('page_id.txt');
 	exit();
