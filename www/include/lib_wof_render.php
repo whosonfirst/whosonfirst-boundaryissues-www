@@ -100,6 +100,9 @@
 		),
 		'sg:phone' => array(
 			'visible' => false
+		),
+		'mz:categories' => array(
+			'visible' => false
 		)
 	);
 

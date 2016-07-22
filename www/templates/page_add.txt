@@ -6,10 +6,10 @@
 		<small class="caveat">map pins are <strong>click to add</strong> and <strong>drag and drop</strong> to reposition</small>
 	</div>
 	<div class="row">
-		<form action="{$cfg.abs_root_url}add/" method="post" id="edit-form" data-crumb-save="{$crumb_save|@escape}" class="add-new-wof">
-		  {$crumb_save_fallback|crumb_input}
-		  <input type="hidden" name="method" value="wof.save">
-		  <input type="hidden" name="access_token" value="{$site_token|@escape}">
+		<form action="{$cfg.abs_root_url}add/" method="post" id="edit-form" class="add-new-wof" data-crumb-save="{$crumb_save|@escape}" data-crumb-property-suggest="{$crumb_property_suggest|@escape}">
+			{$crumb_save_fallback|crumb_input}
+			<input type="hidden" name="method" value="wof.save">
+			<input type="hidden" name="access_token" value="{$site_token|@escape}">
 			<div id="map"></div>
 			<div id="where"></div>
 			<div class="row">
@@ -28,6 +28,9 @@
 					<div id="parent" class="headroom">Parent: <code><small>-1</small></code></div>
 					<div id="hierarchy"></div>
 					<button class="btn disabled" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
+
+					<h3 class="headroom">Category</h3>
+					<div id="categories"></div>
 				</div>
 			</div>
 		</form>

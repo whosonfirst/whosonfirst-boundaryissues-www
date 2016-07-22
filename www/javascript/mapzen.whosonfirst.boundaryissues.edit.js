@@ -37,7 +37,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 			return null;
 		},
-		function () {
+		function() {
 			var categories = [];
 			var index = 0;
 			while ($('input[name="properties.mz:categories[' + index + ']"]').length > 0) {
@@ -281,23 +281,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			}
 
-			var categories = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
-			$.get(categories, function(meta) {
-				$('.json-schema-array[data-context="properties.mz:categories"] input').typeahead({
-					source: Object.keys(meta.tags),
-					afterSelect: function(item) {
-						if (item.match(/^[^:]+:$/)) {
-							this.source = Object.keys(meta.tags[item]);
-						} else if (item.match(/^([^:]+):[^=]+=$/)) {
-							var match = item.match(/^([^:]+:)[^=]+=/);
-							var namespace = match[1];
-							this.source = meta.tags[namespace][item];
-						}
-					}
-				});
-			});
-
-			self.setup_category_property();
+			self.setup_categories();
 		},
 
 		setup_form: function() {
@@ -404,17 +388,67 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 		},
 
-		setup_category_property: function() {
-			var select = '<select name="properties.wof:category" class="property">';
+		setup_categories: function() {
 			var categories_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
 			$.get(categories_url, function(categories) {
-				$.each(categories, function(i, cat) {
-					select += '<option value="' + cat.name + '">' + cat.label + '</option>';
-				});
-				select += '</select>';
-				self.category_select_html = select;
-				self.check_for_category_property();
+				self.categories = categories;
+				self.categories.uri = {};
+				self.setup_categories_uris('namespace');
+				self.setup_categories_uris('predicate');
+				self.setup_categories_uris('value');
+				self.setup_categories_uris('detail');
+				self.setup_categories_ui();
 			});
+		},
+
+		setup_categories_uris: function(type) {
+			self.categories.uri[type] = {};
+			$.each(self.categories[type], function(id, cat) {
+				self.categories.uri[type][cat.uri] = id;
+			});
+		},
+
+		setup_categories_ui: function() {
+			var i = 0;
+			var tags = [];
+			while ($('input[name="properties.mz:categories[' + i + ']"]').length > 0) {
+				tags.push($('input[name="properties.mz:categories[' + i + ']"]').val());
+				i++;
+			}
+			if (tags.length > 0) {
+				$.each(tags, function(i, tag) {
+					self.assign_categories_tag(tag);
+				});
+			} else {
+				self.append_categories_select('namespace');
+			}
+		},
+
+		assign_categories_tag: function(tag) {
+
+			var matches = tag.match(/^([^:]+):([^=]+)=(.+)$/);
+			if (! matches) {
+				return;
+			}
+			var namespace = matches[1];
+			var predicate = matches[2];
+			var value = matches[3];
+			var namespace_id = self.categories.uri.namespace[namespace];
+			if (namespace_id) {
+				self.append_categories_select('namespace', namespace_id);
+			}
+			var predicate_id = self.categories.uri.predicate[predicate];
+			if (predicate_id) {
+				self.append_categories_select('predicate', predicate_id);
+			}
+			var value_id = self.categories.uri.value[value];
+			if (value_id) {
+				self.append_categories_select('value', value_id);
+			}
+			var detail_id = self.categories.uri.detail[value];
+			if (detail_id) {
+				self.append_categories_select('detail', detail_id);
+			}
 		},
 
 		set_marker: function(m) {
@@ -562,6 +596,84 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			}
 			self.lookup_hierarchy(lat, lng);
+		},
+
+		append_categories_select: function(type, value, parent_id) {
+
+			var select = '<select id="categories-' + type + '"><option value="">Choose</option>';
+			var options = [];
+			$.each(self.categories[type], function(id, cat) {
+				if (! parent_id || cat.parent_id == parent_id) {
+					cat.id = id;
+					options.push(cat);
+				}
+			});
+			if (options.length == 0) {
+				return;
+			}
+			options.sort(function(a, b) {
+				if (a.rank < b.rank) {
+					return -1;
+				} else {
+					return 1;
+				}
+			});
+			$.each(options, function(i, cat) {
+				var selected = (cat.id == value) ? ' selected="selected"' : '';
+				select += '<option value="' + cat.id + '"' + selected + '>' + cat.label + '</option>';
+			});
+			select += '</select>';
+			$('#categories').append(select);
+
+			var child_type = null;
+			if (type == 'namespace') {
+				child_type = 'predicate';
+			} else if (type == 'predicate') {
+				child_type = 'value';
+			} else if (type == 'value') {
+				child_type = 'detail';
+			}
+
+			if (child_type) {
+				$('#categories-' + type).change(function() {
+					if (type == 'namespace') {
+						$('#categories-predicate, #categories-value, #categories-detail').remove();
+					} else if (type == 'predicate') {
+						$('#categories-value, #categories-detail').remove();
+					} else if (type == 'value') {
+						$('#categories-detail').remove();
+					}
+					var parent_id = $(this).val();
+					if (parent_id) {
+						self.append_categories_select(child_type, null, parent_id);
+					}
+				});
+			}
+
+		},
+
+		get_categories: function() {
+			var tags = [];
+			var namespace_id = $('#categories-namespace').val();
+			var predicate_id = $('#categories-predicate').val();
+			var value_id = $('#categories-value').val();
+			if (! namespace_id ||
+			    ! predicate_id ||
+			    ! value_id) {
+				return;
+			}
+			var namespace = self.categories.namespace[namespace_id].uri;
+			var predicate = self.categories.predicate[predicate_id].uri;
+			var value = self.categories.value[value_id].uri;
+			tags.push(namespace + ':' + predicate + '=' + value);
+			if ($('#categories-detail').val()) {
+				namespace = predicate;
+				predicate = value;
+				value_id = $('#categories-detail').val();
+				value = self.categories.detail[value_id].uri;
+				tags.push(namespace + ':' + predicate + '=' + value);
+			}
+			return tags;
 		},
 
 		lookup_hierarchy: function(lat, lng) {
@@ -852,6 +964,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			geojson_obj.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
 			geojson_obj.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
+			geojson_obj.properties['mz:categories'] = self.get_categories();
 
 			return JSON.stringify(geojson_obj);
 		},
@@ -992,16 +1105,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		check_for_category_property: function() {
-			var $input = $('input[name="properties.wof:category"]');
-			if ($input.length == 0) {
-				return;
+
+			// This doesn't work yet ¯\_(ツ)_/¯
+
+			var cats = self.get_categories();
+			var icon = null;
+			$.each(cats, function(i, cat) {
+				if (self.categories.icon[cat]) {
+					icon = self.categories.icon[cat];
+					console.log(icon);
+				}
+			});
+			if (icon) {
+				self.set_marker_icon(icon);
 			}
-			var value = $input.val();
-			var $td = $input.closest('td');
-			$td.html(self.category_select_html);
-			var $select = $td.find('select');
-			$select.val(value);
-			self.set_marker_icon(value);
+			return icon;
 		}
 
 	};
@@ -1036,7 +1154,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		});
 
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
-
 
 		self.setup_map();
 		self.setup_drawing();

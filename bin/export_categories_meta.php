@@ -32,6 +32,7 @@
 		$rsp = db_fetch("
 			SELECT *
 			FROM boundaryissues_categories_struct
+			WHERE type = 'parent'
 		");
 		foreach ($rsp['rows'] as $item) {
 			$id = $item['source_id'];

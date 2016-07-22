@@ -341,3 +341,8 @@ nav #navi-branch-dropdown li {
 	color: inherit;
 	background-color: rgba(0, 0, 0, 0.1);
 }
+
+#categories select {
+	display: block;
+	margin-top: 5px;
+}
