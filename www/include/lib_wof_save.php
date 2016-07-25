@@ -691,7 +691,7 @@
 			$diff = false;
 			foreach ($existing as $key => $existing_value) {
 				$pending_value = $pending[$key];
-				$diff = $diff && wof_save_pending_diff_value($existing_value, $pending_value);
+				$diff = $diff || wof_save_pending_diff_value($existing_value, $pending_value);
 			}
 			return $diff;
 		}
