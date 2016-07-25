@@ -575,6 +575,8 @@
 		foreach ($saved as $wof_id => $updates) {
 			foreach ($updates as $update) {
 				if ($options['verbose']) {
+					$date = date('Ymd');
+					$log_dir = wof_utils_pending_dir("log/$date/");
 					echo "mv {$update['path']} $log_dir$filename\n";
 				}
 				if (! $options['dry_run']) {
@@ -594,19 +596,21 @@
 			exec("$find_path $pending_dir -type d -empty -delete");
 		}
 
-		// Schedule S3 updates
-		foreach ($saved as $wof_id => $updates) {
+		if ($branch == 'master') {
+			// Schedule S3 updates
+			foreach ($saved as $wof_id => $updates) {
 
-			if ($options['verbose']) {
-				echo "schedule update_s3: $wof_id\n";
-			}
-
-			if (! $options['dry_run']) {
-				$rsp = offline_tasks_schedule_task('update_s3', array(
-					'wof_id' => $wof_id
-				));
 				if ($options['verbose']) {
-					var_export($rsp);
+					echo "schedule update_s3: $wof_id\n";
+				}
+
+				if (! $options['dry_run']) {
+					$rsp = offline_tasks_schedule_task('update_s3', array(
+						'wof_id' => $wof_id
+					));
+					if ($options['verbose']) {
+						var_export($rsp);
+					}
 				}
 			}
 		}
@@ -679,10 +683,11 @@
 	function wof_save_pending_diff_value($existing, $pending) {
 
 		if (is_scalar($existing) &&
-		    is_scalar($pending) &&
-		    $existing === $pending) {
-			return false;
-		} else {
+		    is_scalar($pending)) {
+			return ($existing === $pending);
+		} else if (is_scalar($existing) != is_scalar($pending)) {
+			return true;
+		} else if (is_array($existing)) {
 			$diff = false;
 			foreach ($existing as $key => $existing_value) {
 				$pending_value = $pending[$key];
