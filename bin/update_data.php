@@ -12,13 +12,17 @@
 	// are available in more granular repos. (20160715/dphiffer)
 
 	// We're not doing anything privileged with the token, so just grab one.
-	$rsp = db_single("
+	$rsp = db_fetch("
 		SELECT oauth_token
 		FROM GithubUsers
 		ORDER BY RAND()
 		LIMIT 1
 	");
-	$oauth_token = $rsp['oauth_token'];
+	if (! $rsp['ok']) {
+		print_r($rsp);
+		exit;
+	}
+	$oauth_token = $rsp['rows'][0]['oauth_token'];
 
 	$page = 1;
 	$count = 0;

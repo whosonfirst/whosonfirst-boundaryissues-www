@@ -44,7 +44,10 @@
 				    in_array($matches[1], $skip)) {
 					continue;
 				}
-				index_file("$dir/$file", $repo);
+				$rsp = index_file("$dir/$file", $repo);
+				if (! $rsp['ok']) {
+					exit;
+				}
 			}
 		}
 		closedir($dh);
@@ -84,5 +87,6 @@
 		$where = array(
 			'id' => addslashes($props['wof:id'])
 		);
-		db_insert_dupe('boundaryissues_wof', $hash, $where);
+		$rsp = db_insert_dupe('boundaryissues_wof', $hash, $where);
+		return $rsp;
 	}
