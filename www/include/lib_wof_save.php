@@ -296,7 +296,7 @@
 
 		$existing_geojson_path = wof_utils_find_id($wof_id);
 		if (! $existing_geojson_path ||
-                    ! file_exists($existing_geojson_path)) {
+		    ! file_exists($existing_geojson_path)) {
 			return array(
 				'ok' => 0,
 				'error' => "wof:id $wof_id not found."
@@ -537,7 +537,7 @@
 		$message = "Boundary Issues: $num_updates updates";
 
 		if ($num_updates == 1) {
-			$message = "Boundary Issues: 1 update";
+			$message = "Boundary Issues: updated $wof_name";
 		}
 
 		if ($options['verbose']) {
@@ -762,6 +762,17 @@
 
 	function save_pending_apply_diff($pending_path, $diff, $existing_path) {
 
+		// This function takes two paths, and merges each of the
+		// properties listed in $diff from the $pending_path GeoJSON
+		// into the one at $existing_path.
+
+		// If the file doesn't exist already, just copy over the
+		// $pending_path file.
+		if (! file_exists($existing_path)) {
+			copy($pending_path, $existing_path);
+			return array('ok' => 1);
+		}
+
 		$pending_json = file_get_contents($pending_path);
 		$pending = json_decode($pending_json, 'as hash');
 
@@ -781,6 +792,7 @@
 
 		$geojson = json_encode($existing);
 		file_put_contents($existing_path, $geojson);
+		return array('ok' => 1);
 	}
 
 	########################################################################
