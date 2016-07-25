@@ -391,8 +391,12 @@
 					$GLOBALS['cfg']['wof_data_dir'],
 					$wof_id
 				);
-				$existing_geojson = file_get_contents($existing_path);
-				$existing[$wof_id] = json_decode($existing_geojson, 'as hash');
+				if (file_exists($existing_path)) {
+					$existing_geojson = file_get_contents($existing_path);
+					$existing[$wof_id] = json_decode($existing_geojson, 'as hash');
+				} else {
+					$existing[$wof_id] = null;
+				}
 			}
 
 			// Figure out which properties changed
@@ -537,7 +541,7 @@
 		$message = "Boundary Issues: $num_updates updates";
 
 		if ($num_updates == 1) {
-			$message = "Boundary Issues: updated $wof_name";
+			$message = "Boundary Issues: saved $wof_name";
 		}
 
 		if ($options['verbose']) {
@@ -660,6 +664,13 @@
 	function wof_save_pending_diff($existing, $pending) {
 
 		$diff = array();
+
+		// If this is a brand new file, we don't have any existing
+		// properties to compare against.
+		if (! $existing) {
+			// ... so the diff is easy: all of the properties.
+			return array_keys($pending);
+		}
 
 		// Check for property updates
 		foreach ($pending['properties'] as $key => $pending_value) {
