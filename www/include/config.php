@@ -420,3 +420,13 @@
 	$GLOBALS['cfg']['wof_geojson_server_port'] = 8181;
 
 	# END OF wof-geojson-server stuff
+
+	# START OF flamework-mapzen-sso stuff
+
+	$GLOBALS['cfg']['mapzen_oauth_key'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['mapzen_oauth_secret'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['mapzen_oauth_callback'] = 'auth/';
+	$GLOBALS['cfg']['crypto_oauth_cookie_secret'] = 'READ-FROM-SECRETS';	# (see notes in www/sign_oauth.php)
+	$GLOBALS['cfg']['mapzen_api_perms'] = 'read';
+
+	# START OF flamework-mapzen-sso stuff

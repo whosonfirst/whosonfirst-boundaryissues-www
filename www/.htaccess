@@ -148,8 +148,8 @@ RewriteRule  ^api/rest/?$						api_rest.php?%{QUERY_STRING}  [L]
 
 # START OF flamework-mapzen-sso stuff
 
-RewriteRule  ^signin/?$		/signin_github_oauth.php	[L]
-RewriteRule  ^auth/?$			/auth_callback_github_oauth.php?%{QUERY_STRING} [L]
+RewriteRule  ^signin/?$			/signin_mapzen_oauth.php	[L]
+RewriteRule  ^auth/?$			/auth_callback_mapzen_oauth.php?%{QUERY_STRING} [L]
 
 # END OF flamework-mapzen-sso stuff
 
