@@ -92,7 +92,7 @@
 				$predicate = $parent_cat['uri'];
 				$value = $item['uri'];
 				$tag = "$namespace:$predicate=$value";
-				$categories_meta['icons'][$tag] = $item['icon'];
+				$categories_meta['icon'][$tag] = $item['icon'];
 			}
 		}
 
