@@ -4,8 +4,8 @@
 
 	loadlib("http");
 	loadlib("random");
-	loadlib("github_api");
-	loadlib("github_users");
+	loadlib("mapzen_api");
+	loadlib("mapzen_users");
 
 	# Some basic sanity checking like are you already logged in?
 
@@ -14,75 +14,55 @@
 		exit();
 	}
 
+
 	if (! $GLOBALS['cfg']['enable_feature_signin']){
 		$GLOBALS['smarty']->display("page_signin_disabled.txt");
 		exit();
 	}
 
 	$code = get_str("code");
-	$redir = get_str("redir");
 
 	if (! $code){
 		error_404();
 	}
 
-	$rsp = github_api_get_auth_token($code, $redir);
+	$rsp = mapzen_api_get_auth_token($code);
 
 	if (! $rsp['ok']){
 		$GLOBALS['error']['oauth_access_token'] = 1;
-		$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+		$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
 		exit();
 	}
 
 	$oauth_token = $rsp['oauth_token'];
 
-	$rsp = github_api_call('GET', "user", $oauth_token);
+	$mapzen_user = mapzen_users_get_by_oauth_token($oauth_token);
+	$mapzen_data = null;
 
-	if (! $rsp['ok']){
-		$GLOBALS['error']['github_userinfo'] = 1;
-		$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
-		exit();
-	}
+	if (($mapzen_user) && ($user_id = $mapzen_user['user_id'])){
 
-	$github_id = $rsp['rsp']['id'];
-	$github_user = github_users_get_by_github_id($github_id);
+		if (! $mapzen_user['is_admin']){
 
-	if ($github_user){
+			$args = array(
+				'access_token' => $oauth_token,
+			);
 
-		$user_id = $github_user['user_id'];
+			if (features_is_enabled("mapzen_require_admin")){
 
-		if (! $user_id){
-			$GLOBALS['error']['github_missing_userid'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
-			exit();
-		}
+				$rsp = mapzen_api_call("current_developer", $args);
 
-		$user = users_get_by_id($user_id);
+				if ((! $rsp['ok']) || (! boolval($rsp['data']['admin']))){
+					$GLOBALS['smarty']->display("page_signin_disabled.txt");
+					exit();
+				}
 
-		if (! $user){
-			$GLOBALS['error']['github_missing_user'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
-			exit();
-		}
-		
-		if ($user['deleted']){
-			$GLOBALS['error']['github_deleted_user'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
-			exit();
-		}
+				$update = array('is_admin' => 1);
 
-		if ($github_user['oauth_token'] != $oauth_token){
-
-			$rsp = github_users_update_user($github_user, array(
-				'oauth_token' => $oauth_token
-			));
-
-			if (! $rsp['ok']){
-				$GLOBALS['error']['github_token_update'] = 1;
-				$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
-				exit();
+				$rsp = mapzen_users_update_user($mapzen_user, $update);
+				$mapzen_user = $rsp['mapzen_user'];
 			}
 		}
+
 	}
 
 	# If we don't ensure that new users are allowed to create
@@ -94,34 +74,71 @@
 	}
 
 	# Hello, new user! This part will create entries in two separate
-	# databases: Users and GithubUsers that are joined by the primary
+	# databases: Users and MapzenUsers that are joined by the primary
 	# key on the Users table.
 
 	else {
-		$rsp = github_api_call('GET', "user", $oauth_token);
+
+		$args = array(
+			'access_token' => $oauth_token,
+		);
+
+		$rsp = mapzen_api_call("current_developer", $args);
 
 		if (! $rsp['ok']){
-			$GLOBALS['error']['github_userinfo'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			$GLOBALS['error']['mapzen_userinfo'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
 			exit();
 		}
 
-		$github_id = $rsp['rsp']['id'];
-		$username = $rsp['rsp']['name'];
+		$mapzen_data = $rsp['data'];
+		$is_admin = boolval($mapzen_data['admin']);
 
-		$rsp = github_api_call('GET', 'user/emails', $oauth_token);
+		if ((features_is_enabled("mapzen_require_admin")) && (! $is_admin)){
 
-		if (! $rsp['ok']){
-			$GLOBALS['error']['github_userinfo'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			$GLOBALS['smarty']->display("page_signin_disabled.txt");
 			exit();
 		}
 
-		$email = $rsp['rsp'][0]['email'];
+		# we don't get back a numeric ID yet
+		# https://github.com/mapzen/operations-engineering/issues/229
 
-		if (! $email){
-			$email = "{$github_id}@donotsend-github.com";
+		$mapzen_id = $mapzen_data['id'];
+		$mapzen_user = mapzen_users_get_by_mapzen_id($mapzen_id);
+
+		if ($mapzen_user){
+
+			$update = array('is_admin' => $is_admin);
+
+			$rsp = mapzen_users_update_user($mapzen_user, $update);
+			$mapzen_user = $rsp['mapzen_user'];
 		}
+	}
+
+	if ($mapzen_user){
+
+		$user = users_get_by_id($mapzen_user['user_id']);
+
+		if (! $user){
+			$GLOBALS['error']['dberr_nouser'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
+			exit();
+		}
+
+		if ($mapzen_user['oauth_token'] != $oauth_token){
+
+			$update = array('oauth_token' => $oauth_token);
+
+			$rsp = mapzen_users_update_user($mapzen_user, $update);
+			$mapzen_user = $rsp['mapzen_user'];
+		}
+
+	} else {
+
+		$mz_id = $mapzen_data['id'];
+		$username = $mapzen_data['nickname'];
+		$email = $mapzen_data['email'];
+		$is_admin = boolval($mapzen_data['admin']);
 
 		$password = random_string(32);
 
@@ -133,33 +150,32 @@
 
 		if (! $rsp['ok']){
 			$GLOBALS['error']['dberr_user'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
 			exit();
 		}
 
 		$user = $rsp['user'];
 
-		if (! $user){
-			$GLOBALS['error']['dberr_user'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
-			exit();
-		}
-
-		$github_user = github_users_create_user(array(
+		$rsp = $mapzen_user = mapzen_users_create_user(array(
 			'user_id' => $user['id'],
 			'oauth_token' => $oauth_token,
-			'github_id' => $github_id,
+			'mapzen_id' => $mz_id,
+			"is_admin" => $is_admin,
 		));
 
-		if (! $github_user){
-			$GLOBALS['error']['dberr_githubuser'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_github_oauth.txt");
+		if (! $rsp['ok']){
+			$GLOBALS['error']['dberr_mapzenuser'] = 1;
+			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
 			exit();
 		}
+
+		$mapzen_user = $rsp['mapzen_user'];
 	}
 
 	# Okay, now finish logging the user in (setting cookies, etc.) and
 	# redirecting them to some specific page if necessary.
+
+	$redir = (isset($extra['redir'])) ? $extra['redir'] : '';
 
 	login_do_login($user, $redir);
 	exit();
