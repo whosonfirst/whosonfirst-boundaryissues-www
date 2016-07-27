@@ -52,7 +52,7 @@
 
 
 	function db_insert($tbl, $hash){						return _db_insert($tbl, $hash, 'main', null); }
-	function db_insert_accounts($k, $tbl, $hash){					return _db_insert($tbl, $hash, 'accounts', null); }
+	function db_insert_accounts($tbl, $hash){					return _db_insert($tbl, $hash, 'accounts', null); }
 	function db_insert_users($k, $tbl, $hash){					return _db_insert($tbl, $hash, 'users', $k); }
 
 	function db_insert_bulk($tbl, $rows, $batch=100){				return _db_insert_bulk($tbl, $rows, $batch, 'main', null); }
