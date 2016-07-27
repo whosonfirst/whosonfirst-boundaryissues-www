@@ -40,35 +40,48 @@
 	# us to skip passing the cluster name. these are the only functions
 	# we should call from outside the library.
 	#
-	# In this example we have 2 cluster - one monolith called 'main' and
-	# one partitioned/sharded cluster called 'users' When making calls
-	# to the sharded cluster, we need to pass the shard number as the first
-	# argument.
-	#
+	# In this example we have (4) clusters:
+	# 1. A monolith called 'main' for anything that can't be sharded
+	# 2. A second monolith called 'accounts' for multiple Flamework applications
+	#    that need or want or need to share a centralized user accounts database
+	# 3. A partitioned/sharded cluster called 'users' When making calls to the
+	#    sharded cluster, we need to pass the shard number as the first
+	#    argument.
+	# 4. A partition called 'tickets' for generating unique IDs across multiple
+	#    cluster
 
-	function db_insert($tbl, $hash){			return _db_insert($tbl, $hash, 'main', null); }
-	function db_insert_users($k, $tbl, $hash){		return _db_insert($tbl, $hash, 'users', $k); }
 
-	function db_insert_bulk($tbl, $rows, $batch=100){	return _db_insert_bulk($tbl, $rows, $batch, 'main', null); }
-	function db_insert_bulk_users($tbl, $rows, $batch=100){	return _db_insert_bulk($tbl, $rows, $batch, 'users', $k); }
+	function db_insert($tbl, $hash){						return _db_insert($tbl, $hash, 'main', null); }
+	function db_insert_accounts($k, $tbl, $hash){					return _db_insert($tbl, $hash, 'accounts', null); }
+	function db_insert_users($k, $tbl, $hash){					return _db_insert($tbl, $hash, 'users', $k); }
 
-	function db_insert_dupe($tbl, $hash, $hash2, $more=array()){		return _db_insert_dupe($tbl, $hash, $hash2, 'main', null, $more); }
-	function db_insert_dupe_users($k, $tbl, $hash, $hash2, $more=array()){	return _db_insert_dupe($tbl, $hash, $hash2, 'users', $k, $more); }
+	function db_insert_bulk($tbl, $rows, $batch=100){				return _db_insert_bulk($tbl, $rows, $batch, 'main', null); }
+	function db_insert_bulk_accounts($tbl, $rows, $batch=100){	       		return _db_insert_bulk($tbl, $rows, $batch, 'accounts', null); }
+	function db_insert_bulk_users($tbl, $rows, $batch=100){				return _db_insert_bulk($tbl, $rows, $batch, 'users', $k); }
 
-	function db_update($tbl, $hash, $where){		return _db_update($tbl, $hash, $where, 'main', null); }
-	function db_update_users($k, $tbl, $hash, $where){	return _db_update($tbl, $hash, $where, 'users', $k); }
+	function db_insert_dupe($tbl, $hash, $hash2, $more=array()){			return _db_insert_dupe($tbl, $hash, $hash2, 'main', null, $more); }
+	function db_insert_dupe_accounts($tbl, $hash, $hash2, $more=array()){		return _db_insert_dupe($tbl, $hash, $hash2, 'accounts', null, $more); }
+	function db_insert_dupe_users($k, $tbl, $hash, $hash2, $more=array()){		return _db_insert_dupe($tbl, $hash, $hash2, 'users', $k, $more); }
 
-	function db_fetch($sql){				return _db_fetch($sql, 'main', null); }
-	function db_fetch_slave($sql){				return _db_fetch_slave($sql, 'main_slaves'); }
-	function db_fetch_users($k, $sql){			return _db_fetch($sql, 'users', $k); }
+	function db_update($tbl, $hash, $where){					return _db_update($tbl, $hash, $where, 'main', null); }
+	function db_update_accounts($tbl, $hash, $where){				return _db_update($tbl, $hash, $where, 'accounts', null); }
+	function db_update_users($k, $tbl, $hash, $where){				return _db_update($tbl, $hash, $where, 'users', $k); }
 
-	function db_fetch_paginated($sql, $args){		return _db_fetch_paginated($sql, $args, 'main', null); }
-	function db_fetch_paginated_users($k, $sql, $args){	return _db_fetch_paginated($sql, $args, 'users', $k); }
+	function db_fetch($sql){							return _db_fetch($sql, 'main', null); }
+	function db_fetch_slave($sql){							return _db_fetch_slave($sql, 'main_slaves'); }
+	function db_fetch_accounts($sql){						return _db_fetch($sql, 'accounts', null); }
+	# function db_fetch_accounts_slave($sql){					return _db_fetch($sql, 'accounts_slave', null); }
+	function db_fetch_users($k, $sql){						return _db_fetch($sql, 'users', $k); }
 
-	function db_write($sql){				return _db_write($sql, 'main', null); }
-	function db_write_users($k, $sql){			return _db_write($sql, 'users', $k); }
+	function db_fetch_paginated($sql, $args){					return _db_fetch_paginated($sql, $args, 'main', null); }
+	function db_fetch_paginated_accounts($sql, $args){				return _db_fetch_paginated($sql, $args, 'accounts', null); }
+	function db_fetch_paginated_users($k, $sql, $args){				return _db_fetch_paginated($sql, $args, 'users', $k); }
 
-	function db_tickets_write($sql){			return _db_write($sql, 'tickets', null); }
+	function db_write($sql){							return _db_write($sql, 'main', null); }
+	function db_write_accounts($sql){						return _db_write($sql, 'accounts', null); }
+	function db_write_users($k, $sql){						return _db_write($sql, 'users', $k); }
+
+	function db_tickets_write($sql){						return _db_write($sql, 'tickets', null); }
 
 	#################################################################
 
@@ -225,26 +238,26 @@
 		# tried to stick anything in the database. It is left as an
 		# exercise to the calling function to check/update the row's
 		# ID by reading $rsp['insert_id']. For example:
-		# 
+		#
 		# $widget = ...
 		# $insert == ...
 		# $dupe == ...
-		#		
+		#
 		# $more = array(
 		# 	'ensure_insert_id' => 'id'
 		# );
-		# 
+		#
 		# $rsp = db_insert_dupe("Widgets", $insert, $dupe, $more);
-		# 
+		#
 		# if ($rsp['ok']){
-		# 
+		#
 		# 	if ($id = $rsp['insert_id']){
 		# 		$widget['id'] = $id;
 		# 	}
-		# 
+		#
 		# 	$rsp['widget'] = $widget;
 		# }
-		# 
+		#
 		# (20140618/straup)
 		#
 		# See also:
@@ -487,7 +500,7 @@
 			$ret['pagination']['first'] = 0;
 			$ret['pagination']['last'] = 0;
 		}
-		
+
 		if ($GLOBALS['cfg']['pagination_assign_smarty_variable']){
 			$GLOBALS['smarty']->assign('pagination', $ret['pagination']);
 		}

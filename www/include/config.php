@@ -24,6 +24,13 @@
 		'auto_connect' => 0,
 	);
 
+	$GLOBALS['cfg']['db_accounts'] = array(
+		'host'	=> 'localhost',
+		'name'	=> 'boundaryissues',		# database name
+		'user'	=> 'boundaryissues',		# database username
+		'auto_connect' => 0,
+	);
+
 	$GLOBALS['cfg']['db_users'] = array(
 
 		'host' => array(
