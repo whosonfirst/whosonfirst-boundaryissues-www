@@ -1,5 +1,12 @@
 <?php
 
+	# this is not the most elegant code - that's unfortunate but polishing
+	# this particular door knob is not the priority right now and what you
+	# see below is the evolution of the mapzen SSO stuff and a lot of different
+	# applications trying to use it and then all playing nicely together.
+	# when things settle down we will clean it up but that day is not today.
+	# (20160727/thisisaaronland)
+
 	include("include/init.php");
 
 	loadlib("http");
@@ -40,7 +47,29 @@
 	$mapzen_data = null;
 
 	if (($mapzen_user) && ($user_id = $mapzen_user['user_id'])){
-		$user = users_get_by_id($user_id);
+
+		if (! $mapzen_user['is_admin']){
+
+			$args = array(
+				'access_token' => $oauth_token,
+			);
+
+			if (features_is_enabled("mapzen_require_admin")){
+
+				$rsp = mapzen_api_call("current_developer", $args);
+
+				if ((! $rsp['ok']) || (! boolval($rsp['data']['admin']))){
+					$GLOBALS['smarty']->display("page_signin_disabled.txt");
+					exit();
+				}
+
+				$update = array('is_admin' => 1);
+
+				$rsp = mapzen_users_update_user($mapzen_user, $update);
+				$mapzen_user = $rsp['mapzen_user'];
+			}
+		}
+
 	}
 
 	# If we don't ensure that new users are allowed to create
@@ -70,9 +99,27 @@
 		}
 
 		$mapzen_data = $rsp['data'];
+		$is_admin = boolval($mapzen_data['admin']);
+
+		if ((features_is_enabled("mapzen_require_admin")) && (! $is_admin)){
+
+			$GLOBALS['smarty']->display("page_signin_disabled.txt");
+			exit();
+		}
+
+		# we don't get back a numeric ID yet
+		# https://github.com/mapzen/operations-engineering/issues/229
 
 		$mapzen_id = $mapzen_data['id'];
 		$mapzen_user = mapzen_users_get_by_mapzen_id($mapzen_id);
+
+		if ($mapzen_user){
+
+			$update = array('is_admin' => $is_admin);
+
+			$rsp = mapzen_users_update_user($mapzen_user, $update);
+			$mapzen_user = $rsp['mapzen_user'];
+		}
 	}
 
 	if ($mapzen_user){
@@ -98,27 +145,36 @@
 		$mz_id = $mapzen_data['id'];
 		$username = $mapzen_data['nickname'];
 		$email = $mapzen_data['email'];
+		$is_admin = boolval($mapzen_data['admin']);
 
-		$password = random_string(32);
+		# kludge... but necessary (20160727/thisisaaronland)
 
-		$rsp = users_create_user(array(
-			"username" => $username,
-			"email" => $email,
-			"password" => $password,
-		));
+		$user = users_get_by_email($email);
 
-		if (! $rsp['ok']){
-			$GLOBALS['error']['dberr_user'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
-			exit();
+		if (! $user){
+
+			$password = random_string(32);
+
+			$rsp = users_create_user(array(
+				"username" => $username,
+				"email" => $email,
+				"password" => $password,
+			));
+
+			if (! $rsp['ok']){
+				$GLOBALS['error']['dberr_user'] = 1;
+				$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
+				exit();
+			}
+
+			$user = $rsp['user'];
 		}
-
-		$user = $rsp['user'];
 
 		$rsp = $mapzen_user = mapzen_users_create_user(array(
 			'user_id' => $user['id'],
 			'oauth_token' => $oauth_token,
 			'mapzen_id' => $mz_id,
+			"is_admin" => $is_admin,
 		));
 
 		if (! $rsp['ok']){
