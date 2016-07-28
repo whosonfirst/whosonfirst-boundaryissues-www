@@ -192,10 +192,8 @@
 		}
 
 		$branches = array();
-		preg_match_all('/^\*?\s*(.+)$/m', $rsp['rsp'], $matches);
-		foreach ($matches as $match) {
-			$branches[] = $match[1];
-		}
+		preg_match_all('/^\*?\s*([a-zA-Z0-9_-]+)$/m', $rsp['rsp'], $matches);
+		$branches = $matches[1];
 
 		return array(
 			'ok' => 1,
