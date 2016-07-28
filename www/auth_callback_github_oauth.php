@@ -1,5 +1,12 @@
 <?php
 
+	# this is not the most elegant code - that's unfortunate but polishing
+	# this particular door knob is not the priority right now and what you
+	# see below is the evolution of the mapzen SSO stuff and a lot of different
+	# applications trying to use it and then all playing nicely together.
+	# when things settle down we will clean it up but that day is not today.
+	# (20160727/thisisaaronland)
+
 	include("include/init.php");
 
 	loadlib("http");
@@ -140,21 +147,28 @@
 		$email = $mapzen_data['email'];
 		$is_admin = boolval($mapzen_data['admin']);
 
-		$password = random_string(32);
+		# kludge... but necessary (20160727/thisisaaronland)
 
-		$rsp = users_create_user(array(
-			"username" => $username,
-			"email" => $email,
-			"password" => $password,
-		));
+		$user = users_get_by_email($email);
 
-		if (! $rsp['ok']){
-			$GLOBALS['error']['dberr_user'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
-			exit();
+		if (! $user){
+
+			$password = random_string(32);
+
+			$rsp = users_create_user(array(
+				"username" => $username,
+				"email" => $email,
+				"password" => $password,
+			));
+
+			if (! $rsp['ok']){
+				$GLOBALS['error']['dberr_user'] = 1;
+				$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
+				exit();
+			}
+
+			$user = $rsp['user'];
 		}
-
-		$user = $rsp['user'];
 
 		$rsp = $mapzen_user = mapzen_users_create_user(array(
 			'user_id' => $user['id'],
