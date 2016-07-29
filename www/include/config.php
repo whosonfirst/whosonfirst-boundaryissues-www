@@ -139,10 +139,7 @@
 	$GLOBALS['cfg']['enable_feature_abs_root_suffix'] = 1;
 	$GLOBALS['cfg']['abs_root_suffix'] = "";
 	$GLOBALS['cfg']['abs_root_suffix_env'] = 'HTTP_X_PROXY_PATH';	# ignored if 'abs_root_suffix' is not empty
-
-	# Because the nginx configs are still busted... (20160429/thisisaaronland)
-	# $GLOBALS['cfg']['data_abs_root_url'] = "https://whosonfirst.mapzen.com/data/";
-	$GLOBALS['cfg']['data_abs_root_url'] = "https://s3.amazonaws.com/whosonfirst.mapzen.com/data/";
+	$GLOBALS['cfg']['data_abs_root_url'] = "https://whosonfirst.mapzen.com/data/";
 
 	$GLOBALS['cfg']['enable_feature_update_s3'] = 1;
 
