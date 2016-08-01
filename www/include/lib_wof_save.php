@@ -514,7 +514,10 @@
 			}
 
 			if (! $options['dry_run']) {
-				git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+				$rsp = git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
 			}
 			$saved[$wof_id] = $updates;
 
