@@ -501,7 +501,7 @@
 				echo "mv $pending_path $data_path\n";
 			}
 			if (! $options['dry_run']) {
-				$rsp = save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
+				$rsp = wof_save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
 				if (! $rsp['ok']) {
 					return $rsp;
 				}
@@ -781,7 +781,7 @@
 
 	########################################################################
 
-	function save_pending_apply_diff($pending_path, $diff, $existing_path, $branch = 'master') {
+	function wof_save_pending_apply_diff($pending_path, $diff, $existing_path, $branch = 'master') {
 
 		// This function takes two paths, and merges each of the
 		// properties listed in $diff from the $pending_path GeoJSON
