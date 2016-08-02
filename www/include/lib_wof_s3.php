@@ -21,7 +21,7 @@
 
 		$data = file_get_contents("{$rel}{$path}");
 		$args = array_merge(array(
-			'id' => $path,
+			'id' => "data/$path",
 			'data' => $data
 		), $args);
 
