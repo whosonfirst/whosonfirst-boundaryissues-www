@@ -531,9 +531,9 @@
 			if ($authors[$user_id]) {
 				$author = $authors[$user_id];
 			} else {
-				$rsp = github_users_get_author_by_user_id($user_id);
+				$rsp = mapzen_users_get_by_mapzen_id($user_id);
 				if ($rsp['ok']) {
-					$author = $rsp['author'];
+					$author = $rsp['username'];
 					$authors[$user_id] = $author;
 				}
 			}
