@@ -192,13 +192,20 @@
 		}
 
 		$branches = array();
-		preg_match_all('/^\*?\s*([a-zA-Z0-9_-]+)$/m', $rsp['rsp'], $matches);
-		$branches = $matches[1];
+		preg_match_all('/^(\*)?\s*([a-zA-Z0-9_-]+)$/m', $rsp['rsp'], $matches);
 
-		return array(
+		$rsp = array(
 			'ok' => 1,
-			'branches' => $branches
+			'branches' => $matches[2]
 		);
+
+		foreach ($matches[1] as $index => $selected) {
+			if ($selected == '*') {
+				$rsp['selected'] = $matches[2][$index];
+			}
+		}
+
+		return $rsp;
 	}
 
 	########################################################################

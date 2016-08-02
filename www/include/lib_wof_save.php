@@ -427,15 +427,20 @@
 			return $rsp;
 		}
 
-		if (! in_array($branch, $rsp['branches'])) {
-			$new_branch = '-b ';
-		}
-
-		if ($options['verbose']) {
-			echo "git checkout {$new_branch}$branch\n";
-		}
-		if (! $options['dry_run']) {
-			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "checkout {$new_branch}$branch");
+		if ($rsp['selected'] == $branch) {
+			if ($options['verbose']) {
+				echo "(branch $branch already checked out)\n";
+			}
+		} else {
+			if (! in_array($branch, $rsp['branches'])) {
+				$new_branch = '-b ';
+			}
+			if ($options['verbose']) {
+				echo "git checkout {$new_branch}$branch\n";
+			}
+			if (! $options['dry_run']) {
+				$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "checkout {$new_branch}$branch");
+			}
 		}
 
 		// Pull down changes from origin
@@ -496,8 +501,10 @@
 				echo "mv $pending_path $data_path\n";
 			}
 			if (! $options['dry_run']) {
-				save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
-				//rename($pending_path, $data_path);
+				$rsp = save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
 			}
 
 			if (! file_exists($data_path) &&
@@ -805,8 +812,13 @@
 		}
 
 		$geojson = json_encode($existing);
-		$rsp = wof_geojson_save($geojson, $branch);
-		return $rsp;
+		$rsp = wof_geojson_encode($geojson, $branch);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		file_put_contents($existing_path, $rsp['encoded']);
+		return array('ok' => 1);
 	}
 
 	########################################################################
