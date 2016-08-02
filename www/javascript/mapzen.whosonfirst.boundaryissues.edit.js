@@ -494,11 +494,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		add_object_row: function($rel, key, value) {
 			var $row = $rel.find('> table > tbody > .add-row');
 			var context = $rel.data('context');
+			if ($('input[name="' + context + '.' + key + '"]').length > 0) {
+				alert('Oops, there is already a property with that name.');
+				return;
+			}
 			var remove = '<span class="remove-row">&times;</span>';
 			var $newRow = $(
 				'<tr>' +
 					'<th>' + key + remove + '</th>' +
-					'<td><input name="' + context + '.' + key + '" class="property"></td>' +
+					'<td><input type="text" name="' + context + '.' + key + '" class="property"></td>' +
 				'</tr>'
 			).insertBefore($row);
 			$newRow.find('.remove-row').click(function(e) {
@@ -506,7 +510,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$rel.find('input[name="' + context + '.' + key + '"]').val(value);
-			self.check_for_category_property();
+			//self.check_for_category_property();
 		},
 
 		add_array_item: function($rel, value) {
