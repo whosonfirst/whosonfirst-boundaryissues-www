@@ -48,9 +48,13 @@
 
 	function wof_elasticsearch_append_defaults(&$more){
 
-		$more['index'] = $GLOBALS['cfg']['wof_elasticsearch_index'];
-		$more['host'] = $GLOBALS['cfg']['wof_elasticsearch_host'];
-		$more['port'] = $GLOBALS['cfg']['wof_elasticsearch_port'];
+		$es_settings_prefix = 'wof';
+		if (isset($more['es_settings_prefix'])) {
+			$es_settings_prefix = $more['es_settings_prefix'];
+		}
+		$more['index'] = $GLOBALS['cfg']["{$es_settings_prefix}_elasticsearch_index"];
+		$more['host'] = $GLOBALS['cfg']["{$es_settings_prefix}_elasticsearch_host"];
+		$more['port'] = $GLOBALS['cfg']["{$es_settings_prefix}_elasticsearch_port"];
 
 		if ($GLOBAL['cfg']['user']) {
 			$branch = users_settings_get_single($GLOBAL['cfg']['user'], 'branch');

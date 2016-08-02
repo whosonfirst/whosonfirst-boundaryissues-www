@@ -67,6 +67,16 @@
 		$doc = $data['feature'];
 
 		$rsp = wof_elasticsearch_update_document($doc);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		if ($GLOBALS['cfg']['enable_feature_index_spelunker']) {
+			// Update the Spelunker ES index
+			$rsp = wof_elasticsearch_update_document($doc, array(
+				'es_settings_prefix' => 'spelunker'
+			));
+		}
 		return $rsp;
 	}
 

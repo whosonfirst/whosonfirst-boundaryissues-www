@@ -82,6 +82,12 @@
 	$GLOBALS['cfg']['offline_tasks_elasticsearch_host'] = 'localhost';
 	$GLOBALS['cfg']['offline_tasks_elasticsearch_port'] = '9200';
 
+	// Spelunker-specific ES settings
+	$GLOBALS['cfg']['enable_feature_index_spelunker'] = 0;
+	$GLOBALS['cfg']['spelunker_elasticsearch_index'] = 'whosonfirst';
+	$GLOBALS['cfg']['spelunker_elasticsearch_host'] = 'localhost';
+	$GLOBALS['cfg']['spelunker_elasticsearch_port'] = '9200';
+
 	$GLOBALS['cfg']['gearman_host'] = 'localhost';
 	$GLOBALS['cfg']['gearman_port'] = '4730';
 
