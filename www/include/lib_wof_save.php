@@ -357,6 +357,7 @@
 			}
 			$branch = basename($branch);
 			$rsp = wof_save_pending_branch($branch, $options);
+			audit_trail("wof_save_pending_branch: $branch", $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -403,6 +404,7 @@
 			$pending_geojson = file_get_contents($path);
 			$pending = json_decode($pending_geojson, 'as hash');
 			$diff = wof_save_pending_diff($existing[$wof_id], $pending);
+			audit_trail("wof_save_pending_diff: $wof_id", $diff);
 
 			array_push($wof[$wof_id], array(
 				'path' => $path,
@@ -423,6 +425,7 @@
 		}
 
 		$rsp = git_branches($GLOBALS['cfg']['wof_data_dir']);
+		audit_trail('git_branches', $rsp);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -440,6 +443,10 @@
 			}
 			if (! $options['dry_run']) {
 				$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "checkout {$new_branch}$branch");
+				audit_trail("git_checkout: {$new_branch}$branch", $rsp);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
 			}
 		}
 
@@ -450,6 +457,7 @@
 
 		if (! $options['dry_run']) {
 			$rsp = wof_save_pending_pull($branch);
+			audit_trail("wof_save_pending_pull: $branch", $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -502,6 +510,7 @@
 			}
 			if (! $options['dry_run']) {
 				$rsp = wof_save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
+				audit_trail('wof_save_pending_apply_diff', $rsp);
 				if (! $rsp['ok']) {
 					return $rsp;
 				}
@@ -522,6 +531,7 @@
 
 			if (! $options['dry_run']) {
 				$rsp = git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+				audit_trail('git_add', $rsp);
 				if (! $rsp['ok']) {
 					return $rsp;
 				}
@@ -532,6 +542,7 @@
 				$author = $authors[$user_id];
 			} else {
 				$rsp = mapzen_users_get_by_mapzen_id($user_id);
+				audit_trail("mapzen_users_get_by_mapzen_id: $user_id", $rsp);
 				if ($rsp['ok']) {
 					$author = $rsp['username'];
 					$authors[$user_id] = $author;
@@ -562,6 +573,7 @@
 
 			// Commit the pending changes
 			$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
+			audit_trail('git_commit', $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -578,6 +590,7 @@
 
 			// Push to GitHub
 			$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch);
+			audit_trail('git_push', $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -677,7 +690,8 @@
 
 		// If this is a brand new file, we don't have any existing
 		// properties to compare against.
-		if (! $existing) {
+		if (! $existing ||
+		    ! $existing['properties']) {
 			// ... so the diff is easy: all of the properties.
 			return array_keys($pending);
 		}
@@ -724,6 +738,7 @@
 	function wof_save_pending_pull($branch) {
 		// Pull changes from GitHub
 		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch, '--rebase');
+		audit_trail("git pull --rebase origin $branch", $rsp);
 		if (! $rsp['ok'] &&
 		    strpos($rsp['rsp'], "Couldn\\'t find remote ref $branch") !== false) {
 			// We are okay with the "branch doesn't exist yet on GitHub" error
@@ -738,6 +753,7 @@
 			$commit_hashes = $rsp['commit_hashes'];
 			$commit_hashes_esc = escapeshellarg($commit_hashes);
 			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
+			audit_trail("git $commit_hashes_esc --summary", $rsp);
 			if (! $rsp['ok']) {
 				return array(
 					'ok' => 0,
@@ -813,6 +829,7 @@
 
 		$geojson = json_encode($existing);
 		$rsp = wof_geojson_encode($geojson, $branch);
+		audit_trail('wof_geojson_encode', $rsp);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
