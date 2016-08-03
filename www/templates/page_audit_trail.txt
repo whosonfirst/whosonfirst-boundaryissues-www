@@ -19,6 +19,7 @@
 
 <tr>
 	<th>Date</th>
+	<th>Status</th>
 	<th>Task</th>
 	<th>PID</th>
 	<th>Event ID</th>
@@ -27,6 +28,7 @@
 {foreach from=$rows item="row"}
 <tr>
 	<td>{$row._timestamp|@escape}</td>
+	<td>{if $row.ok}ok{else}<span style="color:red;">fail</span>{/if}</td>
 	<td><a href="{$cfg.abs_root_url}audit_trail/?task={$row.task|@escape}">{$row.task|@escape}</td>
 	<td><a href="{$cfg.abs_root_url}audit_trail/?pid={$row.pid|@escape}">{$row.pid|@escape}</a></td>
 	<td><a href="#" class="event-id" data-event-id="{$row._id|@escape}">{$row._id|@escape}</a></td>

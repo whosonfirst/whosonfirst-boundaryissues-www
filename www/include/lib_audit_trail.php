@@ -10,15 +10,20 @@
 
 	function audit_trail($task, $data) {
 
-		// Note the use of func_get_args() below (i.e., pass as many
-		// arguments as you want and they'll all get logged.)
-
 		if (! $GLOBALS['cfg']['enable_feature_audit_trail']) {
 			// Use this sparingly. Off by default.
 			return;
 		}
 
+		if (isset($data['ok']) &&
+		    ! $data['ok']) {
+			$ok = 0;
+		} else {
+			$ok = 1;
+		}
+
 		$record = array(
+			'ok' => $ok,
 			'pid' => posix_getpid(),
 			'task' => $task,
 			'data' => $data,
