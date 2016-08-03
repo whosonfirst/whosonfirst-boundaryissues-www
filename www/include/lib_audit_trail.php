@@ -5,9 +5,10 @@
 	# happened and you need more granular logs. (20160803/dphiffer)
 
 	loadlib('logstash');
-	loadlib('offline_tasks');
 
-	function audit_trail() {
+	########################################################################
+
+	function audit_trail($task, $data) {
 
 		// Note the use of func_get_args() below (i.e., pass as many
 		// arguments as you want and they'll all get logged.)
@@ -17,20 +18,25 @@
 			return;
 		}
 
-		$data = array();
-		$args = func_get_args();
-		foreach ($args as $arg) {
-			if (! is_scalar($arg)) {
-				$data[] = var_export($arg, true);
-			} else {
-				$data[] = $arg;
-			}
-		}
-		$data = implode("\n", $data);
 		$record = array(
 			'pid' => posix_getpid(),
+			'task' => $task,
 			'data' => $data,
-			'microtime' => offline_tasks_microtime()
+			'microtime' => audit_trail_microtime()
 		);
-		logstash_publish('audit_trail', $record);
+		$rsp = logstash_publish('audit_trail', $record);
+
+		return $rsp;
 	}
+
+	########################################################################
+
+	function audit_trail_microtime(){
+
+		list($usec, $sec) = explode(" ", microtime());
+		return (float)$sec + (float)$usec;
+	}
+
+	########################################################################
+
+	# the end

@@ -82,6 +82,12 @@
 	$GLOBALS['cfg']['offline_tasks_elasticsearch_host'] = 'localhost';
 	$GLOBALS['cfg']['offline_tasks_elasticsearch_port'] = '9200';
 
+	// Audit Trail-specific ES settings
+	$GLOBALS['cfg']['enable_feature_audit_trail'] = false;
+	$GLOBALS['cfg']['audit_trail_elasticsearch_index'] = 'audit_trail';
+	$GLOBALS['cfg']['audit_trail_elasticsearch_host'] = 'localhost';
+	$GLOBALS['cfg']['audit_trail_elasticsearch_port'] = '9200';
+
 	// Spelunker-specific ES settings
 	$GLOBALS['cfg']['enable_feature_index_spelunker'] = 0;
 	$GLOBALS['cfg']['spelunker_elasticsearch_index'] = 'whosonfirst';
@@ -444,9 +450,3 @@
 	$GLOBALS['cfg']['mapzen_api_perms'] = 'read';
 
 	# END OF flamework-mapzen-sso stuff
-
-	# START OF audit stuff
-
-	$GLOBALS['cfg']['enable_feature_audit_trail'] = false;
-
-	# END OF audit stuff

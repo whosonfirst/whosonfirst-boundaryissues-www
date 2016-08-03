@@ -173,3 +173,4 @@ RewriteRule ^recent(/page([0-9]+))?/?$						recent.php?page=$2	[L,QSA]
 RewriteRule ^recent/created(/page([0-9]+))?/?$					recent.php?created=1&page=$2	[L,QSA]
 
 RewriteRule ^offline-?tasks(/page([0-9]+))?/?$					offline_tasks.php?page=$2	[L,QSA]
+RewriteRule ^audit-?trail(/page([0-9]+))?/?$					audit_trail.php?page=$2	[L,QSA]
