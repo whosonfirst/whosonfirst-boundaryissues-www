@@ -271,6 +271,7 @@
 		'logstash',
 		'redis',
 		'users_settings',
+		'audit_trail',
 	);
 
 	# THINGS YOU SHOULD DEFINE IN YOUR secrets.php FILE WHICH IS NOT
@@ -442,4 +443,10 @@
 	$GLOBALS['cfg']['crypto_oauth_cookie_secret'] = 'READ-FROM-SECRETS';	# (see notes in www/sign_oauth.php)
 	$GLOBALS['cfg']['mapzen_api_perms'] = 'read';
 
-	# START OF flamework-mapzen-sso stuff
+	# END OF flamework-mapzen-sso stuff
+
+	# START OF audit stuff
+
+	$GLOBALS['cfg']['enable_feature_audit_trail'] = false;
+
+	# END OF audit stuff
