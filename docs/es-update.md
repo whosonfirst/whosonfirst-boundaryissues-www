@@ -21,3 +21,13 @@ git pull
 While that's running, you can detach from your `screen` session with `ctrl-A ctrl-D` and then check in on it later with `screen -x index`.
 
 Once the index finishes updating, you should find that the file `/usr/local/mapzen/es-whosonfirst-schema/BOUNDARYISSUES_INDEX_VERSION` has been incremented by one, and the number it contains should match the index name: `whosonfirst_v[n]` (which is aliased as the index `whosonfirst`).
+
+# Resetting things
+
+If you find that your indexes need to reset from scratch, and you don't mind losing their contents:
+
+```
+curl -XDELETE http://localhost:9200/[index]
+rm BOUNDARYISSUES_INDEX_VERSION
+./bin/update-schema.sh boundaryissues
+```
