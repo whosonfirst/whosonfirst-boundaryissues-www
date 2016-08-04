@@ -18,14 +18,14 @@
 			return $rsp;
 		}
 
-		$encoded = $rsp['body'];
-
-		// For new entries that haven't been saved yet, remove empty top-level id param
-		$encoded = str_replace("  \"id\": \"\",\n", '', $encoded);
+		$rsp = json_decode($rsp['body'], true);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
 		return array(
 			'ok' => 1,
-			'encoded' => $encoded
+			'encoded' => $rsp['encoded']
 		);
 	}
 
