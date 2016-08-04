@@ -98,7 +98,7 @@
 		$args = "pull $opts $remote $branch";
 		$rsp = git_execute($cwd, $args);
 		audit_trail("git $args", $rsp);
-		$git_pull_output = "{$rsp['error']}{$rsp['output']}";
+		$git_pull_output = "{$rsp['output']}\n{$rsp['error']}";
 
 		if (! $rsp['ok']) {
 			return array(
