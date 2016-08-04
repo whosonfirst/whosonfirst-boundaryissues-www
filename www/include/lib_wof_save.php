@@ -85,7 +85,7 @@
 	loadlib("wof_geojson");
 	loadlib("git");
 	loadlib("github_api");
-	loadlib("github_users");
+	loadlib("mapzen_users");
 	loadlib("offline_tasks_gearman");
 	loadlib("notifications");
 	loadlib("wof_schema");
