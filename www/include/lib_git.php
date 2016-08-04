@@ -85,6 +85,7 @@
 	function git_pull($cwd, $remote = 'origin', $branch = null, $opts = '') {
 
 		$rsp = git_curr_branch($cwd);
+		audit_trail('git_curr_branch', $rsp);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -96,6 +97,7 @@
 
 		$args = "pull $opts $remote $branch";
 		$rsp = git_execute($cwd, $args);
+		audit_trail("git $args", $rsp);
 		$git_pull_output = "{$rsp['error']}{$rsp['output']}";
 
 		if (! $rsp['ok']) {
