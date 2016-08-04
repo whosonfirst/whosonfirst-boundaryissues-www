@@ -510,7 +510,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$rel.find('input[name="' + context + '.' + key + '"]').val(value);
-			//self.check_for_category_property();
 		},
 
 		add_array_item: function($rel, value) {
@@ -664,7 +663,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if (! namespace_id ||
 			    ! predicate_id ||
 			    ! value_id) {
-				return;
+				return [];
 			}
 			var namespace = self.categories.namespace[namespace_id].uri;
 			var predicate = self.categories.predicate[predicate_id].uri;
@@ -1110,14 +1109,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		check_for_category_property: function() {
 
-			// This doesn't work yet ¯\_(ツ)_/¯
-
 			var cats = self.get_categories();
 			var icon = null;
 			$.each(cats, function(i, cat) {
 				if (self.categories.icon[cat]) {
 					icon = self.categories.icon[cat];
-					console.log(icon);
 				}
 			});
 			if (icon) {
