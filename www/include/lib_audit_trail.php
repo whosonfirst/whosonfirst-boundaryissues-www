@@ -8,19 +8,25 @@
 
 	########################################################################
 
-	function audit_trail($task, $data) {
+	function audit_trail($task, $rsp, $args = null) {
 
 		if (! $GLOBALS['cfg']['enable_feature_audit_trail']) {
 			// Use this sparingly. Off by default.
 			return;
 		}
 
-		if (isset($data['ok']) &&
-		    ! $data['ok']) {
+		if (isset($rsp['ok']) &&
+		    ! $rsp['ok']) {
 			$ok = 0;
 		} else {
 			$ok = 1;
 		}
+
+		$data = array();
+		if ($args) {
+			$data['args'] = $args;
+		}
+		$data['rsp'] = $rsp;
 
 		$record = array(
 			'ok' => $ok,
