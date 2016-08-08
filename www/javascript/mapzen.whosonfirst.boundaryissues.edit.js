@@ -209,11 +209,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('.json-schema-object tr').each(function(i, row) {
 				if (  $(row).hasClass('add-row') ||
-				    ! $(row).hasClass('property-deletable')) {
+				    ! $(row).hasClass('property-editable')) {
 					return;
 				}
 				$(row).find('> th').append('<span class="remove-row">&times;</span>');
 				$(row).find('.remove-row').click(function(e) {
+					$(row).remove();
+				});
+			});
+
+			$('.json-schema-array li').each(function(i, row) {
+				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
+				$(row).find('.btn-remove-item').click(function(e) {
 					$(row).remove();
 				});
 			});
@@ -518,7 +525,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var index = $rel.find('> ul > li').length;
 			$rel.find('> ul').append(
 				'<li>' +
-					'<input name="' + context + '[' + index + ']" class="property">' + remove + '</td>' +
+					'<input name="' + context + '[' + index + ']" type="text" class="property">' + remove +
 				'</li>'
 			);
 			var $new_item = $rel.find('> ul > li').last();
