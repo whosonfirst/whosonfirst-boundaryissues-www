@@ -28,6 +28,9 @@
 		}
 		$data['rsp'] = $rsp;
 
+		// Elasticsearch cannot be trusted with arbitrary structured data, because ... mappings?
+		$data = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
 		$record = array(
 			'ok' => $ok,
 			'pid' => getmypid(),
