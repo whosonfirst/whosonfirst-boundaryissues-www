@@ -85,7 +85,6 @@
 	function git_pull($cwd, $remote = 'origin', $branch = null, $opts = '') {
 
 		$rsp = git_curr_branch($cwd);
-		audit_trail('git_curr_branch', $rsp);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -97,7 +96,6 @@
 
 		$args = "pull $opts $remote $branch";
 		$rsp = git_execute($cwd, $args);
-		audit_trail("git $args", $rsp);
 		$git_pull_output = "{$rsp['output']}\n{$rsp['error']}";
 
 		if (! $rsp['ok']) {
@@ -127,7 +125,6 @@
 	########################################################################
 
 	function git_push($cwd, $remote = 'origin', $branch = null, $opts = '') {
-
 
 		$rsp = git_curr_branch($cwd);
 		if (! $rsp['ok']) {
@@ -236,6 +233,20 @@
 		fclose($pipes[2]);
 		proc_close($proc);
 
+		$rsp = array(
+			'ok' => 1,
+			'output' => trim($output),
+			'error' => trim($error),
+			'rsp' => trim($error) . trim($output)
+		);
+		if (function_exists('audit_trail')) {
+			// Audit all the git commands!
+			audit_trail('git_execute', $rsp, array(
+				'cwd' => $cwd,
+				'cmd' => "git $args"
+			));
+		}
+
 		// Originally this would return 'ok' => 0 if it got back a non-
 		// empty STDERR value. Then I noticed that `git hash-object` was
 		// using STDERR to return the hash value. Plus, it seems that
@@ -243,10 +254,5 @@
 		// `git pull`, so now I pass both values back and expect the
 		// caller to take the right action. (20160502/dphiffer)
 
-		return array(
-			'ok' => 1,
-			'output' => trim($output),
-			'error' => trim($error),
-			'rsp' => trim($error) . trim($output)
-		);
+		return $rsp;
 	}
