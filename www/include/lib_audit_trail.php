@@ -24,7 +24,7 @@
 
 		$record = array(
 			'ok' => $ok,
-			'pid' => posix_getpid(),
+			'pid' => getmypid(),
 			'task' => $task,
 			'data' => $data,
 			'microtime' => audit_trail_microtime()
