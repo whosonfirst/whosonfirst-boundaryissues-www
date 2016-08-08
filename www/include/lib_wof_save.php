@@ -85,7 +85,6 @@
 	loadlib("wof_geojson");
 	loadlib("git");
 	loadlib("github_api");
-	loadlib("mapzen_users");
 	loadlib("offline_tasks_gearman");
 	loadlib("notifications");
 	loadlib("wof_schema");
@@ -541,14 +540,20 @@
 			if ($authors[$user_id]) {
 				$author = $authors[$user_id];
 			} else {
-				$rsp = mapzen_users_get_by_mapzen_id($user_id);
-				audit_trail("mapzen_users_get_by_mapzen_id: $user_id", $rsp);
-				if ($rsp['ok']) {
+				$rsp = users_get_by_id($user_id);
+				audit_trail("users_get_by_id: $user_id", $rsp);
+				if ($rsp['username']) {
 					$author = $rsp['username'];
 					$authors[$user_id] = $author;
 				}
 			}
-			$messages[] = "* $wof_name ($wof_id) saved by $author";
+
+			$message = "* $wof_name ($wof_id) saved by $author";
+			if ($options['verbose']) {
+				echo "$message\n";
+			}
+
+			$messages[] = $message;
 
 			if (! $notifications[$user_id]) {
 				$notifications[$user_id] = array();
@@ -610,6 +615,14 @@
 					wof_save_log($update['path']);
 				}
 			}
+			$data_path = wof_utils_pending_dir("data/") .
+			             wof_utils_id2relpath($wof_id);
+			if ($options['verbose']) {
+				echo "rm $data_path\n";
+			}
+			if (! $options['dry_run']) {
+				unlink($data_path);
+			}
 			$updated[] = $updates[0];
 		}
 
@@ -635,9 +648,6 @@
 					$rsp = offline_tasks_schedule_task('update_s3', array(
 						'wof_id' => $wof_id
 					));
-					if ($options['verbose']) {
-						var_export($rsp);
-					}
 				}
 			}
 		}
