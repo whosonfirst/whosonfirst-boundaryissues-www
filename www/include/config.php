@@ -450,3 +450,12 @@
 	$GLOBALS['cfg']['mapzen_api_perms'] = 'read';
 
 	# END OF flamework-mapzen-sso stuff
+
+	# START of wof spatial stuff
+
+	$GLOBALS['cfg']['enable_feature_spatial'] = 1;
+	$GLOBALS['cfg']['spatial_tile38_host'] = 'localhost';
+	$GLOBALS['cfg']['spatial_tile38_port'] = '9851';
+	$GLOBALS['cfg']['spatial_tile38_collection'] = 'whosonfirst';
+
+	# END of wof spatial stuff
