@@ -50,7 +50,10 @@
 							"type": "array"
 						},
 						"wof:supersedes": {
-							"type": "array"
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
 						},
 						"wof:superseded_by": {
 							"type": "array"
@@ -88,6 +91,12 @@
 						},
 						"mz:categories": {
 							"type": "array"
+						},
+						"addr:postcode": {
+							"type": "string"
+						},
+						"sg:postcode": {
+							"type": "string"
 						}
 					},
 					"required": [
@@ -95,7 +104,6 @@
 						"wof:parent_id",
 						"wof:name",
 						"wof:placetype",
-						"wof:country",
 						"wof:concordances",
 						"wof:hierarchy",
 						"wof:belongsto",
@@ -103,10 +111,10 @@
 						"wof:superseded_by",
 						"wof:breaches",
 						"wof:tags",
-						"iso:country",
 						"src:geom",
 						"edtf:inception",
-						"edtf:cessation"
+						"edtf:cessation",
+						"mz:is_current"
 					]
 				}
 			},

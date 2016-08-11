@@ -165,6 +165,21 @@
 
 	########################################################################
 
+	function wof_render_remove_empty(&$schema) {
+		dbug('wof_render_remove_empty', $schema);
+		foreach ($schema['properties'] as $key => $value) {
+			if (! isset($value['_value']) &&
+			    ! $value['_required']) {
+				// If a property hasn't been set in the existing record, and
+				// isn't required, then we don't need it.
+				unset($schema['properties'][$key]);
+			}
+		}
+		return $schema;
+	}
+
+	########################################################################
+
 	function wof_render_value(&$property) {
 		if (isset($property['_value'])) {
 			return $property['_value'];

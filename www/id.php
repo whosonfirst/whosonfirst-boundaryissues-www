@@ -26,12 +26,14 @@
 	$geojson = file_get_contents($path);
 	$values = json_decode($geojson, 'as hash');
 
-	// We start from a pretty generic JSON schema representation of WOF
-	// minimum viable document.
+	// Load the JSON schema
 	$schema_fields = wof_schema_fields($ref);
 
 	// Next, the values from a particular record are merged into the schema.
-	$schema_fields = wof_render_insert_values($schema_fields, $values);
+	wof_render_insert_values($schema_fields, $values);
+
+	// Remove the properties without values, that aren't required
+	wof_render_remove_empty($schema_fields['properties']['properties']);
 
 	$GLOBALS['smarty']->assign_by_ref("schema_fields", $schema_fields);
 	$GLOBALS['smarty']->assign_by_ref("properties", $values['properties']);
