@@ -48,37 +48,55 @@
 			'deletable' => true
 		),
 		'wof:id' => array(
-			'visible' => false
+			'editable' => false
 		),
 		'wof:placetype' => array(
+			'editable' => false
+		),
+		'wof:name' => array(
 			'deletable' => false
 		),
 		'wof:parent_id' => array(
-			'visible' => false
+			'editable' => false
 		),
 		'wof:hierarchy' => array(
-			'visible' => false
+			'editable' => false
+		),
+		'wof:country' => array(
+			'deletable' => false
+		),
+		'iso:country' => array(
+			'deletable' => false
+		),
+		'src:geom' => array(
+			'deletable' => false
+		),
+		'edtf:inception' => array(
+			'deletable' => false
+		),
+		'edtf:cessation' => array(
+			'deletable' => false
+		),
+		'wof:concordances' => array(
+			'deletable' => false
 		),
 		'wof:belongsto' => array(
 			'visible' => false
 		),
 		'wof:supersedes' => array(
-			'visible' => false
+			'deletable' => false
 		),
 		'wof:superseded_by' => array(
-			'visible' => false
+			'deletable' => false
 		),
 		'wof:breaches' => array(
 			'visible' => false
 		),
-		'wof:country' => array(
-			'visible' => false
+		'wof:tags' => array(
+			'deletable' => false
 		),
 		'wof:geomhash' => array(
 			'editable' => false
-		),
-		'iso:country' => array(
-			'visible' => false
 		),
 		'wof:created' => array(
 			'editable' => false
@@ -95,14 +113,17 @@
 		'geom:bbox' => array(
 			'editable' => false
 		),
+		'geom:latitude' => array(
+			'deletable' => false
+		),
+		'geom:longitude' => array(
+			'deletable' => false
+		),
 		'sg:classifiers' => array(
 			'editable' => false
 		),
-		'sg:phone' => array(
-			'visible' => false
-		),
 		'mz:categories' => array(
-			'visible' => false
+			'editable' => false
 		)
 	);
 

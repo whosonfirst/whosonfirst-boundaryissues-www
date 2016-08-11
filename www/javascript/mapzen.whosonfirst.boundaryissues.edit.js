@@ -207,18 +207,26 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_properties: function() {
 
-			$('.json-schema-object tr').each(function(i, row) {
-				if (  $(row).hasClass('add-row') ||
+			$('.json-schema-object > table > tbody > tr').each(function(i, row) {
+				if ($(row).hasClass('add-row')) {
+					// Don't need to remove the placeholder input rows
+					return;
+				}
+				if (! $(row).hasClass('property-deletable') ||
 				    ! $(row).hasClass('property-editable')) {
 					return;
 				}
-				$(row).find('> th').append('<span class="remove-row">&times;</span>');
+				$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.remove-row').click(function(e) {
 					$(row).remove();
 				});
 			});
 
-			$('.json-schema-array li').each(function(i, row) {
+			$('.json-schema-array > li').each(function(i, row) {
+				if (  $(row).hasClass('add-row') ||
+				    ! $(row).hasClass('property-editable')) {
+					return;
+				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
 					$(row).remove();
