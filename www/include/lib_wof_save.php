@@ -666,7 +666,9 @@
 			exec("$find_path $pending_dir -type d -empty -delete");
 		}
 
-		if ($branch == 'master') {
+		if ($branch == 'master' &&
+		    $GLOBALS['cfg']['enable_feature_update_s3']) {
+
 			// Schedule S3 updates
 			foreach ($saved as $wof_id => $updates) {
 
