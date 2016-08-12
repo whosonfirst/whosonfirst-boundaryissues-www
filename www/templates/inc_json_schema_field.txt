@@ -1,4 +1,4 @@
-<div class="json-schema-field">
+<div class="json-schema-field{if $property._required} json-schema-required{/if}">
 	{if $property.type == 'object'}
 		{include file="inc_json_schema_object.txt" schema=$property context=$context}
 	{elseif $property.type == 'array'}

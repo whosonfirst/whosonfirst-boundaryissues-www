@@ -998,6 +998,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.assign_property(geojson_obj, name, value);
 			});
 
+			// Some array properties are required and may not have any inputs to
+			// iterate over.
+			$('.json-schema-required > .json-schema-array').each(function(i, prop) {
+				if ($(prop).find('> ul > li').length == 0) {
+					var name = $(prop).data('context');
+					self.assign_property(geojson_obj, name, []);
+				}
+			});
+
 			if ($('input[name="wof_id"]').length > 0) {
 				var id = $('input[name="wof_id"]').val();
 				id = parseInt(id);
