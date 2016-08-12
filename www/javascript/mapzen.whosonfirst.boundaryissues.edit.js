@@ -785,6 +785,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('input[name="properties.wof:hierarchy"]').val('[' + JSON.stringify(hierarchy) + ']');
 				self.show_hierarchy(hierarchy);
 			}
+
+			if (hierarchy.country_id) {
+				self.set_country_properties(hierarchy.country_id);
+			}
 		},
 
 		show_hierarchy: function(hierarchy) {
@@ -860,22 +864,43 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		get_venue_marker_style: function(props) {
-			//console.log(props);
 			if (props['wof:is_current'] == 1) {
-				//console.log('current');
 				return mapzen.whosonfirst.leaflet.styles.venue_current();
 			} else if (props['edtf:cessation'] &&
 			           props['edtf:cessation'] != 'uuuu') {
-				//console.log('not current');
 				return mapzen.whosonfirst.leaflet.styles.venue_not_current();
 			} else if (props['edtf:deprecated'] &&
 			           props['edtf:deprecated'] != 'uuuu') {
-				//console.log('deprecated');
 				return mapzen.whosonfirst.leaflet.styles.venue_deprecated();
 			} else {
-				//console.log('unknown');
 				return mapzen.whosonfirst.leaflet.styles.venue_unknown();
 			}
+		},
+
+		set_country_properties: function(country_id) {
+			var base_url = $('body').data('data-abs-root-url');
+			var relpath = mapzen.whosonfirst.data.id2relpath(country_id);
+			var url = base_url + relpath;
+
+			var on_success = function(rsp) {
+				if (! rsp.properties) {
+					mapzen.whosonfirst.log.error('Tried to set country properties, but the country WOF record had no properties.');
+					return;
+				}
+				var props = rsp.properties;
+				if (props['iso:country']) {
+					self.set_property('iso:country', props['iso:country']);
+				}
+				if (props['wof:country']) {
+					self.set_property('wof:country', props['iso:country']);
+				}
+			};
+
+			var on_failure = function(rsp) {
+				mapzen.whosonfirst.log.error('Failed to set country properties.');
+			}
+
+			mapzen.whosonfirst.net.fetch(url, on_success, on_failure);
 		},
 
 		leading_zero: function(num) {
