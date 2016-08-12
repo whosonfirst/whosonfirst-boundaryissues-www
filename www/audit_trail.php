@@ -3,6 +3,8 @@
 	include("include/init.php");
 	loadlib("audit_trail_search");
 
+	login_ensure_loggedin();
+	
 	# TO DO: check a config flag to see whether there are ACLs in place
 	# (20160411/thisisaaronland)
 
