@@ -878,6 +878,27 @@
 			}
 		}
 
+		$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
+		$schema = wof_schema_fields($ref);
+		// Read this next line in Steve Balmer's voice—
+		$props = $schema['properties']['properties']['properties'];
+
+		// Massage the datatypes from the JSON schema
+		foreach ($existing['properties'] as $key => $value) {
+			if (! $props[$key]) {
+				continue;
+			}
+			if ($props[$key]['type'] == 'integer') {
+				$existing['properties'][$key] = intval($value);
+			} else if ($props[$key]['type'] == 'number') {
+				$existing['properties'][$key] = floatval($value);
+			} else if ($props[$key]['type'] == 'object') {
+				$existing['properties'][$key] = (object) $value;
+			} else if ($props[$key]['type'] == 'string') {
+				$existing['properties'][$key] = "$value";
+			}
+		}
+
 		$geojson = json_encode($existing);
 		$rsp = wof_geojson_encode($geojson, $branch);
 		audit_trail('wof_geojson_encode', $rsp, array(
