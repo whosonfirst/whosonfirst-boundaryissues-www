@@ -771,6 +771,10 @@
 				$pending_value = $pending[$key];
 				$diff = $diff || wof_save_pending_diff_value($existing_value, $pending_value);
 			}
+			foreach ($pending as $key => $pending_value) {
+				$existing_value = $existing[$key];
+				$diff = $diff || wof_save_pending_diff_value($existing_value, $pending_value);
+			}
 			return $diff;
 		}
 		return true;
