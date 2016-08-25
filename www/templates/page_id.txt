@@ -9,7 +9,7 @@
 	{if $rev}
 		<div class="wof-revision row">
 			<div class="alert alert-info">
-				This is an archived revision of the WOF record.
+				This is an archived revision of the WOF record. <a href="{$cfg.abs_root_url|@escape}id/{$wof_id|@escape}">Go to the newest one</a>
 			</div>
 		</div>
 	{/if}

@@ -666,7 +666,9 @@
 			exec("$find_path $pending_dir -type d -empty -delete");
 		}
 
-		if ($branch == 'master') {
+		if ($branch == 'master' &&
+		    $GLOBALS['cfg']['enable_feature_update_s3']) {
+
 			// Schedule S3 updates
 			foreach ($saved as $wof_id => $updates) {
 
@@ -767,6 +769,10 @@
 			$diff = false;
 			foreach ($existing as $key => $existing_value) {
 				$pending_value = $pending[$key];
+				$diff = $diff || wof_save_pending_diff_value($existing_value, $pending_value);
+			}
+			foreach ($pending as $key => $pending_value) {
+				$existing_value = $existing[$key];
 				$diff = $diff || wof_save_pending_diff_value($existing_value, $pending_value);
 			}
 			return $diff;
@@ -873,6 +879,27 @@
 			}
 			if ($key == 'wof:geomhash') {
 				$existing['geometry'] = $pending['geometry'];
+			}
+		}
+
+		$ref = 'https://whosonfirst.mapzen.com/schema/whosonfirst.schema#';
+		$schema = wof_schema_fields($ref);
+		// Read this next line in Steve Balmer's voice—
+		$props = $schema['properties']['properties']['properties'];
+
+		// Massage the datatypes from the JSON schema
+		foreach ($existing['properties'] as $key => $value) {
+			if (! $props[$key]) {
+				continue;
+			}
+			if ($props[$key]['type'] == 'integer') {
+				$existing['properties'][$key] = intval($value);
+			} else if ($props[$key]['type'] == 'number') {
+				$existing['properties'][$key] = floatval($value);
+			} else if ($props[$key]['type'] == 'object') {
+				$existing['properties'][$key] = (object) $value;
+			} else if ($props[$key]['type'] == 'string') {
+				$existing['properties'][$key] = "$value";
 			}
 		}
 

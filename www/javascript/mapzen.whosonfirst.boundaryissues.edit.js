@@ -207,18 +207,26 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_properties: function() {
 
-			$('.json-schema-object tr').each(function(i, row) {
-				if (  $(row).hasClass('add-row') ||
+			$('.json-schema-object > table > tbody > tr').each(function(i, row) {
+				if ($(row).hasClass('add-row')) {
+					// Don't need to remove the placeholder input rows
+					return;
+				}
+				if (! $(row).hasClass('property-deletable') ||
 				    ! $(row).hasClass('property-editable')) {
 					return;
 				}
-				$(row).find('> th').append('<span class="remove-row">&times;</span>');
-				$(row).find('.remove-row').click(function(e) {
+				$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
+				$(row).find('.btn-remove-item').click(function(e) {
 					$(row).remove();
 				});
 			});
 
-			$('.json-schema-array li').each(function(i, row) {
+			$('.json-schema-array > li').each(function(i, row) {
+				if (  $(row).hasClass('add-row') ||
+				    ! $(row).hasClass('property-editable')) {
+					return;
+				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
 					$(row).remove();
@@ -505,14 +513,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				alert('Oops, there is already a property with that name.');
 				return;
 			}
-			var remove = '<span class="remove-row">&times;</span>';
+			var remove = '<button class="btn btn-remove-item">-</button>';
 			var $newRow = $(
 				'<tr>' +
-					'<th>' + key + remove + '</th>' +
-					'<td><input type="text" name="' + context + '.' + key + '" class="property"></td>' +
+					'<th>' + key + '</th>' +
+					'<td><input type="text" name="' + context + '.' + key + '" class="property">' + remove + '</td>' +
 				'</tr>'
 			).insertBefore($row);
-			$newRow.find('.remove-row').click(function(e) {
+			$newRow.find('.btn-remove-item').click(function(e) {
 				$newRow.remove();
 			});
 
@@ -777,6 +785,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('input[name="properties.wof:hierarchy"]').val('[' + JSON.stringify(hierarchy) + ']');
 				self.show_hierarchy(hierarchy);
 			}
+
+			if (hierarchy.country_id) {
+				self.set_country_properties(hierarchy.country_id);
+			}
 		},
 
 		show_hierarchy: function(hierarchy) {
@@ -852,22 +864,43 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		get_venue_marker_style: function(props) {
-			//console.log(props);
 			if (props['wof:is_current'] == 1) {
-				//console.log('current');
 				return mapzen.whosonfirst.leaflet.styles.venue_current();
 			} else if (props['edtf:cessation'] &&
 			           props['edtf:cessation'] != 'uuuu') {
-				//console.log('not current');
 				return mapzen.whosonfirst.leaflet.styles.venue_not_current();
 			} else if (props['edtf:deprecated'] &&
 			           props['edtf:deprecated'] != 'uuuu') {
-				//console.log('deprecated');
 				return mapzen.whosonfirst.leaflet.styles.venue_deprecated();
 			} else {
-				//console.log('unknown');
 				return mapzen.whosonfirst.leaflet.styles.venue_unknown();
 			}
+		},
+
+		set_country_properties: function(country_id) {
+			var base_url = $('body').data('data-abs-root-url');
+			var relpath = mapzen.whosonfirst.data.id2relpath(country_id);
+			var url = base_url + relpath;
+
+			var on_success = function(rsp) {
+				if (! rsp.properties) {
+					mapzen.whosonfirst.log.error('Tried to set country properties, but the country WOF record had no properties.');
+					return;
+				}
+				var props = rsp.properties;
+				if (props['iso:country']) {
+					self.set_property('iso:country', props['iso:country']);
+				}
+				if (props['wof:country']) {
+					self.set_property('wof:country', props['iso:country']);
+				}
+			};
+
+			var on_failure = function(rsp) {
+				mapzen.whosonfirst.log.error('Failed to set country properties.');
+			}
+
+			mapzen.whosonfirst.net.fetch(url, on_success, on_failure);
 		},
 
 		leading_zero: function(num) {
@@ -963,6 +996,24 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					value = JSON.parse(value);
 				}
 				self.assign_property(geojson_obj, name, value);
+			});
+
+			// Some array properties are required and may not have any inputs to
+			// iterate over. Encodes as [], when empty.
+			$('.json-schema-required > .json-schema-array').each(function(i, prop) {
+				if ($(prop).find('> ul > li').length == 0) {
+					var name = $(prop).data('context');
+					self.assign_property(geojson_obj, name, []);
+				}
+			});
+
+			// I think this might only be for empty concordances dictionary,
+			// at least for now. It'll encode as {} when empty.
+			$('.json-schema-required > .json-schema-object').each(function(i, prop) {
+				if ($(prop).find('> table > tbody > tr.object-property').length == 0) {
+					var name = $(prop).data('context');
+					self.assign_property(geojson_obj, name, {});
+				}
 			});
 
 			if ($('input[name="wof_id"]').length > 0) {

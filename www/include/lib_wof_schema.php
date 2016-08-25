@@ -28,7 +28,7 @@
 
 	########################################################################
 
-	function wof_schema_fields($ref) {
+	function wof_schema_fields($ref, $only_required = false) {
 		global $wof_schema_lookup;
 		if (empty($wof_schema_lookup)) {
 			$wof_schema_lookup = wof_schema_load(array(
@@ -38,7 +38,7 @@
 				'bbox.schema'
 			));
 		}
-		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref]);
+		$schema_fields = wof_schema_filter($wof_schema_lookup[$ref], $only_required);
 		return $schema_fields;
 	}
 
@@ -58,7 +58,9 @@
 
 	########################################################################
 
-	function wof_schema_filter($schema) {
+	function wof_schema_filter($schema, $only_required = false) {
+
+		// Include 'allOf' sub-schemas into schema
 		if ($schema['allOf']) {
 			foreach ($schema['allOf'] as $part_of) {
 				if ($part_of['$ref']) {
@@ -70,6 +72,18 @@
 			}
 			unset($schema['allOf']);
 		}
+
+		// Mark properties that are required
+		$props = $schema['properties']['properties']['properties'];
+		$required = $schema['properties']['properties']['required'];
+		if ($props && $required) {
+			foreach ($props as $name => $prop) {
+				if (in_array($name, $required)) {
+					$schema['properties']['properties']['properties'][$name]['_required'] = true;
+				}
+			}
+		}
+
 		return $schema;
 	}
 

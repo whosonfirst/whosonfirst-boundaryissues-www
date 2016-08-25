@@ -144,6 +144,8 @@
 	# $GLOBALS['cfg']['data_abs_root_url'] = "https://whosonfirst.mapzen.com/data/";
 	$GLOBALS['cfg']['data_abs_root_url'] = "https://s3.amazonaws.com/whosonfirst.mapzen.com/data/";
 
+	$GLOBALS['cfg']['enable_feature_update_s3'] = 1;
+
 	# Hard-coding these paths will save some stat() ops
 
 	$GLOBALS['cfg']['smarty_template_dir'] = realpath(dirname(__FILE__) . '/../templates/');

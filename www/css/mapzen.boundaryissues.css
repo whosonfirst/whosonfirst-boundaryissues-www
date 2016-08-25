@@ -56,8 +56,22 @@ button.marker-option {
 	padding: 4px 0.5em;
 }
 
-input.add-item, input.add-key, input.add-value {
+input.add-key, input.add-value {
 	display: inline-block;
+}
+
+input.add-item, .btn-add-item, tr.add-row {
+	display: none;
+}
+
+.property-editable > td > .json-schema-field > .json-schema-array > input.add-item,
+.property-editable > td > .json-schema-field > .json-schema-array > .btn-add-item {
+	display: inline-block;
+}
+
+#json-schema-object-properties > table > tbody > tr.add-row,
+.property-editable > td > .json-schema-field > .json-schema-object > table > tbody > tr.add-row {
+	display: table-row;
 }
 
 .json-schema-array > ul {

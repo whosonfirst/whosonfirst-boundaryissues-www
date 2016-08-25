@@ -1,6 +1,8 @@
 <?php
 	include("include/init.php");
 
+	error_404();
+	
 	if (! $GLOBALS['cfg']['enable_feature_password_retrieval']){
 		error_404();
 	}
