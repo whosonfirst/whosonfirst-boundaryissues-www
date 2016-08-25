@@ -456,8 +456,8 @@
 	# START of wof spatial stuff
 
 	$GLOBALS['cfg']['enable_feature_spatial'] = 1;
-	$GLOBALS['cfg']['spatial_tile38_host'] = 'localhost';
-	$GLOBALS['cfg']['spatial_tile38_port'] = '9851';
-	$GLOBALS['cfg']['spatial_tile38_collection'] = 'whosonfirst';
+	$GLOBALS['cfg']['whosonfirst_spatial_tile38_host'] = 'localhost';
+	$GLOBALS['cfg']['whosonfirst_spatial_tile38_port'] = '9851';
+	$GLOBALS['cfg']['whosonfirst_spatial_tile38_collection'] = 'whosonfirst-venue';
 
 	# END of wof spatial stuff
