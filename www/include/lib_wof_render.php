@@ -166,12 +166,16 @@
 	########################################################################
 
 	function wof_render_remove_empty(&$schema) {
-		dbug('wof_render_remove_empty', $schema);
 		foreach ($schema['properties'] as $key => $value) {
-			if (! isset($value['_value']) &&
-			    ! $value['_required']) {
+			if (! $value['_required'] &&
+			    ! (isset($value['_value']) ||
+			       ! empty($value['properties']))) {
 				// If a property hasn't been set in the existing record, and
-				// isn't required, then we don't need it.
+				// isn't required, then we don't need it. The reason the property
+				// exists is so that we can specify datatypes in the JSON
+				// schema. So basically this hides all the specified properties
+				// that haven't actually been set in a given WOF record.
+				// (20160826/dphiffer)
 				unset($schema['properties'][$key]);
 			}
 		}
