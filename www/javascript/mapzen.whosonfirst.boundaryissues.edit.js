@@ -940,7 +940,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					m.bindLabel(item._source['wof:name']);
 					m.on('click', function() {
 						var url = '/id/' + id + '/';
-						url = mapzen.whosonfirst.boundaryissues.abs_root_urlify(url);
+						url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 
 						location.href = url;
 					});
