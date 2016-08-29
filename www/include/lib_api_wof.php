@@ -199,7 +199,7 @@
 			api_output_error(400, "Please include: lat_min, lat_max, lng_min, lng_max");
 		}
 
-		$query = json_encode(array(
+		$query = array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -222,12 +222,9 @@
 					)
 				)
 			)
-		));
+		);
 
-		$es_base_url = $GLOBALS['cfg']['wof_elasticsearch_host'] . ':' .
-		               $GLOBALS['cfg']['wof_elasticsearch_port'];
-		$url = "$es_base_url/_search";
-		$rsp = http_post($url, $query);
+		$rsp = wof_elasticsearch_search($query);
 
 		if (! $rsp['ok']) {
 			api_output_error(400, $rsp['body']);
