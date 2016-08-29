@@ -150,7 +150,11 @@
 		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/pip";
 		# error_log("{$url}?{$query}");
 
-		$rsp = http_get("{$url}?$query");
+		$headers = array();
+		$more = array(
+			'http_timeout' => 10 // let this run for up to 10s
+		);
+		$rsp = http_get("{$url}?$query", $headers, $more);
 
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Error talking to the PIP service.';
