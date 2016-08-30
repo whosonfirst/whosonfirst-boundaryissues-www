@@ -360,3 +360,14 @@ nav #navi-branch-dropdown li {
 	display: block;
 	margin-top: 5px;
 }
+
+ul.wof-hierarchy a.wof-namify-applied::after {
+	content: attr(data-wof-id);
+	margin-left: 5px;
+	font-size: 12px;
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	white-space: nowrap;
+	background-color: #f8f8f8;
+	color: #666666;
+	padding: 4px 8px;
+}

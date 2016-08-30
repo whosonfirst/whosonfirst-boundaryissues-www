@@ -799,7 +799,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		show_hierarchy: function(hierarchy) {
-			var html = '<ul>';
+			var html = '<ul class="wof-hierarchy">';
 			var labelRegex = /^(.+)_id$/;
 			for (var key in hierarchy) {
 				var id = esc_int(hierarchy[key]);
@@ -808,37 +808,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					label = key.match(labelRegex)[1];
 				}
 
-				var root = $(document.body).data("abs-root-url");
+				var url = '/belongsto/' + id + '/';
+				url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 
-			    var url = root + 'belongsto/' + id + '/';
-			    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
-
-				html += '<li>' + label + ': <a href="' + url + '" class="hierarchy-needs-name hierarchy-' + id + '" data-id="' + id + '"><code><small>' + id + '</small></code></a></li>';
+				html += '<li>' + label + ': <a href="' + url + '" class="wof-namify hierarchy-' + id + '" data-wof-id="' + id + '">' + id + '</a></li>';
 			}
 			html += '</ul>';
 			$('#hierarchy').append(html);
-			self.get_hierarchy_names();
+			
+			var container = $('#hierarchy')[0];
+			mapzen.whosonfirst.boundaryissues.namify.update(container);
 			$('#btn-rebuild-hierarchy').removeClass('disabled');
 
-		},
-
-		get_hierarchy_names: function() {
-			var queue = [];
-			$('.hierarchy-needs-name').each(function(i, link) {
-				var id = $(link).data('id');
-				if (queue.indexOf(id) == -1) {
-					queue.push(id);
-				}
-			});
-			$.each(queue, function(i, id) {
-				if (id) {
-					self.get_wof(id, function(wof) {
-						var id = wof.properties['wof:id'];
-						$('.hierarchy-' + id).html(wof.properties['wof:name'] + ' <code><small>' + id + '</small></code>');
-						$('.hierarchy-' + id).removeClass('hierarchy-needs-name');
-					});
-				}
-			});
 		},
 
 		get_parent_by_id: function(parents, parent_id) {

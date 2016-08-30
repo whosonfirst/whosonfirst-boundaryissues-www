@@ -82,5 +82,5 @@
 	</div>
 </div>
 
-
+{include file="inc_js_namify.txt"}
 {include file='inc_foot.txt'}
