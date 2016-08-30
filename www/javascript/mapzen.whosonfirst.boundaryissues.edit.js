@@ -404,8 +404,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_categories: function() {
-			var categories_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
-			$.get(categories_url, function(categories) {
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
+
+			var onsuccess = function(categories) {
 				self.categories = categories;
 				self.categories.uri = {};
 				self.setup_categories_uris('namespace');
@@ -413,7 +414,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.setup_categories_uris('value');
 				self.setup_categories_uris('detail');
 				self.setup_categories_ui();
-			});
+			};
+
+			var onerror = function() {
+				mapzen.whosonfirst.log.error("could not load categories json");
+			};
+
+			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
 		},
 
 		setup_categories_uris: function(type) {
