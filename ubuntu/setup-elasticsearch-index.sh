@@ -25,12 +25,16 @@ if [ ! -f /usr/local/mapzen/es-whosonfirst-schema/OFFLINE_TASKS_INDEX_VERSION ] 
 	/usr/local/mapzen/es-whosonfirst-schema/bin/update-schema.sh offline_tasks
 fi
 
+if [ ! -f /usr/local/mapzen/es-whosonfirst-schema/AUDIT_TRAIL_INDEX_VERSION ] ; then
+	/usr/local/mapzen/es-whosonfirst-schema/bin/update-schema.sh audit_trail
+fi
+
 if [ ! -d ${DATA} ]
 then
     echo "Can not find data directory ${DATA}"
     exit 1
 fi
 
-/usr/local/bin/wof-es-index -s ${DATA} -b
+/usr/local/bin/wof-es-index -s ${DATA} -b --index boundaryissues
 
 exit 0
