@@ -48,6 +48,7 @@
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.net-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.php-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.placetypes-{$lib_date_time}.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/lib/slippymap.crosshairs-{$lib_date_time}.js"></script>		
 
 		{if "api"|@features_is_enabled}
 			<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.api.js"></script>
