@@ -1,0 +1,29 @@
+{capture assign="page_title"}{$wof_name} ({$wof_id}){/capture}
+{include file='inc_head.txt' nav_tab='edit'}
+
+<div class="container">
+	<div class="row">
+		<h2>Photos of <span id="wof_name">{$wof_name|@escape}</span></h2>
+		Click on the photo to make it the primary photo. The one <strong>outlined in red</strong> is the primary photo.
+	</div>
+	<div class="row headroom">
+		<form action="{$cfg.abs_root_url}photos/" method="post" id="photos-form" data-crumb-save="{$crumb_save|@escape}">
+			{$crumb_save_fallback|crumb_input}
+			<input type="hidden" name="method" value="wof.save">
+			<input type="hidden" name="access_token" value="{$site_token|@escape}">
+			<input type="hidden" name="wof_id" value="{$wof_id|@escape}">
+			<h3>Flickr photos</h3>
+			{foreach from=$flickr_photos item=photo}
+				<figure id="wof-photo-flickr-{$photo.id}" class="wof-photo wof-photo-flickr" data-flickr-id="{$photo.id}">
+					<img src="{$photo|@wof_photos_flickr_src|@escape}" alt="">
+				</figure>
+			{/foreach}
+			{if !$flickr_photos}
+				<p>No photos available.</p>
+			{/if}
+		</form>
+	</div>
+</div>
+
+<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.photos.js"></script>
+{include file='inc_foot.txt'}

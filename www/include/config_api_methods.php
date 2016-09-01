@@ -115,6 +115,32 @@
 			)
 		),
 
+		"wof.get_photos" => array (
+			"description" => "Finds a photo for a WOF record.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "wof_id", "description" => "The WOF ID.", "required" => 1),
+				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "required" => 1)
+			)
+		),
+
+		"wof.assign_flickr_photo" => array (
+			"description" => "Assigns a photo to a WOF record.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 0,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "wof_id", "description" => "The WOF ID.", "required" => 1),
+				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "required" => 1)
+			)
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,

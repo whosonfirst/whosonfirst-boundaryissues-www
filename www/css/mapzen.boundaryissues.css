@@ -371,3 +371,22 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 	color: #666666;
 	padding: 4px 8px;
 }
+
+.wof-photo {
+	display: block;
+	margin: 10px 0;
+	outline: 3px solid #ccc;
+	max-width: 320px;
+	height: auto;
+	cursor: pointer;
+}
+
+.wof-photo-primary {
+	outline-color: #d4645c;
+}
+
+#edit-form #photos img {
+	width: 100%;
+	height: auto;
+	margin-top: 10px;
+}

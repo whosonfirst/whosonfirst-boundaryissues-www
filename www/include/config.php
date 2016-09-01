@@ -97,6 +97,9 @@
 	$GLOBALS['cfg']['gearman_host'] = 'localhost';
 	$GLOBALS['cfg']['gearman_port'] = '4730';
 
+	// Put this in your secrets/local config
+	$GLOBALS['cfg']['flickr_api_key'] = '';
+	$GLOBALS['cfg']['flickr_api_secret'] = '';
 
 	// This search query filtering business is here because we've moved
 	// all our Elasticsearch business onto a single common index, but each

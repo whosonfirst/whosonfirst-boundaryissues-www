@@ -65,6 +65,9 @@
 					<div class="caveat">
 					<small>For now, you will still need to click the <span style="font-weight:700;">save</span> button below for these changes to stick.</small>
 					</div>
+
+					<h3 class="headroom">Photos</h3>
+					<div id="photos">Loading photos...</div>
 					{/if}
 
 					<ul id="edit-options">
@@ -83,4 +86,5 @@
 </div>
 
 {include file="inc_js_namify.txt"}
+<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.photos.js"></script>
 {include file='inc_foot.txt'}
