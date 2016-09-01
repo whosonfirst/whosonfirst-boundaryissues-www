@@ -63,8 +63,18 @@ mapzen.whosonfirst.boundaryissues.photos = (function() {
 			var $figure = $(el).closest('figure');
 
 			var onsuccess = function(){
-				$('.wof-photo-primary').removeClass('wof-photo-primary');
+				$('#photos-form .wof-photo-primary').removeClass('wof-photo-primary');
 				$figure.addClass('wof-photo-primary');
+				var src = $(el).attr('src');
+
+				if ($('#primary-photo').length == 0){
+					$('#primary-photo').html(
+						'<h3>Primary photo</h3>' +
+						'<img src="' + src + '" id="primary-photo">'
+					);
+				} else {
+					$('#primary-photo').attr('src', src);
+				}
 			};
 
 			var onerror = function(){

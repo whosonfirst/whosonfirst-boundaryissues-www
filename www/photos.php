@@ -33,6 +33,12 @@
 			$GLOBALS['smarty']->assign_by_ref('flickr_photos', $rsp['photos']);
 		}
 	}
+	
+	$rsp = wof_photos_get($wof_id);
+	if (! empty($rsp['photos'])){
+		$photo = $rsp['photos'][0];
+		$GLOBALS['smarty']->assign('primary_photo_src', $photo['src']);
+	}
 
 	$GLOBALS['smarty']->display('page_photos.txt');
 	exit();

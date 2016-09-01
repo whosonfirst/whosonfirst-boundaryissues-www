@@ -5,6 +5,7 @@
 	loadlib('wof_elasticsearch');
 	loadlib('wof_save');
 	loadlib('wof_s3');
+	loadlib('wof_photos');
 	loadlib('http');
 
 	$GLOBALS['offline_tasks_do_handlers'] = array();
@@ -183,6 +184,20 @@
 			'ok' => 1,
 			'index' => $data['index']
 		);
+	}
+
+	########################################################################
+
+	$GLOBALS['offline_tasks_do_handlers']['save_photo'] = 'offline_tasks_do_save_photo';
+
+	function offline_tasks_do_save_photo($data){
+
+		$wof_id = $data['wof_id'];
+		$type = $data['type'];
+		$info = $data['info'];
+
+		$rsp = wof_photos_save($wof_id, $type, $info);
+		return $rsp;
 	}
 
 	########################################################################
