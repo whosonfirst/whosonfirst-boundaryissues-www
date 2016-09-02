@@ -21,9 +21,9 @@
 		$state = json_encode(array(
 			'redir' => $redir
 		));
-		$enc_state = base64_encode($state);
+		$enc_state = urlencode(base64_encode($state));
 
-		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['mapzen_oauth_callback'] . "?state=$enc_state";
+		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['mapzen_oauth_callback'];
 
 		$oauth_key = $GLOBALS['cfg']['mapzen_oauth_key'];
 
