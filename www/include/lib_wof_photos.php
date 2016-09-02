@@ -1,6 +1,8 @@
 <?php
 
 	loadlib("flickr_api");
+	loadlib("slack_bot");
+	loadlib("users");
 
 	########################################################################
 
@@ -73,7 +75,8 @@
 		$rsp = offline_tasks_schedule_task('save_photo', array(
 			'wof_id' => $wof_id,
 			'type' => $type,
-			'info_json' => $info_json
+			'info_json' => $info_json,
+			'user_id' => $GLOBALS['cfg']['user']['id']
 		));
 		if (! $rsp['ok']) {
 			return $rsp;
@@ -121,12 +124,17 @@
 
 	########################################################################
 
-	function wof_photos_save($wof_id, $type, $info_json){
+	function wof_photos_save($wof_id, $type, $info_json, $user_id){
 
 		$relpath = wof_utils_id2relpath($wof_id);
 		$reldir = dirname($relpath);
 		$dir = "photos/$reldir";
 		$info = json_decode($info_json, 'as hash');
+
+		$path = wof_utils_find_id($wof_id);
+		$geojson = file_get_contents($path);
+		$feature = json_decode($geojson, 'as hash');
+		$props = $feature['properties'];
 
 		if ($type == 'flickr'){
 			$dir .= '/flickr';
@@ -147,6 +155,16 @@
 		}
 
 		$rsp = wof_s3_put_data($photo_data, "$dir/$basename.jpg");
+		if (! $rsp['ok']){
+			return $rsp;
+		}
+
+		$photo_url = $rsp['url'];
+		$photo_name = basename($photo_url);
+		$user = users_get_by_id($user_id);
+		$username = $user['username'];
+		
+		$rsp = slack_bot_msg("`<{$GLOBALS['cfg']['abs_root_url']}id/$wof_id|$wof_id>` $username saved photo for {$props['wof:name']}: $photo_url");
 		return $rsp;
 	}
 
