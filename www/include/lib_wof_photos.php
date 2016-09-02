@@ -164,7 +164,7 @@
 		$user = users_get_by_id($user_id);
 		$username = $user['username'];
 		
-		$rsp = slack_bot_msg("`<{$GLOBALS['cfg']['abs_root_url']}id/$wof_id|$wof_id>` $username saved photo for {$props['wof:name']}: $photo_url");
+		$rsp = slack_bot_msg("`$wof_id` $username saved photo for {$props['wof:name']}: $photo_url");
 		return $rsp;
 	}
 
