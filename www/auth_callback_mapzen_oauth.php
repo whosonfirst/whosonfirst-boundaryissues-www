@@ -28,6 +28,11 @@
 	}
 
 	$code = get_str("code");
+	$state_base64 = get_str("state");
+	if ($state_base64){
+		$state_json = base64_decode($state_base64);
+		$state = json_decode($state_json, 'as hash');
+	}
 
 	if (! $code){
 		error_404();
@@ -189,7 +194,8 @@
 	# Okay, now finish logging the user in (setting cookies, etc.) and
 	# redirecting them to some specific page if necessary.
 
-	$redir = (isset($extra['redir'])) ? $extra['redir'] : '';
+	$redir = (isset($state['redir']))
+	       ? $GLOBALS['cfg']['abs_root_url'] . $state['redir'] : '';
 
 	login_do_login($user, $redir);
 	exit();
