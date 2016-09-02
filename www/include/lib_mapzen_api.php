@@ -23,7 +23,7 @@
 		));
 		$enc_state = urlencode(base64_encode($state));
 
-		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['mapzen_oauth_callback'];
+		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['mapzen_oauth_callback'] . "?state=$enc_state";
 
 		$oauth_key = $GLOBALS['cfg']['mapzen_oauth_key'];
 
@@ -41,9 +41,10 @@
 
 	#################################################################
 
-	function mapzen_api_get_auth_token($code){
+	function mapzen_api_get_auth_token($code, $state_base64){
 
-		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['mapzen_oauth_callback'];
+		$esc_state = urlencode($state_base64);
+		$callback = $GLOBALS['cfg']['abs_root_url'] . $GLOBALS['cfg']['mapzen_oauth_callback'] . "?state=$esc_state";
 
 		$query = array(
 			'client_id' => $GLOBALS['cfg']['mapzen_oauth_key'],
