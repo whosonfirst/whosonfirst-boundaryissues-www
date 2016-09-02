@@ -194,9 +194,9 @@
 
 		$wof_id = $data['wof_id'];
 		$type = $data['type'];
-		$info = $data['info'];
+		$info_json = $data['info_json'];
 
-		$rsp = wof_photos_save($wof_id, $type, $info);
+		$rsp = wof_photos_save($wof_id, $type, $info_json);
 		return $rsp;
 	}
 

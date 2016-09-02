@@ -109,7 +109,11 @@
 		}
 
 		unset($json['stat']);
-		return array( 'ok' => 1, 'rsp' => $json );
+		return array(
+			'ok' => 1,
+			'rsp' => $json,
+			'raw' => $rsp['body']
+		);
 	}
 
 	#################################################################

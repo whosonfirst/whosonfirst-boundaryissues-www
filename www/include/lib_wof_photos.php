@@ -56,7 +56,9 @@
 		$esc_user_id = intval($GLOBALS['cfg']['user']['id']);
 		$type = 'flickr'; // For now we only know about Flickr
 		$info = $rsp['rsp']['photo'];
-		$info_json = json_encode($info);
+
+		$info_json = $rsp['raw'];
+		$esc_info_json = addslashes($info_json);
 
 		// For now we only do one primary photo
 		$rsp = db_write("
@@ -71,7 +73,7 @@
 		$rsp = offline_tasks_schedule_task('save_photo', array(
 			'wof_id' => $wof_id,
 			'type' => $type,
-			'info' => $info
+			'info_json' => $info_json
 		));
 		if (! $rsp['ok']) {
 			return $rsp;
@@ -81,7 +83,7 @@
 			'wof_id' => $esc_wof_id,
 			'user_id' => $esc_user_id,
 			'type' => $type,
-			'info' => $info_json,
+			'info' => $esc_info_json,
 			'sort' => 0,
 			'created' => date('Y-m-d H:i:s')
 		));
@@ -119,15 +121,16 @@
 
 	########################################################################
 
-	function wof_photos_save($wof_id, $type, $info){
+	function wof_photos_save($wof_id, $type, $info_json){
 
 		$relpath = wof_utils_id2relpath($wof_id);
 		$reldir = dirname($relpath);
 		$dir = "photos/$reldir";
+		$info = json_decode($info_json, 'as hash');
 
 		if ($type == 'flickr'){
 			$dir .= '/flickr';
-			$basename = "{$wof_id}_flickr_{$info['id']}";
+			$basename = "{$wof_id}_flickr_{$info['photo']['id']}";
 			$src_url = wof_photos_flickr_src($info);
 		}
 
@@ -137,7 +140,6 @@
 		}
 
 		$photo_data = $rsp['body'];
-		$info_json = json_encode($info, JSON_PRETTY_PRINT);
 
 		$rsp = wof_s3_put_data($info_json, "$dir/$basename.json");
 		if (! $rsp['ok']){
@@ -161,7 +163,7 @@
 		$base_url = "https://whosonfirst.mapzen.com/photos/$reldir";
 
 		if ($type == 'flickr'){
-			$filename = "{$wof_id}_flickr_{$info['id']}.jpg";
+			$filename = "{$wof_id}_flickr_{$info['photo']['id']}.jpg";
 		}
 
 		return "$base_url/{$type}/$filename";

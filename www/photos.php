@@ -27,8 +27,9 @@
 	$GLOBALS['smarty']->assign('wof_id', $wof_id);
 	$GLOBALS['smarty']->assign('wof_name', $feature['properties']['wof:name']);
 
-	if ($concordances['woe:id']){
-		$rsp = wof_photos_flickr_search($concordances['woe:id']);
+	if ($concordances['gp:id']){
+		$rsp = wof_photos_flickr_search($concordances['gp:id']);
+		$GLOBALS['smarty']->assign('woe_id', $concordances['gp:id']);
 		if ($rsp['ok']){
 			$GLOBALS['smarty']->assign_by_ref('flickr_photos', $rsp['photos']);
 		}
