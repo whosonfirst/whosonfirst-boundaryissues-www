@@ -3,6 +3,9 @@
 	include('include/init.php');
 	loadlib('wof_utils');
 	loadlib('wof_photos');
+	loadlib('login');
+
+	login_ensure_loggedin();
 
 	$crumb_venue_fallback = crumb_generate('wof.save');
 	$GLOBALS['smarty']->assign("crumb_save_fallback", $crumb_venue_fallback);
