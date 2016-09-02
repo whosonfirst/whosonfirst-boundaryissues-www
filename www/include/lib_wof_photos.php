@@ -131,7 +131,7 @@
 		if ($type == 'flickr'){
 			$dir .= '/flickr';
 			$basename = "{$wof_id}_flickr_{$info['photo']['id']}";
-			$src_url = wof_photos_flickr_src($info);
+			$src_url = wof_photos_flickr_src($info['photo']);
 		}
 
 		$rsp = http_get($src_url);
