@@ -10,6 +10,8 @@
 		{if $primary_photo_src}
 			<h3>Primary photo</h3>
 			<img src="{$primary_photo_src|@escape}" alt="" id="primary-photo" class="wof-photo-primary">
+		{else}
+			(No photo selected yet)
 		{/if}
 	</div>
 	<p class="caveat">Presently you can only select a single primary photo. Eventually you'll be able to assign multiple photos, sort them, and choose the "primary" one. But for now it's just the one photo.</p>
