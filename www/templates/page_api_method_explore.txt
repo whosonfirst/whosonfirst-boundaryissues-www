@@ -72,7 +72,7 @@
 
 <div id="results" style="margin-top:2em;display:none;">
 
-<h3>Request <button class="pull-right" id="do-it-again">Modify this request</button></h3>
+<h3>Request <button class="btn pull-right" id="do-it-again">Modify this request</button></h3>
 <pre id="api-req"></pre>
 
 <small style="display:block; margin-top:1em; margin-bottom:1em;">
@@ -90,6 +90,38 @@
 {literal}
 
 $(document).ready(function(){
+
+	window.api_explorer = (function(){
+
+	    var _api = undefined;
+
+	        var self = {
+    
+    	        'init': function(){
+	    
+	    	    _api = new flamework.api();
+            	    _api.set_handler('endpoint', window.api_explorer.endpoint);
+            	    _api.set_handler('accesstoken', window.api_explorer.accesstoken);
+       	        },
+
+                'call': function(method, data, on_success, on_error){
+            	    _api.call(method, data, on_success, on_error);
+                },
+
+                'endpoint': function(){
+                    return document.body.getAttribute("data-api-endpoint");
+                },
+
+                'accesstoken': function(){
+                    return document.body.getAttribute("data-api-access-token");
+                }
+            }
+
+            return self;
+
+	})();
+
+	window.api_explorer.init();
 
 	var show_query = function(){
 		$("#query").show();
@@ -151,7 +183,7 @@ $(document).ready(function(){
 			req_args[p['name']] = p['value'];
 		}
 
-		var endpoint = flamework_api_endpoint();
+		var endpoint = window.api_explorer.endpoint();
 
 		var req = "curl -X " + http_method;
 		req += " ";
@@ -207,7 +239,13 @@ $(document).ready(function(){
 			show_caveat();
 		};
 
-		flamework_api_call(method, args, on_success, on_error);
+		try {
+			window.api_explorer.call(method, args, on_success, on_error);
+		} catch(e) {
+			alert("There was a problem calling the API");
+			console.log(e);
+		}
+
 		return false;
 	});
 
