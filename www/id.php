@@ -35,6 +35,9 @@
 	// Remove the properties without values, that aren't required
 	wof_render_remove_empty($schema_fields['properties']['properties']);
 
+	// Sort the properties alphabetically
+	ksort($schema_fields['properties']['properties']['properties']);
+
 	$GLOBALS['smarty']->assign_by_ref("schema_fields", $schema_fields);
 	$GLOBALS['smarty']->assign_by_ref("properties", $values['properties']);
 

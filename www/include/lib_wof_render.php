@@ -184,6 +184,23 @@
 
 	########################################################################
 
+	function wof_render_property_groups(&$properties){
+		$groups = array();
+		foreach ($properties['properties'] as $name => $prop){
+			if (preg_match('/^([^:]+):(.+)$/', $name, $matches)){
+				list($name, $namespace, $predicate) = $matches;
+				if (! $groups[$namespace]){
+					$groups[$namespace] = array($predicate);
+				} else {
+					$groups[$namespace][] = $predicate;
+				}
+			}
+		}
+		return $groups;
+	}
+
+	########################################################################
+
 	function wof_render_value(&$property) {
 		if (isset($property['_value'])) {
 			return $property['_value'];

@@ -12,6 +12,9 @@
 	// What is the minimum viable WOF document?
 	$schema_fields = wof_schema_fields($ref);
 
+	// Sort the properties alphabetically
+	ksort($schema_fields['properties']['properties']['properties']);
+
 	// Remove the properties that aren't required
 	wof_render_remove_empty($schema_fields['properties']['properties']);
 
