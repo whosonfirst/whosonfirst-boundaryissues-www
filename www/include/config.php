@@ -462,6 +462,6 @@
 	$GLOBALS['cfg']['enable_feature_spatial'] = 1;
 	$GLOBALS['cfg']['whosonfirst_spatial_tile38_host'] = 'localhost';
 	$GLOBALS['cfg']['whosonfirst_spatial_tile38_port'] = '9851';
-	$GLOBALS['cfg']['whosonfirst_spatial_tile38_collection'] = 'whosonfirst-venue';
+	$GLOBALS['cfg']['whosonfirst_spatial_tile38_collection'] = 'whosonfirst-nearby';
 
 	# END of wof spatial stuff
