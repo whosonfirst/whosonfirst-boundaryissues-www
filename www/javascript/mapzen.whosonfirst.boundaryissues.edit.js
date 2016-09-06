@@ -80,6 +80,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.show_nearby_results();
 			});
 
+			slippymap.crosshairs.init(map);
+			
 			self.map = map;
 
 			geocoder.on('select', function(e) {

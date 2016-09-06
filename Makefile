@@ -58,6 +58,7 @@ update_js:
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.net-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.net.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.php-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.php.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.placetypes-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.placetypes.js
+	curl -s -o ./www/javascript/lib/slippymap.crosshairs-$(TIMESTAMP).js https://raw.githubusercontent.com/whosonfirst/js-slippymap-crosshairs/master/src/slippymap.crosshairs.js
 	git add ./www/javascript/lib/*
 
 update_json_schema:
