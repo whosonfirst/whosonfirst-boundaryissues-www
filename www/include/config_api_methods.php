@@ -12,7 +12,7 @@
 			"requires_crumb" => 1,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
+				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -24,7 +24,7 @@
 			"requires_crumb" => 1,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "required" => 1)
+				array("name" => "upload_file", "description" => "A GeoJSON file, multipart encoded", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -36,7 +36,7 @@
 			"requires_crumb" => 1,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "geojson", "description" => "A GeoJSON string.", "required" => 1)
+				array("name" => "geojson", "description" => "A GeoJSON string.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -48,8 +48,8 @@
 			"requires_crumb" => 1,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "ids", "description" => "Comma-separated list of WOF IDs to update.", "required" => 1),
-				array("name" => "properties", "description" => "JSON hash of properties to update.", "required" => 1)
+				array("name" => "ids", "description" => "Comma-separated list of WOF IDs to update.", "documented" => 1, "required" => 1),
+				array("name" => "properties", "description" => "JSON hash of properties to update.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -61,9 +61,9 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "latitude", "description" => "Coordinate latitude", "required" => 1),
-				array("name" => "longitude", "description" => "Coordinate longitude", "required" => 1)
-			)
+				array("name" => "latitude", "description" => "", "documented" => 1, "required" => 1),
+				array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1)
+			),
 		),
 
 		"wof.encode" => array (
@@ -74,7 +74,7 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "geojson", "description" => "A GeoJSON string.", "required" => 1)
+				array("name" => "geojson", "description" => "A GeoJSON string.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -86,7 +86,7 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "query", "description" => "The search query.", "required" => 1)
+				array("name" => "query", "description" => "The search query.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -98,7 +98,7 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "branch", "description" => "The branch name.", "required" => 1)
+				array("name" => "branch", "description" => "The branch name.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -110,8 +110,8 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "name", "description" => "The setting name.", "required" => 1),
-				array("name" => "value", "description" => "The setting value.", "required" => 1)
+				array("name" => "name", "description" => "The setting name.", "documented" => 1, "required" => 1),
+				array("name" => "value", "description" => "The setting value.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -123,8 +123,8 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "wof_id", "description" => "The WOF ID.", "required" => 1),
-				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "required" => 1)
+				array("name" => "wof_id", "description" => "The WOF ID.", "documented" => 1, "required" => 1),
+				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "documented" => 1, "required" => 1)
 			)
 		),
 
@@ -136,8 +136,8 @@
 			"requires_crumb" => 0,
 			"request_method" => "POST",
 			"parameters" => array(
-				array("name" => "wof_id", "description" => "The WOF ID.", "required" => 1),
-				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "required" => 1)
+				array("name" => "wof_id", "description" => "The WOF ID.", "documented" => 1, "required" => 1),
+				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "documented" => 1, "required" => 1)
 			)
 		),
 		
@@ -147,12 +147,12 @@
 			"enabled" => 1,
 			"paginated" => 0,
 			"library" => "api_wof_places",
-				"parameters" => array(
-					array("name" => "latitude", "description" => "", "documented" => 1, "required" => 1),
-					array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1),
-					array("name" => "cursor", "description" => "", "documented" => 1, "required" => 0),
-					# array("name" => "extras", "description" => "comma-separated list of additional fields to include in results", "documented" => 1, "required" => 0),
-				),
+			"parameters" => array(
+				array("name" => "latitude", "description" => "", "documented" => 1, "required" => 1),
+				array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1),
+				array("name" => "cursor", "description" => "", "documented" => 1, "required" => 0),
+				# array("name" => "extras", "description" => "comma-separated list of additional fields to include in results", "documented" => 1, "required" => 0),
+			),
 		),
 
 		"api.spec.methods" => array (
