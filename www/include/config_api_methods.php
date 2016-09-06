@@ -62,7 +62,8 @@
 			"request_method" => "POST",
 			"parameters" => array(
 				array("name" => "latitude", "description" => "", "documented" => 1, "required" => 1),
-				array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1)
+				array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1),
+				array("name" => "placetype", "description" => "", "documented" => 1, "required" => 1)
 			),
 		),
 
