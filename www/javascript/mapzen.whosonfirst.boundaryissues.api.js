@@ -90,7 +90,7 @@ mapzen.whosonfirst.boundaryissues.api = (function(){
 		},
 
 		'api_site_token': function(){
-			return $("body").data("api-site-token");
+			return $("body").data("api-access-token");
 		}
 
 	};
