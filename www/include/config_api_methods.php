@@ -146,7 +146,7 @@
 			"documented" => 1,
 			"enabled" => 1,
 			"paginated" => 0,
-			"library" => "api_whosonfirst_places",
+			"library" => "api_wof_places",
 				"parameters" => array(
 					array("name" => "latitude", "description" => "", "documented" => 1, "required" => 1),
 					array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1),
