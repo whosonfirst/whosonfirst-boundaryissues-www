@@ -20,6 +20,7 @@
 
 		<script src="{$cfg.abs_root_url}javascript/jquery-2.1.0.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/bootstrap.min.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/flamework.api.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.draw.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.label.min.js"></script>
