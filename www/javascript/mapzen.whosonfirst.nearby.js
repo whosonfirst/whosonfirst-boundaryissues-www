@@ -32,8 +32,8 @@ mapzen.whosonfirst.nearby = (function(){
 			
 			nearby_points = [];
 			
-			maplibs.nearby.inflate_nearby_venues(function(){
-				maplibs.nearby.draw_nearby_features();
+			mapzen.nearby.inflate_nearby_venues(function(){
+				mapzen.nearby.draw_nearby_features();
 			});
 		},
 		
@@ -93,7 +93,7 @@ mapzen.whosonfirst.nearby = (function(){
 				if (rsp['cursor']){
 					
 					args['cursor'] = rsp['cursor'];
-					maplibs.api.call(method, args, on_success);
+					mapzen.whosonfirst.boundaryissues.api.call(method, args, on_success);
 					return;
 				}
 				
@@ -104,7 +104,7 @@ mapzen.whosonfirst.nearby = (function(){
 				}
 			}
 			
-			maplibs.api.call(method, args, on_success);
+			mapzen.whosonfirst.boundaryissues.api.call(method, args, on_success);
 		},
 		
 		'draw_nearby_features': function(){
