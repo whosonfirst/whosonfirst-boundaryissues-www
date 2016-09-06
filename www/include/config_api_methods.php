@@ -140,6 +140,20 @@
 				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "required" => 1)
 			)
 		),
+		
+		"wof.places.get_nearby" => array(
+			"description" => "",
+			"documented" => 1,
+			"enabled" => 1,
+			"paginated" => 0,
+			"library" => "api_whosonfirst_places",
+				"parameters" => array(
+					array("name" => "latitude", "description" => "", "documented" => 1, "required" => 1),
+					array("name" => "longitude", "description" => "", "documented" => 1, "required" => 1),
+					array("name" => "cursor", "description" => "", "documented" => 1, "required" => 0),
+					# array("name" => "extras", "description" => "comma-separated list of additional fields to include in results", "documented" => 1, "required" => 0),
+				),
+		),
 
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
