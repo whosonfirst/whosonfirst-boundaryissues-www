@@ -54,12 +54,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
-		setup_property_aliases: function() {
-			var property_alias_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/property_aliases.json');
-			$.get(property_alias_url, function(aliases) {
+		setup_property_aliases: function(){
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/property_aliases.json');
+			var onsuccess = function(aliases){
 				self.property_aliases = aliases;
 				properties_are_ready = true;
-			});
+			};
+			var onerror = function(){
+				mapzen.whosonfirst.log.debug("error loading property aliases.");
+			};
+			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
 		},
 
 		show_preview: function(){

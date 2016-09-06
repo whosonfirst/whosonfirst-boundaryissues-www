@@ -584,7 +584,10 @@
 		}
 
 		$root_url = parse_url($GLOBALS['cfg']['abs_root_url']);
-		$redirect = str_replace($root_url['path'], '/', $_SERVER['REQUEST_URI']);
+		$redirect = str_replace($root_url['path'], '', $_SERVER['REQUEST_URI']);
+		if ($redirect == ''){
+			$redirect = '/';
+		}
 		$redirect = urlencode($redirect);
 		$GLOBALS['signin_url'] = "{$GLOBALS['cfg']['abs_root_url']}signin/?redir=$redirect";
 		$GLOBALS['smarty']->assign("signin_url", $GLOBALS['signin_url']);

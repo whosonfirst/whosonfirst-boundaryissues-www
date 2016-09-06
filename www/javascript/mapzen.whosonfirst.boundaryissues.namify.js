@@ -4,192 +4,110 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 mapzen.whosonfirst.boundaryissues.namify = (function() {
 
-    var cache_ttl = 30000;
+	var self = {
 
-    var self = {
-	
-	'init': function(){
-	    self.namify_wof();
-	    self.namify_brands();
-	},
-	
-	'namify_wof': function(){
+		'init': function(){
+			self.update(document);
+		},
 
-	    var resolver = mapzen.whosonfirst.data.id2abspath;
+		'update': function(target){
+			self.namify_wof(target);
+			self.namify_brands(target);
+		},
 
-	    var els = document.getElementsByClassName("wof-namify");
-	    var count = els.length;
+		'namify_wof': function(target){
 
-	    for (var i=0; i < count; i++){
+			var els = target.getElementsByClassName("wof-namify");
+			var count = els.length;
 
-		self.namify_el(els[i], resolver);
-	    }
-	},
+			for (var i=0; i < count; i++){
+				self.namify_el(els[i], [
+					self.local_resolver,
+					mapzen.whosonfirst.data.id2abspath
+				]);
+			}
+		},
 
-	'namify_brands': function(){
+		'namify_brands': function(target){
 
-	    var resolver = mapzen.whosonfirst.brands.id2abspath;
+			var els = target.getElementsByClassName("wof-namify-brand");
+			var count = els.length;
 
-	    var els = document.getElementsByClassName("wof-namify-brand");
-	    var count = els.length;
+			for (var i=0; i < count; i++){
+				self.namify_el(els[i], [
+					mapzen.whosonfirst.brands.id2abspath
+				]);
+			}
+		},
 
-	    for (var i=0; i < count; i++){
+		'namify_el': function(el, resolvers){
 
-		self.namify_el(els[i], resolver);
-	    }
-	},
+			var wofid = el.getAttribute("data-wof-id");
 
-	'namify_el': function(el, resolver){
+			if (! wofid){	
+				mapzen.whosonfirst.log.info("node is missing data-wof-id attribute");
+				return;
+			}
 
-	    var wofid = el.getAttribute("data-wof-id");
+			if (el.textContent != wofid){
+				mapzen.whosonfirst.log.info("node has not-a-wof-id body");
+				return;
+			}
 
-	    if (! wofid){	
-		mapzen.whosonfirst.log.info("node is missing data-wof-id attribute");
-		return;
-	    }
+			self.namify_el_from_source(wofid, el, resolvers);
+		},
 
-	    if (el.textContent != wofid){
-		mapzen.whosonfirst.log.info("node has not-a-wof-id body");
-		return;
-	    }
+		'namify_el_from_source': function(wofid, el, resolvers){
 
-	    var url = resolver(wofid);
+			if (resolvers.length == 0){
+				mapzen.whosonfirst.log.error("namifying " + wofid + ": no more resolvers to check");
+				return;
+			}
 
-	    var on_hit = function(feature){
-		self.apply_namification(el, feature);
-	    };
-	    
-	    var on_miss = function(){
-		console.log("INVOKING ON MISS FOR " + url);
-		self.namify_el_from_source(url, el);
-	    };
+			var resolver = resolvers.shift();
+			var url = resolver(wofid);
 
-	    if (! self.cache_get(url, on_hit, on_miss)){
-		self.namify_el_from_source(url, el);
-	    }
+			var on_fetch = function(feature){
+				self.apply_namification(el, feature);
+			};
 
-	},
+			var on_fail = function(rsp){
+				mapzen.whosonfirst.log.info("namifying " + wofid + ": " + url + " failed, trying next resolver");
+				self.namify_el_from_source(wofid, el, resolvers);
+			};
 
-	'namify_el_from_source': function(url, el){
+			mapzen.whosonfirst.net.fetch(url, on_fetch, on_fail);
+		},
 
-	    var on_fetch = function(feature){
+		'apply_namification': function(el, feature){
 
-		self.apply_namification(el, feature);
-		self.cache_set(url, feature);
-	    };
+			var props = feature['properties'];
 
-	    var on_fail = function(rsp){
-		console.log("sad face");
-	    };
-	    
-	    mapzen.whosonfirst.net.fetch(url, on_fetch, on_fail);
-	},
+			// to account for whosonfirst-brands which needs to be updated
+			// to grow a 'properties' hash... (20160319/thisisaaronland)
 
-	'apply_namification': function(el, feature){
+			if (! props){
+				props = feature;
+			}
 
-		var props = feature['properties'];
+			var label = props['wof:label'];
 
-		// to account for whosonfirst-brands which needs to be updated
-		// to grow a 'properties' hash... (20160319/thisisaaronland)
+			if ((! label) || (label == '')){
+				label = props['wof:name'];
+			}
 
-		if (! props){
-		    props = feature;
+			var enc_label = mapzen.whosonfirst.php.htmlspecialchars(label);
+			el.innerHTML = enc_label;
+
+			el.className += ' wof-namify-applied';
+		},
+
+		'local_resolver': function(wofid){
+			var path = '/id/' + wofid + '.geojson';
+			return mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
 		}
+	};
 
-	    	// console.log(props);
-	    
-		var label = props['wof:label'];
-
-		if ((! label) || (label == '')){
-		    label = props['wof:name'];
-		}
-
-		var enc_label = mapzen.whosonfirst.php.htmlspecialchars(label);
-		el.innerHTML = enc_label;
-	},
-
-	'cache_get': function(key, on_hit, on_miss){
-
-	    if (typeof(localforage) != 'object'){
-		return false;
-	    }
-
-	    var fq_key = self.cache_prep_key(key);
-
-	    localforage.getItem(fq_key, function (err, rsp){
-
-		if ((err) || (! rsp)){
-		    console.log("cache MISS for " + fq_key);
-		    on_miss();
-		}
-
-		console.log("cache HIT for " + fq_key);
-		console.log(rsp);
-
-		var data = rsp['data'];
-
-		if (! data){
-		    console.log("cache WTF for " + fq_key);
-		    on_miss();
-		}
-
-		var dt = new Date();
-		var ts = dt.getTime();
-
-		var then = rsp['created'];
-		var diff = ts - then;
-
-		if (diff > cache_ttl){
-		    console.log("cache EXPIRED for " + fq_key);
-		    self.cache_unset(key);
-		    on_miss();
-		}
-
-		on_hit(data);
-	    });
-
-	    return true;
-	},
-
-	'cache_set': function(key, value){
-
-	    if (typeof(localforage) != 'object'){
-		return false;
-	    }
-
-	    var dt = new Date();
-	    var ts = dt.getTime();
-
-	    var wrapper = {
-		'data': value,
-		'created': ts
-	    };
-
-	    key = self.cache_prep_key(key);
-	    console.log("cache SET for " + key);
-
-	    localforage.setItem(key, wrapper);
-	    return true;
-	},
-
-	'cache_unset': function(key){
-
-	    if (typeof(localforage) != 'object'){
-		return false;
-	    }
-
-	    key = self.cache_prep_key(key);
-	    console.log("cache UNSET for " + key);
-
-	    localforage.removeItem(key);
-	    return true;
-	},
-
-	'cache_prep_key': function(key){
-	    return key + '#namify';
-	}
-    };
-
-    return self;
+	return self;
 
 })();

@@ -95,7 +95,7 @@
 
 	function wof_save_feature($geojson, $geometry = null, $properties = null, $collection_uuid = null, $user_id = null) {
 
-		$feature = json_decode($geojson, true);
+		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
 			return array(
 				'ok' => 0,
@@ -119,6 +119,16 @@
 				return $rsp;
 			}
 			$geojson = $rsp['geojson'];
+			$feature = json_decode($geojson, 'as hash');
+		}
+
+		// If this is a new record, automatically copy wof:name property
+		// into the name:eng_x_preferred. (20160829/dphiffer)
+		if (! $feature['properties']['wof:id']) {
+			$feature['properties']['name:eng_x_preferred'] = array(
+				$feature['properties']['wof:name']
+			);
+			$geojson = json_encode($feature);
 		}
 
 		$user = users_get_by_id($user_id);

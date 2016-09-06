@@ -1,3 +1,6 @@
+// THIS IS DEPRECATED - PLEASE USE mapzen.whosonfirst.uri.js INSTEAD
+// (20160812/thisisaaronland)
+
 var mapzen = mapzen || {};
 mapzen.whosonfirst = mapzen.whosonfirst || {};
 

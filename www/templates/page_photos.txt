@@ -1,0 +1,44 @@
+{capture assign="page_title"}{$wof_name} ({$wof_id}){/capture}
+{include file='inc_head.txt' nav_tab='edit'}
+
+<div class="container">
+	<div class="row">
+		<h2>Photos of <span id="wof_name">{$wof_name|@escape}</span></h2>
+		<p><a href="{$cfg.abs_root}/id/{$wof_id|@escape}">Back to WOF editor</a></p>
+	</div>
+	<div id="primary-photo-container" class="row headroom">
+		{if $primary_photo_src}
+			<h3>Primary photo</h3>
+			<img src="{$primary_photo_src|@escape}" alt="" id="primary-photo" class="wof-photo-primary">
+		{else}
+			(No photo selected yet)
+		{/if}
+	</div>
+	<p class="caveat">Presently you can only select a single primary photo. Eventually you'll be able to assign multiple photos, sort them, and choose the "primary" one. But for now it's just the one photo.</p>
+	<div class="row headroom">
+		<form action="{$cfg.abs_root_url}photos/" method="post" id="photos-form" data-crumb-save="{$crumb_save|@escape}">
+			{$crumb_save_fallback|crumb_input}
+			<input type="hidden" name="method" value="wof.save">
+			<input type="hidden" name="access_token" value="{$site_token|@escape}">
+			<input type="hidden" name="wof_id" value="{$wof_id|@escape}">
+			{if $woe_id}
+				<h3>Photos from Flickr tagged with a WOE ID</h3>
+				<p class="caveat">Click on an image to make it the primary photo. The one <strong>outlined in red</strong> is the current primary photo.</p>
+				{foreach from=$flickr_photos item=photo}
+					<figure id="wof-photo-flickr-{$photo.id}" class="wof-photo wof-photo-flickr" data-flickr-id="{$photo.id}">
+						<img src="{$photo|@wof_photos_flickr_src|@escape}" alt="">
+					</figure>
+				{/foreach}
+				{if !$flickr_photos}
+					<p>No photos available.</p>
+				{/if}
+			{else}
+				<h3>Flickr photos</h3>
+				<p>This WOF record has no <code>gp:id</code> concordance, so we cannot assign photos from Flickr. 😿</p>
+			{/if}
+		</form>
+	</div>
+</div>
+
+<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.photos.js"></script>
+{include file='inc_foot.txt'}

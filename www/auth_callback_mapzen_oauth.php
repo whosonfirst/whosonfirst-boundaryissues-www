@@ -29,11 +29,17 @@
 
 	$code = get_str("code");
 
+	$state_base64 = get_str("state");
+	if ($state_base64){
+		$state_json = base64_decode($state_base64);
+		$state = json_decode($state_json, 'as hash');
+	}
+
 	if (! $code){
 		error_404();
 	}
 
-	$rsp = mapzen_api_get_auth_token($code);
+	$rsp = mapzen_api_get_auth_token($code, $state_base64);
 
 	if (! $rsp['ok']){
 		$GLOBALS['error']['oauth_access_token'] = 1;
@@ -189,7 +195,7 @@
 	# Okay, now finish logging the user in (setting cookies, etc.) and
 	# redirecting them to some specific page if necessary.
 
-	$redir = (isset($extra['redir'])) ? $extra['redir'] : '';
+	$redir = (isset($state['redir'])) ? urlencode($state['redir']) : '';
 
 	login_do_login($user, $redir);
 	exit();

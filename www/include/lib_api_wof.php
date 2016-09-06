@@ -4,6 +4,7 @@
 	loadlib('wof_save');
 	loadlib('uuid');
 	loadlib('users_settings');
+	loadlib('wof_photos');
 
 	########################################################################
 
@@ -150,7 +151,11 @@
 		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/pip";
 		# error_log("{$url}?{$query}");
 
-		$rsp = http_get("{$url}?$query");
+		$headers = array();
+		$more = array(
+			'http_timeout' => 10 // let this run for up to 10s
+		);
+		$rsp = http_get("{$url}?$query", $headers, $more);
 
 		if (! $rsp['ok']) {
 			$error = $rsp['error'] ? $rsp['error'] : 'Error talking to the PIP service.';
@@ -195,7 +200,7 @@
 			api_output_error(400, "Please include: lat_min, lat_max, lng_min, lng_max");
 		}
 
-		$query = json_encode(array(
+		$query = array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -218,12 +223,9 @@
 					)
 				)
 			)
-		));
+		);
 
-		$es_base_url = $GLOBALS['cfg']['wof_elasticsearch_host'] . ':' .
-		               $GLOBALS['cfg']['wof_elasticsearch_port'];
-		$url = "$es_base_url/_search";
-		$rsp = http_post($url, $query);
+		$rsp = wof_elasticsearch_search($query);
 
 		if (! $rsp['ok']) {
 			api_output_error(400, $rsp['body']);
@@ -327,6 +329,32 @@
 
 		api_output_ok($rsp);
 
+	}
+	
+	########################################################################
+
+	function api_wof_get_photos(){
+
+		$wof_id = post_int32('wof_id');
+		$rsp = wof_photos_get($wof_id);
+
+		api_output_ok($rsp);
+	}
+
+	########################################################################
+
+	function api_wof_assign_flickr_photo(){
+
+		$user = $GLOBALS['cfg']['user'];
+		if (! $user) {
+			api_output_error(400, 'You must be logged in assign a Flickr photo.');
+		}
+
+		$wof_id = post_int32('wof_id');
+		$flickr_id = post_int32('flickr_id');
+		$rsp = wof_photos_assign_flickr_photo($wof_id, $flickr_id);
+
+		api_output_ok($rsp);
 	}
 
 	# the end

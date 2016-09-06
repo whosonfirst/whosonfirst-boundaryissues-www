@@ -67,6 +67,9 @@
 					</div>
 					{/if}
 
+					<h3 class="headroom">Photos</h3>
+					<div id="photos">Loading photos...</div>
+
 					<ul id="edit-options">
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson" id="geojson-link">Raw GeoJSON</a></li>
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson?download=1">Download GeoJSON</a></li>
@@ -82,5 +85,6 @@
 	</div>
 </div>
 
-
+{include file="inc_js_namify.txt"}
+<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.photos.js"></script>
 {include file='inc_foot.txt'}

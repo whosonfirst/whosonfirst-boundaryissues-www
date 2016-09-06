@@ -3,7 +3,7 @@
 	include("include/init.php");
 	loadlib("mapzen_api");
 
-	$redir = $GLOBALS['cfg']['abs_root_url'] . get_str('redir');
+	$redir = get_str('redir');
 
 	# Some basic sanity checking like are you already logged in?
 
@@ -17,9 +17,7 @@
 		exit();
 	}
 
-	# TO DO: pass redir around...
-
-	$url = mapzen_api_get_auth_url();
+	$url = mapzen_api_get_auth_url($redir);
 
 	header("location: {$url}");
 	exit();
