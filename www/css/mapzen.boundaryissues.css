@@ -70,6 +70,7 @@ input.add-item, .btn-add-item, tr.add-row {
 }
 
 #json-schema-object-properties > table > tbody > tr.add-row,
+#property-add > table > tbody > tr.add-row,
 .property-editable > td > .json-schema-field > .json-schema-object > table > tbody > tr.add-row {
 	display: table-row;
 }

@@ -212,6 +212,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		setup_properties: function() {
 
 			self.group_properties();
+			self.setup_add_property();
 
 			$('.json-schema-object > table > tbody > tr').each(function(i, row) {
 				if ($(row).hasClass('add-row')) {
@@ -254,12 +255,34 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			// Add new properties to an object by changing the 'Value' field
 			$('.btn-add-value').click(function(e) {
 				e.preventDefault();
-				var $rel = $(e.target).closest('.json-schema-object');
+				if ($(e.target).closest('#property-add').length > 0){
+					var $rel = $('#property-add');
+				} else {
+					var $rel = $(e.target).closest('.json-schema-object');
+				}
 				var $row = $rel.find('> table > tbody > .add-row');
 				var $key = $row.find('.add-key');
 				var $value = $row.find('.add-value');
 				var key = $key.val();
 				var value = $value.val();
+
+				if ($rel.attr('id') == 'property-add'){
+					if ($('#property-add .caveat').length == 0) {
+						$('#property-add').append('<p class="caveat">Your property has been added below. Presently it’s all just appended to the end. Eventually we’ll insert it in sorted order.</p>');
+					}
+					var prefix = key.match(/^([a-z0-9_]+):/);
+					if (prefix){
+						prefix = prefix[1];
+						$rel = $('#property-group-' + prefix);
+						if ($rel.length == 0){
+							var html = '<h3 class="headroom">' + prefix + '</h3>' +
+							           '<div id="property-group-' + prefix + '" class="property-group json-schema-object"><table><tbody></tbody></table></div>';
+							$('.property-group').last().after(html);
+							$rel = $('#property-group-' + prefix);
+						}
+					}
+				}
+
 				if (key && value) {
 					self.add_object_row($rel, key, value);
 					$key.val('');
@@ -303,6 +326,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 
 			self.setup_categories();
+		},
+		
+		setup_add_property: function(){
+			var $row = $('#property-group-minimum_viable > table > tbody > tr.add-row');
+			var html = '<div id="property-add" class="json-schema-object"><h4>Add a new property</h4><table><tbody></tbody></div>';
+			$('#property-group-minimum_viable').after($(html));
+			$('#property-add > table > tbody').append($row);
 		},
 
 		setup_form: function() {
@@ -460,8 +490,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		group_properties: function(){
 			var groups = {};
-			$('#json-schema-object-properties > table').attr('id', 'property-group-minimum_viable');
-			$('#edit-properties > h3').html('Minimum viable properties');
 			$('#json-schema-object-properties > table > tbody > tr > th').each(function(i, th){
 				var property = $(th).html().trim();
 				var prefix = property.match(/^[a-z0-9_]+/);
@@ -477,25 +505,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var prefixes = Object.keys(groups).sort(function(a, b){
 				// Sort by prefix, but keep wof at the top.
 				if (a == 'wof'){
-					return -1;
-				} else if (b == 'wof'){
 					return 1;
+				} else if (b == 'wof'){
+					return -1;
 				} else {
-					return (a < b) ? -1 : 1;
+					return (a < b) ? 1 : -1;
 				}
 			});
 			$.each(prefixes, function(i, prefix){
 				var html = '<h3 class="headroom">' + prefix + '</h3>' +
-				           '<table id="property-group-' + prefix + '" class="property-group"><tbody></tbody></table>';
-				$('#json-schema-object-properties').append(html);
+				           '<div id="property-group-' + prefix + '" class="property-group json-schema-object"><table><tbody></tbody></table></div>';
+				$('#json-schema-object-properties').after(html);
 				$.each(groups[prefix], function(j, $row){
-					$('#property-group-' + prefix + ' > tbody').append($row);
+					$('#property-group-' + prefix + ' > table > tbody').append($row);
 					if ($row.hasClass('property-minimum_viable')){
-						$row.addClass('has-minimum_viable-alias');
-						$('#property-group-minimum_viable > tbody').append($row.clone());
+						$('#json-schema-object-properties > table > tbody').append($row.clone());
 					}
 				});
 			});
+			$('#json-schema-object-properties').attr('id', 'property-group-minimum_viable');
+			$('#json-schema-object-properties').addClass('property-group');
+			$('#json-schema-object-properties').closest('.headroom').removeClass('headroom');
+			$('#edit-properties > h3').html('Minimum viable properties');
 		},
 
 		assign_categories_tag: function(tag) {
@@ -566,7 +597,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		add_object_row: function($rel, key, value) {
-			var $row = $rel.find('> table > tbody > .add-row');
+			var $addRow = $rel.find('> table > tbody > .add-row');
 			var context = $rel.data('context');
 			if ($('input[name="' + context + '.' + key + '"]').length > 0) {
 				alert('Oops, there is already a property with that name.');
@@ -578,7 +609,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					'<th>' + key + '</th>' +
 					'<td><input type="text" name="' + context + '.' + key + '" class="property">' + remove + '</td>' +
 				'</tr>'
-			).insertBefore($row);
+			);
+			if ($addRow.length) {
+				$newRow.insertBefore($addRow);
+			} else {
+				$rel.find('> table > tbody').append($newRow);
+			}
 			$newRow.find('.btn-remove-item').click(function(e) {
 				$newRow.remove();
 			});
