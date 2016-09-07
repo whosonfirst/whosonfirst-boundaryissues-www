@@ -402,3 +402,12 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 #primary-photo {
 	margin-top: 10px;
 }
+
+#slippymap-coords {
+	float: right;
+	font-size: 11px;
+}
+
+#slippymap-coords::before {
+	content: "map is centered at ";
+}

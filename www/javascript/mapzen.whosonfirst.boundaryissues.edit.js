@@ -81,6 +81,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			slippymap.crosshairs.init(map);
+			mapzen.whosonfirst.nearby.init(map);
+			mapzen.whosonfirst.nearby.inflate_nearby();
 			
 			self.map = map;
 
@@ -943,7 +945,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			};
 			var onerror = function() { };
-			mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
+			//mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
 		},
 
 		generate_geojson: function() {

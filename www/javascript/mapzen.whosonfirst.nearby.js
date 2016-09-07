@@ -23,7 +23,8 @@ mapzen.whosonfirst.nearby = (function(){
 			_map.on('dragend', self.inflate_nearby);
 			_map.on('zoomend', self.inflate_nearby);
 
-			_nearby = document.getElementById("whosonfirst-nearby");			
+			//_nearby = document.getElementById("whosonfirst-nearby");
+			self.venues_geojson = venues_geojson;
 		},
 		
 		'inflate_nearby': function(){
@@ -32,8 +33,8 @@ mapzen.whosonfirst.nearby = (function(){
 			
 			nearby_points = [];
 			
-			mapzen.nearby.inflate_nearby_venues(function(){
-				mapzen.nearby.draw_nearby_features();
+			mapzen.whosonfirst.nearby.inflate_nearby_venues(function(){
+				mapzen.whosonfirst.nearby.draw_nearby_features();
 			});
 		},
 		
@@ -46,7 +47,7 @@ mapzen.whosonfirst.nearby = (function(){
 			
 			var center = _map.getCenter();
 			
-			var method = 'whosonfirst.places.getNearby';
+			var method = 'wof.places.get_nearby';
 			
 			var args = {
 				'latitude': center['lat'], 'longitude': center['lng'],
@@ -93,7 +94,7 @@ mapzen.whosonfirst.nearby = (function(){
 				if (rsp['cursor']){
 					
 					args['cursor'] = rsp['cursor'];
-					mapzen.whosonfirst.boundaryissues.api.call(method, args, on_success);
+					mapzen.whosonfirst.boundaryissues.api.api_call(method, args, on_success);
 					return;
 				}
 				
@@ -104,12 +105,12 @@ mapzen.whosonfirst.nearby = (function(){
 				}
 			}
 			
-			mapzen.whosonfirst.boundaryissues.api.call(method, args, on_success);
+			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, on_success);
 		},
 		
 		'draw_nearby_features': function(){
 			
-			self.draw_nearby_mask();
+			//self.draw_nearby_mask();
 			
 			if (venues_layer){
 				_map.removeLayer(venues_layer);
@@ -122,10 +123,10 @@ mapzen.whosonfirst.nearby = (function(){
 			
 			venues_layer = L.geoJson(venues_geojson, {
 				'style': style,
-				'pointToLayer': handler,
+				'pointToLayer': handler
 			});
 			
-			venues_layer.addTo(map);
+			venues_layer.addTo(_map);
 		},
 
 		'draw_nearby_mask': function(){
