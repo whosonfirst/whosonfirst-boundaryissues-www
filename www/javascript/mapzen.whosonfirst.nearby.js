@@ -124,8 +124,7 @@ mapzen.whosonfirst.nearby = (function(){
 				'pointToLayer': handler,
 				'onEachFeature': function(feature, layer){
 					layer.on('click', function(){
-						console.log(feature.properties['wof:id']);
-						var path = '/id/' + feature.properties['wof:id'];
+						var path = '/id/' + feature.properties.id;
 						var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
 						location.href = url;
 					});
