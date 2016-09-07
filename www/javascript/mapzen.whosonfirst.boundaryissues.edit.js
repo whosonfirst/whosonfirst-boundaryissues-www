@@ -345,6 +345,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var category = $('select[name="properties.wof:category"]').val();
 					self.set_marker_icon(category);
 				}
+				// Account for minimal-viable property aliases
+				$('input[name="' + property + '"]').each(function(i, input){
+					if ($(input).val() != value){
+						$(input).val(value);
+					}
+				});
 			});
 
 			$('#edit-form').on('addkey', function(e, $row, key) {
@@ -454,6 +460,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		group_properties: function(){
 			var groups = {};
+			$('#json-schema-object-properties > table').attr('id', 'property-group-minimum_viable');
+			$('#edit-properties > h3').html('Minimum viable properties');
 			$('#json-schema-object-properties > table > tbody > tr > th').each(function(i, th){
 				var property = $(th).html().trim();
 				var prefix = property.match(/^[a-z0-9_]+/);
@@ -482,6 +490,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('#json-schema-object-properties').append(html);
 				$.each(groups[prefix], function(j, $row){
 					$('#property-group-' + prefix + ' > tbody').append($row);
+					if ($row.hasClass('property-minimum_viable')){
+						$row.addClass('has-minimum_viable-alias');
+						$('#property-group-minimum_viable > tbody').append($row.clone());
+					}
 				});
 			});
 		},

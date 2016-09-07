@@ -45,19 +45,24 @@
 		'_default' => array(
 			'visible' => true,
 			'editable' => true,
-			'deletable' => true
+			'deletable' => true,
+			'minimum_viable' => false
 		),
 		'wof:id' => array(
-			'editable' => false
+			'editable' => false,
+			'minimum_viable' => true
 		),
 		'wof:placetype' => array(
-			'editable' => false
+			'editable' => false,
+			'minimum_viable' => true
 		),
 		'wof:name' => array(
-			'deletable' => false
+			'deletable' => false,
+			'minimum_viable' => true
 		),
 		'wof:parent_id' => array(
-			'editable' => false
+			'editable' => false,
+			'minimum_viable' => true
 		),
 		'wof:hierarchy' => array(
 			'editable' => false
