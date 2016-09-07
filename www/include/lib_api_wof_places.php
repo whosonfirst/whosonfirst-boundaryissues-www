@@ -64,6 +64,8 @@
 		$lat = null;
 		$lon = null;
 
+		api_utils_features_ensure_enabled(array('spatial'));
+
 		if ($wofid = request_int64("id")){
 		
 			api_output_error(400, "This has not been implemented yet");
