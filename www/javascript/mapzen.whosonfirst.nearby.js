@@ -118,11 +118,17 @@ mapzen.whosonfirst.nearby = (function(){
 			var style = mapzen.whosonfirst.leaflet.styles.search_centroid();
 			var handler = mapzen.whosonfirst.leaflet.handlers.point(style);
 
-			// sudo make me clickable...
-			
 			venues_layer = L.geoJson(venues_geojson, {
 				'style': style,
 				'pointToLayer': handler,
+				'onEachFeature': function(feature, layer){
+					layer.on('click', function(){
+						console.log(feature.properties['wof:id']);
+						var path = '/id/' + feature.properties['wof:id'];
+						var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
+						location.href = url;
+					});
+				}
 			});
 			
 			venues_layer.addTo(map);

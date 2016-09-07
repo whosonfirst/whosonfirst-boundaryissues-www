@@ -60,7 +60,7 @@
 		$lat = $props['geom:latitude'];
 		$lon = $props['geom:longitude'];
 
-		$r = 100;
+		$r = 200;
 	
 		return whosonfirst_spatial_nearby_latlon($lat, $lon, $r, $more);
 	}
