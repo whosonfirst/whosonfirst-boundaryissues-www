@@ -211,6 +211,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_properties: function() {
 
+			self.group_properties();
+
 			$('.json-schema-object > table > tbody > tr').each(function(i, row) {
 				if ($(row).hasClass('add-row')) {
 					// Don't need to remove the placeholder input rows
@@ -448,6 +450,40 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			} else {
 				self.append_categories_select('namespace');
 			}
+		},
+
+		group_properties: function(){
+			var groups = {};
+			$('#json-schema-object-properties > table > tbody > tr > th').each(function(i, th){
+				var property = $(th).html().trim();
+				var prefix = property.match(/^[a-z0-9_]+/);
+				if (! prefix){
+					return;
+				}
+				var $row = $(th).closest('tr');
+				if (! groups[prefix]){
+					groups[prefix] = [];
+				}
+				groups[prefix].push($row);
+			});
+			var prefixes = Object.keys(groups).sort(function(a, b){
+				// Sort by prefix, but keep wof at the top.
+				if (a == 'wof'){
+					return -1;
+				} else if (b == 'wof'){
+					return 1;
+				} else {
+					return (a < b) ? -1 : 1;
+				}
+			});
+			$.each(prefixes, function(i, prefix){
+				var html = '<h3 class="headroom">' + prefix + '</h3>' +
+				           '<table id="property-group-' + prefix + '" class="property-group"><tbody></tbody></table>';
+				$('#json-schema-object-properties').append(html);
+				$.each(groups[prefix], function(j, $row){
+					$('#property-group-' + prefix + ' > tbody').append($row);
+				});
+			});
 		},
 
 		assign_categories_tag: function(tag) {

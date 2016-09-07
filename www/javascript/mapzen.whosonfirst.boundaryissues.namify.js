@@ -22,8 +22,8 @@ mapzen.whosonfirst.boundaryissues.namify = (function() {
 
 			for (var i=0; i < count; i++){
 				self.namify_el(els[i], [
-					self.local_resolver,
-					mapzen.whosonfirst.data.id2abspath
+					mapzen.whosonfirst.data.id2abspath,
+					self.local_resolver
 				]);
 			}
 		},

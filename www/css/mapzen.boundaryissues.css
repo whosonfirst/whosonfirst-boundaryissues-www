@@ -411,3 +411,7 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 #slippymap-coords::before {
 	content: "map is centered at ";
 }
+
+.property-group {
+	margin-top: 10px;
+}
