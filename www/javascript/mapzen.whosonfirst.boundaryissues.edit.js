@@ -513,8 +513,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			});
 			$.each(prefixes, function(i, prefix){
-				var html = '<h3 class="headroom">' + prefix + '</h3>' +
-				           '<div id="property-group-' + prefix + '" class="property-group json-schema-object"><table><tbody></tbody></table></div>';
+				var html = '<h3 class="property-group-heading collapsed">' + prefix + '</h3>' +
+				           '<div id="property-group-' + prefix + '" class="property-group collapsed json-schema-object"><table><tbody></tbody></table></div>';
 				$('#json-schema-object-properties').after(html);
 				$.each(groups[prefix], function(j, $row){
 					$('#property-group-' + prefix + ' > table > tbody').append($row);
@@ -523,10 +523,30 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					}
 				});
 			});
-			$('#json-schema-object-properties').attr('id', 'property-group-minimum_viable');
-			$('#json-schema-object-properties').addClass('property-group');
-			$('#json-schema-object-properties').closest('.headroom').removeClass('headroom');
-			$('#edit-properties > h3').html('Minimum viable properties');
+
+			$mvp = $('#json-schema-object-properties');
+			$mvp.attr('id', 'property-group-minimum_viable');
+			$mvp.addClass('property-group');
+			$('#edit-properties > h3').remove();
+			$mvp.before('<h4 id="mvp-heading" class="property-group-heading">Minimum viable properties</h4>');
+
+			$('.property-group-heading').click(function(e){
+				var $group = $(e.target).next('.property-group');
+				$group.toggleClass('collapsed');
+				$target = $(e.target);
+				$target.toggleClass('collapsed');
+
+				$collapsed = $('.property-group-heading.collapsed');
+				$headings = $('.property-group-heading');
+
+				if ($target.attr('id') != 'mvp-heading'){
+					if (! $target.hasClass('collapsed')){
+						$('#mvp-heading, #property-group-minimum_viable').addClass('collapsed');
+					} else if ($collapsed.length == $headings.length) {
+						$('#mvp-heading, #property-group-minimum_viable').removeClass('collapsed');
+					}
+				}
+			});
 		},
 
 		assign_categories_tag: function(tag) {

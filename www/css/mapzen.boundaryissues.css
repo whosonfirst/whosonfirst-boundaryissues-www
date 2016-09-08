@@ -416,3 +416,22 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 .property-group {
 	margin-top: 10px;
 }
+
+.property-group-heading {
+	margin-top: 20px;
+	cursor: pointer;
+}
+
+.property-group.collapsed {
+	display: none;
+}
+
+.property-group-heading::after {
+	content: "click to collapse";
+	font-size: 11px;
+	margin-left: 10px;
+}
+
+.property-group-heading.collapsed::after {
+	content: "click to expand";
+}
