@@ -113,6 +113,14 @@
 			$user_id = $GLOBALS['cfg']['user']['id'];
 		}
 
+		if ($GLOBALS['cfg']['require_wof_placetypes'] &&
+		    ! in_array($feature['properties']['wof:placetype'], $GLOBALS['cfg']['require_wof_placetypes'])){
+			return array(
+				'ok' => 0,
+				'error' => 'This instance of Boundary Issues only edits ' . implode(', ', $GLOBALS['cfg']['require_wof_placetypes']) . ' placetypes.'
+			);
+		}
+
 		if (is_array($properties)) {
 			$rsp = wof_save_merged($geojson, $geometry, $properties);
 			if (! $rsp['ok']) {
