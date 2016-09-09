@@ -366,13 +366,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#edit-form').on('propertychanged', function(e, property, value) {
 				if (property == 'properties.wof:name') {
 					var id = $('input[name="wof_id"]').val();
-					if (!id) {
-						return;
+					if (id){
+						var title = value;
+						var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
+						$('#wof_name').html(esc_title);
+						document.title = title + ' (' + id + ') | Boundary Issues';
 					}
-					var title = value;
-					var esc_title = mapzen.whosonfirst.php.htmlspecialchars(title);
-					$('#wof_name').html(esc_title);
-					document.title = title + ' (' + id + ') | Boundary Issues';
 				} else if (property == 'properties.wof:category') {
 					var category = $('select[name="properties.wof:category"]').val();
 					self.set_marker_icon(category);
@@ -495,7 +494,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if ($rel.length == 0){
 				var collapsed = $('#mvp-heading').hasClass('collapsed') ? '' : ' collapsed';
 				var html = '<h3 id="property-group-heading-' + prefix + '" class="property-group-heading' + collapsed + '">' + prefix + '</h3>' +
-					   '<div id="property-group-' + prefix + '" class="property-group json-schema-object' + collapsed + '"><table><tbody></tbody></table></div>';
+					   '<div id="property-group-' + prefix + '" class="property-group json-schema-object' + collapsed + '" data-context="properties"><table><tbody></tbody></table></div>';
 				$('.property-group').last().after(html);
 				$rel = $('#property-group-' + prefix);
 				$('#property-group-heading-' + prefix).click(self.toggle_property_group);
@@ -529,7 +528,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 			$.each(prefixes, function(i, prefix){
 				var html = '<h3 class="property-group-heading collapsed">' + prefix + '</h3>' +
-				           '<div id="property-group-' + prefix + '" class="property-group collapsed json-schema-object"><table><tbody></tbody></table></div>';
+				           '<div id="property-group-' + prefix + '" class="property-group collapsed json-schema-object" data-context="properties"><table><tbody></tbody></table></div>';
 				$('#json-schema-object-properties').after(html);
 				$.each(groups[prefix], function(j, $row){
 					$('#property-group-' + prefix + ' > table > tbody').append($row);
@@ -621,7 +620,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		set_property: function(property, value) {
 			if ($('input[name="properties.' + property + '"]').length == 0) {
-				var prefix = preoperty.match(/^([a-z0-9_]+):/);
+				var prefix = property.match(/^([a-z0-9_]+):/);
 				if (prefix){
 					var $rel = self.get_property_rel(prefix[1]);
 				} else {
