@@ -267,19 +267,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var value = $value.val();
 
 				if ($rel.attr('id') == 'property-add'){
-					if ($('#property-add .caveat').length == 0) {
-						$('#property-add').append('<p class="caveat">Your property has been added below. Presently it’s all just appended to the end. Eventually we’ll insert it in sorted order.</p>');
-					}
+					var msg = 'Your property has been added below. Presently it’s all just appended to the end. Eventually we’ll insert it in sorted order.';
+					var error_msg = 'Oops, you should choose a property name like this: <code>wof:propertyname</code>';
 					var prefix = key.match(/^([a-z0-9_]+):/);
-					if (prefix){
-						prefix = prefix[1];
-						$rel = $('#property-group-' + prefix);
-						if ($rel.length == 0){
-							var html = '<h3 class="headroom">' + prefix + '</h3>' +
-							           '<div id="property-group-' + prefix + '" class="property-group json-schema-object"><table><tbody></tbody></table></div>';
-							$('.property-group').last().after(html);
-							$rel = $('#property-group-' + prefix);
-						}
+					if (! prefix){
+						msg = error_msg;
+					} else {
+						$rel = self.get_property_rel(prefix[1]);
+					}
+					if ($('#property-add .caveat').length == 0) {
+						$('#property-add').append('<p class="caveat">' + msg + '</p>');
+					} else {
+						$('#property-add .caveat').html(msg);
+					}
+					if (! prefix){
+						return false;
 					}
 				}
 
@@ -488,6 +490,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 		},
 
+		get_property_rel: function(prefix){
+			$rel = $('#property-group-' + prefix);
+			if ($rel.length == 0){
+				var collapsed = $('#mvp-heading').hasClass('collapsed') ? '' : ' collapsed';
+				var html = '<h3 id="property-group-heading-' + prefix + '" class="property-group-heading' + collapsed + '">' + prefix + '</h3>' +
+					   '<div id="property-group-' + prefix + '" class="property-group json-schema-object' + collapsed + '"><table><tbody></tbody></table></div>';
+				$('.property-group').last().after(html);
+				$rel = $('#property-group-' + prefix);
+				$('#property-group-heading-' + prefix).click(self.toggle_property_group);
+			}
+			return $rel;
+		},
+
 		group_properties: function(){
 			var groups = {};
 			$('#json-schema-object-properties > table > tbody > tr > th').each(function(i, th){
@@ -530,23 +545,25 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#edit-properties > h3').remove();
 			$mvp.before('<h4 id="mvp-heading" class="property-group-heading">Minimum viable properties</h4>');
 
-			$('.property-group-heading').click(function(e){
-				var $group = $(e.target).next('.property-group');
-				$group.toggleClass('collapsed');
-				$target = $(e.target);
-				$target.toggleClass('collapsed');
+			$('.property-group-heading').click(self.toggle_property_group);
+		},
 
-				$collapsed = $('.property-group-heading.collapsed');
-				$headings = $('.property-group-heading');
+		toggle_property_group: function(e){
+			var $group = $(e.target).next('.property-group');
+			$group.toggleClass('collapsed');
+			$target = $(e.target);
+			$target.toggleClass('collapsed');
 
-				if ($target.attr('id') != 'mvp-heading'){
-					if (! $target.hasClass('collapsed')){
-						$('#mvp-heading, #property-group-minimum_viable').addClass('collapsed');
-					} else if ($collapsed.length == $headings.length) {
-						$('#mvp-heading, #property-group-minimum_viable').removeClass('collapsed');
-					}
+			$collapsed = $('.property-group-heading.collapsed');
+			$headings = $('.property-group-heading');
+
+			if ($target.attr('id') != 'mvp-heading'){
+				if (! $target.hasClass('collapsed')){
+					$('#mvp-heading, #property-group-minimum_viable').addClass('collapsed');
+				} else if ($collapsed.length == $headings.length) {
+					$('#mvp-heading, #property-group-minimum_viable').removeClass('collapsed');
 				}
-			});
+			}
 		},
 
 		assign_categories_tag: function(tag) {
@@ -604,7 +621,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		set_property: function(property, value) {
 			if ($('input[name="properties.' + property + '"]').length == 0) {
-				var $rel = $('#json-schema-object-properties');
+				var prefix = preoperty.match(/^([a-z0-9_]+):/);
+				if (prefix){
+					var $rel = self.get_property_rel(prefix[1]);
+				} else {
+					mapzen.whosonfirst.log.error('Property ' + property + ' did not match the namespace:predicate regex.');
+				}
 				self.add_object_row($rel, property, value);
 			} else {
 				$('input[name="properties.' + property + '"]').val(value);
@@ -665,14 +687,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var lng = ll.lng.toFixed(6);
 
 			if ($('input[name="properties.geom:latitude"]').length == 0) {
-				var $rel = $('#json-schema-object-properties');
+				var $rel = self.get_property_rel('geom');
 				self.add_object_row($rel, 'geom:latitude', lat);
 			} else {
 				$('input[name="properties.geom:latitude"]').val(lat);
 			}
 
 			if ($('input[name="properties.geom:longitude"]').length == 0) {
-				var $rel = $('#json-schema-object-properties');
+				var $rel = self.get_property_rel('geom');
 				self.add_object_row($rel, 'geom:longitude', lng);
 			} else {
 				$('input[name="properties.geom:longitude"]').val(lng);
