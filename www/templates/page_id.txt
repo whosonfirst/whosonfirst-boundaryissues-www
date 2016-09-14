@@ -48,6 +48,12 @@
 					<h3 class="headroom">Category</h3>
 					<div id="categories"></div>
 
+					{assign var=placetype_key value="wof:placetype"}
+					{if $properties[$placetype_key] == 'venue'}
+						<h3 class="headroom">Hours</h3>
+						<div id="hours"></div>
+					{/if}
+
 					{if $cfg.user}
 					<h3 class="headroom">Options</h3>
 					<div id="edit-buttons">

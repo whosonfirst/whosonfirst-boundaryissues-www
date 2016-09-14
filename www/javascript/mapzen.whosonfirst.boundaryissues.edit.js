@@ -328,6 +328,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 
 			self.setup_categories();
+			self.setup_hours();
 		},
 
 		setup_add_property: function(){
@@ -487,6 +488,37 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			} else {
 				self.append_categories_select('namespace');
 			}
+		},
+
+		setup_hours: function(){
+			if ($('#hours').length == 0){
+				return;
+			}
+			var days = ['Sunday', 'Monday', 'Tueday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			$.each(days, function(i, day){
+				var checkbox = 'hours-checkbox-' + day.toLowerCase();
+				var open = 'hours-open-' + day.toLowerCase();
+				var close = 'hours-close-' + day.toLowerCase();
+				$('#hours').append($(
+					'<div class="hours-day">' +
+					'<input type="checkbox" id="' + checkbox + '" class="hours-checkbox"><label for="' + checkbox + '">' + day + '</label>' +
+					'<div class="hours-openclose">' +
+					'Open: <input type="text" id="' + open + '" placeholder="00:00"><br>' +
+					'Close: <input type="text" id="' + close + '" placeholder="00:00">' +
+					'</div>' +
+					'</div>'
+				));
+			});
+
+			$('.hours-checkbox').change(function(e){
+				var $parent = $(this).closest('.hours-day');
+				var $openclose = $parent.find('.hours-openclose');
+				if (this.checked){
+					$openclose.addClass('visible');
+				} else {
+					$openclose.removeClass('visible');
+				}
+			});
 		},
 
 		get_property_rel: function(prefix){

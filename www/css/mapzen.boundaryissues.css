@@ -439,3 +439,25 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 .leaflet-pelias-input::-moz-placeholder {
 	line-height: inherit;
 }
+
+#hours {
+	margin-top: 5px;
+}
+
+.hours-openclose {
+	display: none;
+	padding: 4px 55px 5px 0;
+	text-align: right;
+	width: 200px;
+	margin-bottom: 10px;
+	background: #ededed;
+}
+
+.hours-openclose input {
+	width: 60px;
+	margin-top: 1px;
+}
+
+.hours-openclose.visible {
+	display: block;
+}
