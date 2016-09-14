@@ -518,14 +518,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				return;
 			}
 			var days = ['Sunday', 'Monday', 'Tueday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-			$.each(days, function(i, day){
-				var checkbox = 'hours-checkbox-' + day.toLowerCase();
-				var openclose = 'hours-openclose-' + day.toLowerCase();
-				var open = 'hours-open-' + day.toLowerCase();
-				var close = 'hours-close-' + day.toLowerCase();
+			$.each(days, function(i, label){
+				var day = label.toLowerCase().substr(0, 3);
+				var checkbox = 'hours-checkbox-' + day;
+				var openclose = 'hours-openclose-' + day;
+				var open = 'hours-open-' + day;
+				var close = 'hours-close-' + day;
 				$('#hours').append($(
 					'<div class="hours-day">' +
-					'<input type="checkbox" id="' + checkbox + '" class="hours-checkbox"><label for="' + checkbox + '">' + day + '</label>' +
+					'<input type="checkbox" id="' + checkbox + '" class="hours-checkbox"><label for="' + checkbox + '">' + label + '</label>' +
 					'<div id="' + openclose + '" class="hours-openclose">' +
 					'Open: <input type="text" id="' + open + '" placeholder="00:00"><br>' +
 					'Close: <input type="text" id="' + close + '" placeholder="00:00">' +
@@ -560,10 +561,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var openclose = '#hours-openclose-' + day.toLowerCase();
 					var open = '#hours-open-' + day.toLowerCase();
 					var close = '#hours-close-' + day.toLowerCase();
-					$(checkbox)[0].checked = true;
-					$(openclose).addClass('visible');
-					$(open).val(value.open);
-					$(close).val(value.close);
+					if ($(checkbox).length > 0){
+						$(checkbox)[0].checked = true;
+						$(openclose).addClass('visible');
+						$(open).val(value.open);
+						$(close).val(value.close);
+					}
 				});
 			}
 		},
@@ -912,10 +915,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		get_hours: function(){
 			var hours = {};
 			var days = ['Sunday', 'Monday', 'Tueday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-			$.each(days, function(i, day){
-				var checkbox = '#hours-checkbox-' + day.toLowerCase();
-				var open = '#hours-open-' + day.toLowerCase();
-				var close = '#hours-close-' + day.toLowerCase();
+			$.each(days, function(i, label){
+				var day = label.toLowerCase().substr(0, 3);
+				var checkbox = '#hours-checkbox-' + day;
+				var open = '#hours-open-' + day;
+				var close = '#hours-close-' + day;
 				if (! $(checkbox)[0].checked){
 					return;
 				}
