@@ -435,3 +435,7 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 .property-group-heading.collapsed::after {
 	content: "click to expand";
 }
+
+.leaflet-pelias-input::-moz-placeholder {
+	line-height: inherit;
+}

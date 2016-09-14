@@ -83,7 +83,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			slippymap.crosshairs.init(map);
 			mapzen.whosonfirst.nearby.init(map);
 			mapzen.whosonfirst.nearby.inflate_nearby();
-			
+
 			self.map = map;
 
 			geocoder.on('select', function(e) {
@@ -229,9 +229,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			});
 
-			$('.json-schema-array > li').each(function(i, row) {
+			$('.json-schema-array > ul > li').each(function(i, row) {
 				if (  $(row).hasClass('add-row') ||
-				    ! $(row).hasClass('property-editable')) {
+				    ! $(row).closest('.object-property').hasClass('property-editable')) {
 					return;
 				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
@@ -329,7 +329,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			self.setup_categories();
 		},
-		
+
 		setup_add_property: function(){
 			var $row = $('#property-group-minimum_viable > table > tbody > tr.add-row');
 			var html = '<div id="property-add" class="json-schema-object"><h4>Add a new property</h4><table><tbody></tbody></div>';
@@ -944,7 +944,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 			html += '</ul>';
 			$('#hierarchy').append(html);
-			
+
 			var container = $('#hierarchy')[0];
 			mapzen.whosonfirst.boundaryissues.namify.update(container);
 			$('#btn-rebuild-hierarchy').removeClass('disabled');
