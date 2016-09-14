@@ -536,9 +536,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('.hours-checkbox').change(function(e){
 				var $parent = $(this).closest('.hours-day');
+				var $prev = $parent.prev('.hours-day');
 				var $openclose = $parent.find('.hours-openclose');
 				if (this.checked){
 					$openclose.addClass('visible');
+					if ($prev.length > 0){
+						console.log($prev);
+						var open = $openclose.find('input')[0];
+						var close = $openclose.find('input')[1];
+						$(open).val($prev.find('input')[1].value);
+						$(close).val($prev.find('input')[2].value);
+					}
 				} else {
 					$openclose.removeClass('visible');
 				}
