@@ -52,6 +52,29 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				index++;
 			}
 			return null;
+		},
+		function(){
+			var hours = self.get_hours();
+			var errors = [];
+			$.each(hours, function(day, openclose){
+				var open = openclose.open.match(/^(\d\d):(\d\d)$/);
+				var close = openclose.close.match(/^(\d\d):(\d\d)$/);
+				if (! open ||
+				    parseInt(open[1]) > 23 ||
+				    parseInt(open[2]) > 59){
+					errors.push('Open time for ' + day);
+				}
+				if (! close ||
+				    parseInt(close[1]) > 23 ||
+				    parseInt(close[2]) > 59){
+					errors.push('Close time for ' + day);
+				}
+			});
+			if (errors.length > 0){
+				return "Check to make sure you've typed in the hours correctly (e.g., 09:00 or 17:30). The following values had problems: <ul><li>" + errors.join('</li><li>') + "</li></ul>";
+			} else {
+				return null;
+			}
 		}
 	];
 
@@ -862,6 +885,24 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return tags;
 		},
 
+		get_hours: function(){
+			var hours = {};
+			var days = ['Sunday', 'Monday', 'Tueday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			$.each(days, function(i, day){
+				var checkbox = '#hours-checkbox-' + day.toLowerCase();
+				var open = '#hours-open-' + day.toLowerCase();
+				var close = '#hours-close-' + day.toLowerCase();
+				if (! $(checkbox)[0].checked){
+					return;
+				}
+				hours[day] = {
+					open: $(open).val(),
+					close: $(close).val()
+				};
+			});
+			return hours;
+		},
+
 		lookup_hierarchy: function(lat, lng) {
 			self.reverse_geocode(lat, lng, function(rsp) {
 				var parents = rsp.parents;
@@ -1175,6 +1216,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			geojson_obj.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
 			geojson_obj.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
 			geojson_obj.properties['mz:categories'] = self.get_categories();
+
+			if ($('#hours').length > 0){
+				geojson_obj.properties['mz:hours'] = self.get_hours();
+			}
 
 			return JSON.stringify(geojson_obj);
 		},
