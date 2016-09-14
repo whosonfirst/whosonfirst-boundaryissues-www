@@ -520,12 +520,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var days = ['Sunday', 'Monday', 'Tueday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 			$.each(days, function(i, day){
 				var checkbox = 'hours-checkbox-' + day.toLowerCase();
+				var openclose = 'hours-openclose-' + day.toLowerCase();
 				var open = 'hours-open-' + day.toLowerCase();
 				var close = 'hours-close-' + day.toLowerCase();
 				$('#hours').append($(
 					'<div class="hours-day">' +
 					'<input type="checkbox" id="' + checkbox + '" class="hours-checkbox"><label for="' + checkbox + '">' + day + '</label>' +
-					'<div class="hours-openclose">' +
+					'<div id="' + openclose + '" class="hours-openclose">' +
 					'Open: <input type="text" id="' + open + '" placeholder="00:00"><br>' +
 					'Close: <input type="text" id="' + close + '" placeholder="00:00">' +
 					'</div>' +
@@ -542,6 +543,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$openclose.removeClass('visible');
 				}
 			});
+
+			if ($('input[name="properties.mz:hours"]').length > 0){
+				var hours_json = $('input[name="properties.mz:hours"]').val();
+				var hours = JSON.parse(hours_json);
+				$.each(hours, function(day, value){
+					var checkbox = '#hours-checkbox-' + day.toLowerCase();
+					var openclose = '#hours-openclose-' + day.toLowerCase();
+					var open = '#hours-open-' + day.toLowerCase();
+					var close = '#hours-close-' + day.toLowerCase();
+					$(checkbox)[0].checked = true;
+					$(openclose).addClass('visible');
+					$(open).val(value.open);
+					$(close).val(value.close);
+				});
+			}
 		},
 
 		get_property_rel: function(prefix){
