@@ -330,10 +330,12 @@
 		api_output_ok($rsp);
 
 	}
-	
+
 	########################################################################
 
 	function api_wof_get_photos(){
+
+		api_utils_features_ensure_enabled(array('photos'));
 
 		$wof_id = post_int32('wof_id');
 		$rsp = wof_photos_get($wof_id);

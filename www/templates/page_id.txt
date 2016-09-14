@@ -67,8 +67,10 @@
 					</div>
 					{/if}
 
-					<h3 class="headroom">Photos</h3>
-					<div id="photos">Loading photos...</div>
+					{if $cfg.enable_feature_photos}
+						<h3 class="headroom">Photos</h3>
+						<div id="photos">Loading photos...</div>
+					{/if}
 
 					<ul id="edit-options">
 						<li><a href="{$cfg.abs_root_url}id/{$wof_id|@escape}.geojson" id="geojson-link">Raw GeoJSON</a></li>

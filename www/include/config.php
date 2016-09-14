@@ -98,9 +98,10 @@
 	$GLOBALS['cfg']['gearman_port'] = '4730';
 
 	// Put this in your secrets/local config
+	$GLOBALS['cfg']['enable_feature_photos'] = 0;
 	$GLOBALS['cfg']['flickr_api_key'] = '';
 	$GLOBALS['cfg']['flickr_api_secret'] = '';
-	
+
 	// Also this
 	$GLOBALS['cfg']['enable_feature_slack_bot'] = false;
 	$GLOBALS['cfg']['slack_bot_webhook_url'] = '';

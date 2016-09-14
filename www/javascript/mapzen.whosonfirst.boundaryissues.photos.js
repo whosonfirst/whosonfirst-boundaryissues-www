@@ -17,7 +17,7 @@ mapzen.whosonfirst.boundaryissues.photos = (function() {
 			var wof_id = $('input[name="wof_id"]').val();
 			if (wof_id && $('#photos-form').length > 0){
 				self.mark_photos(wof_id);
-			} else if (wof_id && $('#edit-form').length > 0){
+			} else if (wof_id && $('#edit-form #photos').length > 0){
 				self.show_photo_thumb(wof_id);
 			}
 		},
@@ -79,7 +79,7 @@ mapzen.whosonfirst.boundaryissues.photos = (function() {
 
 			var onerror = function(){
 			};
-			
+
 			var wof_id = $('input[name="wof_id"]').val();
 			var flickr_id = $figure.data('flickr-id');
 
@@ -92,7 +92,7 @@ mapzen.whosonfirst.boundaryissues.photos = (function() {
 		}
 
 	};
-	
+
 	return self;
 
 })();
