@@ -419,7 +419,8 @@
 		}
 
 		api_output_ok(array(
-			'properties' => $props
+			'properties' => $props,
+			'libpostal_results' => $results
 		));
 	}
 
