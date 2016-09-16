@@ -375,7 +375,8 @@
 		// See: https://github.com/whosonfirst/whosonfirst-properties/blob/master/properties/addr.md
 		$libpostal_translation = array(
 			'house_number' => 'addr:housenumber',
-			'road' => 'addr:street'
+			'road' => 'addr:street',
+			'postcode' => 'addr:postcode'
 		);
 
 		if ($GLOBALS['cfg']['wof_libpostal_host']) {
