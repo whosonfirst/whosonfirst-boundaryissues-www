@@ -468,6 +468,11 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 
 #address-properties {
 	background: #ededed;
-	padding: 10px;
+	padding: 0 10px 10px 10px;
 	margin-bottom: 10px;
+}
+
+#address-properties dt {
+	font-size: 80%;
+	margin-top: 10px;
 }
