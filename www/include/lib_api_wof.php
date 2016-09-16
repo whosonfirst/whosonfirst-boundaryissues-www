@@ -368,7 +368,7 @@
 
 		$query = request_str('query');
 		$props = array(
-			'addr:full' => str_replace("\n", ', ', $query)
+			'addr:full' => str_replace("\r\n", ', ', $query)
 		);
 
 		// Translation lookup from libpostal labels to WOF properties
