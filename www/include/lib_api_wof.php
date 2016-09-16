@@ -383,7 +383,7 @@
 				'address' => $query
 			));
 			$host = $GLOBALS['cfg']['wof_libpostal_host'];
-			$rsp = http_get("http://$host/?$query");
+			$rsp = http_get("http://$host/parse?$query");
 			if (! $rsp['ok']){
 				api_output_error(400, 'Error loading results from libpostal.');
 			}
