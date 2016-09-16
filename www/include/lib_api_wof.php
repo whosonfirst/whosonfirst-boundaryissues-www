@@ -433,7 +433,9 @@
 			if ($rsp['ok']) {
 				$pip_results = json_decode($rsp['body'], 'as hash');
 				foreach ($pip_results as $result) {
-					if ($result['Placetype'] == 'postcode') {
+					if ($result['Placetype'] == 'postalcode' &&
+					    ! $result['Deprecated'] &&
+					    ! $result['Superseded']) {
 						$props['addr:postcode'] = $result['name'];
 					}
 				}
