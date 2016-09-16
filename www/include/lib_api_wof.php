@@ -382,7 +382,8 @@
 			$query = http_build_query(array(
 				'address' => $query
 			));
-			$rsp = http_get($GLOBALS['cfg']['wof_libpostal_host'] . "?$query");
+			$host = $GLOBALS['cfg']['wof_libpostal_host'];
+			$rsp = http_get("http://$host/?$query");
 			if (! $rsp['ok']){
 				api_output_error(400, 'Error loading results from libpostal.');
 			}
