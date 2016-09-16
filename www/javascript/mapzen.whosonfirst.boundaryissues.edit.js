@@ -579,7 +579,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				e.preventDefault();
 
 				var data = {
-					query: $('#address-query').val()
+					query: $('#address-query').val(),
+					latitude: $('input[name="properties.wof:latitude"]').val(),
+					longitude: $('input[name="properties.wof:longitude"]').val()
 				};
 
 				$('#address-btn').removeClass('btn-primary');

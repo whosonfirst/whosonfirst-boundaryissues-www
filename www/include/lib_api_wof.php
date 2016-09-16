@@ -419,6 +419,27 @@
 			}
 		}
 
+		if (! $props['addr:postcode'] &&
+		    $GLOBALS['cfg']['wof_postcode_pip_host']) {
+
+			// Look up the postcode using lat/lng if we don't know it
+
+			$query = http_build_query(array(
+				'latitude' => request_float('latitude'),
+				'longitude' => request_float('longitude')
+			));
+			$host = $GLOBALS['cfg']['wof_postcode_pip_host'];
+			$rsp = http_get("http://$host/?$query");
+			if ($rsp['ok']) {
+				$pip_results = json_decode($rsp['body'], 'as hash');
+				foreach ($pip_results as $result) {
+					if ($result['Placetype'] == 'postcode') {
+						$props['addr:postcode'] = $result['name'];
+					}
+				}
+			}
+		}
+
 		api_output_ok(array(
 			'properties' => $props,
 			'libpostal_results' => $results
