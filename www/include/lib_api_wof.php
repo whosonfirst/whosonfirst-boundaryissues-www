@@ -436,7 +436,7 @@
 					if ($result['Placetype'] == 'postalcode' &&
 					    ! $result['Deprecated'] &&
 					    ! $result['Superseded']) {
-						$props['addr:postcode'] = $result['name'];
+						$props['addr:postcode'] = $result['Name'];
 					}
 				}
 			}
