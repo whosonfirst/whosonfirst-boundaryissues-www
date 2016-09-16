@@ -359,4 +359,67 @@
 		api_output_ok($rsp);
 	}
 
+	########################################################################
+
+	function api_wof_address_lookup(){
+
+		// This stuff should probably live in its own dedicated library.
+		// For now it's going to live here. (20160916/dphiffer)
+
+		$query = request_str('query');
+		$props = array(
+			'addr:full' => str_replace("\n", ', ', $query)
+		);
+
+		// Translation lookup from libpostal labels to WOF properties
+		// See: https://github.com/whosonfirst/whosonfirst-properties/blob/master/properties/addr.md
+		$libpostal_translation = array(
+			'house_number' => 'addr:housenumber',
+			'road' => 'addr:street'
+		);
+
+		if ($GLOBALS['cfg']['wof_libpostal_host']) {
+			$query = http_build_query(array(
+				'address' => $query
+			));
+			$rsp = http_get($GLOBALS['cfg']['wof_libpostal_host'] . "?$query");
+			if (! $rsp['ok']){
+				api_output_error(400, 'Error loading results from libpostal.');
+			}
+			$results = json_decode($rsp['body'], 'as hash');
+		} else {
+			// Placeholders for testing
+			$results = array(
+				array(
+					"label" => "house_number",
+					"value" => "475"
+				),
+				array(
+					"label" => "road",
+					"value" => "sansome st"
+				),
+				array(
+					"label" => "city",
+					"value" => "san francisco"
+				),
+				array(
+					"label" => "state",
+					"value" => "ca"
+				)
+			);
+		}
+
+		foreach ($results as $result) {
+			$label = $result['label'];
+			if ($libpostal_translation[$label]) {
+				$key = $libpostal_translation[$label];
+				$props[$key] = $result['value'];
+			}
+		}
+
+		api_output_ok(array(
+			'properties' => $props
+		));
+	}
+
 	# the end

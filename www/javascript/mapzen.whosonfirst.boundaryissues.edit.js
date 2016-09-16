@@ -352,6 +352,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			self.setup_categories();
 			self.setup_hours();
+			self.setup_address();
 		},
 
 		setup_add_property: function(){
@@ -569,6 +570,73 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					}
 				});
 			}
+		},
+
+		setup_address: function(){
+			$('#address-btn').attr('disabled', null);
+			$('#address-btn').click(function(e) {
+
+				e.preventDefault();
+
+				var data = {
+					query: $('#address-query').val()
+				};
+
+				$('#address-btn').removeClass('btn-primary');
+				$('#address-btn').html('Loading...');
+				$('#address-btn').attr('disabled', 'disabled');
+
+				var onsuccess = function(rsp){
+
+					$('#address-btn').addClass('hidden');
+					$('#address-query').addClass('hidden');
+
+					var html = '<p><strong>Assign these properties?</strong> <span class="caveat">Note: not <strong>all</strong> address properties are encoded in addr:* fields.</span></p>';
+					html += '<dl id="address-properties">';
+
+					$.each(rsp.properties, function(key, value) {
+						html += '<dt>' + key + '</dt>' +
+						        '<dd>' + value + '</dd>';
+					});
+					html += '</dl>';
+					html += '<button id="address-assign" class="btn btn-primary">Assign properties</button>';
+					html += ' <button id="address-cancel" class="btn">Cancel</button>';
+					$('#address-results').html(html);
+
+					var resetAddress = function(){
+						$('#address-btn').removeClass('hidden');
+						$('#address-query').removeClass('hidden');
+						$('#address-btn').addClass('btn-primary');
+						$('#address-btn').html('Extract properties');
+						$('#address-btn').attr('disabled', null);
+					};
+
+					$('#address-assign').click(function(e){
+
+						e.preventDefault();
+
+						$.each(rsp.properties, function(key, value) {
+							self.set_property(key, value);
+						});
+						resetAddress();
+						$('#address-results').html('<p class="headroom">Assigned properties!</p>');
+					});
+
+					$('#address-cancel').click(function(e){
+						resetAddress();
+						$('#address-results').html('');
+					});
+				};
+
+				var onerror = function(rsp){
+					$('#address-results').html('Error parsing address!');
+					$('#address-btn').addClass('btn-primary');
+					$('#address-btn').html('Extract properties');
+					$('#address-btn').attr('disabled', null);
+				};
+
+				mapzen.whosonfirst.boundaryissues.api.api_call("wof.address_lookup", data, onsuccess, onerror);
+			});
 		},
 
 		get_property_rel: function(prefix){

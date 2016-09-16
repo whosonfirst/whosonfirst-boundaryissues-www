@@ -461,3 +461,13 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 .hours-openclose.visible {
 	display: block;
 }
+
+#address-query {
+	margin-top: 5px;
+}
+
+#address-properties {
+	background: #ededed;
+	padding: 10px;
+	margin-bottom: 10px;
+}

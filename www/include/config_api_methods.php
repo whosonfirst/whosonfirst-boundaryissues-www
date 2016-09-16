@@ -141,7 +141,7 @@
 				array("name" => "flickr_id", "description" => "The Flickr photo ID.", "documented" => 1, "required" => 1)
 			)
 		),
-		
+
 		"wof.places.get_nearby" => array(
 			"description" => "",
 			"documented" => 1,
@@ -187,5 +187,20 @@
 	), $GLOBALS['cfg']['api']['methods']);
 
 	########################################################################
+
+	if ($GLOBALS['cfg']['enable_feature_libpostal']){
+		$GLOBALS['cfg']['api']['methods'] = array_merge(array(
+			"wof.address_lookup" => array(
+				"description" => "Look up an address",
+				"documented" => 1,
+				"enabled" => 1,
+				"paginated" => 0,
+				"library" => "api_wof",
+				"parameters" => array(
+					array("name" => "query", "description" => "", "documented" => 1, "required" => 1),
+				),
+			)
+		), $GLOBALS['cfg']['api']['methods']);
+	}
 
 	# the end

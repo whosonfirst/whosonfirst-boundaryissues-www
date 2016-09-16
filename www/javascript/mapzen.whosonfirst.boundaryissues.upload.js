@@ -63,7 +63,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var onerror = function(){
 				mapzen.whosonfirst.log.debug("error loading property aliases.");
 			};
-			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+			var cache_ttl = 60 * 60 * 1000; // one hour
+			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror, cache_ttl);
 		},
 
 		show_preview: function(){

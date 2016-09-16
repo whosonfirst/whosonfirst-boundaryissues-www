@@ -109,6 +109,9 @@
 	// Limit editable placetypes (array or false for no limit)
 	$GLOBALS['cfg']['require_wof_placetypes'] = false;
 
+	$GLOBALS['cfg']['enable_feature_libpostal'] = false;
+	$GLOBALS['cfg']['wof_libpostal_host'] = ''; // Set in secrets/local config
+
 	// This search query filtering business is here because we've moved
 	// all our Elasticsearch business onto a single common index, but each
 	// application is only set up to edit a subset of the documents. The

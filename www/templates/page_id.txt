@@ -54,6 +54,15 @@
 						<div id="hours"></div>
 					{/if}
 
+					{if $cfg.enable_feature_libpostal}
+						<h3 class="headroom">Address</h3>
+						<div id="address">
+							<textarea id="address-query" placeholder="Enter full address here" rows="2" cols="40"></textarea>
+							<button id="address-btn" class="btn btn-primary">Extract properties</button>
+							<div id="address-results"></div>
+						</div>
+					{/if}
+
 					{if $cfg.user}
 					<h3 class="headroom">Options</h3>
 					<div id="edit-buttons">
