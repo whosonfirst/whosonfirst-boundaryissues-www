@@ -597,8 +597,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					html += '<dl id="address-properties">';
 
 					$.each(rsp.properties, function(key, value) {
+						key = esc_str(key);
+						value = esc_str(value);
+						var input = '<input type="text" data-property="' + key + '" class="address-property" value="' + value + '">';
 						html += '<dt>' + key + '</dt>' +
-						        '<dd>' + value + '</dd>';
+						        '<dd>' + input + '</dd>';
 					});
 					html += '</dl>';
 					html += '<button id="address-assign" class="btn btn-primary">Assign properties</button>';
@@ -617,8 +620,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 						e.preventDefault();
 
-						$.each(rsp.properties, function(key, value) {
-							self.set_property(key, value);
+						$('#address-properties .address-property').each(function(i, input) {
+							var property = $(input).data('property');
+							var value = $(input).val();
+							self.set_property(property, value);
 						});
 						resetAddress();
 						$('#address-results').html('<p class="headroom">Assigned properties!</p>');

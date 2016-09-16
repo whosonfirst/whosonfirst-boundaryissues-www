@@ -475,3 +475,7 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 #address-properties dt {
 	margin-top: 5px;
 }
+
+#address-properties dd input {
+	width: 100%;
+}
