@@ -261,4 +261,36 @@
 
 	########################################################################
 
+	function wof_render_names(&$values){
+
+		// Default languages
+		$lang_defaults = array(
+			'eng'
+		);
+		$names = array();
+		foreach ($lang_defaults as $lang) {
+			dbug($lang);
+			$names[$lang] = array(
+				'preferred' => array(),
+				'variant' => array()
+			);
+		}
+
+		if (! $values['properties']){
+			return $names;
+		}
+
+		// Assign names from values
+		foreach ($values['properties'] as $key => $value){
+			if (preg_match('/^name:(.+)_x_(.+)$/', $key, $matches)){
+				list(, $lang, $type) = $matches;
+				if (! $names[$lang]){
+					$names[$lang] = array();
+				}
+				$names[$lang][$type] = $value;
+			}
+		}
+		return $names;
+	}
+
 	# the end

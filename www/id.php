@@ -56,6 +56,8 @@
 	$GLOBALS['smarty']->assign('wof_hierarchy', json_encode($values['properties']['wof:hierarchy']));
 	$GLOBALS['smarty']->assign('geometry', json_encode($values['geometry']));
 
+	$GLOBALS['smarty']->assign('names', wof_render_names($values));
+
 	$events = wof_events_for_id($wof_id);
 	$GLOBALS['smarty']->assign_by_ref('events', $events);
 

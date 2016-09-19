@@ -54,6 +54,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return null;
 		},
 		function(){
+			if ($('input[name="wof_id"]').length == 0){
+				return null;
+			}
 			var hours = self.get_hours();
 			var errors = [];
 			$.each(hours, function(day, openclose){
@@ -353,6 +356,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.setup_categories();
 			self.setup_hours();
 			self.setup_address();
+			self.setup_names();
 		},
 
 		setup_add_property: function(){
@@ -643,6 +647,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				};
 
 				mapzen.whosonfirst.boundaryissues.api.api_call("wof.address_lookup", data, onsuccess, onerror);
+			});
+		},
+
+		setup_names: function(){
+			var lang = $('#names-languages').val();
+			$('#names-' + lang).addClass('visible');
+			$('#names-languages').change(function(e){
+				var lang = $('#names-languages').val();
+				$('.names-language.visible').removeClass('visible');
+				$('#names-' + lang).addClass('visible');
 			});
 		},
 

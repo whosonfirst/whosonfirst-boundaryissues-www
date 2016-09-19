@@ -479,3 +479,11 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 #address-properties dd input {
 	width: 100%;
 }
+
+.names-language {
+	display: none;
+}
+
+.names-language.visible {
+	display: block;
+}
