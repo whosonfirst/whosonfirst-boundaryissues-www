@@ -651,12 +651,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_names: function(){
-			var lang = $('#names-languages').val();
-			$('#names-' + lang).addClass('visible');
+			var lang = 'eng';
+			$('#names-languages').val(lang)
+			$('#names-language-' + lang).addClass('property-visible');
 			$('#names-languages').change(function(e){
 				var lang = $('#names-languages').val();
-				$('.names-language.visible').removeClass('visible');
-				$('#names-' + lang).addClass('visible');
+				$('.names-language.property-visible').removeClass('property-visible');
+				$('#names-language-' + lang).addClass('property-visible');
 			});
 		},
 
@@ -701,12 +702,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var html = '<h3 class="property-group-heading collapsed">' + prefix + '</h3>' +
 				           '<div id="property-group-' + prefix + '" class="property-group collapsed json-schema-object" data-context="properties"><table><tbody></tbody></table></div>';
 				$('#json-schema-object-properties').after(html);
-				$.each(groups[prefix], function(j, $row){
-					$('#property-group-' + prefix + ' > table > tbody').append($row);
-					if ($row.hasClass('property-minimum_viable')){
-						$('#json-schema-object-properties > table > tbody').append($row.clone());
-					}
-				});
+				if (prefix == 'name') {
+					$.each(groups[prefix], function(j, $row){
+						$row.addClass('hidden');
+					});
+					$('#json-schema-object-names > table > tbody > tr > th').each(function(i, th){
+						var lang = $(th).html();
+						$(th).closest('tr').attr('id', 'names-language-' + lang);
+						$(th).closest('tr').addClass('names-language');
+						$(th).closest('tr').removeClass('property-visible');
+					});
+					var $langRows = $('#json-schema-object-names > table > tbody > tr');
+					$('#property-group-name > table > tbody').append('<tr><td colspan="2" id="name-languages-holder"></td></tr>');
+					$('#name-languages-holder').html($('#names-languages'));
+					$('#property-group-name > table > tbody').append($langRows);
+				} else {
+					$.each(groups[prefix], function(j, $row){
+						$('#property-group-' + prefix + ' > table > tbody').append($row);
+						if ($row.hasClass('property-minimum_viable')){
+							$('#json-schema-object-properties > table > tbody').append($row.clone());
+						}
+					});
+				}
 			});
 
 			$mvp = $('#json-schema-object-properties');

@@ -480,10 +480,22 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 	width: 100%;
 }
 
+#names {
+	display: none;
+}
+
 .names-language {
 	display: none;
 }
 
 .names-language.visible {
 	display: block;
+}
+
+#names-languages {
+	margin-bottom: 10px;
+}
+
+#property-group-name > table > tbody > tr > th {
+	display: none;
 }

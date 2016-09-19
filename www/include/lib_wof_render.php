@@ -132,6 +132,26 @@
 		)
 	);
 
+	// See also: https://github.com/whosonfirst/whosonfirst-names/blob/master/inventory/inventory.py#L12-L31
+	$GLOBALS['names_default_languages'] = array(
+		"ara",
+		"zho",
+		"eng",
+		"spa",
+		"fre",
+		"rus",
+		"por",	# proposed UN
+		"ben",	# proposed UN
+		"hin",	# proposed UN
+		"tur",	# proposed UN
+		"ger",	# because tilezen
+		"jap",	# because tilezen
+		"kor",	# because tilezen
+		"ita",	# because tilezen
+		"gre",	# because tilezen
+		"vie"   # because tilezen
+	);
+
 	########################################################################
 
 	function wof_render_insert_values(&$schema, $values) {
@@ -264,15 +284,23 @@
 	function wof_render_names(&$values){
 
 		// Default languages
-		$lang_defaults = array(
-			'eng'
+		$lang_defaults = $GLOBALS['names_default_languages'];
+
+		$names = array(
+			'type' => 'object',
+			'properties' => array()
 		);
-		$names = array();
 		foreach ($lang_defaults as $lang) {
-			dbug($lang);
-			$names[$lang] = array(
-				'preferred' => array(),
-				'variant' => array()
+			$names['properties'][$lang] = array(
+				'type' => 'object',
+				'properties' => array(
+					'preferred' => array(
+						'type' => 'array'
+					),
+					'variant' => array(
+						'type' => 'array'
+					)
+				)
 			);
 		}
 
@@ -285,11 +313,24 @@
 			if (preg_match('/^name:(.+)_x_(.+)$/', $key, $matches)){
 				list(, $lang, $type) = $matches;
 				if (! $names[$lang]){
-					$names[$lang] = array();
+					$names['properties'][$lang] = array(
+						'type' => 'object',
+						'properties' => array()
+					);
 				}
-				$names[$lang][$type] = $value;
+				$names['properties'][$lang]['properties'][$type] = array(
+					'type' => 'array',
+					'properties' => array()
+				);
+				foreach ($value as $item) {
+					$names['properties'][$lang]['properties'][$type]['properties'][] = array(
+						'type' => 'string',
+						'_value' => $item
+					);
+				}
 			}
 		}
+
 		return $names;
 	}
 

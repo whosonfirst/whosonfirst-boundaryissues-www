@@ -34,6 +34,7 @@
 					{else}
 						<div class="caveat">You need to be logged in to save changes</div>
 					{/if}
+					{include file="inc_wof_names.txt"}
 				</div>
 				<div id="edit-sidebar" class="col-md-4 col">
 					<h3>Hierarchy</h3>
@@ -61,39 +62,6 @@
 							</div>
 						{/if}
 					{/if}
-
-					<h3 class="headroom">Names</h3>
-					<div id="names">
-						<select id="names-languages">
-							{foreach from=$names key=lang item=types}
-								<option value="{$lang}">{$lang}</option>
-							{/foreach}
-						</select>
-						{foreach from=$names key=lang item=lang_values}
-							<div id="names-{$lang}" class="names-language">
-								{assign var=context value="names-$lang"}
-								<div class="json-schema-object" data-context="{$context}">
-									<table>
-										{foreach from=$lang_values key=type item=lang_names}
-											<tr class="{$type|@wof_render_property_classes|@escape}">
-												<th>{$type}</th>
-												<td>
-													{assign var="name" value="`$context`.`$type`"}
-													{include file="inc_json_schema_field.txt" name=$name property=$property context=$name}
-												</td>
-											</tr>
-										{/foreach}
-
-										<tr class="add-row">
-											<th><input type="text" class="add-key" placeholder="Key"></th>
-											<td><input type="text" class="add-value" placeholder="Value"><button class="btn btn-add btn-add-value">+</button></td>
-										</tr>
-
-									</table>
-								</div>
-							</div>
-						{/foreach}
-					</div>
 
 					{if $cfg.user}
 					<h3 class="headroom">Options</h3>
