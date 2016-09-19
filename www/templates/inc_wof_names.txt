@@ -1,0 +1,8 @@
+<div id="names">
+	<select id="names-languages">
+		{foreach from=$names.properties key=lang item=types}
+			<option value="{$lang}">{$lang}</option>
+		{/foreach}
+	</select>
+	{include file="inc_json_schema_object.txt" schema=$names context="names"}
+</div>
