@@ -299,6 +299,9 @@
 					),
 					'variant' => array(
 						'type' => 'array'
+					),
+					'colloquial' => array(
+						'type' => 'array'
 					)
 				)
 			);
@@ -328,6 +331,21 @@
 						'_value' => $item
 					);
 				}
+			}
+			if (empty($names['properties'][$lang]['properties']['preferred'])) {
+				$names['properties'][$lang]['properties']['preferred'] = array(
+					'type' => 'array'
+				);
+			}
+			if (empty($names['properties'][$lang]['properties']['variant'])) {
+				$names['properties'][$lang]['properties']['variant'] = array(
+					'type' => 'array'
+				);
+			}
+			if (empty($names['properties'][$lang]['properties']['colloquial'])) {
+				$names['properties'][$lang]['properties']['colloquial'] = array(
+					'type' => 'array'
+				);
 			}
 		}
 

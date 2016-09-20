@@ -75,6 +75,10 @@ input.add-item, .btn-add-item, tr.add-row {
 	display: table-row;
 }
 
+.json-schema-field {
+	position: relative;
+}
+
 .json-schema-array > ul {
 	margin-bottom: 0;
 	padding-left: 0;
@@ -106,6 +110,13 @@ th:hover .remove-row {
 #edit-form .btn-remove-item {
 	margin-top: 0;
 	padding: 3px 8px;
+}
+
+.json-schema-array + .btn-remove-item {
+	background: #fff;
+	position: absolute;
+	left: -36px;
+	top: 5px;
 }
 
 #edit-status {
@@ -488,8 +499,8 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 	display: none;
 }
 
-.names-language.visible {
-	display: block;
+.names-language > td > .json-schema-field > .btn-remove-item {
+	display: none;
 }
 
 #names-languages {
@@ -498,4 +509,9 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 
 #property-group-name > table > tbody > tr > th {
 	display: none;
+}
+
+.names-language .object-property > td > .json-schema-field > .btn-remove-item,
+.names-language .add-row {
+	display: none !important;
 }
