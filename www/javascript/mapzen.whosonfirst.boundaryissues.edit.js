@@ -393,6 +393,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$('#edit-form').on('propertychanged', function(e, property, value) {
+				$('input[name="' + property + '"]').parents('tr,li').addClass('property-changed');
 				if (property == 'properties.wof:name') {
 					var id = $('input[name="wof_id"]').val();
 					if (id){
@@ -522,7 +523,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if ($('#hours').length == 0){
 				return;
 			}
-			var days = ['Sunday', 'Monday', 'Tueday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 			$.each(days, function(i, label){
 				var day = label.toLowerCase().substr(0, 3);
 				var checkbox = 'hours-checkbox-' + day;
@@ -821,6 +822,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.add_object_row($rel, property, value);
 			} else {
 				$('input[name="properties.' + property + '"]').val(value);
+				$('#edit-form').trigger('propertychanged', [property, value]);
 			}
 		},
 
@@ -853,6 +855,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$rel.find('input[name="' + context + '.' + key + '"]').val(value);
+			$('#edit-form').trigger('propertychanged', [context + '.' + key, value]);
 		},
 
 		add_array_item: function($rel, value) {
@@ -870,6 +873,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$new_item.remove();
 			});
 			$new_item.find('.property').val(value);
+
+			$('#edit-form').trigger('propertychanged', [context + '[' + index + ']', value]);
 		},
 
 		update_coordinates: function(ll, reverse_geocode) {
@@ -1368,13 +1373,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		generate_name_geojson: function(geojson_obj){
-			console.log('generate_name_geojson');
 			var names = {};
 			$('.names-language input.property').each(function(i, input){
-				//console.log(input);
 				var match = $(input).attr('name').match(/names\.([^.]+)\.(.+?)\[/);
 				if (match){
-					//console.log(match);
 					var lang = match[1];
 					var type = match[2];
 					var prop = "name:" + lang + '_x_' + type;
@@ -1384,7 +1386,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					names[prop].push($(input).val());
 				}
 			});
-			console.log(names);
 			$.each(names, function(prop, value){
 				geojson_obj.properties[prop] = value;
 			});
@@ -1438,6 +1439,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					location.href = url;
 				} else {
 					$status.html('Saved');
+					$('#edit-form .property-changed').removeClass('property-changed');
 				}
 				self.enable_saving();
 			};
@@ -1578,6 +1580,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		self.setup_properties();
 		self.setup_form();
 		self.setup_buttons();
+
+		window.onbeforeunload = function(e) {
+			if ($('#edit-form .property-changed').length > 0) {
+				var dialogText = 'Discard unsaved changes?';
+				e.returnValue = dialogText;
+				return dialogText;
+			} else {
+				return;
+			}
+		};
 	});
 
 	return self;

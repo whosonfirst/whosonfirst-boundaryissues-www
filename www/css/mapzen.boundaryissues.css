@@ -522,20 +522,37 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 	padding-bottom: 10px;
 }
 
-.json-schema-field {
+.json-schema-field,
+.json-schema-array > ul > li {
 	margin-bottom: 1px;
 }
 
 .add-row {
-	background: #444 url("../images/stripes_bg.gif");
+	background: #337ab7 url("../images/stripes_bg.gif");
 }
 
 .add-row td {
 	padding: 10px 10px 10px 5px;
 }
 
-.add-row th {
+.add-row th,
+.property-changed .add-row th {
+	color: inherit;
 	border-right: 0;
 	background: transparent;
 	outline: 0;
+}
+
+.add-row input {
+	border-color: #2e6da4;
+}
+
+.property-changed > th {
+	color: #fff;
+	background: #337ab7;
+}
+
+.property-changed > td > input.property,
+.property-changed > input.property {
+	border-color: #2e6da4;
 }
