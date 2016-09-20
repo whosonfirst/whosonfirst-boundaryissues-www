@@ -349,6 +349,9 @@
 			}
 		}
 
+		// Sort by language
+		ksort($names['properties']);
+
 		return $names;
 	}
 
