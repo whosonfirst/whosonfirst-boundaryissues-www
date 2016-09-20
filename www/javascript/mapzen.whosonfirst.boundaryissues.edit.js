@@ -703,19 +703,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				           '<div id="property-group-' + prefix + '" class="property-group collapsed json-schema-object" data-context="properties"><table><tbody></tbody></table></div>';
 				$('#json-schema-object-properties').after(html);
 				if (prefix == 'name') {
-					$.each(groups[prefix], function(j, $row){
-						$row.addClass('hidden');
-					});
-					$('#json-schema-object-names > table > tbody > tr > th').each(function(i, th){
-						var lang = $(th).html();
-						$(th).closest('tr').attr('id', 'names-language-' + lang);
-						$(th).closest('tr').addClass('names-language');
-						$(th).closest('tr').removeClass('property-visible');
-					});
-					var $langRows = $('#json-schema-object-names > table > tbody > tr');
-					$('#property-group-name > table > tbody').append('<tr><td colspan="2" id="name-languages-holder"></td></tr>');
-					$('#name-languages-holder').html($('#names-languages'));
-					$('#property-group-name > table > tbody').append($langRows);
+					self.setup_name_properties(groups[prefix]);
 				} else {
 					$.each(groups[prefix], function(j, $row){
 						$('#property-group-' + prefix + ' > table > tbody').append($row);
@@ -733,6 +721,22 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$mvp.before('<h4 id="mvp-heading" class="property-group-heading">Minimum viable properties</h4>');
 
 			$('.property-group-heading').click(self.toggle_property_group);
+		},
+
+		setup_name_properties: function(props){
+			$.each(props, function(j, $row){
+				$row.remove();
+			});
+			$('#json-schema-object-names > table > tbody > tr > th').each(function(i, th){
+				var lang = $(th).html();
+				$(th).closest('tr').attr('id', 'names-language-' + lang);
+				$(th).closest('tr').addClass('names-language');
+				$(th).closest('tr').removeClass('property-visible');
+			});
+			var $langRows = $('#json-schema-object-names > table > tbody > tr');
+			$('#property-group-name > table > tbody').append('<tr><td colspan="2" id="name-languages-holder"></td></tr>');
+			$('#name-languages-holder').html($('#names-languages'));
+			$('#property-group-name > table > tbody').append($langRows);
 		},
 
 		toggle_property_group: function(e){
@@ -1310,6 +1314,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			};
 
 			$('#edit-form').find('.property').each(function(i, input) {
+				if ($(input).closest('.names-language').length > 0){
+					// Don't encode custom UI name:* properties
+					return;
+				}
 				var name = $(input).attr('name');
 				var value = $(input).val();
 				if ($(input).data('type') == 'number') {
@@ -1350,12 +1358,36 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			geojson_obj.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
 			geojson_obj.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
 			geojson_obj.properties['mz:categories'] = self.get_categories();
+			self.generate_name_geojson(geojson_obj);
 
 			if ($('#hours').length > 0){
 				geojson_obj.properties['mz:hours'] = self.get_hours();
 			}
 
 			return JSON.stringify(geojson_obj);
+		},
+
+		generate_name_geojson: function(geojson_obj){
+			console.log('generate_name_geojson');
+			var names = {};
+			$('.names-language input.property').each(function(i, input){
+				//console.log(input);
+				var match = $(input).attr('name').match(/names\.([^.]+)\.(.+?)\[/);
+				if (match){
+					//console.log(match);
+					var lang = match[1];
+					var type = match[2];
+					var prop = "name:" + lang + '_x_' + type;
+					if (! names[prop]) {
+						names[prop] = [];
+					}
+					names[prop].push($(input).val());
+				}
+			});
+			console.log(names);
+			$.each(names, function(prop, value){
+				geojson_obj.properties[prop] = value;
+			});
 		},
 
 		assign_property: function(context, name, value) {
