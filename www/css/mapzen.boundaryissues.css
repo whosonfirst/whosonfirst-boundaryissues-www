@@ -515,3 +515,27 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 .names-language .add-row {
 	display: none !important;
 }
+
+.json-schema-object th {
+	outline: 1px solid #fff;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.json-schema-field {
+	margin-bottom: 1px;
+}
+
+.add-row {
+	background: #444 url("../images/stripes_bg.gif");
+}
+
+.add-row td {
+	padding: 10px 10px 10px 5px;
+}
+
+.add-row th {
+	border-right: 0;
+	background: transparent;
+	outline: 0;
+}
