@@ -53,7 +53,7 @@
 			'minimum_viable' => true
 		),
 		'wof:placetype' => array(
-			'editable' => false,
+			'deletable' => false,
 			'minimum_viable' => true
 		),
 		'wof:name' => array(
@@ -65,6 +65,7 @@
 			'minimum_viable' => true
 		),
 		'wof:hierarchy' => array(
+			'deletable' => false,
 			'editable' => false
 		),
 		'wof:country' => array(

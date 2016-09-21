@@ -337,21 +337,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			if ($('#edit-form').hasClass('add-new-wof')) {
-				// Only show editable fields on the add page
-				$('tr.object-property input').each(function(i, input) {
-					$parent = $(input).closest('tr');
-					if ($parent.hasClass('property-editable')) {
-						input.removeAttribute('disabled');
-					} else {
-						$parent.removeClass('property-visible');
-					}
-				});
-			} else {
-				// Show read-only fields if it's an edit page
-				$('tr.object-property.property-editable input').each(function(i, input) {
-					input.removeAttribute('disabled');
-				});
+				$('input[name="properties.wof:id"').closest('.object-property').removeClass('property-visible');
 			}
+			// Show read-only fields if it's an edit page
+			$('tr.object-property.property-editable input').each(function(i, input) {
+				input.removeAttribute('disabled');
+			});
 
 			self.setup_categories();
 			self.setup_hours();
@@ -464,7 +455,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('#btn-rebuild-hierarchy').click(function(e) {
 				e.preventDefault();
-				$('input[name="properties.wof:parent_id"]').val(-1);
+				self.set_property('wof:parent_id', -1);
 				var $latInput = $('input[name="properties.geom:latitude"]');
 				var $lngInput = $('input[name="properties.geom:longitude"]');
 				if ($latInput.val() &&
@@ -822,7 +813,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.add_object_row($rel, property, value);
 			} else {
 				$('input[name="properties.' + property + '"]').val(value);
-				$('#edit-form').trigger('propertychanged', [property, value]);
+				$('#edit-form').trigger('propertychanged', ['properties.' + property, value]);
 			}
 		},
 
@@ -906,7 +897,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		update_where: function(lat, lng, reverse_geocode) {
 			var html = 'Coordinates: <strong>' + lat + ', ' + lng + '</strong>' +
-								 '<span id="where-parent"></span>';
+			           '<span id="where-parent"></span>';
 			$('#where').html(html);
 
 			$('#where-parent').click(function(e) {
@@ -1001,6 +992,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				});
 			}
 
+			if (type == 'value' || type == 'detail') {
+				$('#categories-' + type).change(function() {
+					var categories = self.get_categories();
+					var categories_json = JSON.stringify(categories);
+					self.set_property('mz:categories', categories_json);
+				});
+			}
 		},
 
 		get_categories: function() {
@@ -1083,8 +1081,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$.each(hierarchy, function(i, h) {
 						self.show_hierarchy(h);
 					});
-					$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
+					self.set_property('wof:parent_id', -1);
 				}
+
+				self.set_property('wof:hierarchy', JSON.stringify(hierarchy));
 
 				if (hierarchy.length == 0) {
 					self.set_hierarchy(null);
@@ -1112,21 +1112,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		set_parent: function(parent) {
 			if (! parent) {
-				$('input[name="properties.wof:parent_id"]').val(-1);
+				var id = -1;
 				$('#where-parent').html(' in (unknown)');
 				$('#parent').html('Parent: <code><small>-1</small></code>');
 			} else {
 				var id = esc_int(parent.Id);
 				var name = esc_str(parent.Name);
 				var placetype = esc_str(parent.Placetype);
-				$('input[name="properties.wof:parent_id"]').val(id);
 				$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
 
-			    var url = '/id/' + id + '/';
-			    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
-
+				var url = '/id/' + id + '/';
+				url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 				$('#parent').html('Parent: <a href="' + url + '">' + name + ' <code><small>' + id + '</small></code></a>');
 			}
+			self.set_property('wof:parent_id', id);
 		},
 
 		set_hierarchy: function(hierarchy) {
@@ -1153,7 +1152,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					label = key.match(labelRegex)[1];
 				}
 
-				var url = '/belongsto/' + id + '/';
+				var url = '/id/' + id + '/';
 				url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 
 				html += '<li>' + label + ': <a href="' + url + '" class="wof-namify hierarchy-' + id + '" data-wof-id="' + id + '">' + id + '</a></li>';
