@@ -1065,11 +1065,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else {
 					// There is more than one nearest parent. Gotta choose one!
 					var parent_html = [];
+					var parent_wof = {};
 					$.each(parents, function(i, parent) {
 						var id = esc_int(parent.Id);
 						var name = esc_str(parent.Name);
 						var placetype = esc_str(parent.Placetype);
-						parent_html.push('<strong data-id="' + id + '" data-placetype="' + placetype + '" title="Choose ' + name + ': ' + id + '">' + name + '</strong> (' + placetype + ')');
+						parent_html.push('<strong class="parent-candidate" data-id="' + id + '" data-placetype="' + placetype + '" title="Choose ' + name + ': ' + id + '">' + name + '</strong> (' + placetype + ')');
+						self.get_wof(id, function(wof) {
+							parent_wof[id] = wof;
+						});
 					});
 					var html = ' in either ';
 					html += parent_html.join(' or ');
@@ -1082,6 +1086,23 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						self.show_hierarchy(h);
 					});
 					self.set_property('wof:parent_id', -1);
+
+					var parent_hover = null;
+					$('#where-parent').mouseover(function(e) {
+						var id = $(e.target).data('id');
+						if (! id) {
+							return true;
+						}
+						parent_hover = L.geoJson(parent_wof[id], {
+							style: mapzen.whosonfirst.leaflet.styles.parent_polygon
+						}).addTo(map);
+					});
+
+					$('#where-parent').mouseout(function() {
+						if (parent_hover) {
+							map.removeLayer(parent_hover);
+						}
+					});
 				}
 
 				self.set_property('wof:hierarchy', JSON.stringify(hierarchy));
