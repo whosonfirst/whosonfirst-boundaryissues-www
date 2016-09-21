@@ -14,7 +14,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	    nearby = {},
 	    saving_disabled = false,
 	    VenueIcon,
-	    poi_icon_base;
+	    poi_icon_base,
+	    parent_layer,
+	    parent_hover;
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
@@ -262,6 +264,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
+					$(row).closest('.object-property').addClass('property-changed');
 					$(row).remove();
 				});
 			});
@@ -463,6 +466,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var lat = parseFloat($latInput.val());
 					var lng = parseFloat($lngInput.val());
 					self.lookup_hierarchy(lat, lng);
+				} else if (marker) {
+					var lat = marker.getLatLng().lat;
+					var lng = marker.getLatLng().lng;
+					self.lookup_hierarchy(lat, lng);
 				}
 			});
 		},
@@ -539,7 +546,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (this.checked){
 					$openclose.addClass('visible');
 					if ($prev.length > 0){
-						console.log($prev);
 						var open = $openclose.find('input')[0];
 						var close = $openclose.find('input')[1];
 						$(open).val($prev.find('input')[1].value);
@@ -911,6 +917,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var hierarchy = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
 					self.set_hierarchy(self.get_hierarchy_by_id(hierarchy, id));
 					$('#where-parent').removeClass('is-breach');
+					map.removeLayer(parent_hover);
+					parent_hover = null;
 				}
 			});
 
@@ -1087,7 +1095,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					});
 					self.set_property('wof:parent_id', -1);
 
-					var parent_hover = null;
 					$('#where-parent').mouseover(function(e) {
 						var id = $(e.target).data('id');
 						if (! id) {
@@ -1132,6 +1139,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		set_parent: function(parent) {
+			if (parent_layer) {
+				map.removeLayer(parent_layer);
+			}
 			if (! parent) {
 				var id = -1;
 				$('#where-parent').html(' in (unknown)');
@@ -1145,6 +1155,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var url = '/id/' + id + '/';
 				url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 				$('#parent').html('Parent: <a href="' + url + '">' + name + ' <code><small>' + id + '</small></code></a>');
+
+				self.get_wof(id, function(wof) {
+					parent_layer = L.geoJson(wof, {
+						style: mapzen.whosonfirst.leaflet.styles.parent_polygon
+					}).addTo(map);
+				});
 			}
 			self.set_property('wof:parent_id', id);
 		},
