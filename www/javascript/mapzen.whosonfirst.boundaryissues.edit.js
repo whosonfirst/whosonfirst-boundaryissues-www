@@ -264,8 +264,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
-					$(row).closest('.object-property').addClass('property-changed');
+					var name = $(row).closest('.json-schema-array').data('context');
 					$(row).remove();
+					self.mark_changed_property(name);
 				});
 			});
 
@@ -351,6 +352,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.setup_hours();
 			self.setup_address();
 			self.setup_names();
+
+			self.initial_wof_value = self.generate_feature();
+			if (! $('#edit-form').hasClass('add-new-wof')) {
+				var id = $('input[name="properties.wof:id"').val();
+				self.get_wof(id, function(wof) {
+					self.initial_wof_value = wof;
+				});
+			}
 		},
 
 		setup_add_property: function(){
@@ -387,7 +396,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$('#edit-form').on('propertychanged', function(e, property, value) {
-				$('input[name="' + property + '"]').parents('tr,li').addClass('property-changed');
+				self.mark_changed_property(property);
 				if (property == 'properties.wof:name') {
 					var id = $('input[name="wof_id"]').val();
 					if (id){
@@ -659,12 +668,36 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 		},
 
+		mark_changed_property: function(name) {
+			var target = $(
+				'input[name="' + name + '"],' +
+				'.json-schema-array[data-context="' + name + '"] > ul > li > input,' +
+				'.json-schema-array[data-context="' + name + '"]'
+			).parents('tr, li');
+			var wof_value = self.generate_feature();
+			var property = name.replace(/^properties\./, '');
+			var array_input = property.match(/^(.+)\[(\d+)\]$/);
+			if (array_input) {
+				property = array_input[1];
+				var index = parseInt(array_input[2]);
+				var curr_value = wof_value.properties[property][index];
+				var init_value = self.initial_wof_value.properties[property][index];
+			} else {
+				var curr_value = wof_value.properties[property];
+				var init_value = self.initial_wof_value.properties[property];
+			}
+			if (JSON.stringify(curr_value) != JSON.stringify(init_value)) {
+				target.addClass('property-changed');
+			} else {
+				target.removeClass('property-changed');
+			}
+		},
+
 		get_property_rel: function(prefix){
 			$rel = $('#property-group-' + prefix);
 			if ($rel.length == 0){
-				var collapsed = $('#mvp-heading').hasClass('collapsed') ? '' : ' collapsed';
-				var html = '<h3 id="property-group-heading-' + prefix + '" class="property-group-heading' + collapsed + '">' + prefix + '</h3>' +
-					   '<div id="property-group-' + prefix + '" class="property-group json-schema-object' + collapsed + '" data-context="properties"><table><tbody></tbody></table></div>';
+				var html = '<h3 id="property-group-heading-' + prefix + '" class="property-group-heading">' + prefix + '</h3>' +
+					   '<div id="property-group-' + prefix + '" class="property-group json-schema-object" data-context="properties"><table><tbody></tbody></table></div>';
 				$('.property-group').last().after(html);
 				$rel = $('#property-group-' + prefix);
 				$('#property-group-heading-' + prefix).click(self.toggle_property_group);
@@ -745,14 +778,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$collapsed = $('.property-group-heading.collapsed');
 			$headings = $('.property-group-heading');
-
-			if ($target.attr('id') != 'mvp-heading'){
-				if (! $target.hasClass('collapsed')){
-					$('#mvp-heading, #property-group-minimum_viable').addClass('collapsed');
-				} else if ($collapsed.length == $headings.length) {
-					$('#mvp-heading, #property-group-minimum_viable').removeClass('collapsed');
-				}
-			}
 		},
 
 		assign_categories_tag: function(tag) {
@@ -809,7 +834,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		set_property: function(property, value) {
-			if ($('input[name="properties.' + property + '"]').length == 0) {
+			var $array = $('.json-schema-array[data-context="properties.' + property + '"]');
+			if ($array.length > 0) {
+				// Clear out the items in the array, add new ones back in
+				$array.find('> ul > li').remove();
+				$.each(value, function(i, item) {
+					self.add_array_item($array, value);
+				});
+				$('#edit-form').trigger('propertychanged', ['properties.' + property, value]);
+			} else if ($('input[name="properties.' + property + '"]').length == 0) {
+				// Property seems not to exist, make a new one!
 				var prefix = property.match(/^([a-z0-9_]+):/);
 				if (prefix){
 					var $rel = self.get_property_rel(prefix[1]);
@@ -818,6 +852,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				self.add_object_row($rel, property, value);
 			} else {
+				// Set the existing input's value
 				$('input[name="properties.' + property + '"]').val(value);
 				$('#edit-form').trigger('propertychanged', ['properties.' + property, value]);
 			}
@@ -856,18 +891,22 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		add_array_item: function($rel, value) {
+			var $prop = $rel.closest('.object-property');
+			var disabled = $prop.hasClass('property-editable') ? '' : ' disabled="disabled"';
 			var context = $rel.data('context');
-			var remove = '<button class="btn btn-remove-item">-</button>';
+			var remove = $prop.hasClass('property-editable') ? '<button class="btn btn-remove-item">-</button>' : '';
 			var index = $rel.find('> ul > li').length;
 			$rel.find('> ul').append(
 				'<li>' +
-					'<input name="' + context + '[' + index + ']" type="text" class="property">' + remove +
+					'<input name="' + context + '[' + index + ']" ' + disabled + 'type="text" class="property">' + remove +
 				'</li>'
 			);
 			var $new_item = $rel.find('> ul > li').last();
 			$new_item.find('.btn-remove-item').click(function(e) {
 				e.preventDefault();
+				var name = $new_item.closest('.json-schema-array').data('context');
 				$new_item.remove();
+				self.mark_changed_property(name);
 			});
 			$new_item.find('.property').val(value);
 
@@ -1004,7 +1043,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('#categories-' + type).change(function() {
 					var categories = self.get_categories();
 					var categories_json = JSON.stringify(categories);
-					self.set_property('mz:categories', categories_json);
+					self.set_property('mz:categories', categories);
 				});
 			}
 		},
@@ -1100,6 +1139,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						if (! id) {
 							return true;
 						}
+						if (parent_hover) {
+							map.removeLayer(parent_hover);
+						}
 						parent_hover = L.geoJson(parent_wof[id], {
 							style: mapzen.whosonfirst.leaflet.styles.parent_polygon
 						}).addTo(map);
@@ -1108,8 +1150,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$('#where-parent').mouseout(function() {
 						if (parent_hover) {
 							map.removeLayer(parent_hover);
+							parent_hover = null;
 						}
 					});
+
+					if (parent_layer) {
+						map.removeLayer(parent_layer);
+						parent_layer = null;
+					}
 				}
 
 				self.set_property('wof:hierarchy', JSON.stringify(hierarchy));
@@ -1325,7 +1373,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			//mapzen.whosonfirst.boundaryissues.api.api_call("wof.search", data, onsuccess, onerror);
 		},
 
-		generate_geojson: function() {
+		generate_feature: function() {
 
 			var placetype = $('input[name="properties.wof:placetype"]').val();
 
@@ -1347,7 +1395,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var geometry = JSON.parse(geometry_json);
 			}
 
-			var geojson_obj = {
+			var feature = {
 				type: 'Feature',
 				bbox: [lng, lat, lng, lat],
 				geometry: geometry,
@@ -1368,7 +1416,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else if ($(input).data('type') == 'json') {
 					value = JSON.parse(value);
 				}
-				self.assign_property(geojson_obj, name, value);
+				self.assign_property(feature, name, value);
 			});
 
 			// Some array properties are required and may not have any inputs to
@@ -1376,7 +1424,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('.json-schema-required > .json-schema-array').each(function(i, prop) {
 				if ($(prop).find('> ul > li').length == 0) {
 					var name = $(prop).data('context');
-					self.assign_property(geojson_obj, name, []);
+					self.assign_property(feature, name, []);
 				}
 			});
 
@@ -1385,30 +1433,34 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('.json-schema-required > .json-schema-object').each(function(i, prop) {
 				if ($(prop).find('> table > tbody > tr.object-property').length == 0) {
 					var name = $(prop).data('context');
-					self.assign_property(geojson_obj, name, {});
+					self.assign_property(feature, name, {});
 				}
 			});
 
 			if ($('input[name="wof_id"]').length > 0) {
 				var id = $('input[name="wof_id"]').val();
 				id = parseInt(id);
-				geojson_obj.id = id;
-				geojson_obj.properties['wof:id'] = id;
+				feature.id = id;
+				feature.properties['wof:id'] = id;
 			}
 
-			geojson_obj.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
-			geojson_obj.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
-			geojson_obj.properties['mz:categories'] = self.get_categories();
-			self.generate_name_geojson(geojson_obj);
+			feature.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
+			feature.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
+			feature.properties['mz:categories'] = self.get_categories();
+			self.generate_name_geojson(feature);
 
 			if ($('#hours').length > 0){
-				geojson_obj.properties['mz:hours'] = self.get_hours();
+				feature.properties['mz:hours'] = self.get_hours();
 			}
 
-			return JSON.stringify(geojson_obj);
+			return feature;
 		},
 
-		generate_name_geojson: function(geojson_obj){
+		generate_geojson: function() {
+			return JSON.stringify(self.generate_feature());
+		},
+
+		generate_name_geojson: function(feature){
 			var names = {};
 			$('.names-language input.property').each(function(i, input){
 				var match = $(input).attr('name').match(/names\.([^.]+)\.(.+?)\[/);
@@ -1423,7 +1475,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 			});
 			$.each(names, function(prop, value){
-				geojson_obj.properties[prop] = value;
+				feature.properties[prop] = value;
 			});
 		},
 
@@ -1465,6 +1517,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			};
 
 			var onsuccess = function(rsp) {
+				$('#edit-form .property-changed').removeClass('property-changed');
+				self.initial_wof_value = self.generate_feature();
 				if (! rsp['feature']) {
 					$status.html('Error saving GeoJSON: Bad response from server.');
 				} else if ($('input[name="wof_id"]').length == 0) {
@@ -1475,7 +1529,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					location.href = url;
 				} else {
 					$status.html('Saved');
-					$('#edit-form .property-changed').removeClass('property-changed');
 				}
 				self.enable_saving();
 			};
