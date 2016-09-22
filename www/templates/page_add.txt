@@ -31,6 +31,20 @@
 
 					<h3 class="headroom">Category</h3>
 					<div id="categories"></div>
+
+					{assign var=placetype_key value="wof:placetype"}
+					{if $properties[$placetype_key] == 'venue'}
+						<h3 class="headroom">Hours</h3>
+						<div id="hours"></div>
+						{if $cfg.enable_feature_libpostal}
+							<h3 class="headroom">Address</h3>
+							<div id="address">
+								<textarea id="address-query" placeholder="Enter full address here" rows="2" cols="40"></textarea>
+								<button id="address-btn" class="btn btn-primary">Extract properties</button>
+								<div id="address-results"></div>
+							</div>
+						{/if}
+					{/if}
 				</div>
 			</div>
 		</form>
