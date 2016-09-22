@@ -396,7 +396,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$('#edit-form').on('propertychanged', function(e, property, value) {
-				self.mark_changed_property(property);
 				if (property == 'properties.wof:name') {
 					var id = $('input[name="wof_id"]').val();
 					if (id){
@@ -410,11 +409,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.set_marker_icon(category);
 				}
 				// Account for minimal-viable property aliases
-				$('input[name="' + property + '"]').each(function(i, input){
-					if ($(input).val() != value){
-						$(input).val(value);
-					}
-				});
+				if ($('#property-group-minimum_viable input[name="' + property + '"]').length > 0) {
+					$('input[name="' + property + '"]').each(function(i, input){
+						if ($(input).val() != value){
+							$(input).val(value);
+						}
+					});
+				}
+				self.mark_changed_property(property);
 			});
 
 			$('#edit-form').on('addkey', function(e, $row, key) {
@@ -679,6 +681,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var array_input = property.match(/^(.+)\[(\d+)\]$/);
 			if (array_input) {
 				property = array_input[1];
+				name = 'properties.' + property;
 				var index = parseInt(array_input[2]);
 				var curr_value = wof_value.properties[property][index];
 				var init_value = self.initial_wof_value.properties[property][index];
@@ -686,10 +689,24 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var curr_value = wof_value.properties[property];
 				var init_value = self.initial_wof_value.properties[property];
 			}
+			var $edit_list = $('#edit-status > ul');
+			if (! $edit_list.length) {
+				$('#edit-status').append('<div id="edit-summary"></div><ul></ul>');
+				$edit_list = $('#edit-status > ul');
+			}
 			if (JSON.stringify(curr_value) != JSON.stringify(init_value)) {
 				target.addClass('property-changed');
+				if ($edit_list.find('li[data-context="' + name + '"]').length == 0) {
+					$edit_list.append('<li data-context="' + name + '"><code>' + property + '</code></li>');
+				}
 			} else {
 				target.removeClass('property-changed');
+				$edit_list.find('li[data-context="' + name + '"]').remove();
+			}
+			if ($('#edit-status > ul > li').length == 0) {
+				$('#edit-summary').html('No pending changes');
+			} else {
+				$('#edit-summary').html('Pending changes:');
 			}
 		},
 
@@ -839,9 +856,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				// Clear out the items in the array, add new ones back in
 				$array.find('> ul > li').remove();
 				$.each(value, function(i, item) {
-					self.add_array_item($array, value);
+					self.add_array_item($array, item);
 				});
-				$('#edit-form').trigger('propertychanged', ['properties.' + property, value]);
+				//$('#edit-form').trigger('propertychanged', ['properties.' + property, value]);
 			} else if ($('input[name="properties.' + property + '"]').length == 0) {
 				// Property seems not to exist, make a new one!
 				var prefix = property.match(/^([a-z0-9_]+):/);
@@ -853,7 +870,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.add_object_row($rel, property, value);
 			} else {
 				// Set the existing input's value
-				$('input[name="properties.' + property + '"]').val(value);
+				if (typeof value == 'object') {
+					$('input[name="properties.' + property + '"]').val(JSON.stringify(value));
+				} else {
+					$('input[name="properties.' + property + '"]').val(value);
+				}
 				$('#edit-form').trigger('propertychanged', ['properties.' + property, value]);
 			}
 		},
@@ -886,7 +907,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$newRow.remove();
 			});
 
-			$rel.find('input[name="' + context + '.' + key + '"]').val(value);
+			var $input = $rel.find('input[name="' + context + '.' + key + '"]');
+			if (typeof value == 'object') {
+				$input.val(JSON.stringify(value));
+			} else {
+				$input.val(value);
+			}
 			$('#edit-form').trigger('propertychanged', [context + '.' + key, value]);
 		},
 
@@ -908,7 +934,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$new_item.remove();
 				self.mark_changed_property(name);
 			});
-			$new_item.find('.property').val(value);
+			if (typeof value == 'object') {
+				$new_item.find('.property').val(JSON.stringify(value));
+			} else {
+				$new_item.find('.property').val(value);
+			}
 
 			$('#edit-form').trigger('propertychanged', [context + '[' + index + ']', value]);
 		},
@@ -954,7 +984,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						Placetype: esc_str($(e.target).data('placetype'))
 					});
 					var hierarchy = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
-					self.set_hierarchy(self.get_hierarchy_by_id(hierarchy, id));
+					self.set_hierarchy([self.get_hierarchy_by_id(hierarchy, id)]);
 					$('#where-parent').removeClass('is-breach');
 					map.removeLayer(parent_hover);
 					parent_hover = null;
@@ -968,9 +998,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var hierarchy = JSON.parse(hierarchy);
 					parent = parseInt(parent);
 					if (hierarchy && parent) {
-						$.each(hierarchy, function(i, h) {
-							self.show_hierarchy(h);
-						});
+						self.show_hierarchy(hierarchy);
 						if (parent != -1) {
 							self.get_wof(parent, function(wof) {
 								self.set_parent({
@@ -1160,18 +1188,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					}
 				}
 
-				self.set_property('wof:hierarchy', JSON.stringify(hierarchy));
-
 				if (hierarchy.length == 0) {
-					self.set_hierarchy(null);
+					self.set_hierarchy([]);
 					if ($('input[name="properties.wof:parent_id"]').val() != "-1") {
 						$('#parent').append('<p class="caveat">This parent has no hierarchy</p>');
 					}
-				} else if (parents.length == 1 &&
-					hierarchy.length == 1) {
-					self.set_hierarchy(hierarchy[0]);
 				} else if (chosen_hierarchy) {
-					self.set_hierarchy(chosen_hierarchy);
+					self.set_hierarchy([chosen_hierarchy]);
+				} else {
+					self.set_hierarchy(hierarchy);
 				}
 				$('#where-parent').html(html);
 			});
@@ -1218,32 +1243,35 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if (! hierarchy) {
 				$('input[name="properties.wof:hierarchy"]').val('[]');
 			} else {
-				$('input[name="properties.wof:hierarchy"]').val('[' + JSON.stringify(hierarchy) + ']');
-				self.show_hierarchy(hierarchy);
+				$('input[name="properties.wof:hierarchy"]').val(JSON.stringify(hierarchy));
 			}
+			self.show_hierarchy(hierarchy);
 
 			if (hierarchy.country_id) {
 				self.set_country_properties(hierarchy.country_id);
 			}
+			self.set_property('wof:hierarchy', hierarchy);
 		},
 
 		show_hierarchy: function(hierarchy) {
-			var html = '<ul class="wof-hierarchy">';
-			var labelRegex = /^(.+)_id$/;
-			for (var key in hierarchy) {
-				var id = esc_int(hierarchy[key]);
-				var label = key;
-				if (key.match(labelRegex)) {
-					label = key.match(labelRegex)[1];
+			$.each(hierarchy, function(i, hierarchy_part) {
+				var html = '<ul class="wof-hierarchy">';
+				var labelRegex = /^(.+)_id$/;
+				for (var key in hierarchy_part) {
+					var id = esc_int(hierarchy_part[key]);
+					var label = key;
+					if (key.match(labelRegex)) {
+						label = key.match(labelRegex)[1];
+					}
+
+					var url = '/id/' + id + '/';
+					url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+
+					html += '<li>' + label + ': <a href="' + url + '" class="wof-namify hierarchy-' + id + '" data-wof-id="' + id + '">' + id + '</a></li>';
 				}
-
-				var url = '/id/' + id + '/';
-				url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
-
-				html += '<li>' + label + ': <a href="' + url + '" class="wof-namify hierarchy-' + id + '" data-wof-id="' + id + '">' + id + '</a></li>';
-			}
-			html += '</ul>';
-			$('#hierarchy').append(html);
+				html += '</ul>';
+				$('#hierarchy').append(html);
+			});
 
 			var container = $('#hierarchy')[0];
 			mapzen.whosonfirst.boundaryissues.namify.update(container);
@@ -1382,14 +1410,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var lng = $('input[name="properties.geom:longitude"]').val();
 
 				if (! lat || ! lng) {
-					return null;
+					var geometry = null;
+				} else {
+					lat = parseFloat(lat);
+					lng = parseFloat(lng);
+					var geometry = {
+						type: 'Point',
+						coordinates: [lng, lat]
+					};
 				}
-				lat = parseFloat(lat);
-				lng = parseFloat(lng);
-				var geometry = {
-					type: 'Point',
-					coordinates: [lng, lat]
-				};
 			} else {
 				var geometry_json = $('input[name="geometry"]').val();
 				var geometry = JSON.parse(geometry_json);
