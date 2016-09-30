@@ -25,7 +25,10 @@ mapzen.whosonfirst.geojson = (function(){
 
 					var bbox = self.derive_bbox(features[i]);
 
-					var _swlat, _swlon, _nelat, _nelon = bbox;
+					var _swlat = bbox[0];
+					var _swlon = bbox[1];
+					var _nelat = bbox[2];
+					var _nelon = bbox[3];
 
 					if ((! swlat) || (_swlat < swlat)){
 						swlat = _swlat;
@@ -66,10 +69,8 @@ mapzen.whosonfirst.geojson = (function(){
 				var minlng = Math.min.apply(null, lngs),
 				    maxlng = Math.max.apply(null, lngs);
 
-				return [
-					[minlat, minlng],
-					[maxlat, maxlng]
-				];
+				return [ minlat, minlng,
+					 maxlat, maxlng ];
 			}
 
 			else {}
