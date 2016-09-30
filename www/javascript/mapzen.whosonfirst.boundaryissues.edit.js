@@ -200,8 +200,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			);
 			var geojson_url = $('#geojson-link').attr('href');
 			$.get(geojson_url, function(feature) {
+				var bbox_style = mapzen.whosonfirst.leaflet.styles.bbox();
+				var poly_style = mapzen.whosonfirst.leaflet.styles.consensus_polygon();
 				mapzen.whosonfirst.leaflet.fit_map(map, feature);
-				mapzen.whosonfirst.leaflet.draw_poly(map, feature, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
+				mapzen.whosonfirst.leaflet.draw_bbox(map, feature, bbox_style);
+				mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
+				mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 			});
 			var centroid = self.get_property_centroid();
 			if (centroid){
@@ -210,6 +214,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_drawing: function() {
+
+			var placetype = $('input[name="properties.wof:placetype"]').val();
+			if (placetype != 'venue') {
+				return;
+			}
+
 			var drawControl = new L.Control.Draw({
 				draw: {
 					polyline: false,
@@ -734,21 +744,26 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var $geom_lat = $('input[name="properties.geom:latitude"]');
 			var $geom_lng = $('input[name="properties.geom:longitude"]');
 
-			if ($lbl_lat.val() &&
-			    $lbl_lng.val()){
-				var lat = parseFloat($lbl_lat.val());
-				var lng = parseFloat($lbl_lng.val());
-			} else if ($geom_lat.val() &&
-			           $geom_lng.val()){
-				var lat = parseFloat($geom_lat.val());
-				var lng = parseFloat($geom_lng.val());
+			var centroid = {};
+
+			if ($geom_lat.val() &&
+			    $geom_lng.val()){
+				centroid.geom_lat = parseFloat($geom_lat.val());
+				centroid.geom_lng = parseFloat($geom_lng.val());
+				centroid.lat = centroid.geom_lat;
+				centroid.lng = centroid.geom_lng;
 			}
 
-			if (lat && lng){
-				return {
-					lat: lat,
-					lng: lng
-				};
+			if ($lbl_lat.val() &&
+			    $lbl_lng.val()){
+				centroid.lbl_lat = parseFloat($lbl_lat.val());
+				centroid.lbl_lng = parseFloat($lbl_lng.val());
+				centroid.lat = centroid.lbl_lat;
+				centroid.lng = centroid.lbl_lng;
+			}
+
+			if (centroid.lat && centroid.lng){
+				return centroid;
 			} else {
 				return null;
 			}
