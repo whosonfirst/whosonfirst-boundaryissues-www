@@ -205,10 +205,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				mapzen.whosonfirst.leaflet.fit_map(map, feature);
 				mapzen.whosonfirst.leaflet.draw_bbox(map, feature, bbox_style);
 				mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
-				var centroids = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
-				centroids.math.on('click', function() {
-					console.log('boop');
-				});
+				mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 			});
 			var centroid = self.get_property_centroid();
 			if (centroid){
