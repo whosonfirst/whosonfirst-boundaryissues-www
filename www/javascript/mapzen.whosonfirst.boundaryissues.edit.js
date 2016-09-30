@@ -151,12 +151,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_map_marker: function() {
-			var $latInput = $('input[name="properties.geom:latitude"]');
-			var $lngInput = $('input[name="properties.geom:longitude"]');
-			if ($latInput.val() &&
-			    $lngInput.val()) {
-				var lat = parseFloat($latInput.val());
-				var lng = parseFloat($lngInput.val());
+			var centroid = self.get_property_centroid();
+			if (centroid) {
+				var lat = centroid.lat;
+				var lng = centroid.lng;
 				var zoom = 16;
 				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
 					'map',
@@ -205,6 +203,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				mapzen.whosonfirst.leaflet.fit_map(map, feature);
 				mapzen.whosonfirst.leaflet.draw_poly(map, feature, mapzen.whosonfirst.leaflet.styles.consensus_polygon());
 			});
+			var centroid = self.get_property_centroid();
+			if (centroid){
+				self.update_where(centroid.lat, centroid.lng);
+			}
 		},
 
 		setup_drawing: function() {
@@ -470,13 +472,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#btn-rebuild-hierarchy').click(function(e) {
 				e.preventDefault();
 				self.set_property('wof:parent_id', -1);
-				var $latInput = $('input[name="properties.geom:latitude"]');
-				var $lngInput = $('input[name="properties.geom:longitude"]');
-				if ($latInput.val() &&
-				    $lngInput.val()) {
-					var lat = parseFloat($latInput.val());
-					var lng = parseFloat($lngInput.val());
-					self.lookup_hierarchy(lat, lng);
+				var centroid = self.get_property_centroid();
+				if (centroid) {
+					self.lookup_hierarchy(centroid.lat, centroid.lng);
 				} else if (marker) {
 					var lat = marker.getLatLng().lat;
 					var lng = marker.getLatLng().lng;
@@ -720,6 +718,32 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('#property-group-heading-' + prefix).click(self.toggle_property_group);
 			}
 			return $rel;
+		},
+
+		get_property_centroid: function(){
+			var $lbl_lat = $('input[name="properties.lbl:latitude"]');
+			var $lbl_lng = $('input[name="properties.lbl:longitude"]');
+			var $geom_lat = $('input[name="properties.geom:latitude"]');
+			var $geom_lng = $('input[name="properties.geom:longitude"]');
+
+			if ($lbl_lat.val() &&
+			    $lbl_lng.val()){
+				var lat = parseFloat($lbl_lat.val());
+				var lng = parseFloat($lbl_lng.val());
+			} else if ($geom_lat.val() &&
+			           $geom_lng.val()){
+				var lat = parseFloat($geom_lat.val());
+				var lng = parseFloat($geom_lng.val());
+			}
+
+			if (lat && lng){
+				return {
+					lat: lat,
+					lng: lng
+				};
+			} else {
+				return null;
+			}
 		},
 
 		group_properties: function(){
@@ -1233,6 +1257,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					parent_layer = L.geoJson(wof, {
 						style: mapzen.whosonfirst.leaflet.styles.parent_polygon
 					}).addTo(map);
+					parent_layer.bringToBack();
 				});
 			}
 			self.set_property('wof:parent_id', id);
