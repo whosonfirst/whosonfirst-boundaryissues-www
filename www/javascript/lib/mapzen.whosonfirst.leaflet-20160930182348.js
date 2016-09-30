@@ -11,7 +11,7 @@ mapzen.whosonfirst.leaflet = (function(){
 				'pointToLayer': handler,
 			});
 
-			layer.addTo(map);
+			return layer.addTo(map);
 		},
 
 		'draw_poly': function(map, geojson, style){
@@ -35,7 +35,7 @@ mapzen.whosonfirst.leaflet = (function(){
 				console.log("failed to bind label because " + e);
 			}
 
-			layer.addTo(map);
+			return layer.addTo(map);
 		},
 
 		'draw_bbox': function(map, geojson, style){
@@ -90,7 +90,7 @@ mapzen.whosonfirst.leaflet = (function(){
 			var style = mapzen.whosonfirst.leaflet.styles.math_centroid();
 			var handler = mapzen.whosonfirst.leaflet.handlers.point(style);
 
-			mapzen.whosonfirst.leaflet.draw_point(map, pt, style, handler);
+			var math_centroid = mapzen.whosonfirst.leaflet.draw_point(map, pt, style, handler);
 
 			if ((props['lbl:latitude']) && (props['lbl:longitude'])){
 
@@ -113,8 +113,12 @@ mapzen.whosonfirst.leaflet = (function(){
 				var style = mapzen.whosonfirst.leaflet.styles.label_centroid();
 				var handler = mapzen.whosonfirst.leaflet.handlers.point(style);
 
-				mapzen.whosonfirst.leaflet.draw_point(map, pt, style, handler);
+				var label_centroid = mapzen.whosonfirst.leaflet.draw_point(map, pt, style, handler);
 			}
+			return {
+				math_centroid: math_centroid,
+				label_centroid: label_centroid
+			};
 		},
 
 		'fit_map': function(map, geojson, force){
