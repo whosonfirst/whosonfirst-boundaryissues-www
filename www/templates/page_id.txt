@@ -49,6 +49,13 @@
 					<h3 class="headroom">Category</h3>
 					<div id="categories"></div>
 
+					<h3 class="headroom">Geometry</h3>
+					<span id="geometry" class="btn btn-default btn-file">
+						Upload new geometry
+						<input type="file" name="geojson_file">
+					</span>
+					<div id="geometry-results"></div>
+
 					{assign var=placetype_key value="wof:placetype"}
 					{if $properties[$placetype_key] == 'venue'}
 						<h3 class="headroom">Hours</h3>

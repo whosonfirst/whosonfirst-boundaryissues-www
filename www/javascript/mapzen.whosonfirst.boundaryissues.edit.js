@@ -16,7 +16,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	    VenueIcon,
 	    poi_icon_base,
 	    parent_layer,
-	    parent_hover;
+	    parent_hover,
+	    geometry_layer,
+	    centroid_layers;
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
@@ -204,8 +206,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var poly_style = mapzen.whosonfirst.leaflet.styles.consensus_polygon();
 				mapzen.whosonfirst.leaflet.fit_map(map, feature);
 				mapzen.whosonfirst.leaflet.draw_bbox(map, feature, bbox_style);
-				mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
-				mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
+				geometry_layer = mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
+				centroid_layers = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 			});
 			var centroid = self.get_property_centroid();
 			if (centroid){
@@ -364,6 +366,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.setup_hours();
 			self.setup_address();
 			self.setup_names();
+			self.setup_geometry();
 
 			self.initial_wof_value = self.generate_feature();
 			if (! $('#edit-form').hasClass('add-new-wof')) {
@@ -683,6 +686,57 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var lang = $('#names-languages').val();
 				$('.names-language.property-visible').removeClass('property-visible');
 				$('#names-language-' + lang).addClass('property-visible');
+			});
+		},
+
+		setup_geometry: function() {
+
+			var placetype = $('input[name="properties.wof:placetype"]').val();
+			if (placetype == 'venue'){
+				$('#geometry').prev('h3').remove();
+				$('#geometry').remove();
+				$('#geometry-results').remove();
+				return;
+			}
+
+			$('#geometry input[name=geojson_file]').on('change', function(e){
+				var geojson_file = e.target.files[0];
+				var reader = new FileReader();
+				reader.onload = function(e){
+					try {
+						var geojson = JSON.parse(reader.result);
+					} catch(e) {
+						$('#geometry-results').html('<p class="caveat">' + e + '</p>');
+						return;
+					}
+
+					var style = mapzen.whosonfirst.leaflet.styles.consensus_polygon();
+					if (geojson.type == 'FeatureCollection'){
+						geojson = geojson.features[0];
+					}
+
+					geometry_layer.clearLayers();
+					geometry_layer = mapzen.whosonfirst.leaflet.draw_poly(map, geojson, style);
+					if (centroid_layers.math_centroid) {
+						centroid_layers.math_centroid.bringToFront();
+					}
+					if (centroid_layers.label_centroid) {
+						centroid_layers.label_centroid.bringToFront();
+					}
+
+					var geometry_json = JSON.stringify(geojson.geometry);
+
+					$('input[name="geometry"]').val(geometry_json);
+					$('#geometry-results').html('<p class="caveat">Geometry updated!</p>');
+					self.mark_changed_property('geometry');
+				}
+
+				// Load up the file to kick off the preview
+				if (geojson_file) {
+					reader.readAsText(geojson_file);
+				} else {
+					mapzen.whosonfirst.log.error('No geojson_file to preview.');
+				}
 			});
 		},
 
