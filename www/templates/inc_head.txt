@@ -38,7 +38,7 @@
 			<script src="{$cfg.abs_root_url}javascript/html5.js"></script>
 		<![endif]-->
 
-		{assign var=lib_date_time value='20160830082227'}
+		{assign var=lib_date_time value='20160930160619'}
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.data-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.brands-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.geojson-{$lib_date_time}.js"></script>
@@ -50,7 +50,7 @@
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.net-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.php-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.placetypes-{$lib_date_time}.js"></script>
-		<script src="{$cfg.abs_root_url}javascript/lib/slippymap.crosshairs-{$lib_date_time}.js"></script>		
+		<script src="{$cfg.abs_root_url}javascript/lib/slippymap.crosshairs-{$lib_date_time}.js"></script>
 
 		{if "api"|@features_is_enabled}
 			<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.api.js"></script>
