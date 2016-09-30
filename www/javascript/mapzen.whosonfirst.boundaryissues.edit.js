@@ -1459,6 +1459,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 				if (! lat || ! lng) {
 					var geometry = null;
+					var bbox = null;
 				} else {
 					lat = parseFloat(lat);
 					lng = parseFloat(lng);
@@ -1466,15 +1467,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						type: 'Point',
 						coordinates: [lng, lat]
 					};
+					var bbox = [lng, lat, lng, lat];
 				}
 			} else {
 				var geometry_json = $('input[name="geometry"]').val();
 				var geometry = JSON.parse(geometry_json);
+				var bbox = mapzen.whosonfirst.geojson.derive_bbox({
+					'type': 'Feature',
+					'geometry': geometry
+				});
 			}
 
 			var feature = {
 				type: 'Feature',
-				bbox: [lng, lat, lng, lat],
+				bbox: bbox,
 				geometry: geometry,
 				properties: {}
 			};
