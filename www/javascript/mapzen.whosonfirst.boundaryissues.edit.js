@@ -484,6 +484,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_categories: function() {
+
+			var placetype = $('input[name="properties.wof:placetype"]').val();
+			if (placetype != 'venue') {
+				$('#categories').prev('h3').remove();
+				$('#categories').remove();
+				return;
+			}
+
 			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
 
 			var onsuccess = function(categories) {
