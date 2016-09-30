@@ -205,7 +205,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				mapzen.whosonfirst.leaflet.fit_map(map, feature);
 				mapzen.whosonfirst.leaflet.draw_bbox(map, feature, bbox_style);
 				mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
-				mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
+				var centroids = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
+				centroids.math.on('click', function() {
+					console.log('boop');
+				});
 			});
 			var centroid = self.get_property_centroid();
 			if (centroid){
@@ -1665,10 +1668,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		reverse_geocode: function(lat, lng, callback) {
+			var placetype = $('input[name="properties.wof:placetype"]').val();
 			var data = {
 				latitude: lat,
 				longitude: lng,
-				placetype: 'venue' // For now we just do venues
+				placetype: placetype
 			};
 
 			var onsuccess = function(rsp) {
