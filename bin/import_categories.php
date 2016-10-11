@@ -282,12 +282,11 @@
 		if (empty($categories[$type][$uri])) {
 
 			// Mint an artisanal integer
-			// (Use auto_increment for testing)
-			//$rsp = artisanal_integers_create();
-			//if (! $rsp['ok']) {
-			//	return $rsp;
-			//}
-			//$category['id'] = $rsp['integer'];
+			$rsp = artisanal_integers_create();
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$category['id'] = $rsp['integer'];
 
 			// Insert it!
 			$rsp = db_insert('boundaryissues_categories', $category);
@@ -342,12 +341,53 @@
 			'uri' => addslashes($uri)
 		);
 
+		if (! empty($item['mz:rank'])) {
+			$category['rank'] = $item['mz:rank'];
+		}
+
 		if ($categories[$type][$uri]) {
-			$where = "id = " . addslashes($id);
+
+			$where = "id = $id";
+			$old_id = $categories[$type][$uri];
+
+			if ($old_id != $id) {
+
+				// This is a weird situation. Basically the DB
+				// has auto-increment IDs assigned, but our JSON
+				// has artisanal integers. Update DB to use the
+				// JSON IDs.
+
+				echo "Updating ID $old_id to $id\n";
+
+				$where = "uri = '" . addslashes($uri) . "' AND type = '" . addslashes($type) . "'";
+
+				$rsp = db_update('boundaryissues_categories_meta', array(
+					'category_id' => $id
+				), "category_id = $old_id");
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+
+				$rsp = db_update('boundaryissues_categories_struct', array(
+					'source_id' => $id
+				), "source_id = $old_id");
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+
+				$rsp = db_update('boundaryissues_categories_struct', array(
+					'target_id' => $id
+				), "target_id = $old_id");
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+			}
+
 			$rsp = db_update('boundaryissues_categories', $category, $where);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
+
 		} else {
 			$rsp = db_insert('boundaryissues_categories', $category);
 			if (! $rsp['ok']) {
@@ -363,16 +403,26 @@
 		return array('ok' => 1);
 	}
 
-	function category_meta($category_id, $name, $value) {
+	function category_meta($id, $name, $value) {
 
-		// This assumes that the meta table has been reset already
+		$id = addslashes($id);
+		$name = addslashes($name);
+		$value = addslashes($value);
+
+		$rsp = db_write("
+			DELETE FROM boundaryissues_categories_meta
+			WHERE category_id = $id
+			  AND name = '$name'
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
 		$rsp = db_insert('boundaryissues_categories_meta', array(
-			'category_id' => addslashes($category_id),
-			'name' => addslashes($name),
-			'value' => addslashes($value)
+			'category_id' => $id,
+			'name' => $name,
+			'value' => $value
 		));
-
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
