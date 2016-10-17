@@ -333,7 +333,7 @@
 
 	########################################################################
 
-	function api_wof_get_photos(){
+	function api_wof_photos_get(){
 
 		api_utils_features_ensure_enabled(array('photos'));
 
