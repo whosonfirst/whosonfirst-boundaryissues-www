@@ -145,6 +145,16 @@
 				'label' => $cat['label_en']
 			);
 
+			if (empty($category['label'])) {
+
+				// Assign a label if one doesn't exist yet
+
+				$label = str_replace('_', ' ', $uri);
+				$label = ucwords($label);
+				echo "No label for $type / $uri, assigning as $label\n";
+				$category['label'] = $label;
+			}
+
 			if (! empty($cat['rank'])) {
 				$category['mz:rank'] = intval($cat['rank']);
 			}

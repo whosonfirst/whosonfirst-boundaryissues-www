@@ -331,6 +331,12 @@
 
 		global $categories;
 
+		if (! empty($item['tbd'])) {
+			echo "Skipping item marked tbd\n";
+			print_r($item);
+			return array('ok' => 1);
+		}
+
 		$id = intval($item['id']);
 		$uri = $item['name'];
 		$label = $item['label'];
@@ -400,6 +406,11 @@
 			return $rsp;
 		}
 
+		$rsp = category_structure_json($cat);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
 		return array('ok' => 1);
 	}
 
@@ -459,8 +470,32 @@
 		}
 
 		return array('ok' => 1);
+	}
 
+	function category_structure_json($row) {
 
+		$source_id = intval($row['id']);
+		$target_id = intval($row['parent_id']);
+
+		$rsp = db_write("
+			DELETE FROM boundaryissues_categories_struct
+			WHERE source_id = $source_id
+			  AND type = 'parent'
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = db_insert('boundaryissues_categories_struct', array(
+			'source_id' => $source_id,
+			'target_id' => $target_id,
+			'type' => 'parent'
+		));
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		return array('ok' => 1);
 	}
 
 	function category_uriify($text) {
