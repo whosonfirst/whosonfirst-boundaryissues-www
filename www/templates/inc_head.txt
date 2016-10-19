@@ -68,7 +68,7 @@
 
 	</head>
 
-	<body data-abs-root-url="{$cfg.abs_root_url}" {if "api"|@features_is_enabled}data-api-endpoint="{$cfg.api_abs_root_url}{$cfg.api_endpoint}"{/if}{if "api_site_tokens"|@features_is_enabled} data-api-access-token="{$site_token|@escape}"{/if} data-data-abs-root-url="{$cfg.data_abs_root_url}"{if $cfg.user} data-user-id="{$cfg.user.id|@escape}"{/if}{if $show_git_branch} class="show-git-branch"{/if}>
+	<body class="{$user_signed_in}" data-abs-root-url="{$cfg.abs_root_url}" {if "api"|@features_is_enabled}data-api-endpoint="{$cfg.api_abs_root_url}{$cfg.api_endpoint}"{/if}{if "api_site_tokens"|@features_is_enabled} data-api-access-token="{$site_token|@escape}"{/if} data-data-abs-root-url="{$cfg.data_abs_root_url}"{if $cfg.user} data-user-id="{$cfg.user.id|@escape}"{/if}{if $show_git_branch} class="show-git-branch"{/if}>
 
 	{if $cfg.display_message}<div id="site-message">{$cfg.display_message_text|@escape}</div>{/if}
 	{include file="inc_head_navi.txt"}

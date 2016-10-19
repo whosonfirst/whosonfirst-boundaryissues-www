@@ -64,6 +64,27 @@ input.add-item, .btn-add-item, tr.add-row {
 	display: none;
 }
 
+.json-schema-field {
+	position: relative;
+}
+
+input[readonly="readonly"] {
+	background: #dedede;
+}
+
+.json-schema-field.editing-disabled-notice::after {
+	content: "Please sign in to edit properties";
+	color: #D4645C;
+	font-size: 10px;
+	position: absolute;
+	left: 185px;
+	top: 0;
+	border: 1px solid #D4645C;
+	padding: 5px 10px;
+	width: 170px;
+	background: #fff;
+}
+
 .property-editable > td > .json-schema-field > .json-schema-array > input.add-item,
 .property-editable > td > .json-schema-field > .json-schema-array > .btn-add-item {
 	display: inline-block;
@@ -73,6 +94,10 @@ input.add-item, .btn-add-item, tr.add-row {
 #property-add > table > tbody > tr.add-row,
 .property-editable > td > .json-schema-field > .json-schema-object > table > tbody > tr.add-row {
 	display: table-row;
+}
+
+body.user-not-signed-in #property-add {
+	display: none;
 }
 
 .json-schema-field {

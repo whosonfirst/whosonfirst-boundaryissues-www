@@ -262,7 +262,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 				if (! $(row).hasClass('property-deletable') ||
-				    ! $(row).hasClass('property-editable')) {
+				    ! $(row).hasClass('property-editable') ||
+				    ! self.user_can_edit()) {
 					return;
 				}
 				$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
@@ -273,7 +274,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('.json-schema-array > ul > li').each(function(i, row) {
 				if (  $(row).hasClass('add-row') ||
-				    ! $(row).closest('.object-property').hasClass('property-editable')) {
+				    ! $(row).closest('.object-property').hasClass('property-editable') ||
+				    ! self.user_can_edit()) {
 					return;
 				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
@@ -359,8 +361,18 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 			// Show read-only fields if it's an edit page
 			$('tr.object-property.property-editable input').each(function(i, input) {
-				input.removeAttribute('disabled');
+				if (self.user_can_edit()) {
+					input.removeAttribute('readonly');
+				}
 			});
+
+			if (! self.user_can_edit()) {
+				$('input[readonly="readonly"]').focus(function(e) {
+					$('.editing-disabled-notice').removeClass('editing-disabled-notice');
+					$div = $(e.target).closest('.json-schema-field');
+					$div.addClass('editing-disabled-notice');
+				});
+			}
 
 			self.setup_categories();
 			self.setup_hours();
@@ -605,6 +617,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_address: function(){
+			if (! self.user_can_edit()) {
+				$('#address-btn').attr('disabled', 'disabled');
+				return;
+			}
 			$('#address-btn').attr('disabled', null);
 			$('#address-btn').click(function(e) {
 
@@ -952,6 +968,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		set_property: function(property, value) {
+			if (! self.user_can_edit()) {
+				return;
+			}
 			var $array = $('.json-schema-array[data-context="properties.' + property + '"]');
 			if ($array.length > 0) {
 				// Clear out the items in the array, add new ones back in
@@ -1019,9 +1038,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		add_array_item: function($rel, value) {
 			var $prop = $rel.closest('.object-property');
-			var disabled = $prop.hasClass('property-editable') ? '' : ' disabled="disabled"';
+			var disabled = (
+				$prop.hasClass('property-editable') &&
+				self.user_can_edit()
+			) ? '' : ' readonly="readonly"';
 			var context = $rel.data('context');
-			var remove = $prop.hasClass('property-editable') ? '<button class="btn btn-remove-item">-</button>' : '';
+			var remove = (
+				$prop.hasClass('property-editable') &&
+				self.user_can_edit()
+			    ) ? '<button class="btn btn-remove-item">-</button>' : '';
 			var index = $rel.find('> ul > li').length;
 			$rel.find('> ul').append(
 				'<li>' +
@@ -1077,7 +1102,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			$('#where').html(html);
 
 			$('#where-parent').click(function(e) {
-				if ($('#where-parent').hasClass('is-breach')) {
+				if ($('#where-parent').hasClass('is-breach') &&
+				    self.user_can_edit()) {
 					var id = esc_int($(e.target).data('id'));
 					self.set_parent({
 						Id: id,
@@ -1253,7 +1279,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					});
 					var html = ' in either ';
 					html += parent_html.join(' or ');
-					html += '<br><small class="caveat">more than one parent at this coordinate: <strong>click on a place</strong> to choose the best match</small>';
+					if (self.user_can_edit()) {
+						html += '<br><small class="caveat">more than one parent at this coordinate: <strong>click on a place</strong> to choose the best match</small>';
+					}
 					$('#where-parent').addClass('is-breach');
 
 					$('#hierarchy').html('');
@@ -1767,8 +1795,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				self.set_marker_icon(icon);
 			}
 			return icon;
-		}
+		},
 
+		user_can_edit: function() {
+			// Presently this just means the user is logged in.
+			var user_id = $(document.body).data('user-id');
+			user_id = parseInt(user_id);
+			return !!user_id;
+		}
 	};
 
 	$(document).ready(function() {

@@ -9,5 +9,5 @@
 				<option>{$option|@escape}</option>
 			{/foreach}
 		</select>
-	{else}<input type="text" name="{$name|@escape}" value="{$property|@wof_render_value|@escape}" class="property" data-type="{$property|@wof_render_type|@escape}" disabled="disabled">{/if}
+	{else}<input type="text" name="{$name|@escape}" value="{$property|@wof_render_value|@escape}" class="property" data-type="{$property|@wof_render_type|@escape}" readonly="readonly">{/if}
 </div>

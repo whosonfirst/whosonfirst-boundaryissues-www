@@ -46,47 +46,47 @@
 						<button class="btn" id="btn-rebuild-hierarchy">Rebuild hierarchy</button>
 					{/if}
 
-					<h3 class="headroom">Category</h3>
-					<div id="categories"></div>
-
-					<h3 class="headroom">Geometry</h3>
-					<span id="geometry" class="btn btn-default btn-file">
-						Upload new geometry
-						<input type="file" name="geojson_file">
-					</span>
-					<div id="geometry-results"></div>
-
-					{assign var=placetype_key value="wof:placetype"}
-					{if $properties[$placetype_key] == 'venue'}
-						<h3 class="headroom">Hours</h3>
-						<div id="hours"></div>
-						{if $cfg.enable_feature_libpostal}
-							<h3 class="headroom">Address</h3>
-							<div id="address">
-								<textarea id="address-query" placeholder="Enter full address here" rows="2" cols="40"></textarea>
-								<button id="address-btn" class="btn btn-primary">Extract properties</button>
-								<div id="address-results"></div>
-							</div>
-						{/if}
-					{/if}
-
 					{if $cfg.user}
-					<h3 class="headroom">Options</h3>
-					<div id="edit-buttons">
-						{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}
-						<button type="submit" class="btn btn-success" id="btn-current">This is <strong>current</strong></button>
-						{/if}
-						<button type="submit" class="btn btn-warning" id="btn-not-current">This is <strong>closed</strong></button>
-						{* this needs to always be present in the props hash to work correclty... *}
-						<button type="submit" class="btn btn-danger" id="btn-deprecated">This is <strong>deprecated</strong></button>
-						{if $properties|@wof_smarty_properties_value:"mz:is_funky"!=1}
-						<button type="submit" class="btn btn-info" id="btn-funky">This is <strong>funky</strong></button>
-						{/if}
-					</div>
+						<h3 class="headroom">Category</h3>
+						<div id="categories"></div>
 
-					<div class="caveat">
-					<small>For now, you will still need to click the <span style="font-weight:700;">save</span> button below for these changes to stick.</small>
-					</div>
+						<h3 class="headroom">Geometry</h3>
+						<span id="geometry" class="btn btn-default btn-file">
+							Upload new geometry
+							<input type="file" name="geojson_file">
+						</span>
+						<div id="geometry-results"></div>
+
+						{assign var=placetype_key value="wof:placetype"}
+						{if $properties[$placetype_key] == 'venue'}
+							<h3 class="headroom">Hours</h3>
+							<div id="hours"></div>
+							{if $cfg.enable_feature_libpostal and $cfg.user}
+								<h3 class="headroom">Address</h3>
+								<div id="address">
+									<textarea id="address-query" placeholder="Enter full address here" rows="2" cols="40"></textarea>
+									<button id="address-btn" class="btn btn-primary">Extract properties</button>
+									<div id="address-results"></div>
+								</div>
+							{/if}
+						{/if}
+
+						<h3 class="headroom">Options</h3>
+						<div id="edit-buttons">
+							{if $properties|@wof_smarty_properties_value:"mz:is_current"!=1 and $properties|@wof_smarty_properties_value:"edtf:cessation"=="uuuu"}
+							<button type="submit" class="btn btn-success" id="btn-current">This is <strong>current</strong></button>
+							{/if}
+							<button type="submit" class="btn btn-warning" id="btn-not-current">This is <strong>closed</strong></button>
+							{* this needs to always be present in the props hash to work correclty... *}
+							<button type="submit" class="btn btn-danger" id="btn-deprecated">This is <strong>deprecated</strong></button>
+							{if $properties|@wof_smarty_properties_value:"mz:is_funky"!=1}
+							<button type="submit" class="btn btn-info" id="btn-funky">This is <strong>funky</strong></button>
+							{/if}
+						</div>
+
+						<div class="caveat">
+						<small>For now, you will still need to click the <span style="font-weight:700;">save</span> button below for these changes to stick.</small>
+						</div>
 					{/if}
 
 					{if $cfg.enable_feature_photos}

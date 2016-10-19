@@ -1,6 +1,7 @@
 <div id="{$context|@wof_render_object_id|@escape}" class="json-schema-object" data-context="{$context}">
 	<table>
 		{foreach from=$schema.properties key=name item=property}
+			{assign var="rows_displayed" value="1"}
 			<tr class="{$name|@wof_render_property_classes|@escape}">
 				<th>{$name}</th>
 				<td>
@@ -10,10 +11,16 @@
 			</tr>
 		{/foreach}
 
-		<tr class="add-row">
-			<th><input type="text" class="add-key" placeholder="Key"></th>
-			<td><input type="text" class="add-value" placeholder="Value"><button class="btn btn-add btn-add-value">+</button></td>
-		</tr>
+		{if $cfg.user}
+			<tr class="add-row">
+				<th><input type="text" class="add-key" placeholder="Key"></th>
+				<td><input type="text" class="add-value" placeholder="Value"><button class="btn btn-add btn-add-value">+</button></td>
+			</tr>
+		{elseif !$schema.properties}
+			<tr class="empty">
+				<td><input type="text" name="{$name|@escape}" value="&lbrace;&rbrace;" class="property" data-type="json" readonly="readonly"></td>
+			</tr>
+		{/if}
 
 	</table>
 </div>

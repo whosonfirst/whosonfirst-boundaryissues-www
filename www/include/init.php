@@ -549,6 +549,8 @@
 
 	if ($this_is_webpage){
 		login_check_login();
+		$user_signed_in = empty($GLOBALS['cfg']['user']) ? 'user-not-signed-in' : 'user-signed-in';
+		$GLOBALS['smarty']->assign('user_signed_in', $user_signed_in);
 	}
 
 	if (StrToLower($_SERVER['HTTP_X_MOZ']) == 'prefetch'){
@@ -590,7 +592,7 @@
 		}
 
 		$root_url = parse_url($GLOBALS['cfg']['abs_root_url']);
-		$redirect = str_replace($root_url['path'], '', $_SERVER['REQUEST_URI']);
+		$redirect = preg_replace("#^{$root_url['path']}#", '', $_SERVER['REQUEST_URI']);
 		if ($redirect == ''){
 			$redirect = '/';
 		}
