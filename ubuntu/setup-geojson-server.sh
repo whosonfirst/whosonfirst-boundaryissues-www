@@ -15,7 +15,7 @@ GEOJSON_SERVICE="${SERVICES}/geojson-server"
 GEOJSON_SERVER="${GEOJSON_SERVICE}/wof-geojson-server.py"
 GEOJSON_INITD="${GEOJSON_SERVICE}/wof-geojson-server.sh"
 
-sudo apt-get install python-flask python-requests
+sudo apt-get install -y python-flask python-requests
 
 if [ -f ${GEOJSON_INITD} ]
 then
