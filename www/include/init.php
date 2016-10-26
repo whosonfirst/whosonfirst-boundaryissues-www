@@ -248,6 +248,10 @@
 		$scheme = "https";
 	}
 
+	if ($_SERVER['HTTP_X_FORWARDED_PORT']) {
+		$_SERVER['SERVER_PORT'] = $_SERVER['HTTP_X_FORWARDED_PORT'];
+	}
+
 	if ($_SERVER['SERVER_PORT']) {
 		$server_port = null;
 
