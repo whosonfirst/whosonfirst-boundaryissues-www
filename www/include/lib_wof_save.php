@@ -136,9 +136,16 @@
 			$feature['properties']['name:eng_x_preferred'] = array(
 				$feature['properties']['wof:name']
 			);
+
+			// This next part is kind of a kludge, but necessary because when
+			// PHP JSON-encodes `array()` it comes out as `[]` instead of
+			// `{}`. So we just make sure to take care of wof:concordances by
+			// explicity turning an empty array into an empty object.
+			// (20161031/dphiffer)
 			if (empty($feature['properties']['wof:concordances'])) {
-				$feature['properties']['wof:concordances'] = (object) array();
+				$feature['properties']['wof:concordances'] = new stdClass();
 			}
+
 			$geojson = json_encode($feature);
 		}
 
