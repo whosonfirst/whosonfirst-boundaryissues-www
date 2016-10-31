@@ -136,6 +136,9 @@
 			$feature['properties']['name:eng_x_preferred'] = array(
 				$feature['properties']['wof:name']
 			);
+			if (empty($feature['properties']['wof:concordances'])) {
+				$feature['properties']['wof:concordances'] = (object) array();
+			}
 			$geojson = json_encode($feature);
 		}
 
