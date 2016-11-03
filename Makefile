@@ -15,9 +15,10 @@ setup:
 	sudo ubuntu/setup-certified-ca.sh
 	sudo ubuntu/setup-certified-certs.sh
 	ubuntu/setup-apache.sh
-	bin/configure_secrets.php .
+	bin/configure_secrets.sh .
 	ubuntu/setup-db.sh boundaryissues boundaryissues
 	ubuntu/setup-geojson-server.sh
+	ubuntu/setup-pubsocketd-server.sh
 	ubuntu/setup-mapshaper.sh
 
 setup-offline:

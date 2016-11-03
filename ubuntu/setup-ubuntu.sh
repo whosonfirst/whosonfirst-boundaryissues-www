@@ -8,20 +8,33 @@ sudo dpkg-reconfigure --priority=low unattended-upgrades
 
 sudo apt-get install -y gdal-bin
 sudo apt-get install -y golang
-sudo apt-get install -y make gunicorn python-gevent python-flask
+sudo apt-get install -y make gunicorn python-gevent python-flask python-pip
 
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-service.html
 
-sudo add-apt-repository ppa:webupd8team/java -y
-sudo apt-get update
-sudo apt-get install oracle-java8-installer -y
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get install -y oracle-java8-installer
 
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html
 
-wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-echo "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
-sudo apt-get update && sudo apt-get install elasticsearch
+#wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+#echo "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
+#sudo apt-get update && sudo apt-get install elasticsearch
+
+curl -o /tmp/elasticsearch-2.4.0.deb https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.0/elasticsearch-2.4.0.deb
+curl -o /tmp/elasticsearch-2.4.0.deb.sha1 https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/2.4.0/elasticsearch-2.4.0.deb.sha1
+remote_sha1=`cat /tmp/elasticsearch-2.4.0.deb.sha1`
+local_sha1=`sha1sum /tmp/elasticsearch-2.4.0.deb | cut -c1-40`
+if [ "$remote_sha1" != "$local_sha1" ] ; then
+    echo "Uh oh, elasticsearch SHA1 checksum is invalid."
+    exit 1
+fi
+
+sudo dpkg -i /tmp/elasticsearch-2.4.0.deb
 sudo update-rc.d elasticsearch defaults 95 10
+
+rm /tmp/elasticsearch-2.4.0.deb
+rm /tmp/elasticsearch-2.4.0.deb.sha1
 
 # make sure elasticsearch is running
 
@@ -41,7 +54,7 @@ then
     sudo mkdir /usr/local/mapzen
 fi
 
-sudo chown vagrant /usr/local/mapzen
+#sudo chown vagrant /usr/local/mapzen
 
 # index all the data - this takes a while
 # /usr/local/bin/wof-es-index -s /usr/local/mapzen/whosonfirst-data/data -b -v
@@ -69,6 +82,26 @@ else
 	sudo python ./setup.py install
 	cd -
 fi
+
+if [ ! -d /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils ]
+then
+
+	git clone https://github.com/whosonfirst/py-mapzen-whosonfirst-pip-utils.git /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
+	sudo chown -R vagrant.vagrant /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
+
+	cd /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
+	git remote rm origin
+	git remote add origin git@github.com:whosonfirst/py-mapzen-whosonfirst-pip-utils.git
+
+	sudo python ./setup.py install
+	cd -
+else
+	cd /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
+	sudo python ./setup.py install
+	cd -
+fi
+
+sudo pip install --upgrade urllib3
 
 # Setup log files
 sudo touch /var/log/boundaryissues_dbug.log

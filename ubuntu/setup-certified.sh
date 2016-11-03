@@ -7,7 +7,7 @@ ROOT=`dirname $UBUNTU`
 
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install ruby-dev
+sudo apt-get -y install ruby-dev
 
 # RDISCOUNT=`gem list | grep rdiscount | wc -l`
 # guh.... dunno why this is necessary but it seems to be
