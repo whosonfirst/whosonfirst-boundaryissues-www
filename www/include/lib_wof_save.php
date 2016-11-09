@@ -25,7 +25,7 @@
 
 	1. Check {$DIR}/pending for the latest record (if any).
 	2. If a pending record is *not* found, find the record from the
-	   $GLOBALS['cfg']['wof_data_dir'] repo.
+	   repo path.
 
 	Step two: pull changes from GitHub.
 	-----------------------------------
@@ -43,8 +43,7 @@
 	------------------------------------
 	For each file in {$DIR}/pending, determine the most recent update for a
 	given WOF ID (using the Unix timestamp in the filename). Copy the most
-	recently updated files into the $GLOBALS['cfg']['wof_data_dir'] data
-	tree.
+	recently updated files into the repo path data tree.
 
 	For each file copied, stage the file for a git commit:
 	`git add {$PATH_TO_UPDATED_WOF}`
@@ -417,8 +416,9 @@
 			list($filename, $timestamp, $user_id, $wof_id, $git_hash) = $matches;
 			if (! $wof[$wof_id]) {
 				$wof[$wof_id] = array();
+				$repo_path = wof_utils_id2repopath($wof_id);
 				$existing_path = wof_utils_id2abspath(
-					$GLOBALS['cfg']['wof_data_dir'],
+					$repo_path,
 					$wof_id
 				);
 				if (file_exists($existing_path)) {
@@ -456,9 +456,15 @@
 			);
 		}
 
-		$rsp = git_branches($GLOBALS['cfg']['wof_data_dir']);
+		// THIS DOES NOT WORK YET. Gonna just assume 'master' branch
+		// for now and circle back on it.
+		// (20161108/dphiffer)
+
+		/*
+		$repo_path = wof_utils_id2repopath($wof_id);
+		$rsp = git_branches($repo_path);
 		audit_trail('git_branches', $rsp, array(
-			'cwd' => $GLOBALS['cfg']['wof_data_dir']
+			'cwd' => $repo_path
 		));
 
 		if (! $rsp['ok']) {
@@ -477,7 +483,8 @@
 				echo "git checkout {$new_branch}$branch\n";
 			}
 			if (! $options['dry_run']) {
-				$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "checkout {$new_branch}$branch");
+				$repo_path = wof_utils_id2repopath($wof_id);
+				$rsp = git_execute($repo_path, "checkout {$new_branch}$branch");
 				audit_trail("git_checkout", $rsp, array(
 					'cmd' => "git checkout {$new_branch}$branch"
 				));
@@ -486,6 +493,10 @@
 				}
 			}
 		}
+		*/
+
+		// TODO: remove this part once we figure out multi-repo support.
+		$branch = 'master';
 
 		// Pull down changes from origin
 		if ($options['verbose']) {
@@ -520,8 +531,9 @@
 			});
 			$update = $updates[0];
 
+			$repo_path = wof_utils_id2repopath($wof_id);
 			$data_path = wof_utils_id2abspath(
-				$GLOBALS['cfg']['wof_data_dir'],
+				$repo_path,
 				$wof_id
 			);
 			$pending_path = wof_utils_id2abspath(
@@ -574,9 +586,9 @@
 			}
 
 			if (! $options['dry_run']) {
-				$rsp = git_add($GLOBALS['cfg']['wof_data_dir'], $data_path);
+				$rsp = git_add($repo_path, $data_path);
 				audit_trail('git_add', $rsp, array(
-					'cwd' => $GLOBALS['cfg']['wof_data_dir'],
+					'cwd' => $repo_path,
 					'path' => $data_path
 				));
 				if (! $rsp['ok']) {
@@ -610,6 +622,10 @@
 			}
 			$notifications[$user_id][$wof_id] = $wof_name;
 		}
+
+
+		// TODO: make this next part work
+		return;
 
 		$messages = implode("\n", $messages);
 		$args .= ' --message=' . escapeshellarg($messages);

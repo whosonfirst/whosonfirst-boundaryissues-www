@@ -46,10 +46,12 @@
 		),
 	);
 
-	# WE SHOULD STANDARDIZE ON /usr/local/data/whosonfirst-data BUT THAT IS WAITING
-	# ON WORK AROUND MULTIPLE REPOSITORIES AND FUSE STUFF AND REPO LOOKUP (BELOW)
-	# (20160405/thisisaaronland)
+	# Hey look! See the enable_feature_multi_repo flag below? If you enable that
+	# just make sure to include the __REPO__ placeholder in the wof_data_dir
+	# config. Ex: /usr/local/data/__REPO__/data/ (20161108/dphiffer)
 
+
+	$GLOBALS['cfg']['enable_feature_multi_repo'] = false;
 	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data/';
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/';
 

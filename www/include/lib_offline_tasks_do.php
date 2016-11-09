@@ -88,10 +88,7 @@
 	function offline_tasks_do_update_s3($data){
 
 		$wof_id = $data['wof_id'];
-		$rel = $GLOBALS['cfg']['wof_data_dir'];
-		$path = wof_utils_id2relpath($wof_id);
-
-		$rsp = wof_s3_put_file($rel, $path);
+		$rsp = wof_s3_put_file($wof_id);
 		return $rsp;
 	}
 

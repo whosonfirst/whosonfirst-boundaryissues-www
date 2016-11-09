@@ -1,6 +1,7 @@
 <?php
 
 	loadlib('users_settings');
+	loadlib('wof_elasticsearch');
 
 	########################################################################
 
@@ -41,9 +42,11 @@
 
 	function wof_utils_find_id($id, $more=array()){
 
+		$repo_path = wof_utils_id2repopath($id);
+		dbug("repo_path = $repo_path");
 		$root_dirs = array(
 			wof_utils_pending_dir('data'),
-			$GLOBALS['cfg']['wof_data_dir']
+			$repo_path
 		);
 		if ($more['root_dirs']) {
 			$root_dirs = $more['root_dirs'];
@@ -133,6 +136,24 @@
 		}
 
 		return $pending_dir;
+	}
+
+	########################################################################
+
+	function wof_utils_id2repopath($wof_id) {
+
+		if (! $GLOBALS['cfg']['enable_feature_multi_repo']) {
+			return $GLOBALS['cfg']['wof_data_dir'];
+		}
+
+		$wof = wof_elasticsearch_get($wof_id);
+		$wof_repo = $wof['wof:repo'];
+		if (! $wof_repo) {
+			return null;
+		}
+		$path_template = $GLOBALS['cfg']['wof_data_dir'];
+		$repo_path = str_replace('__REPO__', $wof_repo, $path_template);
+		return $repo_path;
 	}
 
 	# the end

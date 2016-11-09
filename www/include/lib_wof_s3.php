@@ -4,23 +4,26 @@
 
 	########################################################################
 
-	function wof_s3_put_file($rel, $path, $args=array(), $more=array()) {
+	function wof_s3_put_file($wof_id, $args=array(), $more=array()) {
 
-		if (! file_exists("{$rel}{$path}")) {
+		$path = wof_utils_id2relpath($wof_id);
+		$repo = wof_utils_id2repopath($wof_id);
+
+		if (! file_exists("{$repo}{$path}")) {
 			return array(
 				'ok' => 0,
-				'error' => "'{$rel}{$path}' not found."
+				'error' => "'{$repo}{$path}' not found."
 			);
 		}
 
-		$data = file_get_contents("{$rel}{$path}");
+		$data = file_get_contents("{$repo}{$path}");
 		$path = "data/$path";
 
 		return wof_s3_put_data($data, $path, $args, $more);
 	}
 
 	########################################################################
-	
+
 	function wof_s3_put_data($data, $path, $args=array(), $more=array()) {
 
 		$bucket = array(

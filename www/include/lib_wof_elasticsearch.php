@@ -101,4 +101,17 @@
 		return $index_exists;
 	}
 
+	########################################################################
+
+	function wof_elasticsearch_get($wof_id) {
+		wof_elasticsearch_append_defaults($more);
+		$url = "http://{$more['host']}:{$more['port']}/{$more['index']}/wof/$wof_id";
+		$rsp = http_get($url);
+		if (! $rsp['ok']) {
+			return null;
+		}
+		$results = json_decode($rsp['body'], 'as hash');
+		return $results['_source'];
+	}
+
 	# the end
