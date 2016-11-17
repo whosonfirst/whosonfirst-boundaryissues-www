@@ -146,7 +146,19 @@
 			return $GLOBALS['cfg']['wof_data_dir'];
 		}
 
-		$wof = wof_elasticsearch_get($wof_id);
+		$rsp = wof_elasticsearch_search(array(
+			'query' => array(
+				'term' => array(
+					'wof:id' => $wof_id
+				)
+			)
+		));
+		if (! $rsp['ok'] ||
+		    ! $rsp['rows'][0]) {
+			return null;
+		}
+
+		$wof = $rsp['rows'][0];
 		$wof_repo = $wof['wof:repo'];
 		if (! $wof_repo) {
 			return null;
