@@ -414,9 +414,14 @@
 				continue;
 			}
 			list($filename, $timestamp, $user_id, $wof_id, $git_hash) = $matches;
-			if (! $wof[$wof_id]) {
-				$wof[$wof_id] = array();
-				$repo_path = wof_utils_id2repopath($wof_id);
+			$repo_path = wof_utils_id2repopath($wof_id);
+
+			if (! $wof[$repo_path]) {
+				$wof[$repo_path] = array();
+			}
+
+			if (! $wof[$repo_path][$wof_id]) {
+				$wof[$repo_path][$wof_id] = array();
 				$existing_path = wof_utils_id2abspath(
 					$repo_path,
 					$wof_id
@@ -438,7 +443,7 @@
 				'pending' => $pending
 			));
 
-			array_push($wof[$wof_id], array(
+			array_push($wof[$repo_path][$wof_id], array(
 				'path' => $path,
 				'wof_id' => intval($wof_id),
 				'filename' => $filename,
@@ -456,115 +461,51 @@
 			);
 		}
 
-		// THIS DOES NOT WORK YET. Gonna just assume 'master' branch
-		// for now and circle back on it.
-		// (20161108/dphiffer)
+		foreach ($wof as $repo_path => $pending) {
 
-		/*
-		$repo_path = wof_utils_id2repopath($wof_id);
-		$rsp = git_branches($repo_path);
-		audit_trail('git_branches', $rsp, array(
-			'cwd' => $repo_path
-		));
-
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-
-		if ($rsp['selected'] == $branch) {
 			if ($options['verbose']) {
-				echo "(branch $branch already checked out)\n";
+				echo "cd $repo_path\n";
 			}
-		} else {
-			if (! in_array($branch, $rsp['branches'])) {
-				$new_branch = '-b ';
-			}
-			if ($options['verbose']) {
-				echo "git checkout {$new_branch}$branch\n";
-			}
-			if (! $options['dry_run']) {
-				$repo_path = wof_utils_id2repopath($wof_id);
-				$rsp = git_execute($repo_path, "checkout {$new_branch}$branch");
-				audit_trail("git_checkout", $rsp, array(
-					'cmd' => "git checkout {$new_branch}$branch"
-				));
-				if (! $rsp['ok']) {
-					return $rsp;
-				}
-			}
-		}
-		*/
 
-		// TODO: remove this part once we figure out multi-repo support.
-		$branch = 'master';
-
-		// Pull down changes from origin
-		if ($options['verbose']) {
-			echo "git pull --rebase origin $branch\n";
-		}
-
-		if (! $options['dry_run']) {
-			$rsp = wof_save_pending_pull($branch);
-			audit_trail("wof_save_pending_pull", $rsp, array(
-				'branch' => $branch
+			$rsp = git_branches($repo_path);
+			audit_trail('git_branches', $rsp, array(
+				'cwd' => $repo_path
 			));
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
-		}
-
-		$args = '';
-		$saved = array();
-		$messages = array();
-		$authors = array();
-		$notifications = array();
-
-		foreach ($wof as $wof_id => $updates) {
-
-			// Find the most recent pending changes
-			usort($updates, function($a, $b) {
-				if ($a['timestamp'] < $b['timestamp']) {
-					return 1;
-				} else {
-					return -1;
-				}
-			});
-			$update = $updates[0];
-
-			$repo_path = wof_utils_id2repopath($wof_id);
-			$data_path = wof_utils_id2abspath(
-				$repo_path,
-				$wof_id
-			);
-			$pending_path = wof_utils_id2abspath(
-				wof_utils_pending_dir('data', null, $branch),
-				$wof_id
-			);
-
-			$geojson = file_get_contents($pending_path);
-			$feature = json_decode($geojson, 'as hash');
-			$wof_name = $feature['properties']['wof:name'];
-			$user_id = $update['user_id'];
-
-			$data_dir = dirname($data_path);
-			if (! file_exists($data_dir)) {
+			if ($rsp['selected'] == $branch) {
 				if ($options['verbose']) {
-					echo "mkdir -p $data_dir\n";
+					echo "(branch $branch already checked out)\n";
+				}
+			} else {
+				if (! in_array($branch, $rsp['branches'])) {
+					$new_branch = '-b ';
+				}
+				if ($options['verbose']) {
+					echo "git checkout {$new_branch}$branch\n";
 				}
 				if (! $options['dry_run']) {
-					mkdir($data_dir, 0775, true);
+					$rsp = git_execute($repo_path, "checkout {$new_branch}$branch");
+					audit_trail("git_checkout", $rsp, array(
+						'cwd' => $repo_path,
+						'cmd' => "git checkout {$new_branch}$branch"
+					));
+					if (! $rsp['ok']) {
+						return $rsp;
+					}
 				}
 			}
 
+			// Pull down changes from origin
 			if ($options['verbose']) {
-				echo "mv $pending_path $data_path\n";
+				echo "git pull --rebase origin $branch\n";
 			}
+
 			if (! $options['dry_run']) {
-				$rsp = wof_save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
-				audit_trail('wof_save_pending_apply_diff', $rsp, array(
-					'pending_path' => $pending_path,
-					'diff' => $update['diff'],
-					'data_path' => $data_path,
+				$rsp = wof_save_pending_pull($repo_path, $branch);
+				audit_trail("wof_save_pending_pull", $rsp, array(
+					'cwd' => $repo_path,
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
@@ -572,106 +513,152 @@
 				}
 			}
 
-			if (! file_exists($data_path) &&
-			    ! $options['dry_run']) {
-				if ($options['verbose']) {
-					echo "not found: $data_path\n";
+			$args = '';
+			$saved = array();
+			$messages = array();
+			$authors = array();
+			$notifications = array();
+
+			foreach ($pending as $wof_id => $updates) {
+
+				// Find the most recent pending changes
+				usort($updates, function($a, $b) {
+					if ($a['timestamp'] < $b['timestamp']) {
+						return 1;
+					} else {
+						return -1;
+					}
+				});
+				$update = $updates[0];
+
+				$data_path = wof_utils_id2abspath(
+					$repo_path,
+					$wof_id
+				);
+				$pending_path = wof_utils_id2abspath(
+					wof_utils_pending_dir('data', null, $branch),
+					$wof_id
+				);
+
+				$geojson = file_get_contents($pending_path);
+				$feature = json_decode($geojson, 'as hash');
+				$wof_name = $feature['properties']['wof:name'];
+				$user_id = $update['user_id'];
+
+				$data_dir = dirname($data_path);
+				if (! file_exists($data_dir)) {
+					if ($options['verbose']) {
+						echo "mkdir -p $data_dir\n";
+					}
+					if (! $options['dry_run']) {
+						mkdir($data_dir, 0775, true);
+					}
 				}
-				continue;
+
+				if ($options['verbose']) {
+					echo "mv $pending_path $data_path\n";
+				}
+				if (! $options['dry_run']) {
+					$rsp = wof_save_pending_apply_diff($pending_path, $update['diff'], $data_path, $branch);
+					audit_trail('wof_save_pending_apply_diff', $rsp, array(
+						'pending_path' => $pending_path,
+						'diff' => $update['diff'],
+						'data_path' => $data_path,
+						'branch' => $branch
+					));
+					if (! $rsp['ok']) {
+						return $rsp;
+					}
+				}
+
+				if (! file_exists($data_path) &&
+				    ! $options['dry_run']) {
+					if ($options['verbose']) {
+						echo "not found: $data_path\n";
+					}
+					continue;
+				}
+
+
+				if ($options['verbose']) {
+					echo "git add $data_path\n";
+				}
+
+				if (! $options['dry_run']) {
+					$rsp = git_add($repo_path, $data_path);
+					audit_trail('git_add', $rsp, array(
+						'cwd' => $repo_path,
+						'path' => $data_path
+					));
+					if (! $rsp['ok']) {
+						return $rsp;
+					}
+				}
+				$saved[$wof_id] = $updates;
+
+				if ($authors[$user_id]) {
+					$author = $authors[$user_id];
+				} else {
+					$rsp = users_get_by_id($user_id);
+					audit_trail("users_get_by_id", $rsp, array(
+						'id' => $user_id
+					));
+					if ($rsp['username']) {
+						$author = $rsp['username'];
+						$authors[$user_id] = $author;
+					}
+				}
+
+				$message = "* $wof_name ($wof_id) saved by $author";
+				if ($options['verbose']) {
+					echo "$message\n";
+				}
+
+				$messages[] = $message;
+
+				if (! $notifications[$user_id]) {
+					$notifications[$user_id] = array();
+				}
+				$notifications[$user_id][$wof_id] = $wof_name;
 			}
 
-
 			if ($options['verbose']) {
-				echo "git add $data_path\n";
+				echo "git commit \"$message\" $args\n";
 			}
 
 			if (! $options['dry_run']) {
-				$rsp = git_add($repo_path, $data_path);
-				audit_trail('git_add', $rsp, array(
+
+				// Commit the pending changes
+				$rsp = git_commit($repo_path, $message, $args);
+				audit_trail('git_commit', $rsp, array(
 					'cwd' => $repo_path,
-					'path' => $data_path
+					'message' => $message,
+					'args' => $args
 				));
 				if (! $rsp['ok']) {
 					return $rsp;
 				}
-			}
-			$saved[$wof_id] = $updates;
-
-			if ($authors[$user_id]) {
-				$author = $authors[$user_id];
-			} else {
-				$rsp = users_get_by_id($user_id);
-				audit_trail("users_get_by_id", $rsp, array(
-					'id' => $user_id
-				));
-				if ($rsp['username']) {
-					$author = $rsp['username'];
-					$authors[$user_id] = $author;
+				if (preg_match('/^\[\w+\s+(.+?)\]/', $rsp['rsp'], $matches)) {
+					$commit_hash = $matches[1];
 				}
 			}
 
-			$message = "* $wof_name ($wof_id) saved by $author";
 			if ($options['verbose']) {
-				echo "$message\n";
+				echo "git push origin $branch\n";
 			}
 
-			$messages[] = $message;
+			if (! $options['dry_run']) {
 
-			if (! $notifications[$user_id]) {
-				$notifications[$user_id] = array();
-			}
-			$notifications[$user_id][$wof_id] = $wof_name;
-		}
-
-
-		// TODO: make this next part work
-		return;
-
-		$messages = implode("\n", $messages);
-		$args .= ' --message=' . escapeshellarg($messages);
-		$num_updates = count($saved);
-		$message = "Boundary Issues: $num_updates updates";
-
-		if ($num_updates == 1) {
-			$message = "Boundary Issues: saved $wof_name";
-		}
-
-		if ($options['verbose']) {
-			echo "git commit \"$message\" $args\n";
-		}
-
-		if (! $options['dry_run']) {
-
-			// Commit the pending changes
-			$rsp = git_commit($GLOBALS['cfg']['wof_data_dir'], $message, $args);
-			audit_trail('git_commit', $rsp, array(
-				'cwd' => $GLOBALS['cfg']['wof_data_dir'],
-				'message' => $message,
-				'args' => $args
-			));
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-			if (preg_match('/^\[\w+\s+(.+?)\]/', $rsp['rsp'], $matches)) {
-				$commit_hash = $matches[1];
-			}
-		}
-
-		if ($options['verbose']) {
-			echo "git push origin $branch\n";
-		}
-
-		if (! $options['dry_run']) {
-
-			// Push to GitHub
-			$rsp = git_push($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch);
-			audit_trail('git_push', $rsp, array(
-				'cwd' => $GLOBALS['cfg']['wof_data_dir'],
-				'remote' => 'origin',
-				'branch' => $branch
-			));
-			if (! $rsp['ok']) {
-				return $rsp;
+				// Push to GitHub
+				$rsp = git_push($repo_path, 'origin', $branch);
+				audit_trail('git_push', $rsp, array(
+					'cwd' => $repo_path,
+					'remote' => 'origin',
+					'branch' => $branch
+				));
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
 			}
 		}
 
@@ -726,6 +713,15 @@
 					));
 				}
 			}
+		}
+
+		$messages = implode("\n", $messages);
+		$args .= ' --message=' . escapeshellarg($messages);
+		$num_updates = count($saved);
+		$message = "Boundary Issues: $num_updates updates";
+
+		if ($num_updates == 1) {
+			$message = "Boundary Issues: saved $wof_name";
 		}
 
 		// Send out notifications
@@ -826,9 +822,9 @@
 
 	########################################################################
 
-	function wof_save_pending_pull($branch) {
+	function wof_save_pending_pull($repo_path, $branch) {
 		// Pull changes from GitHub
-		$rsp = git_pull($GLOBALS['cfg']['wof_data_dir'], 'origin', $branch, '--rebase');
+		$rsp = git_pull($repo_path, 'origin', $branch, '--rebase');
 		audit_trail("git_pull", $rsp, array(
 			'cwd' => $GLOBALS['cfg']['wof_data_dir'],
 			'remote' => 'origin',
@@ -848,9 +844,9 @@
 		if ($rsp['commit_hashes']) {
 			$commit_hashes = $rsp['commit_hashes'];
 			$commit_hashes_esc = escapeshellarg($commit_hashes);
-			$rsp = git_execute($GLOBALS['cfg']['wof_data_dir'], "diff $commit_hashes_esc --summary");
+			$rsp = git_execute($repo_path, "diff $commit_hashes_esc --summary");
 			audit_trail("summarize_commit_hashes", $rsp, array(
-				'cwd' => $GLOBALS['cfg']['wof_data_dir'],
+				'cwd' => $repo_path,
 				'cmd' => "git $commit_hashes_esc --summary"
 			));
 			if (! $rsp['ok']) {
@@ -876,7 +872,7 @@
 			}
 
 			$owner = $GLOBALS['cfg']['wof_github_owner'];
-			$repo = $GLOBALS['cfg']['wof_github_repo'];
+			$repo = basename($repo_path);
 			$range = str_replace('..', '...', $commit_hashes);
 			$url = "https://github.com/$owner/$repo/compare/$range";
 			$details = array(

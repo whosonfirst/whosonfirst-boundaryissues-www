@@ -50,19 +50,12 @@
 	# just make sure to include the __REPO__ placeholder in the wof_data_dir
 	# config. Ex: /usr/local/data/__REPO__/data/ (20161108/dphiffer)
 
-
 	$GLOBALS['cfg']['enable_feature_multi_repo'] = false;
 	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data/';
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/';
 
 	$GLOBALS['cfg']['enable_feature_save_via_github_api'] = false;
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
-
-	# ULTIMATELY THIS WILL/SHOULD BE REPLACED BY A FUNCTION THAT MAPS ANY GIVEN
-	# RECORD TO A REPO BUT THAT WORK IS NOT DONE YET. ALSO THIS SHOULD PROBABLY
-	# BE STORED IN `config_dev.php` UNTIL THEN (20160405/thisissaaronland)
-
-	$GLOBALS['cfg']['wof_github_repo'] = 'whosonfirst-data';
 
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues_dbug.log';
