@@ -58,7 +58,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return null;
 		},
 		function(){
-			if ($('input[name="wof_id"]').length == 0){
+			if ($('input[name="wof_id"]').length == 0 ||
+			    $('#hours').length == 0){
 				return null;
 			}
 			var hours = self.get_hours();
@@ -757,6 +758,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		mark_changed_property: function(name) {
+			if (! name) {
+				return;
+			}
 			var target = $(
 				'input[name="' + name + '"],' +
 				'.json-schema-array[data-context="' + name + '"] > ul > li > input,' +

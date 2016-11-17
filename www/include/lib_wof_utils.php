@@ -43,7 +43,6 @@
 	function wof_utils_find_id($id, $more=array()){
 
 		$repo_path = wof_utils_id2repopath($id);
-		dbug("repo_path = $repo_path");
 		$root_dirs = array(
 			wof_utils_pending_dir('data'),
 			$repo_path
