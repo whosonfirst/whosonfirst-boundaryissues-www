@@ -2,6 +2,7 @@
 
 	loadlib('users_settings');
 	loadlib('wof_elasticsearch');
+	loadlib('http');
 
 	########################################################################
 
@@ -165,6 +166,143 @@
 		$path_template = $GLOBALS['cfg']['wof_data_dir'];
 		$repo_path = str_replace('__REPO__', $wof_repo, $path_template);
 		return $repo_path;
+	}
+
+	########################################################################
+
+	function wof_utils_pickrepo($feature) {
+
+		$repo = null;
+		$props = $feature['properties'];
+		$pt = $props['wof:placetype'];
+
+		// Huh, there is already a wof:repo property. Just use that.
+		if ($props['wof:repo']) {
+			return $props['wof:repo'];
+		}
+
+		// These placetypes are kept separately from whosonfirst-data
+		$separate_pt = array(
+			'venue',
+			'postalcode',
+			'constituency',
+		);
+
+		// These countries are split into separate region-level repos
+		$include_region = array(
+			'us',
+		);
+
+		if (in_array($pt, $separate_pt)) {
+			$rsp = wof_utils_getcountry($feature);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$country = $rsp['country'];
+
+			if (in_array($country, $include_region)) {
+				$rsp = wof_utils_getregion($feature);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+				$region = $rsp['region'];
+				$repo = "whosonfirst-data-$pt-$country-$region";
+			} else {
+				$repo = "whosonfirst-data-$pt-$country";
+			}
+		} else {
+			$repo = "whosonfirst-data";
+		}
+
+		if ($repo) {
+			return array('ok' => 1, 'repo' => $repo);
+		} else {
+			return array('ok' => 0, 'error' => 'No repo found for feature.');
+		}
+	}
+
+	########################################################################
+
+	// Given a feature, what is its country 2-letter abbreviation?
+
+	function wof_utils_getcountry($feature) {
+		$props = $feature['properties'];
+		$country = null;
+		if ($props['wof:country']) {
+			$country = strtolower($props['wof:country']);
+		} else if ($props['iso:country']) {
+			$country = strtolower($props['iso:country']);
+		} else if ($props['wof:hierarchy']) {
+			foreach ($props['wof:hierarchy'] as $hier) {
+				$country_id = $hier['country_id'];
+				$country_path = wof_utils_id2relpath($country_id);
+				$country_url = $GLOBALS['cfg']['data_abs_root_url'] . $country_path;
+				$more = array(
+					'http_timeout' => 60
+				);
+				$rsp = http_get($country_url, array(), $more);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+
+				$wof = json_decode($rsp['body'], 'as hash');
+				if ($wof['properties']['wof:country']) {
+					$country = strtolower($wof['properties']['wof:country']);
+				} else if ($wof['properties']['iso:country']) {
+					$country = strtolower($wof['properties']['iso:country']);
+				}
+
+				if ($country) {
+					break;
+				}
+			}
+		}
+		if ($country) {
+			return array('ok' => 1, 'country' => $country);
+		} else {
+			return array('ok' => 0, 'error' => 'No country found for feature.');
+		}
+	}
+
+	########################################################################
+
+	// Given a feature, what is its region 2-letter abbreviation?
+
+	function wof_utils_getregion($feature) {
+		$props = $feature['properties'];
+		$region = null;
+		foreach ($props['wof:hierarchy'] as $hier) {
+			$region_id = $hier['region_id'];
+			$region_path = wof_utils_id2relpath($region_id);
+			$region_url = $GLOBALS['cfg']['data_abs_root_url'] . $region_path;
+			$more = array(
+				'http_timeout' => 60
+			);
+			$rsp = http_get($region_url, array(), $more);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+
+			$wof = json_decode($rsp['body'], 'as hash');
+			if ($wof['properties']['wof:abbreviation']) {
+				$region = strtolower($wof['properties']['wof:abbreviation']);
+			} else if ($wof['properties']['wof:subdivision']) {
+				$region = substr($wof['properties']['wof:subdivision'], 3);
+				$region = strtolower($region);
+			} else if ($wof['properties']['iso:subdivision']) {
+				$region = substr($wof['properties']['iso:subdivision'], 3);
+				$region = strtolower($region);
+			}
+
+			if ($region) {
+				break;
+			}
+		}
+		if ($region) {
+			return array('ok' => 1, 'region' => $region);
+		} else {
+			return array('ok' => 0, 'error' => 'No region found for feature.');
+		}
 	}
 
 	# the end

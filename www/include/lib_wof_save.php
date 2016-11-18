@@ -131,6 +131,9 @@
 
 		// If this is a new record, automatically copy wof:name property
 		// into the name:eng_x_preferred. (20160829/dphiffer)
+
+		// Also, assign the wof:repo property. (20161118/dphiffer)
+
 		if (! $feature['properties']['wof:id']) {
 			$feature['properties']['name:eng_x_preferred'] = array(
 				$feature['properties']['wof:name']
@@ -143,6 +146,20 @@
 			// (20161031/dphiffer)
 			if (empty($feature['properties']['wof:concordances'])) {
 				$feature['properties']['wof:concordances'] = new stdClass();
+			}
+
+			if ($GLOBALS['cfg']['enable_feature_multi_repo']) {
+				// Pick the repo based on placetype/country/region
+				$rsp = wof_utils_pickrepo($feature);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+				$feature['properties']['wof:repo'] = $rsp['repo'];
+			} else {
+				// Choose wof:repo based on wof_data_dir
+				if (preg_match('#/([^/]+)/data/?$#', $GLOBALS['cfg']['wof_data_dir'], $matches)) {
+					$feature['properties']['wof:repo'] = $matches[1];
+				}
 			}
 
 			$geojson = json_encode($feature);
