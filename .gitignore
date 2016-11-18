@@ -15,3 +15,4 @@ certified
 .DS_Store
 /git
 /supervisor/whosonfirst-www-boundaryissues.conf
+/bin/test.php
