@@ -47,7 +47,7 @@
 	function wof_schema_load($schema_files) {
 		$schemas = array();
 		foreach ($schema_files as $filename) {
-			$path = realpath(FLAMEWORK_INCLUDE_DIR . "../../schema/json/$filename");
+			$path = realpath(FLAMEWORK_INCLUDE_DIR . "../meta/$filename");
 			$json = file_get_contents($path);
 			$schema = json_decode($json, true);
 			$schema_id = $schema['id'];
