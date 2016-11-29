@@ -5,6 +5,7 @@ import sys
 import logging
 import os
 import re
+import flask
 from flask import Flask, request, jsonify
 
 import geojson
@@ -19,7 +20,7 @@ app = Flask(__name__)
 
 @app.before_request
 def init():
-	wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/')
+	flask.g.wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/')
 
 @app.route('/encode', methods=['POST'])
 def geojson_encode():
@@ -79,7 +80,7 @@ def geojson_save():
 		return jsonify(ok=0, error=error)
 
 	try:
-		data_dir = "%s%s/data" % (wof_pending_dir, branch)
+		data_dir = "%s%s/data" % (flask.g.wof_pending_dir, branch)
 		if not os.path.exists(data_dir):
 			os.makedirs(data_dir, 0775)
 		ff = mapzen.whosonfirst.export.flatfile(data_dir, debug=False)
