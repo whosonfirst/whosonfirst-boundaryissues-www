@@ -15,10 +15,11 @@ import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.pip.utils
 
-# This assumes that a 'pending' folder has been created in the Boundary Issues
-# directory, writable by the www-data user. (20160502/dphiffer)
-root = "/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/"
 app = Flask(__name__)
+
+@app.before_request
+def init():
+	wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/')
 
 @app.route('/encode', methods=['POST'])
 def geojson_encode():
@@ -78,7 +79,7 @@ def geojson_save():
 		return jsonify(ok=0, error=error)
 
 	try:
-		data_dir = "%s%s/data" % (root, branch)
+		data_dir = "%s%s/data" % (wof_pending_dir, branch)
 		if not os.path.exists(data_dir):
 			os.makedirs(data_dir, 0775)
 		ff = mapzen.whosonfirst.export.flatfile(data_dir, debug=False)
@@ -131,4 +132,24 @@ def geojson_hierarchy():
 	return jsonify(ok=1, hierarchy=hierarchy, parents=parents)
 
 if __name__ == "__main__":
-	app.run(port=8181)
+	import sys
+	import optparse
+	import ConfigParser
+
+	opt_parser = optparse.OptionParser()
+
+	opt_parser.add_option('-p', '--port', dest='port', action='store', default=8181, help='')
+	opt_parser.add_option('-d', '--dir', dest='dir', action='store', default='/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/', help='wof_pending_dir')
+	opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
+
+	options, args = opt_parser.parse_args()
+
+	if options.verbose:
+		logging.basicConfig(level=logging.DEBUG)
+	else:
+		logging.basicConfig(level=logging.INFO)
+
+	os.environ['WOF_PENDING_DIR'] = options.dir
+	port = int(options.port)
+
+	app.run(port=port)
