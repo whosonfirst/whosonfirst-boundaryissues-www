@@ -107,20 +107,22 @@ def geojson_hierarchy():
 	data_endpoint = 'https://whosonfirst.mapzen.com/data/'
 	lat = float(request.args.get('latitude'))
 	lng = float(request.args.get('longitude'))
+	wof_id = request.args.get('wof_id')
 	placetype = request.args.get('placetype')
+	pip_server = mapzen.whosonfirst.pip.server(hostname='pip.mapzen.com', scheme='https', port=443)
 
 	if (mapzen.whosonfirst.placetypes.is_valid_placetype(placetype) == False):
 		return jsonify(ok=0, error="What is that placetype?")
 
 	try:
-		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype)
+		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype, pip_server=pip_server)
 	except Exception, e:
 		error = "failed to determine parents, because %s" % e
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
 	try:
-		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, data_endpoint)
+		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, wofid=wof_id, placetype=placetype)
 	except Exception, e:
 		error = "failed to determine hierarchy, because %s" % e
 		logging.error(error)

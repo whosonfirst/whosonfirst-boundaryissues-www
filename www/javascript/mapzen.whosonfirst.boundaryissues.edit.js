@@ -1764,6 +1764,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				placetype: placetype
 			};
 
+			var wof_id = $('input[name="properties.wof:id"').val();
+			if (wof_id) {
+				data.wof_id = wof_id;
+			}
+
 			var onsuccess = function(rsp) {
 				callback(rsp);
 			};

@@ -139,11 +139,15 @@
 			api_output_error(400, "Please include: 'latitude', 'longitude', and 'placetype'.");
 		}
 
-		$query = http_build_query(array(
+		$vars = array(
 			'latitude' => post_float('latitude'),
 			'longitude' => post_float('longitude'),
 			'placetype' => post_str('placetype')
-		));
+		);
+		if (isset($_POST['wof_id'])) {
+			$vars['wof_id'] = post_int32('wof_id');
+		}
+		$query = http_build_query($vars);
 
 		# Note the absence of the trailing slash - this is relevant because Python
 		# (20160429/thisisaaronland)
