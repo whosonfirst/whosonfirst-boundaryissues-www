@@ -32,12 +32,13 @@
 		$now = offline_tasks_microtime();
 
 		$rsp = call_user_func($hook, $task, $data, $task_id);
+		$data_json = json_encode($data);
 
 		$event = array(
 			'action' => 'schedule',
 			'task_id' => $task_id,
 			'task' => $task,
-			'data' => $data,
+			'data' => $data_json,
 			'rsp' => $rsp,
 			'microtime' => $now,
 		);
