@@ -277,11 +277,12 @@
 			}
 		}
 
+		$saved_json = json_encode($saved);
 		if (! $errors) {
 			return array(
 				'ok' => 1,
 				'properties' => $batch_properties,
-				'saved' => $saved
+				'saved' => $saved_json
 			);
 		} else {
 			return array(
@@ -289,7 +290,7 @@
 				'properties' => $batch_properties,
 				'error' => 'Error batch saving WOF documents.',
 				'details' => $errors,
-				'saved' => $saved
+				'saved' => $saved_json
 			);
 		}
 	}
