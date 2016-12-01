@@ -30,8 +30,6 @@ Within the web application, you can check on the status of offline tasks at the 
 
 ## omgwtf nothing is working
 
-1. Make sure Redis is working.
-
 First, subscribe to a Redis channel.
 ```
 cd /usr/local/mapzen/redis-tools
@@ -44,9 +42,11 @@ cd /usr/local/mapzen/redis-tools
 ./bin/publish omgwtf hello
 ```
 
-2. Check the Logstash service logs for error messages
-3. Check the logged messages to see if they got through
-4. Try a running minimal test script in the `whosonfirst-boundary-issues/bin` folder:
+Did you see anything come through on the subscribe end of things? Ok, then let's check that other things are working.
+
+* Check the Logstash service logs for error messages
+* Check the logged messages to see if they got through
+* Try a running minimal test script in the `whosonfirst-boundary-issues/bin` folder:
 
 ```
 <?php
