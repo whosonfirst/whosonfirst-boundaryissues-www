@@ -410,9 +410,10 @@
 			$saved = array_merge($saved, $rsp['saved']);
 		}
 
+		$saved_json = json_encode($saved);
 		return array(
 			'ok' => 1,
-			'saved' => $saved
+			'saved' => $saved_json
 		);
 	}
 
