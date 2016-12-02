@@ -1017,7 +1017,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 			var remove = '<button class="btn btn-remove-item">-</button>';
 			var $newRow = $(
-				'<tr>' +
+				'<tr class="object-property property-visible property-editable property-deletable">' +
 					'<th>' + key + '</th>' +
 					'<td><input type="text" name="' + context + '.' + key + '" class="property">' + remove + '</td>' +
 				'</tr>'
