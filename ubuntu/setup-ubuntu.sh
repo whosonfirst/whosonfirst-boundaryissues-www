@@ -83,24 +83,6 @@ else
 	cd -
 fi
 
-if [ ! -d /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils ]
-then
-
-	git clone https://github.com/whosonfirst/py-mapzen-whosonfirst-pip-utils.git /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
-	sudo chown -R vagrant.vagrant /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
-
-	cd /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
-	git remote rm origin
-	git remote add origin git@github.com:whosonfirst/py-mapzen-whosonfirst-pip-utils.git
-
-	sudo python ./setup.py install
-	cd -
-else
-	cd /usr/local/mapzen/py-mapzen-whosonfirst-pip-utils
-	sudo python ./setup.py install
-	cd -
-fi
-
 sudo pip install --upgrade urllib3
 
 # Setup log files
