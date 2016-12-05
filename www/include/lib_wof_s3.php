@@ -19,6 +19,8 @@
 		$data = file_get_contents("{$repo}{$path}");
 		$path = "data/$path";
 
+		$args['acl'] = rawurlencode('http://acs.amazonaws.com/groups/global/AllUsers');
+
 		return wof_s3_put_data($data, $path, $args, $more);
 	}
 
