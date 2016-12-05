@@ -435,6 +435,12 @@
 			list($filename, $timestamp, $user_id, $wof_id, $git_hash) = $matches;
 			$repo_path = wof_utils_id2repopath($wof_id);
 
+			if (! $repo_path) {
+				$geojson = file_get_contents($filename);
+				$feature = json_decode($geojson, 'as hash');
+				$repo_path = $feature['properties']['wof:repo'];
+			}
+
 			if (! $wof[$repo_path]) {
 				$wof[$repo_path] = array();
 			}
