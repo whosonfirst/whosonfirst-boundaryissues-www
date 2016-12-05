@@ -436,7 +436,7 @@
 			$repo_path = wof_utils_id2repopath($wof_id);
 
 			if (! $repo_path) {
-				$geojson = file_get_contents($filename);
+				$geojson = file_get_contents("$index_dir/$filename");
 				$feature = json_decode($geojson, 'as hash');
 				$repo_path = $feature['properties']['wof:repo'];
 			}
