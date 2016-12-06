@@ -16,7 +16,7 @@
 		// First check if the 'admin' flag is set
 		$mapzen_user = mapzen_users_get_by_user_id($user_id);
 		if ($mapzen_user && $mapzen_user['admin']) {
-			return false;
+			return true;
 		}
 
 		$user = users_get_by_id($user_id);
