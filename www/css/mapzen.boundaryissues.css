@@ -85,6 +85,10 @@ input[readonly="readonly"] {
 	background: #fff;
 }
 
+body.user-signed-in .json-schema-field.editing-disabled-notice::after {
+	content: "You’re not authorized to edit properties.";
+}
+
 .property-editable > td > .json-schema-field > .json-schema-array > input.add-item,
 .property-editable > td > .json-schema-field > .json-schema-array > .btn-add-item {
 	display: inline-block;

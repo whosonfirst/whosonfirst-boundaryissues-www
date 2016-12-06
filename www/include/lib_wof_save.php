@@ -112,6 +112,13 @@
 			$user_id = $GLOBALS['cfg']['user']['id'];
 		}
 
+		if (! users_acl_can_edit($user_id)) {
+			return array(
+				'ok' => 0,
+				'error' => 'User is not authorized to save features.'
+			);
+		}
+
 		if ($GLOBALS['cfg']['require_wof_placetypes'] &&
 		    ! in_array($feature['properties']['wof:placetype'], $GLOBALS['cfg']['require_wof_placetypes'])){
 			return array(

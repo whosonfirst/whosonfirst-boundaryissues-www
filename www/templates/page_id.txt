@@ -29,8 +29,12 @@
 						{include file="inc_json_schema_field.txt" property=$schema_fields.properties.properties context='properties'}
 					</div>
 					{if $cfg.user}
-						<button id="btn-save" type="submit" class="btn btn-primary">Save</button>
-						<div id="edit-status"></div>
+						{if $cfg.user.id|users_acl_can_edit}
+							<button id="btn-save" type="submit" class="btn btn-primary">Save</button>
+							<div id="edit-status"></div>
+						{else}
+							<div class="caveat">Your account is not authorized to save changes</div>
+						{/if}
 					{else}
 						<div class="caveat">You need to be logged in to save changes</div>
 					{/if}

@@ -46,6 +46,20 @@
 		),
 	);
 
+	# Want to grant access to someone who isn't a Mapzen admin? Here is
+	# a way for you to do that. So far we just have one kind of access that
+	# can be granted: 'can-edit.' Eventually we may add additional
+	# capabilities to grant access for, but for now it's just that one.
+	# (20161206/dphiffer)
+
+	$GLOBALS['cfg']['users_acl'] = array(
+		/* Example:
+		'username' => array(
+			'can-edit',
+		),
+		*/
+	);
+
 	# Hey look! See the enable_feature_multi_repo flag below? If you enable that
 	# just make sure to include the __REPO__ placeholder in the wof_data_dir
 	# config. Ex: /usr/local/data/__REPO__/data/ (20161108/dphiffer)

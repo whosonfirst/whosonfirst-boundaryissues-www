@@ -1806,11 +1806,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return icon;
 		},
 
+		user_signed_in: function() {
+			return $(document.body).hasClass('user-signed-in');
+		},
+
 		user_can_edit: function() {
-			// Presently this just means the user is logged in.
-			var user_id = $(document.body).data('user-id');
-			user_id = parseInt(user_id);
-			return !!user_id;
+			return $(document.body).hasClass('user-can-edit');
 		}
 	};
 
