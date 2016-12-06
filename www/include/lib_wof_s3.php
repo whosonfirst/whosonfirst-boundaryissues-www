@@ -1,6 +1,7 @@
 <?php
 
 	loadlib("s3");
+	loadlib("wof_utils");
 
 	########################################################################
 
@@ -19,7 +20,7 @@
 		$data = file_get_contents("{$repo}{$path}");
 		$path = "data/$path";
 
-		$args['acl'] = rawurlencode('http://acs.amazonaws.com/groups/global/AllUsers');
+		$args['acl'] = rawurlencode('public-read');
 
 		return wof_s3_put_data($data, $path, $args, $more);
 	}
