@@ -61,5 +61,14 @@
 	$events = wof_events_for_id($wof_id);
 	$GLOBALS['smarty']->assign_by_ref('events', $events);
 
+	$repo = $values['properties']['wof:repo'];
+	if (! $repo) {
+		$repo_path = wof_utils_id2repopath($wof_id);
+		$repo = basename($repo_path);
+	}
+	if (users_acl_can_edit($repo)) {
+		$GLOBALS['smarty']->assign('user_can_edit', 'user-can-edit');
+	}
+
 	$GLOBALS['smarty']->display('page_id.txt');
 	exit();

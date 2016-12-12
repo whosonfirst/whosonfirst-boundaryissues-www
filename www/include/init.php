@@ -555,19 +555,10 @@
 	if ($this_is_webpage){
 		login_check_login();
 		$user_signed_in = 'user-not-signed-in';
-		$user_can_edit = '';
-
 		if (! empty($GLOBALS['cfg']['user'])) {
-
 			$user_signed_in = 'user-signed-in';
-
-			if (users_acl_can_edit($GLOBALS['cfg']['user']['id'])) {
-				$user_can_edit = 'user-can-edit';
-			}
 		}
-
 		$GLOBALS['smarty']->assign('user_signed_in', $user_signed_in);
-		$GLOBALS['smarty']->assign('user_can_edit', $user_can_edit);
 	}
 
 	if (StrToLower($_SERVER['HTTP_X_MOZ']) == 'prefetch'){

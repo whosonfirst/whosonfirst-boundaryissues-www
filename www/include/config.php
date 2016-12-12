@@ -46,18 +46,31 @@
 		),
 	);
 
-	# Want to grant access to someone who isn't a Mapzen admin? Here is
-	# a way for you to do that. So far we just have one kind of access that
-	# can be granted: 'can-edit.' Eventually we may add additional
-	# capabilities to grant access for, but for now it's just that one.
-	# (20161206/dphiffer)
+	# Configure user access by role and capability. If a user is a member of
+	# a given role (as defined in the `users_roles` database table), then
+	# checks for access will try to match the list of capabilities avail-
+	# able to their roles.
+
+	# The role is free-form text, they just get matched to what's in the
+	# users_role in the DB. Capabilities are constrained to a set of known
+	# values:
+	#   * can_edit_all_repos
+	#   * can_edit_[repo]
+
+	# (20161212/dphiffer)
 
 	$GLOBALS['cfg']['users_acl'] = array(
-		/* Example:
-		'username' => array(
-			'can-edit',
+		/*
+
+		'[role]' => array(
+			'capability 1',
+			'capability 2',
 		),
+
 		*/
+		'staff' => array(
+			'can_edit_all_repos',
+		),
 	);
 
 	# Hey look! See the enable_feature_multi_repo flag below? If you enable that

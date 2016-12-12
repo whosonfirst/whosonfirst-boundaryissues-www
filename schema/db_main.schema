@@ -170,15 +170,10 @@ CREATE TABLE `boundaryissues_categories_struct` (
   KEY `source_id` (`source_id`,`target_id`,`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `boundaryissues_photos`;
+DROP TABLE IF EXISTS `users_roles`;
 
-CREATE TABLE `boundaryissues_photos` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `wof_id` bigint(20) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `info` text,
-  `sort` int(11) DEFAULT NULL,
-  `created` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+CREATE TABLE `users_roles` (
+  `user_id` int(11) unsigned NOT NULL,
+  `user_role` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `unique_user_roles` (`user_id`,`user_role`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

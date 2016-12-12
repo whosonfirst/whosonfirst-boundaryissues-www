@@ -183,10 +183,8 @@
 			"is_admin" => $is_admin,
 		));
 
-		if (! $rsp['ok']){
-			$GLOBALS['error']['dberr_mapzenuser'] = 1;
-			$GLOBALS['smarty']->display("page_auth_callback_mapzen_oauth.txt");
-			exit();
+		if ($is_admin) {
+			users_acl_grant_role($user['id'], 'staff');
 		}
 
 		$mapzen_user = $rsp['mapzen_user'];
