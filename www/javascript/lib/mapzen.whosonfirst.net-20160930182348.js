@@ -16,7 +16,7 @@ mapzen.whosonfirst.net = (function(){
 				v = encodeURIComponent(v);
 				enc.push(k + "=" + v);
 			}
-			
+
 			return enc.join("&");
 		},
 
@@ -26,15 +26,15 @@ mapzen.whosonfirst.net = (function(){
 				cache_ttl = default_cache_ttl;
 			}
 
-			mapzen.whosonfirst.log.debug("fetch " + url);
-
 			var on_hit = function(data){
+				mapzen.whosonfirst.log.debug("[cached] fetch " + url);
 				if (on_success){
 					on_success(data);
 				}
 			};
 
 			var on_miss = function(){
+				mapzen.whosonfirst.log.debug("[xhr] fetch " + url);
 				self.fetch_with_xhr(url, on_success, on_fail);
 			};
 
@@ -46,7 +46,7 @@ mapzen.whosonfirst.net = (function(){
 		'fetch_with_xhr': function(url, on_success, on_fail){
 
 			var req = new XMLHttpRequest();
-			
+
 			req.onload = function(){
 
 				try {
@@ -77,7 +77,7 @@ mapzen.whosonfirst.net = (function(){
 
 			catch(e){
 				mapzen.whosonfirst.log.error("failed to fetch " + url + ", because ");
-				mapzen.whosonfirst.log.debug(e);   
+				mapzen.whosonfirst.log.debug(e);
 
 				if (on_fail){
 					on_fail();
