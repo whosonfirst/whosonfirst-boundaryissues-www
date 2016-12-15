@@ -83,6 +83,15 @@ CREATE TABLE `OAuth2GrantTokens` (
 	KEY `by_created` (`created`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `Tickets64`;
+
+CREATE TABLE `Tickets64` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `stub` char(1) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `stub` (`stub`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `GithubUsers`;
 
 CREATE TABLE `GithubUsers` (
