@@ -21,10 +21,10 @@
 
 	########################################################################
 
-	function users_acl_can_edit($repo) {
-		if (users_acl_check_access('can_edit_all_repos')) {
+	function users_acl_can_edit($user, $repo) {
+		if (users_acl_check_access($user, 'can_edit_all_repos')) {
 			return true;
-		} else if (users_acl_check_access('can_edit_' . $repo)) {
+		} else if (users_acl_check_access($user, 'can_edit_' . $repo)) {
 			return true;
 		}
 		return false;
@@ -32,14 +32,10 @@
 
 	########################################################################
 
-	function users_acl_check_access($capability) {
-
-		if (! $GLOBALS['cfg']['user']['id']) {
-			return false;
-		}
+	function users_acl_check_access($user, $capability) {
 
 		// What roles have been assigned to the user?
-		$roles = users_acl_get_roles($GLOBALS['cfg']['user']['id']);
+		$roles = users_acl_get_roles($user);
 
 		// Which capabilities are afforded to those roles?
 		$capabilities = users_acl_get_capabilities($roles);
@@ -50,8 +46,8 @@
 
 	########################################################################
 
-	function users_acl_get_roles($user_id) {
-		$esc_user_id = addslashes($user_id);
+	function users_acl_get_roles($user) {
+		$esc_user_id = addslashes($user['id']);
 		$rsp = db_fetch("
 			SELECT user_role
 			FROM users_roles
@@ -86,10 +82,12 @@
 
 	########################################################################
 
-	function users_acl_grant_role($user_id, $role) {
+	function users_acl_grant_role($user, $role) {
+		$esc_user_id = addslashes($user['id']);
+		$esc_role = addslashes($role);
 		$rsp = db_insert('users_roles', array(
-			'user_id' => $user_id,
-			'user_role' => $role
+			'user_id' => $esc_user_id,
+			'user_role' => $esc_role
 		));
 		return $rsp;
 	}

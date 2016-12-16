@@ -112,7 +112,8 @@
 			$user_id = $GLOBALS['cfg']['user']['id'];
 		}
 
-		if (! users_acl_can_edit($user_id)) {
+		$repo = wof_utils_pickrepo($feature);
+		if (! users_acl_can_edit($GLOBALS['cfg']['user'], $repo)) {
 			return array(
 				'ok' => 0,
 				'error' => 'User is not authorized to save features.'

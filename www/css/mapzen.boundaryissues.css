@@ -585,3 +585,15 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 .property-changed > input.property {
 	border-color: #2e6da4;
 }
+
+#edit-properties #btn-save {
+	display: none;
+}
+
+body.user-can-edit #edit-properties #btn-save {
+	display: block;
+}
+
+body.user-can-edit #edit-disallowed {
+	display: none;
+}

@@ -66,7 +66,7 @@
 		$repo_path = wof_utils_id2repopath($wof_id);
 		$repo = basename($repo_path);
 	}
-	if (users_acl_can_edit($repo)) {
+	if (users_acl_can_edit($GLOBALS['cfg']['user'], $repo)) {
 		$GLOBALS['smarty']->assign('user_can_edit', 'user-can-edit');
 	}
 
