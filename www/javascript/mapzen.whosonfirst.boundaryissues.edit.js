@@ -511,6 +511,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_categories: function() {
 
+			console.log('setup categories');
+
 			var placetype = $('input[name="properties.wof:placetype"]').val();
 			if (placetype != 'venue') {
 				$('#categories').prev('h3').remove();
@@ -521,6 +523,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
 
 			var onsuccess = function(categories) {
+				console.log('categories!', categories);
 				self.categories = categories;
 				self.categories.uri = {};
 				self.setup_categories_uris('namespace');

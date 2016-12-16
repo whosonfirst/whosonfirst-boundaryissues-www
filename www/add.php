@@ -21,6 +21,7 @@
 	$crumb_venue = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_venue);
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
+	$GLOBALS['smarty']->assign('user_can_edit', 'user-can-edit');
 
 	$GLOBALS['smarty']->display('page_add.txt');
 	exit();
