@@ -84,6 +84,9 @@
 	$GLOBALS['cfg']['enable_feature_save_via_github_api'] = false;
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
 
+	$GLOBALS['cfg']['enable_feature_invite_codes'] = 1;
+	$GLOBALS['cfg']['invite_codes_allow_signedin_users'] = 1;
+
 	$GLOBALS['cfg']['geojson_base_url'] = 'http://localhost:8181';
 	$GLOBALS['cfg']['dbug_log'] = '/var/log/boundaryissues_dbug.log';
 	$GLOBALS['cfg']['gearman_log'] = '/var/log/boundaryissues_gearman.log';
