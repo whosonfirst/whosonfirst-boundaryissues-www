@@ -17,7 +17,7 @@
 
 	# Commenting this out these next two conditionals because they were
 	# doing some redirects unexpectedly and mostly we just want the page to
-	# be too unexpected. (20170126/dphiffer)
+	# not be too unexpected. (20170126/dphiffer)
 
 	#if (($GLOBALS['cfg']['user']['id']) && ($GLOBALS['cfg']['invite_codes_allow_signedin_users'])){
 	#	header("location: /?redir=" . urlencode($redir));
