@@ -1,0 +1,71 @@
+{assign var="page_title" value="this is the part where we do the invitation code dance"}
+{capture assign="extra_head"}
+<script type="text/javascript" src="{$cfg.abs_root_url}javascript/jquery-1.6.2.min.js"></script>
+{/capture}
+{include file="inc_head.txt"}
+
+<div id="invite">
+<div class="container">
+<h2>{$page_title|@ucfirst|escape}</h2>
+
+{if $step=='request_ok'}
+
+{if $error|@count}
+<p class="error">Well this is embarrassing. There was a problem registering your request for an invite. We'll look in to it. Sorry...</p>
+{else}
+<p>Invite code for <span class="hey-look">{$email|escape}</span>: <code>{$invite_code|escape}</code></p>
+{/if}
+
+{else}
+
+{if $error|@count}
+<p class="error">
+{if $error.invalid_code}
+That's not a valid invite code.
+{elseif $error.invalid_email}
+That's not a valid email address.
+{else}
+Ack! The Invisible Error Cat hisses at you.
+{/if}
+</p>
+{/if}
+
+<form method="POST" action="{$cfg.abs_root_url}invite/" style="margin-left:0px;">
+	{$crumb_key|crumb_input}
+
+	<p>Ok, let's invite some new folks to use the site!</p>
+	
+	<input type="text" name="email" size="30" value="you@example.com" style="color:#adadad;" />
+	<input type="submit" value="GENERATE IT" />
+
+</form>
+
+{/if}
+
+</div>
+</div>
+
+<script type="text/javascript">
+{literal}
+
+$(document).ready(function(){
+
+	var reset = function(){
+		$("input[name=email]").val("");
+		$("input[name=code]").val("");
+	};
+
+	$("input[name=code]").click(function(){
+		reset();
+	});
+
+	$("input[name=email]").click(function(){
+		reset();
+	});
+
+});
+
+{/literal}
+</script>
+
+{include file="inc_foot.txt"}
