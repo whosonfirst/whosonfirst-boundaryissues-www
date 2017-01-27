@@ -248,7 +248,11 @@
 
 	#################################################################
 
-	function invite_codes_send_invite(&$invite, $template=''){
+	function invite_codes_send_invite(&$invite, $template='', $dont_actually_send = false){
+
+		// That last argument, $dont_actually_send, disables the
+		// email-sending step. Otherwise, the function behaves as
+		// as it normally would. (20170127/dphiffer)
 
 		$args = array(
 			'to_email' => $invite['email'],
@@ -259,10 +263,13 @@
 
 		$GLOBALS['smarty']->assign_by_ref("invite", $invite);
 
-		# There's not really a good way to check the response
-		# of this... which is frustrating.
+		if (! $dont_actually_send) {
 
-		email_send($args);
+			# There's not really a good way to check the response
+			# of this... which is frustrating.
+
+			email_send($args);
+		}
 
 		$update = array(
 			'sent' => time(),

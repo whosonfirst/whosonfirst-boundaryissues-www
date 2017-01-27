@@ -77,6 +77,7 @@
 		else if ($email){
 
 			$email = post_str("email");
+			$generated = post_bool("generated");
 
 			if (! rfc822_is_valid_email_address($email)){
 				$GLOBALS['error']['invalid_email'] = 1;
@@ -89,6 +90,8 @@
 				if ($rsp['ok']){
 
 					$invite = $rsp['invite'];
+					$GLOBALS['smarty']->assign("email", $email);
+					$GLOBALS['smarty']->assign("invite", $invite);
 
 					if ($invite['sent']){
 						invite_codes_send_invite($invite);
@@ -98,6 +101,12 @@
 					else {
 						$rsp = invite_codes_register_invite($invite);
 					}
+
+					if ($generated && users_acl_check_access($GLOBALS["cfg"]["user"], "can_invite_users")) {
+						$template = 'email_invite_code.txt';
+						$message = trim($GLOBALS['smarty']->fetch($template));
+						$GLOBALS['smarty']->assign("invite_email", $message);
+					}
 				}
 
 				if (! $rsp['ok']){
@@ -105,8 +114,6 @@
 					$GLOBALS['error']['details'] = $rsp['error'];
 				}
 
-				$GLOBALS['smarty']->assign("email", $email);
-				$GLOBALS['smarty']->assign("invite_code", $invite['code']);
 				$GLOBALS['smarty']->assign("step", "request_ok");
 			}
 		}

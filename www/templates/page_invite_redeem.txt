@@ -35,17 +35,17 @@ Ack! The Invisible Error Cat hisses at you.
 <form method="POST" action="{$cfg.abs_root_url}invite/" style="margin-left:0px;">
 	{$crumb_key|crumb_input}
 
-	<p>This website is not open to everyone, just yet, so you'll need an invite code to get started. If you've received on enter it below (you should only need to do this once) and you'll be on your way!</p>
+	<p>This website is not open to everyone, just yet, so you'll need an invite code to get started. If you've received one, enter it below (you should only need to do this once) and you'll be on your way!</p>
 	
-	<input type="text" name="code" size="30" value="3x4mpl3c0d3" style="color:#adadad;" />
-	<input type="submit" value="LET ME IN, NOW!" />
+	<input type="text" name="code" size="30" placeholder="your invite code">
+	<input type="submit" class="btn" value="LET ME IN, NOW!">
 
 	<br /><br /><br />
 
 	<p>Don't have an invite code? If you submit your email address below we'll send you an invite code during the next round of testing. (We will not send you spam or give your email address to <em>anyone</em>. We just need to it to send you an invite code.)</p>
 
-	<input type="text" name="email" size="30" value="you@example.com" style="color:#adadad;" />
-	<input type="submit" value="LET ME IN, SOON" />
+	<input type="text" name="email" size="30" placeholder="you@example.com">
+	<input type="submit" class="btn" value="LET ME IN, SOON">
 
 </form>
 
@@ -53,28 +53,5 @@ Ack! The Invisible Error Cat hisses at you.
 
 </div>
 </div>
-
-<script type="text/javascript">
-{literal}
-
-$(document).ready(function(){
-
-	var reset = function(){
-		$("input[name=email]").val("");
-		$("input[name=code]").val("");
-	};
-
-	$("input[name=code]").click(function(){
-		reset();
-	});
-
-	$("input[name=email]").click(function(){
-		reset();
-	});
-
-});
-
-{/literal}
-</script>
 
 {include file="inc_foot.txt"}
