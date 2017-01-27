@@ -68,9 +68,15 @@
 		),
 
 		*/
-		'staff' => array(
-			'can_edit_all_repos',
+		'admin' => array(
 			'can_invite_users'
+		),
+		'staff' => array(
+			'can_edit_all_repos'
+		),
+		'users' => array(
+			'can_edit_whosonfirst-data-venue-us-ny',
+			'can_edit_whosonfirst-data-venue-us-ca'
 		),
 	);
 

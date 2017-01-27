@@ -1,4 +1,4 @@
-{assign var="page_title" value="this is the part where we do the invitation code dance"}
+{assign var="page_title" value="This is the part where we do the invitation code dance"}
 {capture assign="extra_head"}
 <script type="text/javascript" src="{$cfg.abs_root_url}javascript/jquery-1.6.2.min.js"></script>
 {/capture}

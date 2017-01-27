@@ -185,6 +185,8 @@
 
 		if ($is_admin) {
 			users_acl_grant_role($user, 'staff');
+		} else {
+			users_acl_grant_role($user, 'users');
 		}
 
 		$mapzen_user = $rsp['mapzen_user'];
