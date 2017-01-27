@@ -5,13 +5,13 @@
 {include file="inc_head.txt"}
 
 <div id="invite">
-
+<div class="container">
 <h2>{$page_title|@ucfirst|escape}</h2>
 
 {if $step=='request_ok'}
 
 {if $error|@count}
-<p class="error">Well this is embarrasing. There was a problem registering your request for an invite. We'll look in to it. Sorry...</p>
+<p class="error">Well this is embarrassing. There was a problem registering your request for an invite. We'll look in to it. Sorry...</p>
 {elseif $invite_resent}
 <p>Your invite has been resent.</p>
 {else}
@@ -51,6 +51,7 @@ Ack! The Invisible Error Cat hisses at you.
 
 {/if}
 
+</div>
 </div>
 
 <script type="text/javascript">

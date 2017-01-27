@@ -105,6 +105,8 @@
 					$GLOBALS['error']['details'] = $rsp['error'];
 				}
 
+				$GLOBALS['smarty']->assign("email", $email);
+				$GLOBALS['smarty']->assign("invite_code", $invite['code']);
 				$GLOBALS['smarty']->assign("step", "request_ok");
 			}
 		}
@@ -112,7 +114,11 @@
 		else {}
 	}
 
-	$GLOBALS['smarty']->display("page_invite.txt");
+	if (($GLOBALS['cfg']['user']['id']) && (users_acl_check_access($GLOBALS['cfg']['user'], 'can_invite_users'))){
+		$GLOBALS['smarty']->display("page_invite_generate.txt");
+	} else {
+		$GLOBALS['smarty']->display("page_invite_redeem.txt");
+	}
 	exit();
 
 ?>

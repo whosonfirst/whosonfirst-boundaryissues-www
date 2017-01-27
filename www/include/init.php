@@ -558,6 +558,9 @@
 		if (! empty($GLOBALS['cfg']['user'])) {
 			$user_signed_in = 'user-signed-in';
 		}
+		if (users_acl_check_access($GLOBALS['cfg']['user'], 'can_invite_users')) {
+			$GLOBALS['cfg']['user']['can_invite_users'] = true;
+		}
 		$GLOBALS['smarty']->assign('user_signed_in', $user_signed_in);
 	}
 

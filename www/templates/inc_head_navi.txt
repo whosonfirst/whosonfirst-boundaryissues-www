@@ -42,11 +42,10 @@
 						<li class="divider"></li>
 						<li id="toggle-git-branch"><a href="#">{if $show_git_branch}Hide{else}Show{/if} git branch</a></li>
 						<li id="account"><a href="{$cfg.abs_root_url}account/" title="hello, {$cfg.user.username|escape}">Your account</a></li>
-						<li id="signout"><a href="{$cfg.abs_root_url}signout/">Sign out</a></li>
-						{if "admin"|@auth_has_role:$cfg.user.id}
-							<li class="divider"></li>
-							<li id="admin"><a href="{$cfg.abs_root_url}admin/">Admin</a></li>
+						{if $cfg.user.can_invite_users}
+							<li><a href="{$cfg.abs_root_url}invite/">Generate invite code</a></li>
 						{/if}
+						<li id="signout"><a href="{$cfg.abs_root_url}signout/">Sign out</a></li>
 					</ul>
 				</li>
 			{else}

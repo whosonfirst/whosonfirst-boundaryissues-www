@@ -70,6 +70,7 @@
 		*/
 		'staff' => array(
 			'can_edit_all_repos',
+			'can_invite_users'
 		),
 	);
 
