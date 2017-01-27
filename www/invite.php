@@ -15,17 +15,21 @@
 
 	# User is already logged in
 
-	if (($GLOBALS['cfg']['user']['id']) && (! $GLOBALS['cfg']['invite_codes_allow_signedin_users'])){
-		header("location: /?redir=" . urlencode($redir));
-		exit();
-	}
+	# Commenting this out these next two conditionals because they were
+	# doing some redirects unexpectedly and mostly we just want the page to
+	# be too unexpected. (20170126/dphiffer)
+
+	#if (($GLOBALS['cfg']['user']['id']) && ($GLOBALS['cfg']['invite_codes_allow_signedin_users'])){
+	#	header("location: /?redir=" . urlencode($redir));
+	#	exit();
+	#}
 
 	# User has already redeemed their invite code
 
-	if (invite_codes_get_by_cookie()){
-		header("location: /signin/?redir=" . urlencode($redir));
-		exit();
-	}
+	#if (invite_codes_get_by_cookie() && (! $GLOBALS['cfg']['user']['id'])){
+	#	header("location: /signin/?redir=" . urlencode($redir));
+	#	exit();
+	#}
 
 	# User is trying to redeem an invite code
 
@@ -45,7 +49,7 @@
 
 	$crumb_key = 'invite';
 	$GLOBALS['smarty']->assign("crumb_key", $crumb_key);
-	
+
 	$crumb_ok = crumb_check($crumb_key);
 
 	if ($crumb_ok){
@@ -110,5 +114,5 @@
 
 	$GLOBALS['smarty']->display("page_invite.txt");
 	exit();
-	
+
 ?>
