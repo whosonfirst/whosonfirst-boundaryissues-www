@@ -76,7 +76,8 @@
 		),
 		'users' => array(
 			'can_edit_whosonfirst-data-venue-us-ny',
-			'can_edit_whosonfirst-data-venue-us-ca'
+			'can_edit_whosonfirst-data-venue-us-ca',
+			'can_edit_whosonfirst-data-venue-au'
 		),
 	);
 
