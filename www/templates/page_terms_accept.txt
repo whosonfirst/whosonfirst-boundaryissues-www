@@ -1,0 +1,16 @@
+{capture assign="page_title"}Terms of Service{/capture}
+{include file='inc_head.txt'}
+
+<div class="container">
+	<div class="row">
+		<h2>Terms of Service</h2>
+		<form action="{$cfg.abs_root_url}terms" method="post">
+			<input type="hidden" name="redir" value="{ $redir | e }">
+			<p>Before you get started <i>doing things</i>, you have to accept the terms.</p>
+			<p><input type="checkbox" name="terms_accepted" value="1" id="terms_accepted">
+			<label for="terms_accepted">I accept the Terms of Service</label></p>
+			<input type="submit" class="btn btn-primary" value="Okay">
+		</form>
+		{include file="inc_terms_legal.txt"}
+	</div>
+</div>

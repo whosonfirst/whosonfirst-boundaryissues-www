@@ -3,6 +3,9 @@
 
 	login_ensure_loggedin();
 
+	// Make sure the user has accepted the TOS
+	users_ensure_terms_accepted("upload/");
+
 	if ($_FILES["upload_file"]) {
 		loadlib('api_wof');
 		api_wof_upload();

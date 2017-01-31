@@ -44,6 +44,9 @@
 	if ($GLOBALS['cfg']['user']){
 		$crumb_save = crumb_generate('api', 'wof.save');
 		$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
+
+		// Make sure the user has accepted the TOS
+		users_ensure_terms_accepted("id/$wof_id/");
 	}
 
 	if ($rev) {

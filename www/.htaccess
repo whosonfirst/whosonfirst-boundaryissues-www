@@ -53,6 +53,7 @@ RewriteEngine on
 #RewriteRule  ^signin/?$			signin.php		[L]
 RewriteRule  ^signout/?$		signout.php		[L]
 RewriteRule  ^checkcookie/?$		checkcookie.php	[L]
+RewriteRule  ^terms/?$           	terms.php         [L]
 
 # Password retrieval stuff
 

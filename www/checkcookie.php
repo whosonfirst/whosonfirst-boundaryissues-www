@@ -17,17 +17,12 @@
 	# where shall we bounce to?
 	#
 
-	$redir = $GLOBALS['cfg']['abs_root_url'];
+	$redir = request_str('redir');
+	$url = "{$GLOBALS['cfg']['abs_root_url']}terms/";
 
-	if ($_redir = get_str("redir")){
-		if (substr($_redir, 0, 1) == '/') $_redir = substr($_redir, 1);
-		$redir .= $_redir;
+	if ($redir){
+		$url .= "?redir={$redir}";
 	}
 
-
-	#
-	# go!
-	#
-
-	header("location: {$redir}");
+	header("location: {$url}");
 	exit;

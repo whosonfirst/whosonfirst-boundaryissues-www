@@ -4,6 +4,9 @@
 
 	login_ensure_loggedin();
 
+	// Make sure the user has accepted the TOS
+	users_ensure_terms_accepted("add/");
+
 	$crumb_venue_fallback = crumb_generate('wof.save');
 	$GLOBALS['smarty']->assign("crumb_save_fallback", $crumb_venue_fallback);
 

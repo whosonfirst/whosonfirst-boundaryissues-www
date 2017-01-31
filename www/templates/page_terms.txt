@@ -1,0 +1,9 @@
+{capture assign="page_title"}Terms of Service{/capture}
+{include file='inc_head.txt'}
+
+<div class="container">
+	<div class="row">
+		<h2>Terms of Service</h2>
+		{include file="inc_terms_legal.txt"}
+	</div>
+</div>
