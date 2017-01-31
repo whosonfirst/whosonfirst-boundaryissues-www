@@ -106,6 +106,8 @@
 						$template = 'email_invite_code.txt';
 						$message = trim($GLOBALS['smarty']->fetch($template));
 						$GLOBALS['smarty']->assign("invite_email", $message);
+						$dont_actually_send = true;
+						invite_codes_send_invite($invite, $template, $dont_actually_send);
 					}
 				}
 
