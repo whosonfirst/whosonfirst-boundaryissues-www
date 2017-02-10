@@ -1,6 +1,9 @@
 {assign var="email_subject" value="You have been sent an invite code!"}
 Hello!
 
+tl;dr we’d like to invite you to try out our Who’s On First gazetteer editor,
+called Boundary Issues. If you know what that is, scroll down to “What next?”
+
 At Mapzen we believe that places make everything better. We’d like to invite you
 to help us define the places that are most important to you and your work. Our
 global, open data gazetteer (a big list of places) is called Who’s On First [1]
@@ -9,7 +12,7 @@ records, and has been designed with some interesting features. Each place record
 is encoded in a flexible text-based format (GeoJSON [2]), each has a stable
 numeric identifier, and historical snapshots of a place can be described through
 a series of pointers. WOF records include structured place hierarchies that
-describe how one place is contained by others (e.g., Drawn &amp; Quarterly [3] is a
+describe how one place is contained by others (e.g., Drawn & Quarterly [3] is a
 bookstore in Montréal, which is in Quebec).
 
 To make editing WOF records easier, we are working on a web-based editor called
@@ -28,7 +31,7 @@ neighborhood it’s in.
 Please let us know if Boundary Issues is helpful for your work, or *if it isn't*
 how we might make improvements that are relevant to your needs.
 
-What happens next?
+What next?
 
 1. If you don’t have an account already, you will need to sign up for GitHub:
    https://github.com/join (this requirement will be removed eventually).
