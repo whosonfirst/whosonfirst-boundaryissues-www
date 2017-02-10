@@ -1,8 +1,49 @@
 {assign var="email_subject" value="You have been sent an invite code!"}
-Hello! 
+Hello!
 
-Your invite code is:
+At Mapzen we believe that places make everything better. We’d like to invite you
+to help us define the places that are most important to you and your work. Our
+global, open data gazetteer (a big list of places) is called Who’s On First [1]
+(also known as WOF, pronounced “woff”). WOF currently has around 26 million
+records, and has been designed with some interesting features. Each place record
+is encoded in a flexible text-based format (GeoJSON [2]), each has a stable
+numeric identifier, and historical snapshots of a place can be described through
+a series of pointers. WOF records include structured place hierarchies that
+describe how one place is contained by others (e.g., Drawn &amp; Quarterly [3] is a
+bookstore in Montréal, which is in Quebec).
 
-	{$cfg.abs_root_url}invite/{$invite.code|escape}/
+To make editing WOF records easier, we are working on a web-based editor called
+Boundary Issues [4]) and we would love it if you’d try it out, and send us your
+feedback.
+
+We have been sourcing our data from a variety of other projects, but we also
+produce our own records and add pointers to other sources; we call these
+“concordances.” We could use your help identifying and fixing those places that
+may be missing or outdated. As an open data commons, any improvements made by
+one user benefit all. You could use WOF as an open data rolodex. If your website
+includes pages about the venues in our dataset, they could draw from the WOF
+record to automatically display their details, such as photos, hours, which
+neighborhood it’s in.
+
+Please let us know if Boundary Issues is helpful for your work, or *if it isn't*
+how we might make improvements that are relevant to your needs.
+
+What happens next?
+
+1. If you don’t have an account already, you will need to sign up for GitHub:
+   https://github.com/join (this requirement will be removed eventually).
+2. Click on this invite link: {$cfg.abs_root_url}invite/{$invite.code|escape}/
+3. Accept the terms, etc.
+4. Try searching for a place
+5. If you don’t find what you’re looking, try adding a new place
+6. Explore around and try editing some existing records
+
+If you get stuck or have questions, bug reports, general feedback, complaints,
+or ecstatic praise, get in touch with Dan Phiffer at dan@mapzen.com.
 
 Enjoy!
+
+[1]: https://whosonfirst.mapzen.com/
+[2]: http://geojson.org/
+[3]: https://whosonfirst.mapzen.com/boundaryissues/id/1108808935
+[4]: https://whosonfirst.mapzen.com/boundaryissues/
