@@ -82,6 +82,18 @@
 		),
 	);
 
+
+	# This is a kludge-y way to constrain search results on a per-user
+	# basis. That's right, it's just hardcoded here by user ID. At some
+	# point this should be configurable through an actual web-based UI,
+	# but for now it'll help reduce irrelevant search results.
+	# Related: $GLOBALS['cfg']['search_query_filter'],
+	# $GLOBALS['cfg']['enable_feature_filter_search'] (20170213/dphiffer)
+
+	$GLOBALS['cfg']['users_search_scope'] = array(
+		# [user id] => [wof id]
+	);
+
 	# Hey look! See the enable_feature_multi_repo flag below? If you enable that
 	# just make sure to include the __REPO__ placeholder in the wof_data_dir
 	# config. Ex: /usr/local/data/__REPO__/data/ (20161108/dphiffer)

@@ -32,6 +32,34 @@
 			);
 		}
 
+		# This is kind of a big hack. But it should scope the current
+		# user's queries within a wof:belongsto WOF ID, assuming there
+		# is one set for $GLOBALS['cfg']['users_search_scope'] in
+		# config.php. Eventually this will be exposed as some user-
+		# configuration UI (20170214/dphiffer)
+
+		if ($GLOBALS['cfg']['user']){
+			$user_id = $GLOBALS['cfg']['user']['id'];
+			if ($GLOBALS['cfg']['users_search_scope'][$user_id]){
+				$scope_wof_id = $GLOBALS['cfg']['users_search_scope'][$user_id];
+				$curr_query = $query['query'];
+				$query['query'] = array(
+					'filtered' => array(
+						'query' => $curr_query,
+						'filter' => array(
+							"bool" => array(
+								"must" => array(
+									array("term" => array(
+										"wof:belongsto" => $scope_wof_id
+									))
+								)
+							)
+						)
+					)
+				);
+			}
+		}
+
 		wof_elasticsearch_append_defaults($more);
 		return elasticsearch_search($query, $more);
 	}
