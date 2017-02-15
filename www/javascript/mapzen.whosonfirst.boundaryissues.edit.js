@@ -188,6 +188,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 						icon: new VenueIcon()
 					});
 					self.set_marker(m);
+					var ll = m.getLatLng();
+					self.update_coordinates(ll, true);
+					self.mark_changed_property('properties.geom:latitude');
+					self.mark_changed_property('properties.geom:longitude');
 				}
 			}
 		},
@@ -510,8 +514,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_categories: function() {
-
-			console.log('setup categories');
 
 			var placetype = $('input[name="properties.wof:placetype"]').val();
 			if (placetype != 'venue') {
@@ -1824,6 +1826,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return;
 		}
 
+		// Check if we arrived by a URL like this: /add/?ll=123,456
+		// which redirects to: /add/#16/123/456
+		var ll = location.search.match(/ll=([^&]+)/);
+		if (location.pathname.match(/add\/?$/) && ll) {
+			window.location = location.pathname + '#16/' + ll[1].replace(',', '/');
+			return;
+		}
+
 		var data_endpoint = $(document.body).attr("data-data-abs-root-url");
 		mapzen.whosonfirst.data.endpoint(data_endpoint);
 
@@ -1849,9 +1859,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 
+		self.setup_properties();
 		self.setup_map();
 		self.setup_drawing();
-		self.setup_properties();
 		self.setup_form();
 		self.setup_buttons();
 
