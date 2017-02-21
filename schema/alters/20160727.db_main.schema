@@ -1,0 +1,9 @@
+CREATE TABLE `MapzenUsers` (
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `mapzen_id` varchar(20) NOT NULL,
+  `is_admin` tinyint(3) unsigned NOT NULL,
+  `oauth_token` char(64) NOT NULL,
+  `oauth_secret` char(34) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `by_mapzenid` (`mapzen_id`)
+)  ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

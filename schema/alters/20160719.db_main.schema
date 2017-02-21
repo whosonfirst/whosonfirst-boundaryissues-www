@@ -1,0 +1,6 @@
+CREATE TABLE `boundaryissues_categories_struct` (
+  `source_id` int(11) NOT NULL,
+  `target_id` int(11) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  KEY `source_id` (`source_id`,`target_id`,`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

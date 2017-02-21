@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS `GithubUsers`;
+
+CREATE TABLE `GithubUsers` (
+	`user_id` int(11) UNSIGNED NOT NULL,
+	`github_id` varchar(20) NOT NULL,
+	`oauth_token` char(40) NOT NULL,
+	PRIMARY KEY(`user_id`),
+	UNIQUE KEY `by_githubid` (`github_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

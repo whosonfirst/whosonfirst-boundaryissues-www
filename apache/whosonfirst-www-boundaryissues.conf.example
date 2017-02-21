@@ -1,0 +1,95 @@
+<VirtualHost *:80>
+
+	RewriteEngine        on
+	RewriteCond          "%{HTTPS}" "!=on"
+	RewriteRule          "." "-" [F]
+
+	DocumentRoot __PROJECT_ROOT__/www
+
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+
+	<Directory __PROJECT_ROOT__/www>
+		Options FollowSymLinks Indexes
+		# AllowOverride FileInfo Limit
+		AllowOverride All
+		Require all granted
+	</Directory>
+
+	<Directory __PROJECT_ROOT__/www/templates_c>
+		Require all denied
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+	LogLevel warn
+
+</VirtualHost>
+
+<VirtualHost *:443>
+
+		SSLEngine on
+
+		# This assumes you have run `ubuntu/setup-certified*.sh`
+		# (20160208/thisisaaronland)
+
+		SSLCertificateFile "__PROJECT_ROOT__/certified/db/__PROJECT_NAME__.crt"
+		SSLCertificateKeyFile "__PROJECT_ROOT__/certified/db/__PROJECT_NAME__.key"
+
+		SSLProtocol             all -SSLv2 -SSLv3
+		SSLCipherSuite          CDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK
+		SSLHonorCipherOrder     on
+		SSLCompression          off
+
+		SSLUseStapling          on
+		SSLStaplingResponderTimeout 5
+		SSLStaplingReturnResponderErrors off
+
+		Header add Strict-Transport-Security "max-age=15768000"
+
+		DocumentRoot __PROJECT_ROOT__/www
+
+		# For example
+		# Alias /boundaryissues/ca /usr/local/mapzen/whosonfirst-www-boundaryissues/www
+		# Alias __PROJECT_PATH__	__PROJECT_ROOT__
+
+		<Directory />
+			Options FollowSymLinks
+			AllowOverride None
+		</Directory>
+
+		<Directory __PROJECT_ROOT__/www>
+			Options FollowSymLinks Indexes
+			AllowOverride All
+			Require all granted
+
+			# https://httpd.apache.org/docs/current/howto/auth.html
+			# AuthType Basic
+			# AuthName "__PROJECT_NAME__"
+			# AuthBasicProvider file
+			# AuthUserFile "__PROJECT_ROOT__/apache/.htusers"
+			# Require user mapzen
+
+		</Directory>
+
+		<Directory __PROJECT_ROOT__/www/templates_c>
+			Require all denied
+		</Directory>
+
+		# ZOMG... this is the bloody crux of it... turning proxy
+		# requests off... so you can do proxy requests... because...
+		# http://blog.revathskumar.com/2015/09/proxy-websocket-via-apache.html
+		
+		ProxyRequests Off
+		ProxyPass "__PROJECT_PATH__/ws/"  "ws://localhost:8080/"
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+		LogLevel warn
+
+</VirtualHost>
+
+SSLStaplingCache        shmcb:/var/run/ocsp(128000)
