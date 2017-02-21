@@ -7,8 +7,8 @@
 		<form action="{$cfg.abs_root_url}venue/" method="post">
 			<input type="hidden" name="coords" value="">
 			<input type="text" name="name" placeholder="Venue name">
-			<!--<textarea name="address" placeholder="Venue address" cols="50" rows="3"></textarea>
-			<input type="text" name="name" placeholder="Venue tags">-->
+			<textarea name="address" placeholder="Venue address" cols="50" rows="3"></textarea>
+			<input type="text" name="tags" placeholder="Venue tags">
 			<input type="submit" value="Add venue" class="btn btn-primary">
 		</form>
 	</div>

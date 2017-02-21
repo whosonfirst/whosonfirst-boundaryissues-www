@@ -8,12 +8,14 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 mapzen.whosonfirst.boundaryissues.venue = (function() {
 
+	var VenueIcon;
+
 	var self = {
 		map: null,
 		country_id: -1,
-		country: '',
+		properties: {},
 
-		set_country: function(country_id) {
+		set_country: function(country_id, cb) {
 
 			if (country_id == self.country_id) {
 				// No change in the ID, so no need to reload the WOF record
@@ -31,12 +33,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 				var props = rsp.properties;
 
-				// This treats iso:country and wof:country as equivalent
-				// Is that a good assumption? (20170221/dphiffer)
 				if (props['iso:country']) {
-					self.country = props['iso:country'];
-				} else if (props['wof:country']) {
-					self.country = props['wof:country'];
+					self.set_property('iso:country', props['iso:country']);
+				}
+				if (props['wof:country']) {
+					self.set_property('wof:country', props['wof:country']);
+				}
+
+				if (cb) {
+					cb(rsp);
 				}
 			};
 
@@ -45,6 +50,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 
 			mapzen.whosonfirst.net.fetch(url, on_success, on_failure);
+		},
+
+		set_property: function(name, value) {
+			self.properties[name] = value;
 		},
 
 		generate_feature: function() {
@@ -66,8 +75,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 			feature.properties['wof:placetype'] = 'venue';
 			feature.properties['wof:name'] = $('input[name="name"]').val();
-			feature.properties['wof:country'] = self.country;
-			feature.properties['iso:country'] = self.country;
+			feature.properties['wof:tags'] = $('input[name="tags"]').val();
+			feature.properties['wof:country'] = self.properties['wof:country'];
+			feature.properties['iso:country'] = self.properties['iso:country'];
 			feature.properties['geom:latitude'] = lat;
 			feature.properties['geom:longitude'] = lng;
 			feature.properties['wof:parent_id'] = -1;
@@ -113,27 +123,79 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 		mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
-		var show_the_map = function(bbox) {
-			if (bbox) {
-				// Parse and map from a bounding box string
-				bbox_coords = bbox.split(',');
-				var map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
-					'map',
-					parseFloat(bbox_coords[1]),
-					parseFloat(bbox_coords[0]),
-					parseFloat(bbox_coords[3]),
-					parseFloat(bbox_coords[2])
-				);
-			} else {
-				// Ok, fine just show NYC
-				var lat = 40.73581157695217;
-				var lon = -73.9815902709961;
-				var zoom = 12;
-				var map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-					'map',
-					lat, lon, zoom
-				);
+		VenueIcon = L.Icon.extend({
+			options: {
+				iconUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon.png'),
+				iconRetinaUrl: mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png'),
+				shadowUrl: null,
+				iconAnchor: new L.Point(13, 42),
+				iconSize: new L.Point(25, 42),
+				popupAnchor: new L.Point(0, -42)
 			}
+		});
+
+		var show_the_map = function(bbox) {
+			var map = mapzen.whosonfirst.leaflet.tangram.map_with_bbox(
+				'map',
+				bbox[1],
+				bbox[0],
+				bbox[3],
+				bbox[2]
+			);
+
+			var geocoder = L.control.geocoder('search-o3YYmTI', {
+				markers: {
+					icon: new VenueIcon()
+				}
+			}).addTo(map);
+
+			geocoder.on('select', function(e) {
+				var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
+				var popup = geocoder.marker.bindPopup(html).openPopup();
+				var props = e.feature.properties;
+				$('#geocoder-marker-select').click(function(e) {
+					e.preventDefault();
+					popup.closePopup();
+					geocoder.collapse();
+					var ll = geocoder.marker.getLatLng();
+					map.removeLayer(geocoder.marker);
+					map.setView(ll, 16);
+					//self.lookup_hierarchy(ll.lat, ll.lng);
+					//self.update_coordinates(ll, true);
+					//self.set_marker(geocoder.marker);
+
+					// This is a US-centric way of encoding an address
+					var regex = new RegExp('^' + props.name);
+					var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
+
+					if (! $('input[name="name"]').val()) {
+						$('input[name="name"]').val(props.name);
+					}
+					if (! $('textarea[name="address"]').val()) {
+						$('textarea[name="address"]').val(address);
+					}
+
+					self.set_property('addr:full', address);
+
+					if (props.housenumber) {
+						self.set_property('addr:housenumber', props.housenumber);
+					}
+					if (props.street) {
+						self.set_property('addr:street', props.street);
+					}
+					if (props.postalcode) { // Seeing postAL code coming from Pelias, but we prefer 'postcode'
+						self.set_property('addr:postcode', props.postalcode);
+					}
+					if (props.postcode) {
+						self.set_property('addr:postcode', props.postcode);
+					}
+				});
+				$('#geocoder-marker-cancel').click(function(e) {
+					e.preventDefault();
+					popup.closePopup();
+					map.removeLayer(geocoder.marker);
+				});
+			});
 			return map;
 		};
 
@@ -142,14 +204,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		};
 
 		var onsuccess = function(rsp) {
-			if (rsp.geom_bbox) {
-				var map = show_the_map(rsp.geom_bbox);
-			} else {
-				var map = show_the_map();
-			}
-			self.map = map;
-			slippymap.crosshairs.init(map);
-			self.set_country(rsp.country_id);
+			self.set_country(rsp.country_id, function(country) {
+				var map = show_the_map(country.bbox);
+				self.map = map;
+				slippymap.crosshairs.init(map);
+			});
 		};
 
 		var url = 'https://ip.dev.mapzen.com/?raw=1';
