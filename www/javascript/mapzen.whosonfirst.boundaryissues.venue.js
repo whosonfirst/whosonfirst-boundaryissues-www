@@ -153,6 +153,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
 				var popup = geocoder.marker.bindPopup(html).openPopup();
 				var props = e.feature.properties;
+				if (e.feature.bbox) {
+					var bbox = e.feature.bbox;
+					var sw = L.latLng(bbox[1], bbox[0]);
+					var ne = L.latLng(bbox[3], bbox[2]);
+					var bounds = L.latLngBounds(sw, ne);
+					map.fitBounds(bounds);
+				}
 				$('#geocoder-marker-select').click(function(e) {
 					e.preventDefault();
 					popup.closePopup();
