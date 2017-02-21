@@ -70,7 +70,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				type: 'Feature',
 				bbox: bbox,
 				geometry: geometry,
-				properties: {}
+				properties: self.properties
 			};
 
 			feature.properties['wof:placetype'] = 'venue';
