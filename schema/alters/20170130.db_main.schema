@@ -1,2 +1,0 @@
-
-ALTER TABLE `users` ADD COLUMN `terms_accepted` tinyint(3) unsigned NOT NULL DEFAULT 0;

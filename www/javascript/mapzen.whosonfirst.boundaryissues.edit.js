@@ -1476,7 +1476,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.set_property('iso:country', props['iso:country']);
 				}
 				if (props['wof:country']) {
-					self.set_property('wof:country', props['wof:country']);
+					self.set_property('wof:country', props['iso:country']);
 				}
 			};
 

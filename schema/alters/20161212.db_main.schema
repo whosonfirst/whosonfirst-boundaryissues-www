@@ -1,5 +1,0 @@
-CREATE TABLE `users_roles` (
-  `user_id` int(11) unsigned NOT NULL,
-  `user_role` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `unique_user_roles` (`user_id`,`user_role`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;

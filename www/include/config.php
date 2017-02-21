@@ -4,7 +4,7 @@
 	# Things you may want to change in a hurry
 
 	$GLOBALS['cfg']['site_name'] = 'Boundary Issues';
-	$GLOBALS['cfg']['environment'] = 'dev';
+	$GLOBALS['cfg']['environment'] = 'prod';
 
 	$GLOBALS['cfg']['site_disabled'] = 0;
 	$GLOBALS['cfg']['site_disabled_retry_after'] = 0;	# seconds; if set will return HTTP Retry-After header
@@ -520,3 +520,60 @@
 	$GLOBALS['cfg']['whosonfirst_spatial_tile38_collection'] = 'whosonfirst-nearby';
 
 	# END of wof spatial stuff
+
+
+	# START OF custom config stuff
+
+	$GLOBALS['cfg']['site_disabled'] = 0;
+	$GLOBALS['cfg']['server_force_https'] = 1;
+
+        # $GLOBALS['cfg']['enable_feature_signup'] = 0;
+	# $GLOBALS['cfg']['enable_feature_signin'] = 0;
+	# $GLOBALS['cfg']['enable_feature_persistent_login'] = 0;
+        # $GLOBALS['cfg']['enable_feature_api_site_keys'] = 0;
+        # $GLOBALS['cfg']['enable_feature_api_site_tokens'] = 0;
+
+        $GLOBALS['cfg']['db_main'] = array(
+                'host'  => 'whosonfirst-main-dev.chuawkltpek8.us-east-1.rds.amazonaws.com',
+                'name'  => 'main',			# database name
+                'user'  => 'whosonfirst_www',            # database username                                                                                                      
+                'auto_connect' => 0,
+        );
+
+        $GLOBALS['cfg']['db_accounts'] = array(
+                'host'  => 'whosonfirst-accounts-dev.chuawkltpek8.us-east-1.rds.amazonaws.com',
+                'name'  => 'accounts',			        # database name
+		'user'  => 'whosonfirst_www',                   # database username
+                'auto_connect' => 0,
+        );
+
+	$GLOBALS['cfg']['elasticsearch_host'] = 'internal-whosonfirst-elasticsearch-dev-399376336.us-east-1.elb.amazonaws.com';
+	$GLOBALS['cfg']['wof_elasticsearch_host'] = $GLOBALS['cfg']['elasticsearch_host'];
+	$GLOBALS['cfg']['offline_tasks_elasticsearch_host'] = $GLOBALS['cfg']['elasticsearch_host'];
+	$GLOBALS['cfg']['audit_trail_elasticsearch_host'] = $GLOBALS['cfg']['elasticsearch_host'];
+	$GLOBALS['cfg']['spelunker_elasticsearch_host'] = $GLOBALS['cfg']['elasticsearch_host'];
+
+	$GLOBALS['cfg']['enable_feature_photos'] = 1;
+	$GLOBALS['cfg']['enable_feature_filter_search'] = 0;
+	$GLOBALS['cfg']['enable_feature_audit_trail'] = 0;
+	$GLOBALS['cfg']['enable_feature_update_s3'] = 1;
+	$GLOBALS['cfg']['enable_feature_multi_repo'] = 1;
+	$GLOBALS['cfg']['enable_feature_index_spelunker'] = 1;
+
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/data/__REPO__/data/';
+	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/data/whosonfirst-pending/';
+	$GLOBALS['cfg']['site_name'] = "Boundary Issues (dev)";
+	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
+    	$GLOBALS['cfg']['slack_bot_webhook_url'] = 'https://hooks.slack.com/services/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';
+    	$GLOBALS['cfg']['whosonfirst_spatial_tile38_host'] = '192.168.0.119';
+
+    	$GLOBALS['cfg']['enable_feature_libpostal'] = true;
+    	$GLOBALS['cfg']['wof_libpostal_host'] = 'internal-wof-libpostal-dev-793771553.us-east-1.elb.amazonaws.com';
+    	$GLOBALS['cfg']['wof_postcode_pip_host'] = '192.168.25.42:8080';
+
+	$GLOBALS['cfg']['aws'] = array();
+	$GLOBALS['cfg']['aws']['s3_bucket'] = 'whosonfirst.dev.mapzen.com';
+	$GLOBALS['cfg']['aws']['access_key'] = 'READ FROM SECRETS';
+	$GLOBALS['cfg']['aws']['access_secret'] = 'READ FROM SECRETS';
+
+	# END OF custom config stuff
