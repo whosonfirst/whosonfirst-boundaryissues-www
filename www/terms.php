@@ -27,8 +27,19 @@
 	}
 
 	if ($GLOBALS['cfg']['user'] &&
-	    ! $GLOBALS['cfg']['user']['accepted_tos']) {
+	    ! $GLOBALS['cfg']['user']['terms_accepted']) {
 		$GLOBALS['smarty']->display('page_terms_accept.txt');
+	} else if ($redir) {
+
+		$url = $GLOBALS['cfg']['abs_root_url'];
+
+		if ($redir){
+			if (substr($redir, 0, 1) == '/') $redir = substr($redir, 1);
+			$url .= $redir;
+		}
+
+		header("location: {$url}");
+		exit;
 	} else {
 		$GLOBALS['smarty']->display('page_terms.txt');
 	}
