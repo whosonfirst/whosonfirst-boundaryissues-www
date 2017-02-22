@@ -2,6 +2,8 @@
 
 	include('include/init.php');
 
+	login_ensure_loggedin('venue/');
+
 	$id = get_int64('id');
 	if ($id) {
 		$GLOBALS['smarty']->assign('page_title', 'Edit venue');
