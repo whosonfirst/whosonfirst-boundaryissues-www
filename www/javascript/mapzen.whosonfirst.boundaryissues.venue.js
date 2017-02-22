@@ -80,8 +80,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			feature.properties['iso:country'] = self.properties['iso:country'];
 			feature.properties['geom:latitude'] = lat;
 			feature.properties['geom:longitude'] = lng;
-			feature.properties['wof:parent_id'] = -1;
-			feature.properties['wof:hierarchy'] = [];
 
 			return feature;
 		},
@@ -148,6 +146,42 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
+
+			var hash = new L.Hash(map);
+
+			function lookup_hierarchy() {
+				var ll = map.getCenter();
+				var data = {
+					latitude: ll.lat,
+					longitude: ll.lng,
+					placetype: 'venue'
+				};
+
+				var onsuccess = function(rsp) {
+					if (! rsp.ok) {
+						mapzen.whosonfirst.log.error('Error reverse geocoding.');
+						return;
+					}
+					if (rsp.parents && rsp.parents.length == 1) {
+						self.set_property('wof:parent_id', rsp.parents[0].Id);
+					} else {
+						self.set_property('wof:parent_id', -1);
+					}
+					if (rsp.hierarchy) {
+						self.set_property('wof:hierarchy', rsp.hierarchy);
+					} else {
+						self.set_property('wof:hierarchy', []);
+					}
+				}
+
+				var onerror = function(rsp) {
+					mapzen.whosonfirst.log.error('Error reverse geocoding.');
+				};
+
+				mapzen.whosonfirst.boundaryissues.api.api_call("wof.pip", data, onsuccess, onerror);
+			}
+
+			map.on('moveend', lookup_hierarchy);
 
 			geocoder.on('select', function(e) {
 				var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
