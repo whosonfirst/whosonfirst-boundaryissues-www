@@ -73,11 +73,16 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				properties: self.properties
 			};
 
+			var tags = $('input[name="tags"]').val();
+			tags.split(',');
+			for (var i = 0; i < tags.length; i++) {
+				tags[i] = tags[i].trim();
+			}
+
 			feature.properties['wof:placetype'] = 'venue';
 			feature.properties['wof:name'] = $('input[name="name"]').val();
-			feature.properties['wof:tags'] = $('input[name="tags"]').val();
-			feature.properties['wof:country'] = self.properties['wof:country'];
-			feature.properties['iso:country'] = self.properties['iso:country'];
+			feature.properties['wof:tags'] = tags;
+			feature.properties['addr:full'] = $('input[name="address"]').val();
 			feature.properties['geom:latitude'] = lat;
 			feature.properties['geom:longitude'] = lng;
 
