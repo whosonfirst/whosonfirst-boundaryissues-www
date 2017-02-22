@@ -597,3 +597,55 @@ body.user-can-edit #edit-properties #btn-save {
 body.user-can-edit #edit-disallowed {
 	display: none;
 }
+
+#venue form {
+	margin-top: 2em;
+}
+
+#venue .form-group {
+	width: 100%;
+	max-width: 360px;
+}
+
+#venue input[type="text"] {
+	width: 100%;
+}
+
+#venue .btn {
+	margin-top: 1em;
+}
+
+@media screen and (max-width: 480px) {
+
+	body {
+		margin-top: 10px;
+	}
+
+	#site-message,
+	#nav form {
+		display: none;
+	}
+
+	#header {
+		padding: 0 15px;
+	}
+
+	h2 {
+		padding: 0 15px;
+		font-size: 1.5em;
+	}
+
+	#map {
+		height: 200px;
+	}
+
+	#venue form {
+		padding: 0 15px;
+	}
+
+	footer {
+		font-size: 0.8em;
+		padding: 0 15px 0.5em 15px;
+	}
+
+}

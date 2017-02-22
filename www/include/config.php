@@ -11,7 +11,7 @@
 
 	# Message is displayed in the nav header in inc_head.txt
 
-	$GLOBALS['cfg']['display_message'] = 1;
+	$GLOBALS['cfg']['display_message'] = 0;
 	$GLOBALS['cfg']['display_message_text'] = 'this is still a wet-paint prototype, suggestions and cluebats are welcome but please be gentle';
 
 	# Things you'll certainly need to tweak

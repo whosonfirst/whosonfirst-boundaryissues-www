@@ -6,9 +6,18 @@
 		<div id="map"></div>
 		<form action="{$cfg.abs_root_url}venue/" method="post">
 			<input type="hidden" name="coords" value="">
-			<input type="text" name="name" placeholder="Venue name">
-			<textarea name="address" placeholder="Venue address" cols="50" rows="3"></textarea>
-			<input type="text" name="tags" placeholder="Venue tags">
+			<div class="form-group">
+				<label for="venue-name">Venue name</label>
+				<input type="text" name="name" id="venue-name">
+			</div>
+			<div class="form-group">
+				<label for="venue-address">Address</label>
+				<textarea name="address" id="venue-address" cols="50" rows="3"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="venue-tags">Tags <small>(comma-separated)</small></label>
+				<input type="text" name="tags" id="venue-tags">
+			</div>
 			<input type="submit" value="Add venue" class="btn btn-primary">
 		</form>
 	</div>
