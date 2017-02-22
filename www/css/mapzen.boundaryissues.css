@@ -648,4 +648,16 @@ body.user-can-edit #edit-disallowed {
 		padding: 0 15px 0.5em 15px;
 	}
 
+	#slippymap-coords::before {
+		content: "";
+	}
+
+	#slippymap-coords {
+		padding-right: 10px;
+	}
+
+	.mobile-gutter {
+		padding: 0 15px;
+	}
+
 }
