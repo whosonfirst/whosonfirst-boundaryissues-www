@@ -16,6 +16,7 @@
 
 		<link href="{$cfg.abs_root_url}css/mapzen.styleguide.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/mapzen.whosonfirst.log.css" rel="stylesheet" />
+		<link href="{$cfg.abs_root_url}css/mapzen.whosonfirst.chrome.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/mapzen.boundaryissues.css" rel="stylesheet" />
 
 		<script src="{$cfg.abs_root_url}javascript/jquery-2.1.0.min.js"></script>
@@ -33,6 +34,8 @@
 		<script src="{$cfg.abs_root_url}javascript/moment.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/bootstrap3-typeahead.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/slippymap.crosshairs.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.chrome.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.chrome.init.js"></script>
 
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>

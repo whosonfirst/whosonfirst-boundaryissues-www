@@ -1,0 +1,29 @@
+.wof-host {
+    position:fixed;
+    height:50px;
+    background-color:red;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    margin-bottom:0px;
+    z-index: 5000;
+    font-weight: 700;
+    text-align:right;
+    border-top:1px solid #fff;
+    padding-right: 1em;
+    padding-top: .5em;
+    color: #fff;
+}
+
+.wof-host:before {
+    content: "this is not prod – this is ";
+    font-weight: 200;
+}
+
+@media print {
+    
+    .wof-host {
+	display:none !important;
+    }
+    
+}
