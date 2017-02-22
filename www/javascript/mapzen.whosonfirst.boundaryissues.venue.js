@@ -74,7 +74,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 
 			var tags = $('input[name="tags"]').val();
-			tags.split(',');
+			tags = tags.split(',');
 			for (var i = 0; i < tags.length; i++) {
 				tags[i] = tags[i].trim();
 			}
@@ -82,7 +82,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			feature.properties['wof:placetype'] = 'venue';
 			feature.properties['wof:name'] = $('input[name="name"]').val();
 			feature.properties['wof:tags'] = tags;
-			feature.properties['addr:full'] = $('input[name="address"]').val();
+			feature.properties['addr:full'] = $('textarea[name="address"]').val();
 			feature.properties['geom:latitude'] = lat;
 			feature.properties['geom:longitude'] = lng;
 
