@@ -8,10 +8,10 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 // This JS library answers the question: what should the default position of a
 // "blank" map be? The answer to that question is chosen, in the order of
-// precedence:
+// precedence, from:
 
 // 1. The hash in the URL (i.e., #[zoom]/[lat]/[lng])
-// 2. A user-chosen default bbox
+// 2. A user-chosen default bbox (stored in the users_settings db table)
 // 3. The bbox from the country WOF record for the current IP address
 
 // We ping the IP address service either way, since the caller may be depending
@@ -117,7 +117,7 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 				link.addClass('bbox-saved');
 			};
 			var onerror = function(rsp) {
-				mapzen.whosonfirst.log.info('could not assign default_bbox user setting');
+				mapzen.whosonfirst.log.error('could not assign default_bbox user setting');
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call('wof.users_settings_set', {
 				name: 'default_bbox',
