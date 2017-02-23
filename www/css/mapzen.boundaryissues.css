@@ -449,10 +449,6 @@ ul.wof-hierarchy a.wof-namify-applied::after {
 	font-size: 11px;
 }
 
-#slippymap-coords::before {
-	content: "map is centered at ";
-}
-
 .property-group {
 	margin-top: 10px;
 }
@@ -616,9 +612,10 @@ body.user-can-edit #edit-disallowed {
 }
 
 #bbox-default {
-	float: left;
+	float: right;
 	font-weight: normal;
 	font-size: 11px;
+	margin-right: 10px;
 }
 
 #bbox-default.bbox-saved::after {
@@ -656,10 +653,6 @@ body.user-can-edit #edit-disallowed {
 	footer {
 		font-size: 0.8em;
 		padding: 0 15px 0.5em 15px;
-	}
-
-	#slippymap-coords::before {
-		content: "";
 	}
 
 	#slippymap-coords {
