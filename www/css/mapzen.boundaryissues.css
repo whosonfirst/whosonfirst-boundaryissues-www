@@ -599,7 +599,7 @@ body.user-can-edit #edit-disallowed {
 }
 
 #venue form {
-	margin-top: 2em;
+	margin-top: 2.5em;
 }
 
 #venue .form-group {
@@ -613,6 +613,16 @@ body.user-can-edit #edit-disallowed {
 
 #venue .btn {
 	margin-top: 1em;
+}
+
+#bbox-default {
+	float: left;
+	font-weight: normal;
+	font-size: 11px;
+}
+
+#bbox-default.bbox-saved::after {
+	content: " (saved)";
 }
 
 @media screen and (max-width: 480px) {
