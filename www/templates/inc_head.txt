@@ -68,6 +68,7 @@
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.events.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.branch.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.nearby.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.bbox.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.boundaryissues.venue.js"></script>
 
 	</head>
