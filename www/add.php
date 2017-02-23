@@ -26,5 +26,10 @@
 	$GLOBALS['smarty']->assign('schema_fields', $schema_fields);
 	$GLOBALS['smarty']->assign('user_can_edit', 'user-can-edit');
 
+	$bbox = users_settings_get_single($GLOBALS['cfg']['user'], 'default_bbox');
+	if ($bbox){
+		$GLOBALS['smarty']->assign('default_bbox', $bbox);
+	}
+
 	$GLOBALS['smarty']->display('page_add.txt');
 	exit();

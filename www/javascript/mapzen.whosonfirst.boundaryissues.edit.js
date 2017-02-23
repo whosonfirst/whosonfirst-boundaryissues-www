@@ -104,6 +104,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
+
+			if ($('input[name="wof_id"]').length == 0) {
+				// On the "add" page, pick a good default bbox
+				mapzen.whosonfirst.boundaryissues.bbox.init(map);
+			}
+
 			var hash = new L.Hash(map);
 
 			self.show_nearby_results();
