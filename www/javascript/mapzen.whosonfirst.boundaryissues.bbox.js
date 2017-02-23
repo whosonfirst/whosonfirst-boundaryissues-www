@@ -65,6 +65,10 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 
 			var url = 'https://ip.dev.mapzen.com/?raw=1';
 			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+
+			if ($(document.body).hasClass('user-signed-in')) {
+				self.draw_set_default_link(map);
+			}
 		},
 
 		'draw_set_default_link': function(map) {

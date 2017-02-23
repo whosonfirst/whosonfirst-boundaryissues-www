@@ -209,9 +209,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		mapzen.whosonfirst.boundaryissues.bbox.init(map, function(rsp) {
 			self.set_country(rsp.country);
 			slippymap.crosshairs.init(map);
-			if ($(document.body).hasClass('user-signed-in')) {
-				mapzen.whosonfirst.boundaryissues.bbox.draw_set_default_link(map);
-			}
 		});
 
 		map.on('moveend', function() {
