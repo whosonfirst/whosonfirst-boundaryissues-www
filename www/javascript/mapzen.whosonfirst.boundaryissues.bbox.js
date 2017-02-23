@@ -6,6 +6,17 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 // that decision may change some day but not today
 // (20160121/thisisaaronland)
 
+// This JS library answers the question: what should the default position of a
+// "blank" map be? The answer to that question is chosen, in the order of
+// precedence:
+
+// 1. The hash in the URL (i.e., #[zoom]/[lat]/[lng])
+// 2. A user-chosen default bbox
+// 3. The bbox from the country WOF record for the current IP address
+
+// We ping the IP address service either way, since the caller may be depending
+// on its results for other things. (20170223/dphiffer)
+
 mapzen.whosonfirst.boundaryissues.bbox = (function() {
 
 	var self = {
@@ -13,16 +24,6 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 
 			var container = map.getContainer();
 			var id = container.id;
-
-			// Ok, here is the deal: If there is a hash that looks
-			// like #zoom/lat/lon use that. Or if we there's a
-			// data-default-bbox attribute on the map DIV, we go
-			// with that. Otherwise we use the bbox from the country
-			// record for the current IP address.
-
-			// We are going to ping the IP address service either
-			// way, since the caller may be depending on its results
-			// for other things. (20170222/dphiffer)
 
 			var set_bbox = null;
 			var hash_view = location.hash.match(/^#(\d+)\/([0-9.-]+)\/([0-9.-]+)/)
