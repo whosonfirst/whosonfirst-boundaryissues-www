@@ -18,5 +18,6 @@
 
 	$crumb_save = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
+	$GLOBALS['smarty']->assign('mapzen_api_key', $GLOBALS['cfg']['mazpen_api_key']);
 
 	$GLOBALS['smarty']->display('page_venue.txt');

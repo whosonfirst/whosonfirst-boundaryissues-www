@@ -620,10 +620,21 @@ body.user-can-edit #edit-disallowed {
 
 #bbox-default.bbox-saved::after {
 	content: " (saved)";
+	color: #999;
 }
 
 #venue-dupes-notice {
 	font-size: 12px;
+}
+
+#venue-lookup-address {
+	font-size: 11px;
+	font-weight: normal;
+}
+
+#venue-lookup-address.loading::after {
+	content: " (loading)";
+	color: #999;
 }
 
 @media screen and (max-width: 480px) {

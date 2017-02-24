@@ -241,10 +241,46 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		});
 	}
 
+	function setup_address() {
+		$('#venue-lookup-address').click(function(e) {
+			e.preventDefault();
+			var address = $('textarea[name="address"]').val();
+			var ll = address.match(/(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)/);
+			if (ll) {
+				var lat = parseFloat(ll[1]);
+				var lng = parseFloat(ll[2]);
+				self.map.setView([lat, lng], 16);
+				$('textarea[name="address"]').val('');
+			} else {
+				var api_key = $('#venue-lookup-address').data('api-key');
+				var esc_address = encodeURI(address);
+				var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
+				var onsuccess = function(rsp) {
+					if (rsp && rsp.features &&
+					    rsp.features.length > 0) {
+						// For now, just go with result #1
+						var f = rsp.features[0];
+						var c = f.geometry.coordinates;
+						var lng = c[0];
+						var lat = c[1];
+						self.map.setView([lat, lng], 16);
+					}
+					$('#venue-lookup-address').removeClass('loading');
+				};
+				var onerror = function() {
+					mapzen.whosonfirst.log.error("unable to geocode address: " + address);
+				};
+				$('#venue-lookup-address').addClass('loading');
+				mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+			}
+		});
+	}
+
 	$(document).ready(function() {
 		if ($('#venue').length > 0) {
 			setup_map();
 			setup_form();
+			setup_address();
 		}
 	});
 
