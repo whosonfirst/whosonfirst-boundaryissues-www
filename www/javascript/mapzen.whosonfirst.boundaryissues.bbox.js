@@ -22,6 +22,7 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 	var self = {
 		'init': function(map, cb) {
 
+			console.log('init');
 			var container = map.getContainer();
 			var id = container.id;
 
@@ -29,12 +30,14 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 			var hash_view = location.hash.match(/^#(\d+)\/([0-9.-]+)\/([0-9.-]+)/)
 
 			if (hash_view) {
+				console.log('hash view');
 				var zoom = parseInt(hash_view[1]);
 				var lat = parseFloat(hash_view[2]);
 				var lng = parseFloat(hash_view[3]);
 				map.setView([lat, lng], zoom);
 				set_bbox = self.get_bbox(map);
 			} else if (container.getAttribute('data-default-bbox')) {
+				console.log('data-default-bbox');
 				var bbox = container.getAttribute('data-default-bbox');
 				bbox = bbox.split(',');
 				var swlon = parseFloat(bbox[0]);
@@ -50,11 +53,15 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 			};
 
 			var onsuccess = function(rsp) {
+				console.log('got ip info');
 				self.load_country_wof(rsp.country_id, function(rsp) {
+					console.log('got country');
 					if (! set_bbox) {
+						console.log('setting bbox');
 						self.set_bbox(map, rsp.bbox);
 					}
 					if (cb) {
+						console.log('cb');
 						cb({
 							bbox: rsp.bbox,
 							country: rsp
@@ -110,6 +117,7 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 			var swlat = bbox[1];
 			var nelon = bbox[2];
 			var nelat = bbox[3];
+			console.log(bbox);
 			map.fitBounds([[swlat, swlon], [nelat, nelon]]);
 		},
 
