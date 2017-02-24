@@ -278,6 +278,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 	$(document).ready(function() {
 		if ($('#venue').length > 0) {
+
+			// Check if we arrived by a URL like this: /add/?ll=123,456
+			// which redirects to: /add/#16/123/456
+			var ll = location.search.match(/ll=([^&]+)/);
+			if (location.pathname.match(/add\/?$/) && ll) {
+				window.location = location.pathname + '#16/' + ll[1].replace(',', '/');
+				return;
+			}
+
 			setup_map();
 			setup_form();
 			setup_address();
