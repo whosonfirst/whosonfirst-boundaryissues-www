@@ -19,6 +19,7 @@
 				<input type="text" name="tags" id="venue-tags">
 			</div>
 			<input type="submit" value="Add venue" class="btn btn-primary">
+			<div id="venue-response" class="headroom"></div>
 		</form>
 	</div>
 </div>

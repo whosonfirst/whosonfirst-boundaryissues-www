@@ -73,7 +73,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			return JSON.stringify(self.generate_feature());
 		},
 
-		save_to_server: function(geojson) {
+		save_to_server: function(geojson, cb) {
 
 			var data = {
 				crumb: $('#venue').data('crumb-save'),
@@ -87,10 +87,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					mapzen.whosonfirst.log.error("no feature returned from wof.save");
 					return;
 				}
-				var wof_id = parseInt(rsp.feature.properties['wof:id']);
-				var url = '/id/' + wof_id + '/';
-				url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
-				location.href = url;
+				if (cb) {
+					var wof_id = parseInt(rsp.feature.properties['wof:id']);
+					cb(wof_id);
+				}
 			};
 
 			var onerror = function(rsp) {
@@ -224,8 +224,18 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	function setup_form() {
 		$('#venue form').submit(function(e) {
 			e.preventDefault();
-			var geojson = self.generate_geojson();
-			self.save_to_server(geojson);
+			if ($('input[name="name"]').val() != '') {
+				var geojson = self.generate_geojson();
+				self.save_to_server(geojson, function(id) {
+					var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
+					$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
+					$('input[name="name"]').val('');
+					$('textarea[name="address"]').val('');
+					$('input[name="tags"]').val('');
+				});
+			} else {
+				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
+			}
 		});
 	}
 
