@@ -160,6 +160,9 @@
 	$GLOBALS['cfg']['wof_libpostal_host'] = '';
 	$GLOBALS['cfg']['wof_postcode_pip_host'] = '';
 
+	// Used for the add-a-venue geocoder
+	$GLOBALS['cfg']['mazpen_api_key'] = 'mapzen-LhT76h5';
+
 	// This search query filtering business is here because we've moved
 	// all our Elasticsearch business onto a single common index, but each
 	// application is only set up to edit a subset of the documents. The

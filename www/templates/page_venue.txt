@@ -13,6 +13,7 @@
 			<div class="form-group">
 				<label for="venue-address">Address</label>
 				<textarea name="address" id="venue-address" cols="50" rows="3"></textarea>
+				<a href="#" id="venue-lookup-address" data-api-key="{$mapzen_api_key|@escape}">find it on the map</a>
 			</div>
 			<div class="form-group">
 				<label for="venue-tags">Tags <small>(comma-separated)</small></label>
