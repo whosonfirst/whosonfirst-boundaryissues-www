@@ -205,6 +205,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				icon: new VenueIcon()
 			}
 		}).addTo(map);
+		L.control.locate().addTo(map);
 
 		mapzen.whosonfirst.boundaryissues.bbox.init(map, function(rsp) {
 			self.set_country(rsp.country);
