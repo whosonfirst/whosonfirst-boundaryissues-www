@@ -225,6 +225,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		$('#venue form').submit(function(e) {
 			e.preventDefault();
 			if ($('input[name="name"]').val() != '') {
+				$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
 				var geojson = self.generate_geojson();
 				self.save_to_server(geojson, function(id) {
 					var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
