@@ -622,6 +622,10 @@ body.user-can-edit #edit-disallowed {
 	content: " (saved)";
 }
 
+#venue-dupes-notice {
+	font-size: 12px;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

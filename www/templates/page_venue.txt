@@ -20,6 +20,7 @@
 			</div>
 			<input type="submit" value="Add venue" class="btn btn-primary">
 			<div id="venue-response" class="headroom"></div>
+			<div id="venue-dupes-notice">Please note: we presently don’t check for duplicate venues.</div>
 		</form>
 	</div>
 </div>
