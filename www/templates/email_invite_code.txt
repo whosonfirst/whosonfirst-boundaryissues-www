@@ -1,8 +1,9 @@
 {assign var="email_subject" value="You have been sent an invite code!"}
 Hello!
 
-tl;dr we’d like to invite you to try out our Who’s On First gazetteer editor,
-called Boundary Issues. If you know what that is, scroll down to “What next?”
+The short version: we’d like to invite you to try out our Who’s On First
+gazetteer editor, called Boundary Issues. If you know what that is, scroll down
+to “What next?”
 
 At Mapzen we believe that places make everything better. We’d like to invite you
 to help us define the places that are most important to you and your work. Our
@@ -38,7 +39,7 @@ What next?
 2. Click on this invite link: {$cfg.abs_root_url}invite/{$invite.code|escape}/
 3. Accept the terms, etc.
 4. Try searching for a place
-5. If you don’t find what you’re looking, try adding a new place
+5. Add a new venue: https://whosonfirst.mapzen.com/boundaryissues/venue
 6. Explore around and try editing some existing records
 
 If you get stuck or have questions, bug reports, general feedback, complaints,
