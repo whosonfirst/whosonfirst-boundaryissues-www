@@ -5,7 +5,8 @@
 		<h1>Boundary Issues</h1>
 	</div>
 	<ul>
-		<li><a href="{$cfg.abs_root_url}add/">Add a new place</a></li>
+		<li><a href="{$cfg.abs_root_url}add/">Add a new place</a> <small>with all the options</small></li>
+		<li><a href="{$cfg.abs_root_url}venue/">Add a new venue</a> <small>with a minimal set of options</small></li>
 		<li><a href="{$cfg.abs_root_url}upload/">Upload a GeoJSON file</a></li>
 	</ul>
 
