@@ -13,6 +13,7 @@
 		<link href="{$cfg.abs_root_url}css/leaflet.draw.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/leaflet.label.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.css" rel="stylesheet" />
+		<link href="{$cfg.abs_root_url}css/L.Control.Locate.css" rel="stylesheet" />
 
 		<link href="{$cfg.abs_root_url}css/mapzen.styleguide.css" rel="stylesheet" />
 		<link href="{$cfg.abs_root_url}css/mapzen.whosonfirst.log.css" rel="stylesheet" />
@@ -27,6 +28,7 @@
 		<script src="{$cfg.abs_root_url}javascript/leaflet.draw.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.label.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/leaflet.hash.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/L.Control.Locate.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/tangram.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/localforage.min.js"></script>
 		<script src="{$cfg.abs_root_url}leaflet-geocoder/leaflet-geocoder-mapzen.js"></script>
