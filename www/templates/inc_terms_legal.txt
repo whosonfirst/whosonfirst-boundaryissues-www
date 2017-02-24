@@ -1,11 +1,47 @@
-<pre>TERMS OF USE
+<pre>Contributor License Agreement
 
-The short version is that anything you put in here gets a <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a> license. Until we get some lawyers up in here, we're just gonna pretend there is fancy legal text.
+In order to clarify the intellectual property rights granted in contributions from any person or entity ("Contribution"), Samsung Research America, Inc. on behalf of its Mapzen business unit ("Mapzen") must have a Contributor License Agreement (the "Agreement") agreed to by each contributor. The license granted hereunder is for your protection as a Contributor as well as for the protection of Mapzen; it does not change your rights to use your own Contributions for any other purpose.
 
-Chillwave occupy hoodie vice deep v, gochujang artisan banh mi iceland narwhal man bun crucifix yr four loko. 90's readymade portland, try-hard bushwick flannel butcher godard pabst helvetica ramps vaporware chambray. Messenger bag coloring book freegan, shoreditch health goth 8-bit XOXO brunch crucifix gastropub microdosing beard craft beer actually vaporware. Normcore kogi 90's readymade, air plant edison bulb literally farm-to-table organic stumptown bespoke austin gochujang jianbing etsy. Deep v etsy artisan gochujang hella, bicycle rights brunch succulents shabby chic stumptown cardigan kogi godard pork belly pop-up. Chia glossier twee, knausgaard vape letterpress butcher pickled pok pok banjo pabst next level jean shorts. Vinyl kogi gochujang, pop-up occupy keffiyeh brooklyn pour-over unicorn vaporware coloring book heirloom.
+Either individuals or business, governmental or non-profit entities, including without limitation, all employees or agents acting on behalf of any such entity (an "Entity"), may submit Contributions to Mapzen under this Agreement. If you click the checkbox above to indicate that you are entering this Agreement on behalf of an Entity, you represent that you have the authority to bind such Entity to this Agreement, in which case, the terms "You" and "Your" shall refer to such Entity, as further defined below.
 
-Pitchfork subway tile pop-up, keytar lyft authentic la croix iceland brunch banjo distillery chambray letterpress. Letterpress flexitarian +1, hexagon cold-pressed scenester green juice. Health goth offal af banh mi. Schlitz ennui narwhal, photo booth skateboard sriracha four loko +1. Venmo normcore pork belly, yr echo park mustache whatever. Semiotics gluten-free photo booth pabst, lyft vinyl messenger bag shoreditch neutra williamsburg. Tumblr hell of raclette swag typewriter polaroid, yr poutine hoodie enamel pin vape hella food truck four dollar toast.
+Please read this document carefully before agreeing to it, and print a copy for your records.
 
-Portland succulents meggings, cray everyday carry pork belly ramps you probably haven't heard of them shabby chic iceland biodiesel direct trade enamel pin hashtag taxidermy. Street art asymmetrical keffiyeh, selvage bitters hell of cardigan. Kickstarter actually pickled ethical meggings kinfolk chia semiotics, chicharrones coloring book knausgaard unicorn humblebrag pour-over. Hot chicken raw denim cliche freegan jean shorts yuccie meggings pinterest. Kinfolk green juice art party tote bag PBR&B, retro godard bushwick kogi YOLO swag trust fund. Schlitz tofu heirloom, prism synth fixie succulents messenger bag locavore salvia butcher offal intelligentsia activated charcoal. Health goth prism synth, tofu kombucha man braid kinfolk tbh hella art party tacos put a bird on it cred butcher.
+You accept and agree to the following terms and conditions for (i) all contributions that You may have previously submitted to Mapzen, unless otherwise governed by a written license agreement, and (ii) Your present and future Contributions submitted to Mapzen. Except for the license granted herein to Mapzen and recipients of software and services offered by Mapzen, You reserve all right, title, and interest in and to Your Contributions.
 
-Leggings chia master cleanse disrupt, tumeric next level whatever messenger bag. Live-edge waistcoat vinyl, gluten-free humblebrag locavore hot chicken knausgaard. Blog brooklyn synth polaroid. 90's lumbersexual before they sold out umami, listicle mustache cardigan. Vexillologist gentrify banh mi flexitarian af, street art paleo retro biodiesel blog small batch taxidermy chia four dollar toast XOXO. Prism butcher flexitarian, irony synth chicharrones brooklyn helvetica pok pok hot chicken authentic lyft. Williamsburg cred austin authentic, salvia tote bag portland mixtape activated charcoal skateboard master cleanse pour-over.</pre>
+1. Definitions.
+
+"You" (or "Your") shall mean the holder of intellectual property rights in the Contributions or the Entity authorized by such holder of intellectual property rights to enter into this agreement with Mapzen. For Entities, the Entity making a Contribution and all other Entities that control, are controlled by, or are under common control with that Entity are considered to be a single Contributor. For the purposes of this definition, "control" means (i) the power, direct or indirect, to cause the direction or management of such entity, whether by contract or otherwise, (ii) the power to appoint a majority of the board of directors or other similar governing body of such entity, (iii) ownership of fifty percent (50%) or more of the outstanding voting shares of, or other voting equity interests in, such entity, or (iv) any other beneficial majority ownership of such entity.
+
+"Contribution" shall mean any data, metadata or other content, including any corrections, modifications or additions to any existing data, metadata or content (such as geographic coordinates, translations or local names), that is or has been intentionally submitted by You to Mapzen for inclusion in, or documentation of, any of the software or services offered by Mapzen (collectively with all Contributions, the “Works”). For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to Mapzen or its representatives, for the purpose of adding to, correcting, modifying, and/or improving the Work other than a communication that is conspicuously designated in writing by You as "Not a Contribution." 
+
+2. Grant of License.
+
+a. Subject to the terms of this Agreement, You hereby grant to Mapzen a worldwide, royalty-free, non-exclusive, perpetual, sub-licensable, irrevocable license in the Contributions, to do any act that is restricted by copyright, database right or any other intellectual property right upon which the Contributions, or any element within the Contributions, are subject. To the extent allowable under applicable law, You also waive and/or agree not to assert against Mapzen or its licensees any moral rights that You may have in the Contributions.
+
+b. You agree that Mapzen may license the Work under any open license it chooses in its sole discretion, including without limitation CC0, or release the Work in the public domain.
+
+c. You agree that Mapzen does not have to include the Contributions or any portion thereof in the Works and may remove the Contributions, or any portion thereof, from the Works at any time and for any reason.
+
+3. Representations and Warranties.
+
+a. If You are entering into this Agreement as an individual, You represent that You are legally entitled to grant the above license. If Your employer(s) has intellectual property rights in the Contributions, You represent that You have received permission to make Contributions on behalf of that employer, that Your employer has waived such rights for Your Contributions to Mapzen, or that Your employer has executed a separate contribution agreement with Mapzen.
+
+b. If You are entering into this Agreement on behalf of an Entity, You represent that You are legally entitled to grant the above license. You represent further that each employee of the Entity that submits Contributions is authorized to submit such Contributions on behalf of the Entity.
+
+c. You provide Your Contributions on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied, including, without limitation, any warranties or conditions of TITLE, NON- INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE.
+
+4. Covenants
+
+a. You agree to notify Mapzen of any facts or circumstances of which you become aware that would make these representations inaccurate in any respect.
+
+5. Miscellaneous
+
+a. This Agreement shall be governed by and construed in accordance with the laws of the State of New York, without regard to the conflict of laws provisions thereof.
+
+b. Any provision of this Agreement that is determined to be unenforceable or unlawful shall not affect the remainder of the Agreement and shall be severable therefrom, and the unenforceable or unlawful provision shall be limited or eliminated to the minimum extent necessary to that this Agreement shall otherwise remain in full force and effect and enforceable.
+
+c. This Agreement constitutes the entire agreement between the parties and supersedes any and all prior agreements between them, whether written or oral, with respect to the subject matter hereof.
+
+d. This Agreement may not be amended, modified or provision hereof waived, except in a writing signed by the parties hereto.
+
+e. No waiver by either party, whether express or implied, of any provision of this Agreement, or of any breach thereof, shall constitute a continuing waiver of such provision or a breach or waiver of any other provision of this Agreement.</pre>
