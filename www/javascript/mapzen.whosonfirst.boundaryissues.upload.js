@@ -32,10 +32,29 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			$preview_map = $('#upload-preview-map');
 			$preview_props = $('#upload-preview-props');
 
-			// Grab a reference to the file input's data when its onchange fires
+			var preview_handler = function(file, cb) {
+				var reader = new FileReader();
+				reader.onload = function() {
+					cb(reader.result);
+				};
+				if (file) {
+					reader.readAsText(file);
+					$result.html('This is just a preview. You still have to hit the upload button.');
+				} else {
+					mapzen.whosonfirst.log.error('No file to preview.');
+				}
+			};
+
+			// Preview the GeoJSON when the file input's onchange fires
 			$form.find('input[name=geojson_file]').on('change', function(e){
-				geojson_file = e.target.files[0];
-				self.show_preview(geojson_file);
+				var file = e.target.files[0];
+				preview_handler(file, self.preview_geojson);
+			});
+
+			// Preview the CSV when the file input's onchange fires
+			$form.find('input[name=csv_file]').on('change', function(e){
+				var file = e.target.files[0];
+				preview_handler(file, self.preview_csv);
 			});
 
 			// Intercept the form submit event and upload the file via API
@@ -67,48 +86,40 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror, cache_ttl);
 		},
 
-		show_preview: function(){
+		preview_geojson: function(data){
 
-			// Read the file and display a preview map prior to uploading
-			var reader = new FileReader();
-			reader.onload = function(e){
-				try {
-					var geojson = JSON.parse(reader.result);
-				} catch(e) {
-					$result.html(e);
-					upload_is_ready = false;
-					return;
-				}
-
-				upload_is_ready = true;
-				$('#upload-btn').addClass('btn-primary');
-				$('#upload-btn').attr('disabled', false);
-
-				var map = self.setup_map_preview(geojson);
-
-				if (geojson.type == "Feature") {
-					is_collection = false;
-					if (map) {
-						mapzen.whosonfirst.leaflet.fit_map(map, geojson);
-						self.show_feature_preview(map, geojson);
-					}
-					self.show_props_preview(geojson);
-				} else if (geojson.type == "FeatureCollection") {
-					is_collection = true;
-					if (map) {
-						self.show_collection_preview(map, geojson);
-					}
-					self.show_props_preview(geojson);
-				}
+			try {
+				var geojson = JSON.parse(data);
+			} catch(e) {
+				$result.html(e);
+				upload_is_ready = false;
+				return;
 			}
 
-			// Load up the file to kick off the preview
-			if (geojson_file) {
-				reader.readAsText(geojson_file);
-				$result.html('This is just a preview. You still have to hit the upload button.');
-			} else {
-				mapzen.whosonfirst.log.error('No geojson_file to preview.');
+			upload_is_ready = true;
+			$('#upload-btn').addClass('btn-primary');
+			$('#upload-btn').attr('disabled', false);
+
+			var map = self.setup_map_preview(geojson);
+
+			if (geojson.type == "Feature") {
+				is_collection = false;
+				if (map) {
+					mapzen.whosonfirst.leaflet.fit_map(map, geojson);
+					self.show_feature_preview(map, geojson);
+				}
+				self.show_props_preview(geojson);
+			} else if (geojson.type == "FeatureCollection") {
+				is_collection = true;
+				if (map) {
+					self.show_collection_preview(map, geojson);
+				}
+				self.show_props_preview(geojson);
 			}
+		},
+
+		preview_csv: function(csv) {
+			console.log(csv);
 		},
 
 		setup_map_preview: function(geojson) {
