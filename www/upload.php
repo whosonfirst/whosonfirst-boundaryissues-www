@@ -21,5 +21,8 @@
 	$crumb_upload_collection = crumb_generate('api', 'wof.upload_collection');
 	$GLOBALS['smarty']->assign("crumb_upload_collection", $crumb_upload_collection);
 
+	$crumb_upload_csv = crumb_generate('api', 'wof.upload_csv');
+	$GLOBALS['smarty']->assign("crumb_upload_csv", $crumb_upload_csv);
+
 	$GLOBALS['smarty']->display('page_upload.txt');
 	exit();

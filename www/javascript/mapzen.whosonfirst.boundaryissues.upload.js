@@ -13,9 +13,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    $preview_map,
 	    $preview_props,
 	    geojson_file,
+	    csv_file,
 	    upload_is_ready = false,
 	    properties_are_ready = false,
 	    is_collection,
+	    is_csv,
 	    feature_count,
 	    VenueIcon,
 	    poi_icon_base;
@@ -46,15 +48,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			// Preview the GeoJSON when the file input's onchange fires
 			$form.find('input[name=geojson_file]').on('change', function(e){
-				var file = e.target.files[0];
-				preview_handler(file, self.preview_geojson);
+				geojson_file = e.target.files[0];
+				preview_handler(geojson_file, self.preview_geojson);
 				$form.find('input[name=csv_file]')[0].setAttribute('disabled', 'disabled');
 			});
 
 			// Preview the CSV when the file input's onchange fires
 			$form.find('input[name=csv_file]').on('change', function(e){
-				var file = e.target.files[0];
-				preview_handler(file, self.preview_csv);
+				is_csv = true;
+				csv_file = e.target.files[0];
+				preview_handler(csv_file, self.preview_csv);
 				$form.find('input[name=geojson_file]')[0].setAttribute('disabled', 'disabled');
 			});
 
@@ -374,16 +377,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return;
 			}
 
-			if (is_collection) {
-				var crumb = $form.data("crumb-upload-collection");
-				var api_method = 'wof.upload_collection';
-			} else {
-				var crumb = $form.data("crumb-upload-feature");
-				var api_method = 'wof.upload_feature';
-			}
-
 			var onsuccess = function(rsp) {
-
 				self.show_result(rsp);
 				mapzen.whosonfirst.log.debug(rsp);
 			};
@@ -392,39 +386,68 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				mapzen.whosonfirst.log.error(rsp);
 			};
 
-			// Make sure we have a geojson_file reference set up
-			if (! geojson_file) {
-				mapzen.whosonfirst.log.error('No geojson_file to post.');
-				return;
+			var upload_file;
+
+			if (is_csv) {
+
+				if (csv_file) {
+					upload_file = csv_file;
+				} else {
+					mapzen.whosonfirst.log.error('No csv_file to post.');
+					return;
+				}
+
+				var crumb = $form.data("crumb-upload-csv");
+				var api_method = 'wof.upload_csv';
+
+			} else {
+
+				if (geojson_file) {
+					upload_file = geojson_file;
+				} else {
+					mapzen.whosonfirst.log.error('No geojson_file to post.');
+					return;
+				}
+
+				if (is_collection) {
+					var crumb = $form.data("crumb-upload-collection");
+					var api_method = 'wof.upload_collection';
+				} else {
+					var crumb = $form.data("crumb-upload-feature");
+					var api_method = 'wof.upload_feature';
+				}
 			}
 
 			// Assemble our form data and send it along to the API method
 			var data = new FormData();
 			data.append('crumb', crumb);
-			data.append('upload_file', geojson_file);
+			data.append('upload_file', upload_file);
 
-			var empty = true;
+			if (! is_csv) {
 
-			if ($('#upload-geometry').length > 0 &&
-			    $('#upload-geometry').get(0).checked) {
-				data.append('geometry', 1);
-				empty = false;
-			}
-			$('.upload-properties input').each(function(i, prop) {
-				if ($(prop).attr('name') == 'properties[]' &&
-				    prop.checked) {
-					var name = $(prop).attr('name');
-					var value = $(prop).val();
-					data.append(name, value);
-					if (value != 'wof:id') {
-						empty = false;
-					}
+				var empty = true;
+
+				if ($('#upload-geometry').length > 0 &&
+				    $('#upload-geometry').get(0).checked) {
+					data.append('geometry', 1);
+					empty = false;
 				}
-			});
+				$('.upload-properties input').each(function(i, prop) {
+					if ($(prop).attr('name') == 'properties[]' &&
+					    prop.checked) {
+						var name = $(prop).attr('name');
+						var value = $(prop).val();
+						data.append(name, value);
+						if (value != 'wof:id') {
+							empty = false;
+						}
+					}
+				});
 
-			if (empty) {
-				$result.html("You haven't selected anything to update.");
-				return;
+				if (empty) {
+					$result.html("You haven't selected anything to update.");
+					return;
+				}
 			}
 
 			mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
