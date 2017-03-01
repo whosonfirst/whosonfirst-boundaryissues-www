@@ -11,7 +11,7 @@
 			$invite['created']
 		));
 
-		return crypto_encrypt($raw, $GLOBALS['cfg']['crypt_invite_secret']);
+		return crypto_encrypt($raw, $GLOBALS['cfg']['crypto_invite_secret']);
 	}
 
 	#################################################################
@@ -24,7 +24,7 @@
 			return null;
 		}
 
-		$cookie = crypto_decrypt($cookie, $GLOBALS['cfg']['crypt_invite_secret']);
+		$cookie = crypto_decrypt($cookie, $GLOBALS['cfg']['crypto_invite_secret']);
 
 		if (! $cookie){
 			return null;
