@@ -39,7 +39,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				};
 				if (file) {
 					reader.readAsText(file);
-					$result.html('This is just a preview. You still have to hit the upload button.');
 				} else {
 					mapzen.whosonfirst.log.error('No file to preview.');
 				}
@@ -49,12 +48,14 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			$form.find('input[name=geojson_file]').on('change', function(e){
 				var file = e.target.files[0];
 				preview_handler(file, self.preview_geojson);
+				$form.find('input[name=csv_file]')[0].setAttribute('disabled', 'disabled');
 			});
 
 			// Preview the CSV when the file input's onchange fires
 			$form.find('input[name=csv_file]').on('change', function(e){
 				var file = e.target.files[0];
 				preview_handler(file, self.preview_csv);
+				$form.find('input[name=geojson_file]')[0].setAttribute('disabled', 'disabled');
 			});
 
 			// Intercept the form submit event and upload the file via API
@@ -96,6 +97,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return;
 			}
 
+			$result.html('This is just a preview. You still have to hit the upload button.');
+
 			upload_is_ready = true;
 			$('#upload-btn').addClass('btn-primary');
 			$('#upload-btn').attr('disabled', false);
@@ -118,8 +121,56 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 		},
 
-		preview_csv: function(csv) {
-			console.log(csv);
+		preview_csv: function(data) {
+
+			try {
+				var csv = Papa.parse(data);
+			} catch(e) {
+				$result.html(e);
+				upload_is_ready = false;
+				return;
+			}
+
+			$result.html('Please choose which CSV column maps onto which Who’s On First property.');
+
+			var property_select_html = function(column) {
+				var name = 'property-' + htmlspecialchars(column);
+				var misc = 'misc:' + column.replace(/\W/, '_');
+
+				var html = '<select name="' + name + '">';
+				html += '<option>' + misc + '</option>';
+				html += '<option>wof:name</option>';
+				html += '<option>geom:latitude</option>';
+				html += '<option>geom:longitude</option>';
+				html += '<option>addr:full</option>';
+				html += '<option>addr:housenumber</option>';
+				html += '<option>addr:street</option>';
+				html += '<option>addr:postcode</option>';
+				html += '<option>addr:city</option>';
+				html += '<option>addr:state</option>';
+				html += '<option>addr:province</option>';
+				html += '<option>addr:phone</option>';
+				html += '<option>wof:tags</option>';
+				html += '</select>';
+
+				return html;
+			};
+
+			var table = '<table id="csv-columns">';
+			table += '<tr><th>CSV column</th><th class="property">WOF property</th></tr>';
+
+			var heading = csv.data[0];
+			for (var i = 0; i < heading.length; i++) {
+				var column = heading[i];
+				var property_select = property_select_html(column);
+				table += '<tr>';
+				table += '<td class="column">' + htmlspecialchars(column) + '</th>';
+				table += '<td class="property">' + property_select + '</td>';
+				table += '</tr>';
+			}
+
+			table += '</table>';
+			$('#upload-preview-props').html(table);
 		},
 
 		setup_map_preview: function(geojson) {
