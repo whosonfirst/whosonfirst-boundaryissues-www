@@ -2,17 +2,24 @@
 
 <form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload-feature="{$crumb_upload_feature|@escape}" data-crumb-upload-collection="{$crumb_upload_collection|@escape}">
 	<div class="container">
-		{$crumb_upload_fallback|crumb_input}
-		<input type="hidden" name="method" value="wof.upload">
-		<input type="hidden" name="access_token" value="{$site_token|@escape}">
-		<span class="btn btn-default btn-file">
-			Choose GeoJSON file
-			<input type="file" name="geojson_file">
-		</span>
-		<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
-		<div id="upload-result"></div>
-		<div id="upload-preview-map" class="hidden"></div>
-		<div id="upload-preview-props"></div>
+		<div class="row">
+			{$crumb_upload_fallback|crumb_input}
+			<input type="hidden" name="method" value="wof.upload">
+			<input type="hidden" name="access_token" value="{$site_token|@escape}">
+			<span class="btn btn-default btn-file">
+				Choose GeoJSON file
+				<input type="file" name="geojson_file">
+			</span>
+			<span class="hey-look">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+			<span class="btn btn-default btn-file">
+				Choose CSV file
+				<input type="file" name="csv_file">
+			</span>
+			<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
+			<div id="upload-result"></div>
+			<div id="upload-preview-map" class="hidden"></div>
+			<div id="upload-preview-props"></div>
+		</div>
 	</div>
 </form>
 
