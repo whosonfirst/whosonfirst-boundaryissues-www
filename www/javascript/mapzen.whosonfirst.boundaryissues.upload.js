@@ -131,7 +131,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return;
 			}
 
-			$result.html('Please choose which CSV column maps onto which Who’s On First property.');
+			$result.html('Please choose which CSV column maps onto which Who’s On First property.<br><small class="caveat">at minimum we will need a <span class="hey-look">wof:name</span> and <em>either</em> a <span class="hey-look">addr:full</span> or pair of <span class="hey-look">geom:latitude</span> + <span class="hey-look">geom:longitude</span> coordinates</small>');
 
 			var property_select_html = function(column) {
 				var name = 'property-' + htmlspecialchars(column);
@@ -139,6 +139,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 				var html = '<select name="' + name + '">';
 				html += '<option>' + misc + '</option>';
+				html += '<option value="">(ignore this column)</option>';
 				html += '<option>wof:name</option>';
 				html += '<option>geom:latitude</option>';
 				html += '<option>geom:longitude</option>';
@@ -171,6 +172,34 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			table += '</table>';
 			$('#upload-preview-props').html(table);
+
+			$('#upload-preview-props select').change(function(e) {
+				var has_name = false;
+				var has_addr = false;
+				var has_lat = false;
+				var has_lng = false;
+				$('#upload-preview-props select').each(function(i, select) {
+					if ($(select).val() == 'wof:name') {
+						has_name = true;
+					} else if ($(select).val() == 'addr:full') {
+						has_addr = true;
+					} else if ($(select).val() == 'geom:latitude') {
+						has_lat = true;
+					} else if ($(select).val() == 'geom:longitude') {
+						has_lng = true;
+					}
+				});
+				if (has_name &&
+				    (has_addr || has_lat && has_lng)) {
+					upload_is_ready = true;
+					$('#upload-btn').addClass('btn-primary');
+					$('#upload-btn').attr('disabled', false);
+				} else {
+					upload_is_ready = false;
+					$('#upload-btn').removeClass('btn-primary');
+					$('#upload-btn').attr('disabled', 'disabled');
+				}
+			});
 		},
 
 		setup_map_preview: function(geojson) {
