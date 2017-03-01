@@ -1582,12 +1582,47 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				properties: {}
 			};
 
-			$('#edit-form').find('.property').each(function(i, input) {
+			$('#edit-form').find('.property, .add-item, .add-value').each(function(i, input) {
 				if ($(input).closest('.names-language').length > 0){
 					// Don't encode custom UI name:* properties
 					return;
 				}
-				var name = $(input).attr('name');
+
+				var is_new_item = false;
+
+				// This next conditional block exists to grab properties
+				// that have *not yet been added* which I know sounds weird
+				// but trust me here. This is for arrays and objects. When
+				// you add a new item or value to an array/object, you
+				// press a "+" button and it adds it to the list. But what
+				// if just type in the property and do not press the "+"?
+				// That's where all this comes in. (20170228/dphiffer)
+				if ($(input).hasClass('add-value')) {
+					if ($(input).val() == '') {
+						return;
+					}
+					var $obj = $(input).closest('.json-schema-object');
+					var key = $obj.find('.add-key').val();
+					if (key == '') {
+						// Ok, forget it, we don't have a key to work with
+						return;
+					}
+					var context = $obj.data('context');
+					var name = context + '.' + key;
+				} else if ($(input).hasClass('add-item')) {
+					is_new_item = true;
+					console.log('oh hey');
+					if ($(input).val() == '') {
+						return;
+					}
+					var $arr = $(input).closest('.json-schema-array');
+					var key = '[' + $arr.find('.property').length + ']';
+					var context = $arr.data('context');
+					var name = context + key;
+					console.log(name);
+				} else {
+					var name = $(input).attr('name');
+				}
 				var value = $(input).val();
 				if ($(input).data('type') == 'number') {
 					value = parseFloat(value);
@@ -1596,7 +1631,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else if ($(input).data('type') == 'json') {
 					value = JSON.parse(value);
 				}
+				if (is_new_item) {
+					console.log('-------------- assigning property! --------------', name, value);
+				}
 				self.assign_property(feature, name, value);
+				if (is_new_item) {
+					console.log('-------------- ok we assigned the property! --------------', feature);
+				}
 			});
 
 			// Some array properties are required and may not have any inputs to
@@ -1661,6 +1702,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		assign_property: function(context, name, value) {
 
+			console.log('assign_property', name, value);
+			console.log('context', context);
+
 			if (typeof name == 'string') {
 
 				// Check if there are '.' chars in the name (object)
@@ -1671,18 +1715,29 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 
 			if (dot_match) {
+
 				// Looks like an object; recurse into the properties context
-				if (!context[dot_match[1]]) {
-					context[dot_match[1]] = {};
+
+				var context_key = dot_match[1];
+				var key = dot_match[2];
+
+				if (! context[context_key]) {
+					context[context_key] = {};
 				}
-				self.assign_property(context[dot_match[1]], dot_match[2], value);
+				self.assign_property(context[context_key], key, value);
+
 			} else if (bracket_match) {
+
 				// Looks like an array; recurse into the properties context
-				if (!context[bracket_match[1]]) {
-					context[bracket_match[1]] = [];
-				}
+
+				var key = bracket_match[1];
 				var index = parseInt(bracket_match[2]);
-				self.assign_property(context[bracket_match[1]], index, value);
+
+				if (!context[key]) {
+					context[key] = [];
+				}
+				self.assign_property(context[key], index, value);
+
 			} else {
 				// If not, then we've reached the correct context
 				context[name] = value;
