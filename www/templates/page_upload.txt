@@ -23,5 +23,6 @@
 	</div>
 </form>
 
+<script src="{$cfg.abs_root_url}javascript/papaparse.js"></script>
 
 {include file='inc_foot.txt'}

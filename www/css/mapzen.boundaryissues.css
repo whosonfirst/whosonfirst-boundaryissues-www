@@ -637,6 +637,36 @@ body.user-can-edit #edit-disallowed {
 	color: #999;
 }
 
+#csv-columns {
+	margin-top: 1em;
+}
+
+#csv-columns th {
+	font-size: 12px;
+	text-transform: uppercase;
+	padding-bottom: 5px;
+	padding-left: 7px;
+}
+
+#csv-columns td {
+	min-width: 120px;
+}
+
+#csv-columns td.column {
+	vertical-align: middle;
+	font-family: menlo, monospace;
+	font-weight: normal;
+	font-size: 14px;
+	padding: 4px 0.5em;
+	background: #ededed;
+	border-bottom: 1px solid #fff;
+}
+
+#csv-columns td.property {
+	border-left: 5px solid #fff;
+	border-bottom: 1px solid #fff;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {
