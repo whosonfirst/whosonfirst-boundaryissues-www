@@ -271,6 +271,12 @@
 	function wof_utils_getregion($feature) {
 		$props = $feature['properties'];
 		$region = null;
+		if (! $props['wof:hierarchy']) {
+			return array(
+				'ok' => 0,
+				'error' => 'We need a wof:hierarchy to determine which repo to save to.'
+			);
+		}
 		foreach ($props['wof:hierarchy'] as $hier) {
 			$region_id = $hier['region_id'];
 			$region_path = wof_utils_id2relpath($region_id);
