@@ -1,6 +1,6 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
-<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload-feature="{$crumb_upload_feature|@escape}" data-crumb-upload-collection="{$crumb_upload_collection|@escape}">
+<form action="{$cfg.abs_root_url}upload/" method="post" enctype="multipart/form-data" id="upload-form" data-crumb-upload-feature="{$crumb_upload_feature|@escape}" data-crumb-upload-collection="{$crumb_upload_collection|@escape}" data-crumb-upload-csv="{$crumb_upload_csv|@escape}">
 	<div class="container">
 		<div class="row">
 			{$crumb_upload_fallback|crumb_input}

@@ -81,6 +81,22 @@
 
 	########################################################################
 
+	function api_wof_upload_csv() {
+
+		if (! $_FILES["upload_file"]) {
+			api_output_error(400, 'Please include an upload_file.');
+		}
+
+		# something something save the CSV file
+
+		api_output_ok(array(
+			'ok' => 1,
+			'csv_id' => 'foo'
+		));
+	}
+
+	########################################################################
+
 	function api_wof_save() {
 
 		$geojson = post_str('geojson');

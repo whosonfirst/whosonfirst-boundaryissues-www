@@ -28,6 +28,18 @@
 			)
 		),
 
+		"wof.upload_csv" => array (
+			"description" => "Upload a CSV file to create new WOF records.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "upload_file", "description" => "A CSV file, multipart encoded", "documented" => 1, "required" => 1)
+			)
+		),
+
 		"wof.save" => array (
 			"description" => "Save a WOF record.",
 			"documented" => 1,
