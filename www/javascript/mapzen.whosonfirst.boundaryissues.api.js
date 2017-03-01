@@ -38,7 +38,7 @@ mapzen.whosonfirst.boundaryissues.api = (function(){
 						return;
 					}
 				};
-				
+
 				rsp = parse_rsp(rsp);
 				
 				if (on_error){

@@ -73,7 +73,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			return JSON.stringify(self.generate_feature());
 		},
 
-		save_to_server: function(geojson, cb) {
+		save_to_server: function(geojson, succes_cb, error_cb) {
 
 			var data = {
 				crumb: $('#venue').data('crumb-save'),
@@ -87,13 +87,16 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					mapzen.whosonfirst.log.error("no feature returned from wof.save");
 					return;
 				}
-				if (cb) {
+				if (succes_cb) {
 					var wof_id = parseInt(rsp.feature.properties['wof:id']);
-					cb(wof_id);
+					succes_cb(wof_id);
 				}
 			};
 
 			var onerror = function(rsp) {
+				if (error_cb) {
+					error_cb(rsp);
+				}
 				mapzen.whosonfirst.log.error("error calling wof.save");
 			};
 
@@ -223,18 +226,29 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	}
 
 	function setup_form() {
+
+		function onsuccess(id) {
+			var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
+			$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
+			$('input[name="name"]').val('');
+			$('textarea[name="address"]').val('');
+			$('input[name="tags"]').val('');
+		}
+
+		function onerror(rsp) {
+			var message = '😿 There was a problem saving your venue.';
+			if (rsp.error && rsp.error.message) {
+				message = '<strong>Oops!</strong> ' + htmlspecialchars(rsp.error.message);
+			}
+			$('#venue-response').html('<div class="alert alert-danger">' + message + '</div>');
+		}
+
 		$('#venue form').submit(function(e) {
 			e.preventDefault();
 			if ($('input[name="name"]').val() != '') {
 				$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
 				var geojson = self.generate_geojson();
-				self.save_to_server(geojson, function(id) {
-					var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
-					$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
-					$('input[name="name"]').val('');
-					$('textarea[name="address"]').val('');
-					$('input[name="tags"]').val('');
-				});
+				self.save_to_server(geojson, onsuccess, onerror);
 			} else {
 				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
 			}
