@@ -531,7 +531,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/categories.json');
 
 			var onsuccess = function(categories) {
-				console.log('categories!', categories);
 				self.categories = categories;
 				self.categories.uri = {};
 				self.setup_categories_uris('namespace');
@@ -1588,8 +1587,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 
-				var is_new_item = false;
-
 				// This next conditional block exists to grab properties
 				// that have *not yet been added* which I know sounds weird
 				// but trust me here. This is for arrays and objects. When
@@ -1611,7 +1608,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var name = context + '.' + key;
 				} else if ($(input).hasClass('add-item')) {
 					is_new_item = true;
-					console.log('oh hey');
 					if ($(input).val() == '') {
 						return;
 					}
@@ -1619,7 +1615,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var key = '[' + $arr.find('.property').length + ']';
 					var context = $arr.data('context');
 					var name = context + key;
-					console.log(name);
 				} else {
 					var name = $(input).attr('name');
 				}
@@ -1631,19 +1626,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else if ($(input).data('type') == 'json') {
 					value = JSON.parse(value);
 				}
-				if (is_new_item) {
-					console.log('-------------- assigning property! --------------', name, value);
-				}
 				self.assign_property(feature, name, value);
-				if (is_new_item) {
-					console.log('-------------- ok we assigned the property! --------------', feature);
-				}
 			});
 
 			// Some array properties are required and may not have any inputs to
 			// iterate over. Encodes as [], when empty.
 			$('.json-schema-required > .json-schema-array').each(function(i, prop) {
-				if ($(prop).find('> ul > li').length == 0) {
+				if ($(prop).find('> ul > li').length == 0 &&
+				    $(prop).find('.add-item').val() == '') {
 					var name = $(prop).data('context');
 					self.assign_property(feature, name, []);
 				}
@@ -1652,7 +1642,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			// I think this might only be for empty concordances dictionary,
 			// at least for now. It'll encode as {} when empty.
 			$('.json-schema-required > .json-schema-object').each(function(i, prop) {
-				if ($(prop).find('> table > tbody > tr.object-property').length == 0) {
+				if ($(prop).find('> table > tbody > tr.object-property').length == 0 &&
+				    $(prop).find('.add-key').val() == '' &&
+				    $(prop).find('.add-value').val() == '') {
 					var name = $(prop).data('context');
 					self.assign_property(feature, name, {});
 				}
@@ -1702,9 +1694,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		assign_property: function(context, name, value) {
 
-			console.log('assign_property', name, value);
-			console.log('context', context);
-
 			if (typeof name == 'string') {
 
 				// Check if there are '.' chars in the name (object)
@@ -1716,7 +1705,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			if (dot_match) {
 
-				// Looks like an object; recurse into the properties context
+				// Looks like an object; recurse into the object context
 
 				var context_key = dot_match[1];
 				var key = dot_match[2];
@@ -1724,23 +1713,27 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (! context[context_key]) {
 					context[context_key] = {};
 				}
+
 				self.assign_property(context[context_key], key, value);
 
 			} else if (bracket_match) {
 
-				// Looks like an array; recurse into the properties context
+				// Looks like an array; recurse into the array context
 
 				var key = bracket_match[1];
 				var index = parseInt(bracket_match[2]);
 
-				if (!context[key]) {
+				if (! context[key]) {
 					context[key] = [];
 				}
+
 				self.assign_property(context[key], index, value);
 
 			} else {
+
 				// If not, then we've reached the correct context
 				context[name] = value;
+
 			}
 		},
 
