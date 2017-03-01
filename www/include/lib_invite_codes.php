@@ -296,7 +296,7 @@
 		}
 
 		invite_codes_set_cookie($invite);
-		header("location: /signin/");
+		header("location: {$GLOBALS['cfg']['abs_root_url']}signin/");
 		exit();
 
 	}
