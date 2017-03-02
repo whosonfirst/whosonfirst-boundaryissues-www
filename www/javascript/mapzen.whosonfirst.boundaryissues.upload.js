@@ -140,7 +140,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var name = 'property-' + htmlspecialchars(column);
 				var misc = 'misc:' + column.replace(/\W/, '_');
 
-				var html = '<select name="' + name + '">';
+				var html = '<select name="' + name + '" data-column="' +htmlspecialchars(column) + '" class="column">';
 				html += '<option value="">(ignore this column)</option>';
 				html += '<option selected="selected">' + misc + '</option>';
 				html += '<option>wof:name</option>';
@@ -425,7 +425,18 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			data.append('crumb', crumb);
 			data.append('upload_file', upload_file);
 
-			if (! is_csv) {
+			if (is_csv) {
+
+				var properties = [];
+				$('select.column').each(function(i, select) {
+					var property = $(select).val();
+					properties.push(property);
+				});
+
+				properties = properties.join(',');
+				data.append('column_properties', properties);
+
+			} else {
 
 				var empty = true;
 

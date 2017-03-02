@@ -87,11 +87,34 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		# something something save the CSV file
+		$column_properties = post_str('column_properties');
+		if (! $column_properties) {
+			api_output_error(400, 'Please include a column_properties list.');
+		}
+
+		$user_id = $GLOBALS['cfg']['user']['id'];
+		$csv_id = random_string('10');
+		$timestamp = time();
+		$filename = "$timestamp-$user_id-$csv_id.csv";
+
+		$dir = $GLOBALS['cfg']['wof_pending_dir'] . 'csv';
+		if (! file_exists($dir)) {
+			mkdir($dir, 0755, true);
+		}
+
+		$path = "$dir/$filename";
+		move_uploaded_file($_FILES["upload_file"]["tmp_name"], $path);
+
+		$csv_settings = array(
+			'column_properties' => $column_properties,
+			'filename' => $filename
+		);
+		$csv_settings = json_encode($csv_settings);
+		users_settings_set($GLOBALS['cfg']['user'], "csv_$csv_id", $csv_settings);
 
 		api_output_ok(array(
 			'ok' => 1,
-			'csv_id' => 'foo'
+			'csv_id' => $csv_id
 		));
 	}
 
