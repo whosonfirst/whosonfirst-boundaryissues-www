@@ -1,5 +1,11 @@
 {include file='inc_head.txt' nav_tab='add'}
 
+{if $assignments}
+<script>
+var venue_assignments = {$assignments};
+</script>
+{/if}
+
 <div id="venue" class="container" data-crumb-save="{$crumb_save|@escape}">
 	<div class="row">
 		<h2>{$page_title | esc}</h2>

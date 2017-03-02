@@ -1,13 +1,38 @@
 <?php
 
 	include('include/init.php');
+	loadlib('users_settings');
 
-	login_ensure_loggedin('venue/');
+	$csv_id = get_str('csv');
+	if ($csv_id) {
+		login_ensure_loggedin("csv/$csv_id");
+		$GLOBALS['smarty']->assign('page_title', 'Import from CSV');
+		$user = $GLOBALS['cfg']['user'];
+		$settings_json = users_settings_get_single($user, "csv_$csv_id");
+		$settings = json_decode($settings_json, 'as hash');
 
-	$id = get_int64('id');
-	if ($id) {
-		$GLOBALS['smarty']->assign('page_title', 'Edit venue');
+		$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
+		$column_properties = explode(',', $settings['column_properties']);
+
+		$csv_file_handle = fopen($path, 'r');
+
+		# TODO: make the heading row optional
+		$heading = fgetcsv($csv_file_handle);
+
+		$row = fgetcsv($csv_file_handle);
+		fclose($csv_file_handle);
+
+		$assignments = array();
+		foreach ($row as $index => $value) {
+			$prop = $column_properties[$index];
+			$assignments[$prop] = $value;
+		}
+
+		$assignments_json = json_encode($assignments);
+		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments_json);
+
 	} else {
+		login_ensure_loggedin('venue/');
 		$GLOBALS['smarty']->assign('page_title', 'Add venue');
 	}
 
