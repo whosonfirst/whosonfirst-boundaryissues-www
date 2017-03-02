@@ -290,6 +290,30 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		});
 	}
 
+	function check_for_assignments() {
+		if (! venue_assignments) {
+			return;
+		}
+		$.each(venue_assignments, function(key, value) {
+			self.set_property(key, value);
+			if (key == 'wof:name') {
+				$('input[name="name"]').val(value);
+			} else if (key == 'addr:full') {
+				$('textarea[name="address"]').val(value);
+			} else if (key == 'wof:tags') {
+				$('input[name="tags"]').val(value);
+			}
+			if (venue_assignments['geom:latitude'] &&
+			    venue_assignments['geom:longitude']) {
+				var lat = parseFloat(venue_assignments['geom:latitude']);
+				var lng = parseFloat(venue_assignments['geom:longitude']);
+				self.map.setView([lat, lng], 16);
+			} else {
+				// geocode the address!
+			}
+		});
+	}
+
 	$(document).ready(function() {
 		if ($('#venue').length > 0) {
 
@@ -304,6 +328,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			setup_map();
 			setup_form();
 			setup_address();
+			check_for_assignments();
 		}
 	});
 
