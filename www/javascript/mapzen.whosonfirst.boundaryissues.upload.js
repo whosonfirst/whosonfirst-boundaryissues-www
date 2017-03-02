@@ -141,8 +141,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var misc = 'misc:' + column.replace(/\W/, '_');
 
 				var html = '<select name="' + name + '">';
-				html += '<option>' + misc + '</option>';
 				html += '<option value="">(ignore this column)</option>';
+				html += '<option selected="selected">' + misc + '</option>';
 				html += '<option>wof:name</option>';
 				html += '<option>geom:latitude</option>';
 				html += '<option>geom:longitude</option>';
@@ -155,6 +155,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				html += '<option>addr:province</option>';
 				html += '<option>addr:phone</option>';
 				html += '<option>wof:tags</option>';
+				html += '<option>edtf:inception</option>';
+				html += '<option>edtf:cessation</option>';
 				html += '</select>';
 
 				return html;
