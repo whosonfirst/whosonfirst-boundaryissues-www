@@ -180,6 +180,32 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				popup.closePopup();
 				map.removeLayer(geocoder.marker);
 			});
+		},
+
+		geocode_address: function(address) {
+			var api_key = $('#venue-lookup-address').data('api-key');
+			var esc_address = encodeURIComponent(address);
+			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
+			var onsuccess = function(rsp) {
+				if (rsp && rsp.features &&
+				    rsp.features.length > 0) {
+					// For now, just go with result #1
+					var f = rsp.features[0];
+					var c = f.geometry.coordinates;
+					var lng = c[0];
+					var lat = c[1];
+					self.map.setView([lat, lng], 16);
+
+					var ll = self.map.getCenter();
+					self.lookup_hierarchy(ll);
+				}
+				$('#venue-lookup-address').removeClass('loading');
+			};
+			var onerror = function() {
+				mapzen.whosonfirst.log.error("unable to geocode address: " + address);
+			};
+			$('#venue-lookup-address').addClass('loading');
+			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
 		}
 	};
 
@@ -228,11 +254,27 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	function setup_form() {
 
 		function onsuccess(id) {
-			var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
-			$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
-			$('input[name="name"]').val('');
-			$('textarea[name="address"]').val('');
-			$('input[name="tags"]').val('');
+			var csv_url = window.location.href.match(/csv\/([^\/]+)\/(\d+)\/?/);
+			if (csv_url) {
+				var csv_id = csv_url[1];
+				var page = parseInt(csv_url[2]);
+				if (page == csv_row_count) {
+					$('#venue-response').html('<div class="alert alert-success">You have finished importing the CSV file.</div>');
+					$('input[name="name"]').val('');
+					$('textarea[name="address"]').val('');
+					$('input[name="tags"]').val('');
+					window.scrollTo(0, 0);
+				} else {
+					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/' + (page + 1) + '/');
+				}
+			} else {
+				var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
+				$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
+				$('input[name="name"]').val('');
+				$('textarea[name="address"]').val('');
+				$('input[name="tags"]').val('');
+				window.scrollTo(0, 0);
+			}
 		}
 
 		function onerror(rsp) {
@@ -266,26 +308,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				self.map.setView([lat, lng], 16);
 				$('textarea[name="address"]').val('');
 			} else {
-				var api_key = $('#venue-lookup-address').data('api-key');
-				var esc_address = encodeURI(address);
-				var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
-				var onsuccess = function(rsp) {
-					if (rsp && rsp.features &&
-					    rsp.features.length > 0) {
-						// For now, just go with result #1
-						var f = rsp.features[0];
-						var c = f.geometry.coordinates;
-						var lng = c[0];
-						var lat = c[1];
-						self.map.setView([lat, lng], 16);
-					}
-					$('#venue-lookup-address').removeClass('loading');
-				};
-				var onerror = function() {
-					mapzen.whosonfirst.log.error("unable to geocode address: " + address);
-				};
-				$('#venue-lookup-address').addClass('loading');
-				mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+				self.geocode_address(address);
 			}
 		});
 	}
@@ -303,15 +326,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			} else if (key == 'wof:tags') {
 				$('input[name="tags"]').val(value);
 			}
-			if (venue_assignments['geom:latitude'] &&
-			    venue_assignments['geom:longitude']) {
-				var lat = parseFloat(venue_assignments['geom:latitude']);
-				var lng = parseFloat(venue_assignments['geom:longitude']);
-				self.map.setView([lat, lng], 16);
-			} else {
-				// geocode the address!
-			}
 		});
+		if (venue_assignments['geom:latitude'] &&
+		    venue_assignments['geom:longitude']) {
+			var lat = parseFloat(venue_assignments['geom:latitude']);
+			var lng = parseFloat(venue_assignments['geom:longitude']);
+			self.map.setView([lat, lng], 16);
+		} else {
+			self.geocode_address(venue_assignments['addr:full']);
+		}
 	}
 
 	$(document).ready(function() {
