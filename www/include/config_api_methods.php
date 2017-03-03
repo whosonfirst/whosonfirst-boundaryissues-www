@@ -37,7 +37,8 @@
 			"request_method" => "POST",
 			"parameters" => array(
 				array("name" => "upload_file", "description" => "A CSV file, multipart encoded", "documented" => 1, "required" => 1),
-				array("name" => "column_properties", "description" => "A comma-separated list of WOF properties (or empty, to ignore the column), one assigned to each CSV column.", "documented" => 1, "required" => 1)
+				array("name" => "column_properties", "description" => "A comma-separated list of WOF properties (or empty, to ignore the column), one assigned to each CSV column.", "documented" => 1, "required" => 1),
+				array("name" => "row_count", "description" => "The number of rows in the CSV file.", "documented" => 1, "required" => 1)
 			)
 		),
 

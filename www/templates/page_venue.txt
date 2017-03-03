@@ -3,6 +3,7 @@
 {if $assignments}
 <script>
 var venue_assignments = {$assignments};
+var csv_row_count = {$csv_row_count};
 </script>
 {/if}
 
@@ -12,6 +13,7 @@ var venue_assignments = {$assignments};
 		<div id="map"{if $default_bbox} data-default-bbox="{$default_bbox | @escape}"{/if}></div>
 		<form action="{$cfg.abs_root_url}venue/" method="post">
 			<input type="hidden" name="coords" value="">
+			<div id="venue-response" class="headroom"></div>
 			<div class="form-group">
 				<label for="venue-name">Venue name</label>
 				<input type="text" name="name" id="venue-name">
@@ -26,7 +28,6 @@ var venue_assignments = {$assignments};
 				<input type="text" name="tags" id="venue-tags">
 			</div>
 			<input type="submit" value="Add venue" class="btn btn-primary">
-			<div id="venue-response" class="headroom"></div>
 			<div id="venue-dupes-notice">Please note: we presently don’t check for duplicate venues.</div>
 		</form>
 	</div>

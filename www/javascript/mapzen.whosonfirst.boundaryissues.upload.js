@@ -14,6 +14,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    $preview_props,
 	    geojson_file,
 	    csv_file,
+	    csv_row_count,
 	    upload_is_ready = false,
 	    properties_are_ready = false,
 	    is_collection,
@@ -134,6 +135,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return;
 			}
 
+			csv_row_count = csv.data.length;
 			$result.html('Please choose which CSV column maps onto which Who’s On First property.<br><small class="caveat">at minimum we will need a <span class="hey-look">wof:name</span> and <em>either</em> a <span class="hey-look">addr:full</span> or pair of <span class="hey-look">geom:latitude</span> + <span class="hey-look">geom:longitude</span> coordinates</small>');
 
 			var property_select_html = function(column) {
@@ -380,8 +382,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 
 			var onsuccess = function(rsp) {
-				self.show_result(rsp);
-				mapzen.whosonfirst.log.debug(rsp);
+				if (is_csv && rsp.csv_id) {
+					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + rsp.csv_id + '/1/');
+				} else {
+					self.show_result(rsp);
+					mapzen.whosonfirst.log.debug(rsp);
+				}
 			};
 			var onerror = function(rsp) {
 				self.show_result(rsp);
@@ -435,6 +441,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 				properties = properties.join(',');
 				data.append('column_properties', properties);
+				data.append('row_count', csv_row_count);
 
 			} else {
 

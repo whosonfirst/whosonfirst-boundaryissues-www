@@ -4,9 +4,13 @@
 	loadlib('users_settings');
 
 	$csv_id = get_str('csv');
+	$page = get_int32('page');
+
 	if ($csv_id) {
+
 		login_ensure_loggedin("csv/$csv_id");
 		$GLOBALS['smarty']->assign('page_title', 'Import from CSV');
+
 		$user = $GLOBALS['cfg']['user'];
 		$settings_json = users_settings_get_single($user, "csv_$csv_id");
 		$settings = json_decode($settings_json, 'as hash');
@@ -19,7 +23,13 @@
 		# TODO: make the heading row optional
 		$heading = fgetcsv($csv_file_handle);
 
-		$row = fgetcsv($csv_file_handle);
+		if (! $page) {
+			$page = 1;
+		}
+
+		for ($i = 0; $i < $page; $i++) {
+			$row = fgetcsv($csv_file_handle);
+		}
 		fclose($csv_file_handle);
 
 		$assignments = array();
@@ -30,6 +40,7 @@
 
 		$assignments_json = json_encode($assignments);
 		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments_json);
+		$GLOBALS['smarty']->assign('csv_row_count', $settings['row_count']);
 
 	} else {
 		login_ensure_loggedin('venue/');

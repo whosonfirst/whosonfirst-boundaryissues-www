@@ -92,6 +92,11 @@
 			api_output_error(400, 'Please include a column_properties list.');
 		}
 
+		$row_count = post_int32('row_count');
+		if (! $row_count) {
+			api_output_error(400, 'Please include a row_count list.');
+		}
+
 		$user_id = $GLOBALS['cfg']['user']['id'];
 		$csv_id = random_string('10');
 		$timestamp = time();
@@ -107,7 +112,8 @@
 
 		$csv_settings = array(
 			'column_properties' => $column_properties,
-			'filename' => $filename
+			'filename' => $filename,
+			'row_count' => $row_count
 		);
 		$csv_settings = json_encode($csv_settings);
 		users_settings_set($GLOBALS['cfg']['user'], "csv_$csv_id", $csv_settings);
