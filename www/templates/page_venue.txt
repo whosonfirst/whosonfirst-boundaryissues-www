@@ -28,7 +28,7 @@ var csv_row_count = {$csv_row_count};
 				<input type="text" name="tags" id="venue-tags">
 			</div>
 			<input type="submit" value="Add venue" class="btn btn-primary">
-			<div id="venue-dupes-notice">Please note: we presently don’t check for duplicate venues.</div>
+			<div id="venue-dupes-notice" class="headroom">Please note: we presently don’t check for duplicate venues.</div>
 		</form>
 	</div>
 </div>

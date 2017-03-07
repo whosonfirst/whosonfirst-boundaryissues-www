@@ -37,7 +37,7 @@
 		header("HTTP/1.1 {$enc_status}");
 		header("Status: {$enc_status}");
 
-		if (isset($more['is_error'])){
+		if ($more['is_error']){
 
 			if (! is_array($rsp['error']['code'])){
 				header("X-api-error-code: " . htmlspecialchars($rsp['error']['code']));

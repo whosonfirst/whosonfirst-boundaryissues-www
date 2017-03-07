@@ -124,7 +124,7 @@ def geojson_hierarchy():
 		return jsonify(ok=0, error=error)
 
 	try:
-		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, wofid=wof_id, placetype=placetype)
+		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, wof_id, placetype)
 	except Exception, e:
 		error = "failed to determine hierarchy, because %s" % e
 		logging.error(error)
