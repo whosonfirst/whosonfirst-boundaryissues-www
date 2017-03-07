@@ -105,6 +105,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		'lookup_hierarchy': function(ll) {
 
+			console.log('lookup_hierarchy');
+
 			var data = {
 				latitude: ll.lat,
 				longitude: ll.lng,
@@ -113,7 +115,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 			var onsuccess = function(rsp) {
 				if (! rsp.ok) {
-					mapzen.whosonfirst.log.error('Error reverse geocoding.');
+					var message = 'Error reverse geocoding';
+					if (rsp.error) {
+						message += ': ' + rsp.error;
+					}
+					mapzen.whosonfirst.log.error(message);
 					return;
 				}
 				if (rsp.parents && rsp.parents.length == 1) {
@@ -123,6 +129,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 				if (rsp.hierarchy) {
 					self.set_property('wof:hierarchy', rsp.hierarchy);
+					console.log(rsp.hierarchy);
 				} else {
 					self.set_property('wof:hierarchy', []);
 				}
@@ -182,7 +189,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			});
 		},
 
-		geocode_address: function(address) {
+		geocode_address: function(address, cb) {
 			var api_key = $('#venue-lookup-address').data('api-key');
 			var esc_address = encodeURIComponent(address);
 			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
@@ -200,6 +207,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.lookup_hierarchy(ll);
 				}
 				$('#venue-lookup-address').removeClass('loading');
+				if (cb) {
+					cb(rsp);
+				}
 			};
 			var onerror = function() {
 				mapzen.whosonfirst.log.error("unable to geocode address: " + address);
@@ -209,7 +219,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}
 	};
 
-	function setup_map() {
+	function setup_map(bbox_init) {
 
 		var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 		mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
@@ -236,10 +246,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}).addTo(map);
 		L.control.locate().addTo(map);
 
-		mapzen.whosonfirst.boundaryissues.bbox.init(map, function(rsp) {
-			self.set_country(rsp.country);
-			slippymap.crosshairs.init(map);
-		});
+		if (bbox_init) {
+			mapzen.whosonfirst.boundaryissues.bbox.init(map, function(rsp) {
+				self.set_country(rsp.country);
+				slippymap.crosshairs.init(map);
+			});
+		}
 
 		map.on('moveend', function() {
 			var ll = map.getCenter();
@@ -315,7 +327,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 	function check_for_assignments() {
 		if (! venue_assignments) {
-			return;
+			return false;
 		}
 		$.each(venue_assignments, function(key, value) {
 			self.set_property(key, value);
@@ -332,9 +344,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var lat = parseFloat(venue_assignments['geom:latitude']);
 			var lng = parseFloat(venue_assignments['geom:longitude']);
 			self.map.setView([lat, lng], 16);
+			self.lookup_hierarchy({
+				lat: lat,
+				lng: lng
+			});
+			slippymap.crosshairs.init(self.map);
 		} else {
-			self.geocode_address(venue_assignments['addr:full']);
+			self.geocode_address(venue_assignments['addr:full'], function() {
+				slippymap.crosshairs.init(self.map);
+			});
 		}
+		return true;
 	}
 
 	$(document).ready(function() {
@@ -348,10 +368,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				return;
 			}
 
-			setup_map();
+			var bbox_init = ! venue_assignments;
+			setup_map(bbox_init);
 			setup_form();
 			setup_address();
-			check_for_assignments();
+			check_for_assignments()
 		}
 	});
 

@@ -204,6 +204,7 @@
 		$more = array(
 			'http_timeout' => 10 // let this run for up to 10s
 		);
+		dbug("{$url}?$query");
 		$rsp = http_get("{$url}?$query", $headers, $more);
 
 		if (! $rsp['ok']) {
