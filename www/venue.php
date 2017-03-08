@@ -9,11 +9,16 @@
 	if ($csv_id) {
 
 		login_ensure_loggedin("csv/$csv_id");
+
 		$GLOBALS['smarty']->assign('page_title', 'Import from CSV');
 
 		$user = $GLOBALS['cfg']['user'];
 		$settings_json = users_settings_get_single($user, "csv_$csv_id");
 		$settings = json_decode($settings_json, 'as hash');
+
+		$GLOBALS['smarty']->assign('csv_filename', $settings['orig_filename']);
+		$GLOBALS['smarty']->assign('csv_row', $page);
+		$GLOBALS['smarty']->assign('csv_row_count', $settings['row_count']);
 
 		$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
 		$column_properties = explode(',', $settings['column_properties']);
@@ -37,10 +42,11 @@
 			$prop = $column_properties[$index];
 			$assignments[$prop] = $value;
 		}
+		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
 
-		$assignments_json = json_encode($assignments);
-		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments_json);
-		$GLOBALS['smarty']->assign('csv_row_count', $settings['row_count']);
+		$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
+		$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
+		$GLOBALS['smarty']->assign('venue_tags', $assignments['wof:tags']);
 
 	} else {
 		login_ensure_loggedin('venue/');
