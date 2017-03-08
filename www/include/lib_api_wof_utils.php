@@ -59,7 +59,7 @@
 		}
 
 		$settings['wof_ids'][$csv_row - 1] = intval($feature['properties']['wof:id']);
-		$settings_json = json_encode($settings_json);
+		$settings_json = json_encode($settings);
 		$rsp = users_settings_set($user, "csv_$csv_id", $settings_json);
 	}
 
