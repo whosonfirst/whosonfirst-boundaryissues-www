@@ -49,4 +49,18 @@
 
 	########################################################################
 
+	function api_wof_utils_save_feature_csv($feature, $csv_id, $csv_row) {
+		$user = $GLOBALS['cfg']['user'];
+		$settings_json = users_settings_get_single($user, "csv_$csv_id");
+		$settings = json_decode($settings_json, 'as hash');
+
+		if (! $settings['wof_ids']) {
+			$settings['wof_ids'] = array();
+		}
+
+		$settings['wof_ids'][$csv_row - 1] = intval($feature['properties']['wof:id']);
+		$settings_json = json_encode($settings_json);
+		$rsp = users_settings_set($user, "csv_$csv_id", $settings_json);
+	}
+
 	# the end

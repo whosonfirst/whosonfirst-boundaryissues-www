@@ -1,10 +1,11 @@
 <?php
 
+	loadlib('api_wof_utils');
 	loadlib('wof_utils');
-	loadlib('wof_save');
-	loadlib('uuid');
-	loadlib('users_settings');
 	loadlib('wof_photos');
+	loadlib('wof_save');
+	loadlib('users_settings');
+	loadlib('uuid');
 
 	########################################################################
 
@@ -140,6 +141,11 @@
 			$error = $rsp['error'] ? $rsp['error'] : 'Error saving WOF record.';
 			api_output_error(400, $error);
 		}
+
+		$csv_id = post_str('csv_id');
+		$csv_row = post_int32('csv_row');
+		api_wof_utils_save_feature_csv($rsp['feature'], $csv_id, $csv_row);
+
 		api_output_ok($rsp);
 	}
 
