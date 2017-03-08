@@ -7,7 +7,9 @@
 		<div id="map"{if $default_bbox} data-default-bbox="{$default_bbox | @esc}"{/if}></div>
 		<form action="{$cfg.abs_root_url}venue/" method="post">
 			<input type="hidden" name="coords" value="">
-			<input type="hidden" name="csv_row_count" value="{$csv_row_count | @esc}">
+			<input type="hidden" name="csv_id" value="{$csv_id | @esc}" id="csv_id">
+			<input type="hidden" name="csv_row" value="{$csv_row | @esc}" id="csv_row">
+			<input type="hidden" name="csv_row_count" value="{$csv_row_count | @esc}" id="csv_row_count">
 			{foreach from=$assignments key=key item=value}
 				<input type="hidden" name="{$key | @esc}" value="{$value | @esc}" class="property">
 			{/foreach}

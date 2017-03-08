@@ -16,6 +16,7 @@
 		$settings_json = users_settings_get_single($user, "csv_$csv_id");
 		$settings = json_decode($settings_json, 'as hash');
 
+		$GLOBALS['smarty']->assign('csv_id', $csv_id);
 		$GLOBALS['smarty']->assign('csv_filename', $settings['orig_filename']);
 		$GLOBALS['smarty']->assign('csv_row', $page);
 		$GLOBALS['smarty']->assign('csv_row_count', $settings['row_count']);

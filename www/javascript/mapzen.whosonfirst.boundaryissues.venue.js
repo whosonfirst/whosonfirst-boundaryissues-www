@@ -15,6 +15,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		properties: {},
 		country_id: -1,
 
+		reset_properties: function() {
+			self.properties = {};
+			$('input[name="name"]').val('');
+			$('textarea[name="address"]').val('');
+			$('input[name="tags"]').val('');
+		},
+
 		set_property: function(name, value) {
 			self.properties[name] = value;
 		},
@@ -73,11 +80,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			return JSON.stringify(self.generate_feature());
 		},
 
-		save_to_server: function(geojson, succes_cb, error_cb) {
+		save_to_server: function(geojson, success_cb, error_cb) {
 
 			var data = {
 				crumb: $('#venue').data('crumb-save'),
-				geojson: geojson
+				geojson: geojson,
+				csv_id: $('#csv_id').val(),
+				csv_row: $('#csv_row').val()
 			};
 
 			var onsuccess = function(rsp) {
@@ -87,9 +96,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					mapzen.whosonfirst.log.error("no feature returned from wof.save");
 					return;
 				}
-				if (succes_cb) {
+				if (success_cb) {
 					var wof_id = parseInt(rsp.feature.properties['wof:id']);
-					succes_cb(wof_id);
+					success_cb(wof_id);
 				}
 			};
 
@@ -104,8 +113,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		'lookup_hierarchy': function(ll) {
-
-			console.log('lookup_hierarchy');
 
 			var data = {
 				latitude: ll.lat,
@@ -129,7 +136,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 				if (rsp.hierarchy) {
 					self.set_property('wof:hierarchy', rsp.hierarchy);
-					console.log(rsp.hierarchy);
 				} else {
 					self.set_property('wof:hierarchy', []);
 				}
@@ -266,25 +272,21 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	function setup_form() {
 
 		function onsuccess(id) {
-			var csv_url = window.location.href.match(/csv\/([^\/]+)\/(\d+)\/?/);
-			if (csv_url) {
-				var csv_id = csv_url[1];
-				var page = parseInt(csv_url[2]);
-				if (page == csv_row_count) {
+			if ($('#csv_id').length > 0) {
+				var csv_id = $('#csv_id').val();
+				var csv_row = parseInt($('#csv_row').val());
+				var csv_row_count = parseInt($('#csv_row_count').val());
+				if (csv_row == csv_row_count) {
 					$('#venue-response').html('<div class="alert alert-success">You have finished importing the CSV file.</div>');
-					$('input[name="name"]').val('');
-					$('textarea[name="address"]').val('');
-					$('input[name="tags"]').val('');
+					self.reset_properties();
 					window.scrollTo(0, 0);
 				} else {
-					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/' + (page + 1) + '/');
+					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/' + (csv_row + 1) + '/');
 				}
 			} else {
 				var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
 				$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
-				$('input[name="name"]').val('');
-				$('textarea[name="address"]').val('');
-				$('input[name="tags"]').val('');
+				self.reset_properties();
 				window.scrollTo(0, 0);
 			}
 		}
@@ -370,7 +372,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				return;
 			}
 
-			var bbox_init = $('input[name="csv_row_count"]').length > 0;
+			var bbox_init = $('#csv_id').length > 0;
 			setup_map(bbox_init);
 			setup_form();
 			setup_address();
