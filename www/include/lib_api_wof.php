@@ -112,6 +112,7 @@
 
 		$csv_settings = array(
 			'column_properties' => $column_properties,
+			'orig_filename' => $_FILES['upload_file']['name'],
 			'filename' => $filename,
 			'row_count' => $row_count
 		);

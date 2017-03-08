@@ -326,23 +326,24 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	}
 
 	function check_for_assignments() {
-		if (! venue_assignments) {
+		var $properties = $('input.property');
+		if ($properties.length == 0) {
 			return false;
 		}
-		$.each(venue_assignments, function(key, value) {
+		var assignments = {};
+		$properties.each(function(i, input) {
+
+			var key = $(input).attr('name');
+			var value = $(input).val();
+			assignments[key] = value;
+
 			self.set_property(key, value);
-			if (key == 'wof:name') {
-				$('input[name="name"]').val(value);
-			} else if (key == 'addr:full') {
-				$('textarea[name="address"]').val(value);
-			} else if (key == 'wof:tags') {
-				$('input[name="tags"]').val(value);
-			}
 		});
-		if (venue_assignments['geom:latitude'] &&
-		    venue_assignments['geom:longitude']) {
-			var lat = parseFloat(venue_assignments['geom:latitude']);
-			var lng = parseFloat(venue_assignments['geom:longitude']);
+
+		if (assignments['geom:latitude'] &&
+		    assignments['geom:longitude']) {
+			var lat = parseFloat(assignments['geom:latitude']);
+			var lng = parseFloat(assignments['geom:longitude']);
 			self.map.setView([lat, lng], 16);
 			self.lookup_hierarchy({
 				lat: lat,
@@ -350,10 +351,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			});
 			slippymap.crosshairs.init(self.map);
 		} else {
-			self.geocode_address(venue_assignments['addr:full'], function() {
+			self.geocode_address(assignments['addr:full'], function() {
 				slippymap.crosshairs.init(self.map);
 			});
 		}
+
 		return true;
 	}
 
@@ -368,7 +370,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				return;
 			}
 
-			var bbox_init = ! venue_assignments;
+			var bbox_init = $('input[name="csv_row_count"]').length > 0;
 			setup_map(bbox_init);
 			setup_form();
 			setup_address();
