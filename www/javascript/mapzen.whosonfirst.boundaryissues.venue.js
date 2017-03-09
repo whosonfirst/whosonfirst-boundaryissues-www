@@ -327,6 +327,38 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		});
 	}
 
+	function check_for_wof_id() {
+
+		if ($('#wof_id').length == 0) {
+			return false;
+		}
+
+		var wof_id = $('#wof_id').val();
+
+		var onsuccess = function(rsp) {
+			properties = rsp.properties;
+			var lat = parseFloat(properties['geom:latitude']);
+			var lng = parseFloat(properties['geom:longitude']);
+			self.map.setView([lat, lng], 16);
+			slippymap.crosshairs.init(self.map);
+		};
+
+		var onerror = function(rsp) {
+			$('#venue-response').html('<div class="alert alert-danger">Something went wrong while retrieving the properties for this venue. Please proceed with caution.</div>');
+			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id);
+		};
+
+		var path = '/id/' + wof_id + '.geojson';
+		var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
+		mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+
+		var path = '/id/' + wof_id + '/';
+		var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
+		$('#venue-response').html('<div class="alert alert-info">This CSV row has already been imported. Edit the <a href="' + edit_url + '">full record</a>?</div>');
+
+		return true;
+	}
+
 	function check_for_assignments() {
 		var $properties = $('input.property');
 		if ($properties.length == 0) {
@@ -376,7 +408,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			setup_map(bbox_init);
 			setup_form();
 			setup_address();
-			check_for_assignments()
+			if (! check_for_wof_id()) {
+				check_for_assignments();
+			}
 		}
 	});
 

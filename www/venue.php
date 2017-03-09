@@ -2,9 +2,12 @@
 
 	include('include/init.php');
 	loadlib('users_settings');
+	loadlib('wof_utils');
 
 	$csv_id = get_str('csv');
 	$page = get_int32('page');
+
+	$GLOBALS['smarty']->assign('button_label', 'Add venue');
 
 	if ($csv_id) {
 
@@ -21,33 +24,57 @@
 		$GLOBALS['smarty']->assign('csv_row', $page);
 		$GLOBALS['smarty']->assign('csv_row_count', $settings['row_count']);
 
-		$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
-		$column_properties = explode(',', $settings['column_properties']);
-
-		$csv_file_handle = fopen($path, 'r');
-
-		# TODO: make the heading row optional
-		$heading = fgetcsv($csv_file_handle);
-
-		if (! $page) {
-			$page = 1;
+		if ($page < $settings['row_count']) {
+			$next_url = $GLOBALS['cfg']['abs_root_url'] . "csv/$csv_id/" . ($page + 1) . '/';
+			$GLOBALS['smarty']->assign('next_url', $next_url);
+		}
+		if ($page > 1) {
+			$prev_url = $GLOBALS['cfg']['abs_root_url'] . "csv/$csv_id/" . ($page - 1) . '/';
+			$GLOBALS['smarty']->assign('prev_url', $prev_url);
 		}
 
-		for ($i = 0; $i < $page; $i++) {
-			$row = fgetcsv($csv_file_handle);
-		}
-		fclose($csv_file_handle);
+		if ($settings['wof_ids'] &&
+		    $settings['wof_ids'][$page - 1]) {
+			$wof_id = $settings['wof_ids'][$page - 1];
+			$path = wof_utils_find_id($wof_id);
+			$geojson = file_get_contents($path);
+			$feature = json_decode($geojson, 'as hash');
+			$props = $feature['properties'];
 
-		$assignments = array();
-		foreach ($row as $index => $value) {
-			$prop = $column_properties[$index];
-			$assignments[$prop] = $value;
-		}
-		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
+			$GLOBALS['smarty']->assign('wof_id', $wof_id);
+			$GLOBALS['smarty']->assign('venue_name', $props['wof:name']);
+			$GLOBALS['smarty']->assign('venue_address', $props['addr:full']);
+			$GLOBALS['smarty']->assign('venue_tags', implode(', ', $props['wof:tags']));
+			$GLOBALS['smarty']->assign('button_label', 'Save venue');
+		} else {
+			$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
+			$column_properties = explode(',', $settings['column_properties']);
 
-		$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
-		$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
-		$GLOBALS['smarty']->assign('venue_tags', $assignments['wof:tags']);
+			$csv_file_handle = fopen($path, 'r');
+
+			# TODO: make the heading row optional
+			$heading = fgetcsv($csv_file_handle);
+
+			if (! $page) {
+				$page = 1;
+			}
+
+			for ($i = 0; $i < $page; $i++) {
+				$row = fgetcsv($csv_file_handle);
+			}
+			fclose($csv_file_handle);
+
+			$assignments = array();
+			foreach ($row as $index => $value) {
+				$prop = $column_properties[$index];
+				$assignments[$prop] = $value;
+			}
+
+			$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
+			$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
+			$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
+			$GLOBALS['smarty']->assign('venue_tags', $assignments['wof:tags']);
+		}
 
 	} else {
 		login_ensure_loggedin('venue/');
