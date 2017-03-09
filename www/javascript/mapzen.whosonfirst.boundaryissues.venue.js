@@ -372,7 +372,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				return;
 			}
 
-			var bbox_init = $('#csv_id').length > 0;
+			var bbox_init = $('#csv_id').length == 0;
 			setup_map(bbox_init);
 			setup_form();
 			setup_address();
