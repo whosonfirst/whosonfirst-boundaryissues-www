@@ -52,6 +52,30 @@ mapzen.whosonfirst.leaflet.styles = (function(){
 			};
 		},
 
+		'nearby_centroid': function(){
+
+			return {
+				"color": "#000",
+				"weight": 2,
+				"opacity": 1,
+				"radius": 8,
+				"fillColor": "#0BBDFF",
+				"fillOpacity": 0.8,
+			};
+		},
+
+		'nearby_hover_centroid': function(){
+
+			return {
+				"color": "#fff",
+				"weight": 2,
+				"opacity": 1,
+				"radius": 8,
+				"fillColor": "#FF0096",
+				"fillOpacity": 0.8,
+			};
+		},
+
 		'search_centroid': function(){
 
 			return {
