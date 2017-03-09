@@ -140,6 +140,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			if (header_row) {
 				csv_row_count--;
 			}
+			if (csv.data[csv.data.length - 1].length == 1 &&
+			    csv.data[csv.data.length - 1][0] == "") {
+				// Ignore a trailing linebreak
+				csv_row_count--;
+			}
 
 			$result.html('Please choose which CSV column maps onto which Who’s On First property.<br><small class="caveat">at minimum we will need a <span class="hey-look">wof:name</span> and <em>either</em> a <span class="hey-look">addr:full</span> or pair of <span class="hey-look">geom:latitude</span> + <span class="hey-look">geom:longitude</span> coordinates</small>');
 

@@ -3,16 +3,34 @@
 <div id="venue" class="container" data-crumb-save="{$crumb_save | @esc}">
 	<div class="row">
 		<h2>{$page_title | esc}</h2>
-		{if $csv_filename}<p>Importing from <span class="hey-look">{$csv_filename | @esc}</span> (row {$csv_row | @esc} of {$csv_row_count | @esc})</p>{/if}
+		{if $csv_filename}
+			<p>
+			{if $prev_url}
+				<a href="{$prev_url | @esc}">&larr; prev</a>
+			{else}
+				<span class="text-muted">&larr; prev</span>
+			{/if}
+			| <span class="hey-look">{$csv_row | @esc} of {$csv_row_count | @esc}</span> {$csv_filename | @esc} |
+			{if $next_url}
+				<a href="{$next_url | @esc}">next &rarr;</a>
+			{else}
+				<span class="text-muted">next &rarr;</span>
+			{/if}
+			</p>
+		{/if}
 		<div id="map"{if $default_bbox} data-default-bbox="{$default_bbox | @esc}"{/if}></div>
 		<form action="{$cfg.abs_root_url}venue/" method="post">
 			<input type="hidden" name="coords" value="">
 			<input type="hidden" name="csv_id" value="{$csv_id | @esc}" id="csv_id">
 			<input type="hidden" name="csv_row" value="{$csv_row | @esc}" id="csv_row">
 			<input type="hidden" name="csv_row_count" value="{$csv_row_count | @esc}" id="csv_row_count">
-			{foreach from=$assignments key=key item=value}
-				<input type="hidden" name="{$key | @esc}" value="{$value | @esc}" class="property">
-			{/foreach}
+			{if $wof_id}
+				<input type="hidden" name="wof_id" value="{$wof_id | @esc}" id="wof_id">
+			{else}
+				{foreach from=$assignments key=key item=value}
+					<input type="hidden" name="{$key | @esc}" value="{$value | @esc}" class="property">
+				{/foreach}
+			{/if}
 			<div id="venue-response" class="headroom"></div>
 			<div class="form-group">
 				<label for="venue-name">Venue name</label>
@@ -27,7 +45,7 @@
 				<label for="venue-tags">Tags <small>(comma-separated)</small></label>
 				<input type="text" name="tags" id="venue-tags" value="{$venue_tags | @esc}">
 			</div>
-			<input type="submit" value="Add venue" class="btn btn-primary">
+			<input type="submit" value="{$button_label | @esc}" class="btn btn-primary">
 			<div id="venue-dupes-notice" class="headroom">Please note: we presently don’t check for duplicate venues.</div>
 		</form>
 	</div>
