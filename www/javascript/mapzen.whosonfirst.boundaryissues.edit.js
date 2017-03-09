@@ -1346,7 +1346,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		get_wof: function(id, callback) {
-			var url = mapzen.whosonfirst.data.id2abspath(id);
+			var url = mapzen.whosonfirst.uri.id2abspath(id);
 			var onsuccess = callback;
 			var onerror = function() {
 				mapzen.whosonfirst.log.debug("error loading '" + id + "' using get_wof");
@@ -1468,7 +1468,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		set_country_properties: function(country_id) {
 			var base_url = $('body').data('data-abs-root-url');
-			var relpath = mapzen.whosonfirst.data.id2relpath(country_id);
+			var relpath = mapzen.whosonfirst.uri.id2relpath(country_id);
 			var url = base_url + relpath;
 
 			var on_success = function(rsp) {
@@ -1889,7 +1889,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		}
 
 		var data_endpoint = $(document.body).attr("data-data-abs-root-url");
-		mapzen.whosonfirst.data.endpoint(data_endpoint);
+		mapzen.whosonfirst.uri.endpoint(data_endpoint);
 
 		// We need to wait until the page has loaded before we can make
 		// calls to mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify.

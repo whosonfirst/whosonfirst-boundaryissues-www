@@ -21,7 +21,7 @@ mapzen.whosonfirst.boundaryissues.enmapify = (function(){
 				};
 			}
 
-			var url = mapzen.whosonfirst.data.id2abspath(wofid);
+			var url = mapzen.whosonfirst.uri.id2abspath(wofid);
 
 			mapzen.whosonfirst.net.fetch(url, on_fetch);
 		},
@@ -39,7 +39,7 @@ mapzen.whosonfirst.boundaryissues.enmapify = (function(){
 			var props = feature['properties'];
 
 			var parent_id = props['wof:parent_id'];
-			var parent_url = mapzen.whosonfirst.data.id2abspath(parent_id);
+			var parent_url = mapzen.whosonfirst.uri.id2abspath(parent_id);
 
 			var on_parent = function(parent_feature){
 
@@ -164,7 +164,7 @@ mapzen.whosonfirst.boundaryissues.enmapify = (function(){
 					for (var i=0; i < count; i++){
 
 						var breach_id = breaches[i];
-						var breach_url = mapzen.whosonfirst.data.id2abspath(breach_id);
+						var breach_url = mapzen.whosonfirst.uri.id2abspath(breach_id);
 
 						var breach_style = mapzen.whosonfirst.leaflet.styles.breach_polygon();
 

@@ -22,7 +22,7 @@ mapzen.whosonfirst.boundaryissues.namify = (function() {
 
 			for (var i=0; i < count; i++){
 				self.namify_el(els[i], [
-					mapzen.whosonfirst.data.id2abspath,
+					mapzen.whosonfirst.uri.id2abspath,
 					self.local_resolver
 				]);
 			}
@@ -44,7 +44,7 @@ mapzen.whosonfirst.boundaryissues.namify = (function() {
 
 			var wofid = el.getAttribute("data-wof-id");
 
-			if (! wofid){	
+			if (! wofid){
 				mapzen.whosonfirst.log.info("node is missing data-wof-id attribute");
 				return;
 			}

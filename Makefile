@@ -49,7 +49,7 @@ update_js:
 	git rm -f ./www/javascript/lib/*.js
 	mkdir -p ./www/javascript/lib
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.brands-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.brands.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.data-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.data.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.uri-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.uri.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.geojson-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.geojson.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.handlers-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.handlers.js
 	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.js

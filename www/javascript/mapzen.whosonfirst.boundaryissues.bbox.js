@@ -140,7 +140,7 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 		'load_country_wof': function(id, cb) {
 
 			var base_url = $('body').data('data-abs-root-url');
-			var relpath = mapzen.whosonfirst.data.id2relpath(id);
+			var relpath = mapzen.whosonfirst.uri.id2relpath(id);
 			var url = base_url + relpath;
 
 			var onsuccess = function(rsp) {
