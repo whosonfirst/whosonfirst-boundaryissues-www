@@ -1,0 +1,10 @@
+{include file='inc_head.txt' nav_tab='add'}
+
+<div id="venue" class="container" data-crumb-save="{$crumb_save | @esc}">
+	<div class="row">
+		<h2>{$page_title | @esc}</h2>
+		<p><a href="{$cfg.abs_root_url}csv/{$csv_id}/?download=1" id="csv_download">{$csv_filename | @esc}</a></p>
+	</div>
+</div>
+
+{include file='inc_foot.txt'}

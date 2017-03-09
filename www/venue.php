@@ -11,12 +11,15 @@
 
 	if ($csv_id) {
 
-		login_ensure_loggedin("csv/$csv_id");
+		login_ensure_loggedin("csv/$csv_id/$page/");
 
 		$GLOBALS['smarty']->assign('page_title', 'Import from CSV');
 
 		$user = $GLOBALS['cfg']['user'];
 		$settings_json = users_settings_get_single($user, "csv_$csv_id");
+		if (! $settings_json) {
+			error_404();
+		}
 		$settings = json_decode($settings_json, 'as hash');
 
 		$GLOBALS['smarty']->assign('csv_id', $csv_id);

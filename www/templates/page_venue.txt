@@ -10,7 +10,7 @@
 			{else}
 				<span class="text-muted">&larr; prev</span>
 			{/if}
-			| <span class="hey-look">{$csv_row | @esc} of {$csv_row_count | @esc}</span> {$csv_filename | @esc} |
+			&middot; <span class="hey-look">{$csv_row | @esc} of {$csv_row_count | @esc}</span> {$csv_filename | @esc} &middot;
 			{if $next_url}
 				<a href="{$next_url | @esc}">next &rarr;</a>
 			{else}
