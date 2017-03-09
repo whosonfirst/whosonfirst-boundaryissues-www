@@ -22,25 +22,25 @@ mapzen.whosonfirst.net = (function(){
 
 		'fetch': function(url, on_success, on_fail, args){
 
-		    	if (typeof(args) == "undefined") {
-			    args = {};
+			if (typeof(args) == "undefined") {
+				args = {};
 			}
 
-		    	// this is here for backwards compatibility
-		    	// (20170113/thisisaaronland)
+			// this is here for backwards compatibility
+			// (20170113/thisisaaronland)
 
-		    	else if (typeof(args) == "number") {
-			    args = { "cache_ttl": args };
+			else if (typeof(args) == "number") {
+				args = { "cache_ttl": args };
 			}
 
-		    	else {}
+			else {}
 
 			if (args["cache_ttl"]){
-			    args["cache_ttl"] = default_cache_ttl;
+				var cache_ttl = args["cache_ttl"];
 			}
 
-		        else { 
-			     cache_ttl = default_cache_ttl;
+			else {
+				var cache_ttl = default_cache_ttl;
 			}
 
 			var on_hit = function(data){
@@ -63,7 +63,7 @@ mapzen.whosonfirst.net = (function(){
 		'fetch_with_xhr': function(url, on_success, on_fail, args){
 
 			if (! args){
-			    args = {};
+				args = {};
 			}
 
 			var req = new XMLHttpRequest();
@@ -93,26 +93,26 @@ mapzen.whosonfirst.net = (function(){
 
 			try {
 
-			    	if (args["cache-busting"]){
+				if (args["cache-busting"]){
 
-				    var cb = Math.floor(Math.random() * 1000000);
-				    
-				    var tmp = document.createElement("a");
-				    tmp.href = url;
-				    
-				    if (tmp.search){
-					tmp.search += "&cb=" + cb;
-				    }
+					var cb = Math.floor(Math.random() * 1000000);
 
-				    else {
-					tmp.search = "?cb= " + cb;
-				    }
+					var tmp = document.createElement("a");
+					tmp.href = url;
 
-				    url = tmp.href;
+					if (tmp.search){
+						tmp.search += "&cb=" + cb;
+					}
+
+					else {
+						tmp.search = "?cb= " + cb;
+					}
+
+					url = tmp.href;
 				}
-			    
-			    	// console.log("ARGS " + args);
-			    	// console.log("URL " + url);
+
+				// console.log("ARGS " + args);
+				// console.log("URL " + url);
 
 				req.open("get", url, true);
 				req.send();

@@ -44,8 +44,8 @@
 			<script src="{$cfg.abs_root_url}javascript/html5.js"></script>
 		<![endif]-->
 
-		{assign var=lib_date_time value='20170309105959'}
-		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.data-{$lib_date_time}.js"></script>
+		{assign var=lib_date_time value='20170309113014'}
+		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.uri-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.brands-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.geojson-{$lib_date_time}.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/lib/mapzen.whosonfirst.leaflet-{$lib_date_time}.js"></script>
