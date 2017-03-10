@@ -6,6 +6,8 @@
 
 	$csv_id = get_str('id');
 	$download = get_bool('download');
+	$include_wof = get_bool('wof');
+	$resume = get_bool('resume'); // Find where we left off importing
 
 	login_ensure_loggedin("csv/$csv_id/");
 
@@ -16,13 +18,36 @@
 	}
 	$settings = json_decode($settings_json, 'as hash');
 
-	if ($download) {
+	$curr_index = 0;
+	if ($settings['wof_ids']) {
+		while ($settings['wof_ids'][$curr_index]) {
+			$curr_index++;
+		}
+	}
+	$curr_page = $curr_index + 1;
+
+	if ($resume) {
+
+		$redirect = $GLOBALS['cfg']['abs_root_url'] . "csv/$csv_id/$curr_page/";
+		header("Location: $redirect");
+		exit;
+
+	} else if ($download) {
 
 		$filename = $settings['orig_filename'];
+		if ($include_wof) {
+			$filename = "wof-$filename";
+		}
 		header('Content-Type: text/plain; charset=utf-8');
-		header("Content-disposition: attachment; filename=\"wof-{$settings['orig_filename']}\"");
+		header("Content-disposition: attachment; filename=\"$filename\"");
 
 		$path = $GLOBALS['cfg']['wof_pending_dir'] . "/csv/{$settings['filename']}";
+
+		if (! $include_wof || $resume) {
+			echo file_get_contents($path);
+			exit;
+		}
+
 		$csv_fh = fopen($path, 'r');
 		$output = fopen('php://output', 'w');
 
@@ -50,10 +75,15 @@
 
 	} else {
 
-		$GLOBALS['smarty']->assign('page_title', 'Download imported CSV');
+		$GLOBALS['smarty']->assign('page_title', 'Import from CSV');
 
 		$GLOBALS['smarty']->assign('csv_id', $csv_id);
 		$GLOBALS['smarty']->assign('csv_filename', 'wof-' . $settings['orig_filename']);
+
+		if ($curr_page != $settings['row_count']) {
+			$GLOBALS['smarty']->assign('row_num', $curr_page);
+			$GLOBALS['smarty']->assign('row_count', $settings['row_count']);
+		}
 
 		$GLOBALS['smarty']->display('page_csv.txt');
 

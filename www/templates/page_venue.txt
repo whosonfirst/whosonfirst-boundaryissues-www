@@ -10,7 +10,9 @@
 			{else}
 				<span class="text-muted">&larr; prev</span>
 			{/if}
-			&middot; <span class="hey-look">{$csv_row | @esc} of {$csv_row_count | @esc}</span> {$csv_filename | @esc} &middot;
+			&middot; <span class="hey-look">{$csv_row | @esc} of {$csv_row_count | @esc}</span> &middot;
+
+			<a href="{$cfg.abs_root_url | @esc}csv/{$csv_id | @esc}/">{$csv_filename | @esc}</a> &middot;
 			{if $next_url}
 				<a href="{$next_url | @esc}">next &rarr;</a>
 			{else}

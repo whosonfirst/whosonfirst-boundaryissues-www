@@ -277,9 +277,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var csv_row = parseInt($('#csv_row').val());
 				var csv_row_count = parseInt($('#csv_row_count').val());
 				if (csv_row == csv_row_count) {
-					$('#venue-response').html('<div class="alert alert-success">You have finished importing the CSV file.</div>');
-					self.reset_properties();
-					window.scrollTo(0, 0);
+					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/');
 				} else {
 					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/' + (csv_row + 1) + '/');
 				}
