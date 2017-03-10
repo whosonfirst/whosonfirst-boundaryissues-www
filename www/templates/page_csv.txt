@@ -3,7 +3,15 @@
 <div id="venue" class="container" data-crumb-save="{$crumb_save | @esc}">
 	<div class="row">
 		<h2>{$page_title | @esc}</h2>
-		<p><a href="{$cfg.abs_root_url}csv/{$csv_id}/?download=1" id="csv_download">{$csv_filename | @esc}</a></p>
+		<p>Download the your CSV file, modified with the imported WOF IDs (<code>wof_id</code>) inserted into the first column.</p>
+		<p>
+			<a href="{$cfg.abs_root_url}csv/{$csv_id}/?download=1&amp;wof=1" class="btn btn-primary">Modified CSV</a>
+			<a href="{$cfg.abs_root_url}csv/{$csv_id}/?download=1" class="btn btn-default">Original CSV</a>
+		</p>
+		{if $row_num}
+			<p>Import is currently paused at row {$row_num | @esc} of {$row_count | @esc}.</p>
+			<p><a href="{$cfg.abs_root_url}csv/{$csv_id | @esc}/{$row_num | @esc}/" class="btn btn-success">Resume import</a></p>
+		{/if}
 	</div>
 </div>
 
