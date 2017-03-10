@@ -150,6 +150,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var property_select_html = function(column) {
 				var misc_selected = '';
+				var id_selected = '';
 				var name_selected = '';
 				var lat_selected = '';
 				var lng_selected = '';
@@ -158,7 +159,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var name = 'property-' + htmlspecialchars(column);
 				var misc = 'misc:' + column.replace(/\W/, '_');
 
-				if (column == 'name') {
+				if (column == 'wof_id') {
+					id_selected = ' selected="selected"';
+				} else if (column == 'name') {
 					name_selected = ' selected="selected"';
 				} else if (column == 'latitude') {
 					lat_selected = ' selected="selected"';
@@ -173,6 +176,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var html = '<select name="' + name + '" data-column="' +htmlspecialchars(column) + '" class="column">';
 				html += '<option value="">(ignore this column)</option>';
 				html += '<option' + misc_selected + '>' + misc + '</option>';
+				html += '<option' + id_selected + '>wof:id</option>';
 				html += '<option' + name_selected + '>wof:name</option>';
 				html += '<option' + lat_selected + '>geom:latitude</option>';
 				html += '<option' + lng_selected + '>geom:longitude</option>';

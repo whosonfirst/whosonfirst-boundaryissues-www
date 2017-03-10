@@ -80,7 +80,7 @@
 		$GLOBALS['smarty']->assign('csv_id', $csv_id);
 		$GLOBALS['smarty']->assign('csv_filename', 'wof-' . $settings['orig_filename']);
 
-		if ($curr_page != $settings['row_count']) {
+		if ($curr_page != ($settings['row_count'] + 1)) {
 			$GLOBALS['smarty']->assign('row_num', $curr_page);
 			$GLOBALS['smarty']->assign('row_count', $settings['row_count']);
 		}

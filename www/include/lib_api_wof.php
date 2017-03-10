@@ -111,11 +111,28 @@
 		$path = "$dir/$filename";
 		move_uploaded_file($_FILES["upload_file"]["tmp_name"], $path);
 
+		$wof_ids = array();
+		$props = explode(',', $column_properties);
+		$wof_id_index = array_search('wof:id', $props);
+		if ($wof_id_index !== false) {
+			$fh = fopen($path, 'r');
+			$headers = fgetcsv($fh);
+			$index = 0;
+			while ($row = fgetcsv($fh)) {
+				$wof_id = $row[$wof_id_index];
+				if ($wof_id != -1) {
+					$wof_ids[$index] = $wof_id;
+				}
+				$index++;
+			}
+		}
+
 		$csv_settings = array(
 			'column_properties' => $column_properties,
 			'orig_filename' => $_FILES['upload_file']['name'],
 			'filename' => $filename,
-			'row_count' => $row_count
+			'row_count' => $row_count,
+			'wof_ids' => $wof_ids
 		);
 		$csv_settings = json_encode($csv_settings);
 		users_settings_set($GLOBALS['cfg']['user'], "csv_$csv_id", $csv_settings);
