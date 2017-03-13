@@ -637,6 +637,10 @@ body.user-can-edit #edit-disallowed {
 	color: #999;
 }
 
+#csv-controls {
+	margin-top: 1em;
+}
+
 #csv-columns {
 	margin-top: 1em;
 }
@@ -652,7 +656,8 @@ body.user-can-edit #edit-disallowed {
 	min-width: 120px;
 }
 
-#csv-columns td.column {
+#csv-columns td.column,
+#csv-columns td.preview {
 	vertical-align: middle;
 	font-family: menlo, monospace;
 	font-weight: normal;
@@ -664,7 +669,17 @@ body.user-can-edit #edit-disallowed {
 
 #csv-columns td.property {
 	border-left: 5px solid #fff;
+	border-right: 5px solid #fff;
 	border-bottom: 1px solid #fff;
+}
+
+#csv-columns td.property select {
+	width: 210px;
+}
+
+#csv-columns.no-headers td.column,
+#csv-columns.no-headers th.column {
+	display: none;
 }
 
 @media screen and (max-width: 480px) {
