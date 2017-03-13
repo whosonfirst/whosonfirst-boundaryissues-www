@@ -15,6 +15,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    geojson_file,
 	    csv_file,
 	    csv_row_count,
+	    csv_preview_row = 1,
 	    upload_is_ready = false,
 	    properties_are_ready = false,
 	    is_collection,
@@ -135,15 +136,40 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return;
 			}
 
-			csv_row_count = csv.data.length;
-			var header_row = true; // TODO: make this an option
-			if (header_row) {
-				csv_row_count--;
+			function update_row_count() {
+				// Oh, this is simple right? Just use csv.data.length
+				csv_row_count = csv.data.length;
+
+				// ... not so fast
+
+				// What about the header row, do we count that?
+				var header_row = $('#csv-headers')[0].checked;
+				if (header_row) {
+					csv_row_count--;
+				}
+
+				// What about trailing line breaks?
+				for (var i = csv.data.length - 1; i > -1; i--) {
+					if (csv.data[i].length == 1 &&
+					    csv.data[i][0] == "") {
+						csv_row_count--;
+					} else {
+						break;
+					}
+				}
 			}
-			if (csv.data[csv.data.length - 1].length == 1 &&
-			    csv.data[csv.data.length - 1][0] == "") {
-				// Ignore a trailing linebreak
-				csv_row_count--;
+
+			function update_preview() {
+				$('#csv-preview-status').html(csv_preview_row + ' / ' + csv_row_count);
+				var index = csv_preview_row - 1;
+				if ($('#csv-headers')[0].checked) {
+					index++;
+				}
+				var row = csv.data[index];
+				$('td.preview').each(function(i, td) {
+					var value = htmlspecialchars(row[i]);
+					$(td).html(value);
+				});
 			}
 
 			$result.html('Please choose which CSV column maps onto which Who’s On First property.<br><small class="caveat">at minimum we will need a <span class="hey-look">wof:name</span> and <em>either</em> a <span class="hey-look">addr:full</span> or pair of <span class="hey-look">geom:latitude</span> + <span class="hey-look">geom:longitude</span> coordinates</small>');
@@ -173,7 +199,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					misc_selected = ' selected="selected"';
 				}
 
-				var html = '<select name="' + name + '" data-column="' +htmlspecialchars(column) + '" class="column">';
+				var html = '<select name="' + name + '" data-column="' + htmlspecialchars(column) + '" class="column">';
 				html += '<option value="">(ignore this column)</option>';
 				html += '<option' + misc_selected + '>' + misc + '</option>';
 				html += '<option' + id_selected + '>wof:id</option>';
@@ -224,24 +250,66 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 			};
 
-			var table = '<table id="csv-columns">';
-			table += '<tr><th>CSV column</th><th class="property">WOF property</th></tr>';
+			var csv_controls = '<div id="csv-controls">';
+			csv_controls += '<div class="input-group">';
+			csv_controls += '<input type="checkbox" name="csv_headers" id="csv-headers" checked="checked">';
+			csv_controls += ' <label for="csv-headers">First CSV row is column headers</label>';
+			csv_controls += '</div>';
+			csv_controls += '</div>';
 
-			var heading = csv.data[0];
-			for (var i = 0; i < heading.length; i++) {
-				var column = heading[i];
+			var table = '<table id="csv-columns">';
+			table += '<tr><th class="column">Column header</th>';
+			table += '<th class="property">WOF property</th>';
+			table += '<th class="preview">Preview values ';
+			table += '<a href="#csv-prev" id="csv-prev"><span class="glyphicon glyphicon-chevron-left"></span></a> ';
+			table += '<span id="csv-preview-status"></span> ';
+			table += '<a href="#csv-next" id="csv-next"><span class="glyphicon glyphicon-chevron-right"></span></a>';
+			table += '</th></tr>';
+
+			var headers = csv.data[0];
+			for (var i = 0; i < headers.length; i++) {
+				var column = headers[i];
 				var property_select = property_select_html(column);
 				table += '<tr>';
-				table += '<td class="column">' + htmlspecialchars(column) + '</th>';
+				table += '<td class="column">' + htmlspecialchars(column) + '</td>';
 				table += '<td class="property">' + property_select + '</td>';
+				table += '<td class="preview">' + htmlspecialchars(csv.data[1][i]) + '</td>';
 				table += '</tr>';
 			}
 
 			table += '</table>';
-			$('#upload-preview-props').html(table);
+			$('#upload-preview-props').html(csv_controls + table);
+
 			check_if_ready();
+			update_row_count();
+			update_preview();
 
 			$('#upload-preview-props select').change(check_if_ready);
+			$('#csv-headers').change(function() {
+				if ($('#csv-headers')[0].checked) {
+					$('#csv-columns').removeClass('no-headers');
+				} else {
+					$('#csv-columns').addClass('no-headers');
+				}
+				update_row_count();
+				update_preview();
+			});
+			$('#csv-next').click(function(e) {
+				e.preventDefault();
+				csv_preview_row++;
+				if (csv_preview_row > csv_row_count) {
+					csv_preview_row = 1;
+				}
+				update_preview();
+			});
+			$('#csv-prev').click(function(e) {
+				e.preventDefault();
+				csv_preview_row--;
+				if (csv_preview_row == 0) {
+					csv_preview_row = csv_row_count;
+				}
+				update_preview();
+			});
 		},
 
 		setup_map_preview: function(geojson) {
@@ -473,10 +541,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					var property = $(select).val();
 					properties.push(property);
 				});
-
 				properties = properties.join(',');
+
+				var has_headers = $('#csv-headers')[0].checked ? 1 : 0;
+
 				data.append('column_properties', properties);
 				data.append('row_count', csv_row_count);
+				data.append('has_headers', has_headers);
 
 			} else {
 

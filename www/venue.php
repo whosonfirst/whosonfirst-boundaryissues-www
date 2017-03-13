@@ -55,8 +55,10 @@
 
 			$csv_file_handle = fopen($path, 'r');
 
-			# TODO: make the heading row optional
-			$heading = fgetcsv($csv_file_handle);
+			if ($settings['has_headers'] ||
+			    ! isset($settings['has_headers'])) {
+				$heading = fgetcsv($csv_file_handle);
+			}
 
 			if (! $page) {
 				$page = 1;
