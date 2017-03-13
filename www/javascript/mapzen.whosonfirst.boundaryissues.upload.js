@@ -174,49 +174,54 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			$result.html('Please choose which CSV column maps onto which Who’s On First property.<br><small class="caveat">at minimum we will need a <span class="hey-look">wof:name</span> and <em>either</em> a <span class="hey-look">addr:full</span> or pair of <span class="hey-look">geom:latitude</span> + <span class="hey-look">geom:longitude</span> coordinates</small>');
 
+			var selected_attr = function(i, j) {
+				if (i == j) {
+					return ' selected="selected"';
+				}
+				return '';
+			}
+
+			var property_select_options = function(default_value, index_selected) {
+				var options = '';
+				options += '<option value=""' + selected_attr(0, index_selected) + '>(ignore this column)</option>';
+				options += '<option' + selected_attr(1, index_selected) + '>' + default_value + '</option>';
+				options += '<option' + selected_attr(2, index_selected) + '>wof:id</option>';
+				options += '<option' + selected_attr(3, index_selected) + '>wof:name</option>';
+				options += '<option' + selected_attr(4, index_selected) + '>geom:latitude</option>';
+				options += '<option' + selected_attr(5, index_selected) + '>geom:longitude</option>';
+				options += '<option' + selected_attr(6, index_selected) + '>addr:full</option>';
+				options += '<option>addr:housenumber</option>';
+				options += '<option>addr:street</option>';
+				options += '<option>addr:postcode</option>';
+				options += '<option>addr:city</option>';
+				options += '<option>addr:state</option>';
+				options += '<option>addr:province</option>';
+				options += '<option>addr:phone</option>';
+				options += '<option>wof:tags</option>';
+				options += '<option>edtf:inception</option>';
+				options += '<option>edtf:cessation</option>';
+				return options;
+			}
+
 			var property_select_html = function(column) {
-				var misc_selected = '';
-				var id_selected = '';
-				var name_selected = '';
-				var lat_selected = '';
-				var lng_selected = '';
-				var addr_selected = '';
-
 				var name = 'property-' + htmlspecialchars(column);
-				var misc = 'misc:' + column.replace(/\W/, '_');
+				var default_value = 'misc:' + column.replace(/\W/, '_');
 
+				var index_selected = 1;
 				if (column == 'wof_id') {
-					id_selected = ' selected="selected"';
+					index_selected = 2;
 				} else if (column == 'name') {
-					name_selected = ' selected="selected"';
+					index_selected = 3;
 				} else if (column == 'latitude') {
-					lat_selected = ' selected="selected"';
+					index_selected = 4;
 				} else if (column == 'longitude') {
-					lng_selected = ' selected="selected"';
+					index_selected = 5;
 				} else if (column == 'address') {
-					addr_selected = ' selected="selected"';
-				} else {
-					misc_selected = ' selected="selected"';
+					index_selected = 6;
 				}
 
 				var html = '<select name="' + name + '" data-column="' + htmlspecialchars(column) + '" class="column">';
-				html += '<option value="">(ignore this column)</option>';
-				html += '<option' + misc_selected + '>' + misc + '</option>';
-				html += '<option' + id_selected + '>wof:id</option>';
-				html += '<option' + name_selected + '>wof:name</option>';
-				html += '<option' + lat_selected + '>geom:latitude</option>';
-				html += '<option' + lng_selected + '>geom:longitude</option>';
-				html += '<option' + addr_selected + '>addr:full</option>';
-				html += '<option>addr:housenumber</option>';
-				html += '<option>addr:street</option>';
-				html += '<option>addr:postcode</option>';
-				html += '<option>addr:city</option>';
-				html += '<option>addr:state</option>';
-				html += '<option>addr:province</option>';
-				html += '<option>addr:phone</option>';
-				html += '<option>wof:tags</option>';
-				html += '<option>edtf:inception</option>';
-				html += '<option>edtf:cessation</option>';
+				html += property_select_options(default_value, index_selected);
 				html += '</select>';
 
 				return html;
@@ -254,6 +259,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			csv_controls += '<div class="input-group">';
 			csv_controls += '<input type="checkbox" name="csv_headers" id="csv-headers" checked="checked">';
 			csv_controls += ' <label for="csv-headers">First CSV row is column headers</label>';
+			csv_controls += '</div>';
+			csv_controls += '<div class="input-group">';
+			csv_controls += '<label for="property-prefix">Property prefix</label>';
+			csv_controls += '<input type="text" id="property-prefix" size="10" value="misc">';
 			csv_controls += '</div>';
 			csv_controls += '</div>';
 
@@ -309,6 +318,20 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					csv_preview_row = csv_row_count;
 				}
 				update_preview();
+			});
+			$('#property-prefix').change(function() {
+				var prefix = $('#property-prefix').val();
+				if (prefix == '') {
+					prefix = 'misc';
+					$('#property-prefix').val(prefix);
+					return;
+				}
+				$('select.column').each(function(i, select) {
+					var column = $(select).data('column');
+					var default_value = prefix + ':' + column.replace(/\W/, '_');
+					var options = property_select_options(default_value, select.selectedIndex);
+					$(select).html(options);
+				});
 			});
 		},
 
