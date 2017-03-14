@@ -132,6 +132,10 @@ th:hover .remove-row {
 	visibility: visible;
 }
 
+.btn-default {
+	border: 1px solid #dedede;
+}
+
 #edit-form .btn {
 	margin-top: 10px;
 }
@@ -641,6 +645,12 @@ body.user-can-edit #edit-disallowed {
 	margin-top: 1em;
 }
 
+#property-prefix {
+	margin-left: 10px;
+	font-family: menlo, monospace;
+	font-size: 14px;
+}
+
 #csv-columns {
 	margin-top: 1em;
 }
@@ -675,6 +685,8 @@ body.user-can-edit #edit-disallowed {
 
 #csv-columns td.property select {
 	width: 210px;
+	font-family: menlo, monospace;
+	font-size: 14px;
 }
 
 #csv-columns.no-headers td.column,
