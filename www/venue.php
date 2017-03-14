@@ -69,11 +69,20 @@
 			}
 			fclose($csv_file_handle);
 
-			$assignments = array();
+			$assignments = array(
+				'wof:tags' => array()
+			);
 			foreach ($row as $index => $value) {
 				$prop = $column_properties[$index];
-				$assignments[$prop] = $value;
+				if ($prop == 'wof:tags') {
+					if ($value) {
+						$assignments['wof:tags'][] = $value;
+					}
+				} else {
+					$assignments[$prop] = $value;
+				}
 			}
+			$assignments['wof:tags'] = implode(', ', $assignments['wof:tags']);
 
 			$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
 			$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
