@@ -190,16 +190,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				options += '<option' + selected_attr(4, index_selected) + '>geom:latitude</option>';
 				options += '<option' + selected_attr(5, index_selected) + '>geom:longitude</option>';
 				options += '<option' + selected_attr(6, index_selected) + '>addr:full</option>';
-				options += '<option>addr:housenumber</option>';
-				options += '<option>addr:street</option>';
-				options += '<option>addr:postcode</option>';
-				options += '<option>addr:city</option>';
-				options += '<option>addr:state</option>';
-				options += '<option>addr:province</option>';
-				options += '<option>addr:phone</option>';
-				options += '<option>wof:tags</option>';
-				options += '<option>edtf:inception</option>';
-				options += '<option>edtf:cessation</option>';
+				options += '<option' + selected_attr(7, index_selected) + '>addr:housenumber</option>';
+				options += '<option' + selected_attr(8, index_selected) + '>addr:street</option>';
+				options += '<option' + selected_attr(9, index_selected) + '>addr:postcode</option>';
+				options += '<option' + selected_attr(10, index_selected) + '>addr:city</option>';
+				options += '<option' + selected_attr(11, index_selected) + '>addr:state</option>';
+				options += '<option' + selected_attr(12, index_selected) + '>addr:province</option>';
+				options += '<option' + selected_attr(13, index_selected) + '>addr:phone</option>';
+				options += '<option' + selected_attr(14, index_selected) + '>wof:tags</option>';
+				options += '<option' + selected_attr(15, index_selected) + '>edtf:inception</option>';
+				options += '<option' + selected_attr(16, index_selected) + '>edtf:cessation</option>';
 				return options;
 			}
 
@@ -218,6 +218,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					index_selected = 5;
 				} else if (column == 'address') {
 					index_selected = 6;
+				} else if (column == 'city') {
+					index_selected = 10;
+				} else if (column == 'state') {
+					index_selected = 11;
 				}
 
 				var html = '<select name="' + name + '" data-column="' + htmlspecialchars(column) + '" class="column">';
