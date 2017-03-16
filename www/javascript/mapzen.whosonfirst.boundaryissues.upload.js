@@ -203,11 +203,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return options;
 			}
 
-			var property_select_html = function(column) {
+			var property_select_html = function(column, default_index) {
+
+				if (! default_index) {
+					default_index = 1;
+				}
+
 				var name = 'property-' + htmlspecialchars(column);
 				var default_value = 'misc:' + column.replace(/\W/, '_');
 
-				var index_selected = 1;
+				var index_selected = default_index;
 				if (column == 'wof_id') {
 					index_selected = 2;
 				} else if (column == 'name') {
@@ -276,9 +281,19 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			table += '</th></tr>';
 
 			var headers = csv.data[0];
+			var default_index = 1;
+
+			// If there is a 'wof_id' column, default to "ignore"
+			for (var i = 0; i < headers.length; i++) {
+				if (headers[i] == 'wof_id') {
+					default_index = 0;
+					break;
+				}
+			}
+
 			for (var i = 0; i < headers.length; i++) {
 				var column = headers[i];
-				var property_select = property_select_html(column);
+				var property_select = property_select_html(column, default_index);
 				table += '<tr>';
 				table += '<td class="column">' + htmlspecialchars(column) + '</td>';
 				table += '<td class="property">' + property_select + '</td>';
