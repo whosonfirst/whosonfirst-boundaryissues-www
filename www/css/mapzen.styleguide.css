@@ -375,8 +375,8 @@ hr {
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: inherit;
-  font-weight: 500;
+  font-family: "Poppins", "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 600;
   line-height: 1.1;
   color: inherit; }
   h1 small,
@@ -4224,6 +4224,7 @@ img.dashboard-profile-pic {
   border-radius: 5px;
   border: 0;
   text-transform: uppercase;
+  font-family: "Poppins", "Open Sans", Helvetica, Arial, sans-serif;
   font-weight: 600;
   padding: 12px 24px; }
 
@@ -4256,10 +4257,10 @@ input[type="search"] + .btn {
     background-color: #635378;
     color: #f8f8f8; }
 
-.btn-white, footer .btn-transparent, nav .btn-mapzen {
+.btn-white {
   background-color: #ffffff;
   color: #1E0E33; }
-  .btn-white:hover, footer .btn-transparent:hover, nav .btn-mapzen:hover, .btn-white:focus, footer .btn-transparent:focus, nav .btn-mapzen:focus {
+  .btn-white:hover, .btn-white:focus {
     background-color: #EEE7F8; }
 
 .btn-with-arrow {
@@ -4423,15 +4424,10 @@ input[type="search"] + .btn {
   .breadcrumb li::before {
     font: normal normal normal 14px/1 FontAwesome; }
   .breadcrumb li > a {
-    font-weight: 600; }
+    font-weight: 700; }
 
 .breadcrumb > li + li:before {
   content: "" " "; }
-
-h6.category-title {
-  font-weight: 600;
-  font-size: 1.5em;
-  line-height: 1.5; }
 
 .category-info-container {
   width: 100%;
@@ -4546,7 +4542,6 @@ img.avatar-byline {
 .featured-item {
   padding-top: 30px;
   padding-bottom: 10px;
-  font-weight: 300;
   font-size: 24px;
   line-height: 1.4; }
 
@@ -4734,9 +4729,6 @@ img.avatar-byline {
     margin-bottom: 24px; }
   .documentation-content h1, .documentation-content h2, .documentation-content h3, .documentation-content h4, .documentation-content h5, .documentation-content h6 {
     position: relative; }
-  @media (min-width: 767px) {
-    .documentation-content {
-      /* no more special header for documentation */ } }
   .documentation-content section {
     margin-top: -50px;
     padding-top: 50px;
@@ -4804,7 +4796,13 @@ body.no-footer #footer,
 body.no-footer footer {
   display: none; }
 
+.footer-no-background {
+  color: #1E0E33; }
+  .footer-no-background a {
+    color: #FF7B7B; }
+
 .footer-background {
+  color: #AD9CC2;
   padding-top: 50px;
   background-color: #1E0E33;
   border-top: 10px solid #FF7B7B; }
@@ -4814,18 +4812,12 @@ body.no-footer footer {
     color: #EEE7F8; }
   .footer-background a:hover {
     color: white; }
-  .footer-background img, .footer-background .slogan {
-    display: none; }
-
-footer {
-  color: #AD9CC2; }
 
 .footer-menu {
   font-size: 13px;
   line-height: 1.8; }
   .footer-menu h6 {
     font-size: inherit;
-    font-weight: 600;
     text-transform: uppercase; }
     .footer-menu h6:not(:first-of-type) {
       margin-top: 20px; }
@@ -4840,11 +4832,6 @@ footer {
   .footer-menu .fa {
     margin-right: 0.25em; }
 
-footer > div:first-child {
-  color: #1E0E33; }
-  footer > div:first-child a {
-    color: #FF7B7B; }
-
 .footer-section {
   padding-left: 30px; }
   @media (min-width: 480px) {
@@ -4853,6 +4840,14 @@ footer > div:first-child {
   @media (min-width: 992px) {
     .footer-section {
       padding-left: 80px; } }
+
+.compass-logo {
+  width: 36px;
+  height: 36px;
+  background-image: url("https://mapzen.com/common/styleguide/images/logos/mapzen-logo-compass-white.png");
+  background-repeat: no-repeat;
+  background-size: 36px;
+  margin: 6px auto; }
 
 .form-group-header {
   font-weight: bold;
@@ -5135,7 +5130,7 @@ html {
   height: 100%; }
 
 body {
-  font-family: "Poppins", "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-weight: 400;
   background: transparent;
   overflow-x: hidden;
@@ -5272,10 +5267,9 @@ ol.legal-terms {
   ol.legal-terms > li:before {
     content: counter(legal-counter) ".";
     counter-increment: legal-counter;
-    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-weight: 700;
     font-size: 1.2em;
-    font-weight: 600;
-    color: #666666;
+    line-height: 1em;
     position: absolute;
     left: -40px; }
 
@@ -5326,26 +5320,24 @@ article ul li.static p {
   .loading-spinner-02::before {
     background-image: url("https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/images/loading@2x.gif"); } }
 
+.logos .bright-logo-wrapper {
+  background-color: #635378;
+  width: 180px;
+  margin: 0 auto;
+  margin-bottom: 20px; }
+
+.logos .dark-logo-wrapper {
+  margin-bottom: 20px; }
+
 .logos img.logo-sample {
   width: 100%;
   height: auto;
   max-width: 180px;
-  margin-bottom: 10px; }
-
-.logos img.logo-sample-square {
-  max-width: 120px; }
-
-@media (max-width: 767px) {
-  .logos > div:not(:first-child) img.logo-sample {
-    border-top: 1px solid #e0e0e0;
-    padding-top: 20px; } }
-
-@media (min-width: 480px) {
-  .logos > div:not(:nth-child(-n+2)) img.logo-sample {
-    border-top: 1px solid #e0e0e0;
-    padding-top: 20px; } }
+  padding: 20px; }
 
 nav {
+  font-family: "Poppins", "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 300;
   width: 100%;
   height: 50px;
   -webkit-transform: translate(0, 0);
@@ -5363,11 +5355,8 @@ nav {
   nav li {
     text-transform: uppercase;
     text-align: center; }
-  nav .btn-mapzen {
-    font-weight: 600;
+  nav .btn-white {
     padding: 8px 16px; }
-    nav .btn-mapzen:hover, nav .btn-mapzen:focus {
-      color: #444; }
 
 body:not(.is-scrolling) nav.navbar-fixed-top {
   top: 0; }
@@ -5384,7 +5373,8 @@ body {
 @media (max-width: 767px) {
   .navbar-nav {
     background: rgba(30, 14, 51, 0.9);
-    margin-top: 0; }
+    margin-top: 0;
+    margin-bottom: 0; }
     .navbar-nav li > a {
       display: inline-block;
       background: transparent !important; } }
@@ -5406,7 +5396,7 @@ body {
   border-bottom: 5px solid #FF7B7B; }
 
 .navbar-brand {
-  padding: 8px 15px; }
+  padding: 5px 30px 11px 15px; }
   @media (min-width: 768px) {
     .navbar-brand {
       height: 100%; }
@@ -5416,14 +5406,20 @@ body {
 .mapzen-logo {
   width: 130px;
   height: 40px;
-  background-image: url("https://mapzen.com/common/styleguide/images/logos/mapzen-logo-white.png");
+  background-image: url("https://mapzen.com/common/styleguide/images/mapzen-logo-stacked.png");
   background-repeat: no-repeat;
+  background-position: 0 -40px;
   background-size: 130px; }
+  .mapzen-logo:hover {
+    background-position: 0 0; }
   @media (max-width: 767px) {
     .mapzen-logo {
       height: 31px;
       background-position: 0 0;
       background-size: 110px; } }
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .mapzen-logo {
+      background-image: url("https://mapzen.com/common/styleguide/images/mapzen-logo-stacked@2x.png"); } }
 
 .navbar-nav > li > a#sign-in {
   min-width: 80px;
@@ -5481,69 +5477,6 @@ body {
 
 .navbar-nav li a:focus #login-profile {
   border-color: white; }
-
-.navbar-nav li.active:hover .compass:before {
-  border-bottom-color: white; }
-
-.navbar-nav li.active a:focus .compass:before {
-  border-bottom-color: white; }
-
-.navbar-nav li.active:hover .compass:after {
-  border-top-color: white; }
-
-.navbar-nav li.active a:focus .compass:after {
-  border-top-color: white; }
-
-.navbar-nav li:hover .compass:before {
-  border-bottom-color: white; }
-
-.navbar-nav li a:focus .compass:before {
-  border-bottom-color: white; }
-
-.navbar-nav li:hover .compass:after {
-  border-top-color: white; }
-
-.navbar-nav li a:focus .compass:after {
-  border-top-color: white; }
-
-.compass {
-  width: 22px;
-  height: 22px;
-  position: relative;
-  margin-left: -1px;
-  /* arm of compass looks off, this is lame solution for the problem */
-  margin-top: -1px;
-  /* same with the line above */
-  transform-origin: center center;
-  transform: rotate(30deg);
-  transition: all 2s ease; }
-  .compass:before {
-    content: ' ';
-    position: absolute;
-    left: 7px;
-    top: 3px;
-    border-bottom: 8px solid #EEE7F8;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent; }
-  .compass:after {
-    content: ' ';
-    position: absolute;
-    left: 7px;
-    top: 11px;
-    border-top: 8px solid #EEE7F8;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent; }
-  .compass:hover {
-    transform: rotate(390deg); }
-
-.compass > .center-dot {
-  width: 2px;
-  height: 2px;
-  background-color: #1E0E33;
-  z-index: 10;
-  position: absolute;
-  top: 10px;
-  left: 10px; }
 
 #sign-in + .dropdown-menu > li > a {
   text-transform: capitalize; }
@@ -5717,29 +5650,29 @@ body.project .demo-container {
     .static-content {
       font-size: 16px; } }
   .static-content h1 {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 36px;
     margin-top: 48px;
     margin-bottom: 12px; }
   .static-content h2 {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 24px;
     margin-top: 48px;
     margin-bottom: 12px; }
   .static-content h3 {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 16px;
     margin-top: 24px;
     margin-bottom: 12px; }
   .static-content h4 {
     margin-top: 24px;
     margin-bottom: 12px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px; }
   .static-content h5, .static-content h6 {
     margin-top: 24px;
     margin-bottom: 12px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 11px; }
   .static-content h1[id]:before,
   .static-content h2[id]:before,
@@ -6029,7 +5962,6 @@ body.project .demo-container {
   .section-nav-title h2 {
     margin: 0;
     font-size: 2em;
-    font-weight: 600;
     line-height: 50px; }
     @media (min-width: 768px) and (max-width: 1199px) {
       .section-nav-title h2 {
@@ -6227,7 +6159,7 @@ body.project .demo-container {
 /* First level of nav */
 .toc {
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 1.4;
   background-color: #f8f8f8;
   margin-bottom: 30px;
@@ -6248,15 +6180,15 @@ body.project .demo-container {
     padding: 6px 15px;
     z-index: 1;
     color: #635378;
-    font-weight: 300;
+    font-weight: 400;
     text-decoration: none;
     -webkit-transition: box-shadow 100ms ease-in-out;
     -moz-transition: box-shadow 100ms ease-in-out;
     transition: box-shadow 100ms ease-in-out; }
   .toc li.toc-top-level {
-    font-weight: 600; }
+    font-weight: 700; }
   .toc li.toc-top-level > a {
-    font-weight: 600; }
+    font-weight: 700; }
   .toc li.toc-top-level.toc-current > a {
     background-color: #635378;
     color: white; }
@@ -6311,14 +6243,13 @@ ul.nav > li:first-child:last-child {
     padding-left: 30px; }
 
 body {
-  font-family: "Poppins", "Open Sans", Helvetica, Arial, sans-serif;
-  font-weight: 300;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 400;
   color: #2C1E3F;
   font-size: 16px;
   line-height: 1.5; }
 
 h1, h2, h3 {
-  font-weight: 600;
   margin-top: 48px;
   margin-bottom: 12px;
   line-height: 1.2em; }
@@ -6346,13 +6277,11 @@ h3 {
       font-size: 18px; } }
 
 h4 {
-  font-weight: 600;
   font-size: 16px;
   margin-top: 24px;
   margin-bottom: 12px; }
 
 h5 {
-  font-weight: 600;
   font-size: 14px;
   margin-top: 24px;
   margin-bottom: 12px; }
@@ -6424,20 +6353,3 @@ pullquote {
 /* about page styles */
 .team .name {
   font-size: 15px; }
-
-/* This stylefile is written to be temporary. This needs to be gone after dom change of homepage*/
-#content h5,
-footer h5 {
-  /* h2 style */
-  font-weight: 600;
-  font-size: 36px;
-  margin-top: 48px;
-  margin-bottom: 12px; }
-
-#content .static-content h5,
-footer .static-content h5 {
-  /* h3 style */
-  font-weight: 600;
-  font-size: 24px;
-  margin-top: 48px;
-  margin-bottom: 12px; }
