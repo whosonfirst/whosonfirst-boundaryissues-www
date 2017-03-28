@@ -598,10 +598,6 @@ body.user-can-edit #edit-disallowed {
 	display: none;
 }
 
-#venue form {
-	margin-top: 2.5em;
-}
-
 #venue .form-group {
 	width: 100%;
 	max-width: 360px;
