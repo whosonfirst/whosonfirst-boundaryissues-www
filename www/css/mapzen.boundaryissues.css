@@ -686,6 +686,14 @@ body.user-can-edit #edit-disallowed {
 	display: none;
 }
 
+#property-preview {
+	display: none;
+}
+
+#property-preview.visible {
+	display: block;
+}
+
 #property-preview table {
 	margin-top: 1em;
 }

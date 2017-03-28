@@ -12,11 +12,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 	var self = {
 		map: null,
-		properties: {},
+		properties: {
+			'wof:placetype': 'venue'
+		},
 		country_id: -1,
 
 		reset_properties: function() {
-			self.properties = {};
+			self.properties = {
+				'wof:placetype': 'venue'
+			};
 			$('input[name="name"]').val('');
 			$('textarea[name="address"]').val('');
 			$('input[name="tags"]').val('');
@@ -24,6 +28,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		set_property: function(name, value) {
 			self.properties[name] = value;
+			if (typeof value == 'object') {
+				value = JSON.stringify(value);
+			}
+			$('td[data-property="' + name + '"]').html(htmlspecialchars(value));
 		},
 
 		set_country: function(country) {
@@ -44,34 +52,19 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		generate_feature: function() {
-			var center = self.map.getCenter();
-			var lat = center.lat;
-			var lng = center.lng;
-			var geometry = {
-				type: 'Point',
-				coordinates: [lng, lat]
-			};
-			var bbox = [lng, lat, lng, lat];
+
+			var lat = parseFloat(self.properties['geom:latitude']);
+			var lng = parseFloat(self.properties['geom:longitude']);
 
 			var feature = {
 				type: 'Feature',
-				bbox: bbox,
-				geometry: geometry,
+				bbox: [lng, lat, lng, lat],
+				geometry: {
+					type: 'Point',
+					coordinates: [lng, lat]
+				},
 				properties: self.properties
 			};
-
-			var tags = $('input[name="tags"]').val();
-			tags = tags.split(',');
-			for (var i = 0; i < tags.length; i++) {
-				tags[i] = tags[i].trim();
-			}
-
-			feature.properties['wof:placetype'] = 'venue';
-			feature.properties['wof:name'] = $('input[name="name"]').val();
-			feature.properties['wof:tags'] = tags;
-			feature.properties['addr:full'] = $('textarea[name="address"]').val();
-			feature.properties['geom:latitude'] = lat;
-			feature.properties['geom:longitude'] = lng;
 
 			return feature;
 		},
@@ -222,6 +215,23 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 			$('#venue-lookup-address').addClass('loading');
 			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+		},
+
+		update_name: function() {
+			self.set_property('wof:name', $('input[name="name"]').val());
+		},
+
+		update_address: function() {
+			self.set_property('addr:full', $('textarea[name="address"]').val());
+		},
+
+		update_tags: function() {
+			var tags = $('input[name="tags"]').val();
+			tags = tags.split(',');
+			for (var i = 0; i < tags.length; i++) {
+				tags[i] = tags[i].trim();
+			}
+			self.set_property('wof:tags', tags);
 		}
 	};
 
@@ -262,6 +272,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		map.on('moveend', function() {
 			var ll = map.getCenter();
 			self.lookup_hierarchy(ll);
+			self.set_property('geom:latitude', ll.lat);
+			self.set_property('geom:longitude', ll.lng);
 		});
 
 		geocoder.on('select', function(e) {
@@ -307,6 +319,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
 			}
 		});
+
+		$('input[name="name"]').change(self.update_name);
+		$('textarea[name="address"]').change(self.update_address);
+		$('input[name="tags"]').change(self.update_tags);
 	}
 
 	function setup_address() {
@@ -328,21 +344,24 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	function setup_preview() {
 		$('#property-preview-link').click(function(e) {
 			e.preventDefault();
-			var html = '<table>';
-			var keys = Object.keys(self.properties);
-			keys.sort();
-			$.each(keys, function(i, key) {
-				var value = self.properties[key];
-				if (typeof value == 'object') {
-					value = JSON.stringify(value);
-				}
-				html += '<tr>';
-				html += '<td class="property">' + htmlspecialchars(key) + '</td>';
-				html += '<td class="preview">' + htmlspecialchars(value) + '</td>';
-				html += '</tr>';
-			});
-			html += '</table>';
-			$('#property-preview').html(html);
+			$('#property-preview').toggleClass('visible');
+			if ($('#property-preview').hasClass('visible')) {
+				var html = '<table>';
+				var keys = Object.keys(self.properties);
+				keys.sort();
+				$.each(keys, function(i, key) {
+					var value = self.properties[key];
+					if (typeof value == 'object') {
+						value = JSON.stringify(value);
+					}
+					html += '<tr>';
+					html += '<td class="property">' + htmlspecialchars(key) + '</td>';
+					html += '<td class="preview" data-property="' + htmlspecialchars(key) + '">' + htmlspecialchars(value) + '</td>';
+					html += '</tr>';
+				});
+				html += '</table>';
+				$('#property-preview').html(html);
+			}
 		});
 	}
 
@@ -431,6 +450,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			if (! check_for_wof_id()) {
 				check_for_assignments();
 			}
+			self.update_name();
+			self.update_address();
+			self.update_tags();
 		}
 	});
 
