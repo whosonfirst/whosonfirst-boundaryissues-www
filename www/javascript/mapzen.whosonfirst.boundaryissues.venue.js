@@ -155,6 +155,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var ll = geocoder.marker.getLatLng();
 				map.removeLayer(geocoder.marker);
 				map.setView(ll, 16);
+				self.set_property('geom:latitude', ll.lat);
+				self.set_property('geom:longitude', ll.lng);
 				//self.lookup_hierarchy(ll.lat, ll.lng);
 				//self.update_coordinates(ll, true);
 				//self.set_marker(geocoder.marker);
@@ -204,6 +206,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 					var ll = self.map.getCenter();
 					self.lookup_hierarchy(ll);
+					self.set_property('geom:latitude', ll.lat);
+					self.set_property('geom:longitude', ll.lng);
 				}
 				$('#venue-lookup-address').removeClass('loading');
 				if (cb) {
