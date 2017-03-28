@@ -325,6 +325,27 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		});
 	}
 
+	function setup_preview() {
+		$('#property-preview-link').click(function(e) {
+			e.preventDefault();
+			var html = '<table>';
+			var keys = Object.keys(self.properties);
+			keys.sort();
+			$.each(keys, function(i, key) {
+				var value = self.properties[key];
+				if (typeof value == 'object') {
+					value = JSON.stringify(value);
+				}
+				html += '<tr>';
+				html += '<td class="property">' + htmlspecialchars(key) + '</td>';
+				html += '<td class="preview">' + htmlspecialchars(value) + '</td>';
+				html += '</tr>';
+			});
+			html += '</table>';
+			$('#property-preview').html(html);
+		});
+	}
+
 	function check_for_wof_id() {
 
 		if ($('#wof_id').length == 0) {
@@ -406,6 +427,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			setup_map(bbox_init);
 			setup_form();
 			setup_address();
+			setup_preview();
 			if (! check_for_wof_id()) {
 				check_for_assignments();
 			}

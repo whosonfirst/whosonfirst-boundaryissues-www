@@ -607,10 +607,6 @@ body.user-can-edit #edit-disallowed {
 	width: 100%;
 }
 
-#venue .btn {
-	margin-top: 1em;
-}
-
 #bbox-default {
 	float: right;
 	font-weight: normal;
@@ -688,6 +684,29 @@ body.user-can-edit #edit-disallowed {
 #csv-columns.no-headers td.column,
 #csv-columns.no-headers th.column {
 	display: none;
+}
+
+#property-preview table {
+	margin-top: 1em;
+}
+
+#property-preview td {
+	font-size: 14px;
+	font-family: menlo, monospace;
+	border-bottom: 1px solid #fff;
+	padding: 4px 0.5em;
+	background: #ededed;
+	vertical-align: top;
+}
+
+#property-preview td.property {
+	background: #dedede;
+}
+
+#property-preview td.preview {
+	border-left: 5px solid #fff;
+	max-width: 640px;
+	word-wrap: break-word;
 }
 
 @media screen and (max-width: 480px) {

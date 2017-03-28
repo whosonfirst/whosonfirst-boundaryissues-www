@@ -50,6 +50,10 @@
 					<label for="venue-tags">Tags <small>(comma-separated)</small></label>
 					<input type="text" name="tags" id="venue-tags" value="{$venue_tags | @esc}">
 				</div>
+				<div class="form-group">
+					<small><a href="#" id="property-preview-link">Preview property assignments</a></small>
+					<div id="property-preview"></div>
+				</div>
 				<input type="submit" value="{$button_label | @esc}" class="btn btn-primary">
 				<div id="venue-dupes-notice" class="headroom">Please note: we presently don’t check for duplicate venues.</div>
 			</form>
