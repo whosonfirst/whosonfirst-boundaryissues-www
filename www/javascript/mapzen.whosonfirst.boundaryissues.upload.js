@@ -183,7 +183,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var property_select_options = function(default_value, index_selected) {
 				var options = '';
-				options += '<option value=""' + selected_attr(0, index_selected) + '>(ignore this column)</option>';
+				options += '<option value=""' + selected_attr(0, index_selected) + '>(ignore column)</option>';
 				options += '<option' + selected_attr(1, index_selected) + '>' + default_value + '</option>';
 				options += '<option' + selected_attr(2, index_selected) + '>wof:id</option>';
 				options += '<option' + selected_attr(3, index_selected) + '>wof:name</option>';
@@ -192,41 +192,45 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				options += '<option' + selected_attr(6, index_selected) + '>addr:full</option>';
 				options += '<option' + selected_attr(7, index_selected) + '>addr:housenumber</option>';
 				options += '<option' + selected_attr(8, index_selected) + '>addr:street</option>';
-				options += '<option' + selected_attr(9, index_selected) + '>addr:postcode</option>';
-				options += '<option' + selected_attr(10, index_selected) + '>addr:city</option>';
-				options += '<option' + selected_attr(11, index_selected) + '>addr:state</option>';
-				options += '<option' + selected_attr(12, index_selected) + '>addr:province</option>';
-				options += '<option' + selected_attr(13, index_selected) + '>addr:phone</option>';
-				options += '<option' + selected_attr(14, index_selected) + '>wof:tags</option>';
-				options += '<option' + selected_attr(15, index_selected) + '>edtf:inception</option>';
-				options += '<option' + selected_attr(16, index_selected) + '>edtf:cessation</option>';
+				options += '<option' + selected_attr(9, index_selected) + '>addr:housenumber addr:street</option>';
+				options += '<option' + selected_attr(10, index_selected) + '>addr:postcode</option>';
+				options += '<option' + selected_attr(11, index_selected) + '>addr:city</option>';
+				options += '<option' + selected_attr(12, index_selected) + '>addr:state</option>';
+				options += '<option' + selected_attr(13, index_selected) + '>addr:province</option>';
+				options += '<option' + selected_attr(14, index_selected) + '>addr:phone</option>';
+				options += '<option' + selected_attr(15, index_selected) + '>wof:tags</option>';
+				options += '<option' + selected_attr(16, index_selected) + '>edtf:inception</option>';
+				options += '<option' + selected_attr(17, index_selected) + '>edtf:cessation</option>';
 				return options;
 			}
 
 			var property_select_html = function(column, default_index) {
 
-				if (! default_index) {
-					default_index = 1;
-				}
-
 				var name = 'property-' + htmlspecialchars(column);
 				var default_value = 'misc:' + column.replace(/\W/, '_');
 
-				var index_selected = default_index;
-				if (column == 'wof_id') {
-					index_selected = 2;
-				} else if (column == 'name') {
-					index_selected = 3;
-				} else if (column == 'latitude') {
-					index_selected = 4;
-				} else if (column == 'longitude') {
-					index_selected = 5;
-				} else if (column == 'address') {
-					index_selected = 6;
-				} else if (column == 'city') {
-					index_selected = 10;
-				} else if (column == 'state') {
-					index_selected = 11;
+				if (typeof default_index != 'undefined') {
+					index_selected = default_index;
+					if (column == 'wof_id') {
+						index_selected = 2;
+					}
+				} else {
+					var index_selected = 1;
+					if (column == 'wof_id') {
+						index_selected = 2;
+					} else if (column == 'name') {
+						index_selected = 3;
+					} else if (column == 'latitude') {
+						index_selected = 4;
+					} else if (column == 'longitude') {
+						index_selected = 5;
+					} else if (column == 'address') {
+						index_selected = 6;
+					} else if (column == 'city') {
+						index_selected = 11;
+					} else if (column == 'state') {
+						index_selected = 12;
+					}
 				}
 
 				var html = '<select name="' + name + '" data-column="' + htmlspecialchars(column) + '" class="column">';
@@ -237,12 +241,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			};
 
 			var check_if_ready = function() {
+				var has_id = false;
 				var has_name = false;
 				var has_addr = false;
 				var has_lat = false;
 				var has_lng = false;
 				$('#upload-preview-props select').each(function(i, select) {
-					if ($(select).val() == 'wof:name') {
+					if ($(select).val() == 'wof:id') {
+						has_id = true;
+					} else if ($(select).val() == 'wof:name') {
 						has_name = true;
 					} else if ($(select).val() == 'addr:full') {
 						has_addr = true;
@@ -252,8 +259,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 						has_lng = true;
 					}
 				});
-				if (has_name &&
-				    (has_addr || has_lat && has_lng)) {
+				if (has_id || (
+				    has_name &&
+				    (has_addr || has_lat && has_lng))) {
 					upload_is_ready = true;
 					$('#upload-btn').addClass('btn-primary');
 					$('#upload-btn').attr('disabled', false);
@@ -285,12 +293,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			table += '</th></tr>';
 
 			var headers = csv.data[0];
-			var default_index = 1;
 
 			// If there is a 'wof_id' column, default to "ignore"
 			for (var i = 0; i < headers.length; i++) {
 				if (headers[i] == 'wof_id') {
-					default_index = 0;
+					var default_index = 0;
 					break;
 				}
 			}

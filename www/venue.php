@@ -40,6 +40,10 @@
 			$GLOBALS['smarty']->assign('prev_url', $prev_url);
 		}
 
+		$assignments = array(
+			'wof:tags' => array()
+		);
+
 		if ($settings['wof_ids'] &&
 		    $settings['wof_ids'][$page - 1]) {
 			$wof_id = $settings['wof_ids'][$page - 1];
@@ -49,50 +53,53 @@
 			$props = $feature['properties'];
 
 			$GLOBALS['smarty']->assign('wof_id', $wof_id);
-			$GLOBALS['smarty']->assign('venue_name', $props['wof:name']);
-			$GLOBALS['smarty']->assign('venue_address', $props['addr:full']);
-			$GLOBALS['smarty']->assign('venue_tags', implode(', ', $props['wof:tags']));
 			$GLOBALS['smarty']->assign('button_label', 'Save venue');
-		} else {
-			$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
-			$column_properties = explode(',', $settings['column_properties']);
 
-			$csv_file_handle = fopen($path, 'r');
-
-			if ($settings['has_headers'] ||
-			    ! isset($settings['has_headers'])) {
-				$heading = fgetcsv($csv_file_handle);
-			}
-
-			if (! $page) {
-				$page = 1;
-			}
-
-			for ($i = 0; $i < $page; $i++) {
-				$row = fgetcsv($csv_file_handle);
-			}
-			fclose($csv_file_handle);
-
-			$assignments = array(
-				'wof:tags' => array()
-			);
-			foreach ($row as $index => $value) {
-				$prop = $column_properties[$index];
-				if ($prop == 'wof:tags') {
-					if ($value) {
-						$assignments['wof:tags'][] = $value;
-					}
-				} else {
-					$assignments[$prop] = $value;
-				}
-			}
-			$assignments['wof:tags'] = implode(', ', $assignments['wof:tags']);
-
-			$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
-			$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
-			$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
-			$GLOBALS['smarty']->assign('venue_tags', $assignments['wof:tags']);
+			$assignments['wof:name'] = $props['wof:name'];
+			$assignments['addr:full'] = $props['addr:full'];
+			$assignments['wof:tags'] = $props['wof:tags'];
 		}
+
+		$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
+		$column_properties = explode(',', $settings['column_properties']);
+
+		$csv_file_handle = fopen($path, 'r');
+
+		if ($settings['has_headers'] ||
+		    ! isset($settings['has_headers'])) {
+			$heading = fgetcsv($csv_file_handle);
+		}
+
+		if (! $page) {
+			$page = 1;
+		}
+
+		for ($i = 0; $i < $page; $i++) {
+			$row = fgetcsv($csv_file_handle);
+		}
+		fclose($csv_file_handle);
+
+		foreach ($row as $index => $value) {
+			$prop = $column_properties[$index];
+			if ($prop == 'wof:tags') {
+				if ($value) {
+					$assignments['wof:tags'][] = $value;
+				}
+			} else if ($prop == 'addr:housenumber addr:street') {
+				if (preg_match('/\s*(\S+)\s+(.+)/', $value, $matches)) {
+					$assignments['addr:housenumber'] = $matches[1];
+					$assignments['addr:street'] = $matches[2];
+				}
+			} else {
+				$assignments[$prop] = $value;
+			}
+		}
+		$assignments['wof:tags'] = implode(', ', $assignments['wof:tags']);
+
+		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
+		$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
+		$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
+		$GLOBALS['smarty']->assign('venue_tags', $assignments['wof:tags']);
 
 	} else {
 		login_ensure_loggedin('venue/');

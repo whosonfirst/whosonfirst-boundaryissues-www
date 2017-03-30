@@ -230,10 +230,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		update_tags: function() {
-			var tags = $('input[name="tags"]').val();
-			tags = tags.split(',');
-			for (var i = 0; i < tags.length; i++) {
-				tags[i] = tags[i].trim();
+			var tag_list = $('input[name="tags"]').val();
+			tag_list = tag_list.split(',');
+			var tags = [];
+			for (var i = 0; i < tag_list.length; i++) {
+				var t = tag_list[i].trim();
+				if (t != '') {
+					tags.push(t);
+				}
 			}
 			self.set_property('wof:tags', tags);
 		}
