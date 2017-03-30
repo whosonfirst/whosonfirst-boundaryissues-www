@@ -7,7 +7,7 @@
 	<ul>
 		<li><a href="{$cfg.abs_root_url}add/">Add a new place</a> <small> &#8212; with all the options</small></li>
 		<li><a href="{$cfg.abs_root_url}venue/">Add a new venue</a> <small> &#8212; with a minimal set of options</small></li>
-		<li><a href="{$cfg.abs_root_url}upload/">Upload a GeoJSON or CSV file</a></li>
+		<li><a href="{$cfg.abs_root_url}upload/">Upload a GeoJSON {if $cfg.enable_feature_csv_upload}or CSV{/if} file</a></li>
 	</ul>
 
 	<ul>
