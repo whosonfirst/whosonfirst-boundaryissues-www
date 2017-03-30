@@ -163,6 +163,9 @@
 	// Used for the add-a-venue geocoder
 	$GLOBALS['cfg']['mazpen_api_key'] = 'mapzen-LhT76h5';
 
+	// CSV upload feature
+	$GLOBALS['cfg']['enable_feature_csv_upload'] = true;
+
 	// This search query filtering business is here because we've moved
 	// all our Elasticsearch business onto a single common index, but each
 	// application is only set up to edit a subset of the documents. The

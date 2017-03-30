@@ -11,6 +11,10 @@
 
 	if ($csv_id) {
 
+		if (! $GLOBALS['cfg']['enable_feature_csv_upload']){
+			error_404();
+		}
+
 		login_ensure_loggedin("csv/$csv_id/$page/");
 
 		$GLOBALS['smarty']->assign('page_title', 'Import from CSV');
