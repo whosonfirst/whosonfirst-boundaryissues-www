@@ -160,8 +160,9 @@
 	$GLOBALS['cfg']['wof_libpostal_host'] = '';
 	$GLOBALS['cfg']['wof_postcode_pip_host'] = '';
 
-	// Used for the add-a-venue geocoder
+	// Used for the add-a-venue geocoder and WOF API Calls
 	$GLOBALS['cfg']['mazpen_api_key'] = 'mapzen-LhT76h5';
+	$GLOBALS['cfg']['wof_api_base_url'] = 'https://whosonfirst-api.mapzen.com/';
 
 	// CSV upload feature
 	$GLOBALS['cfg']['enable_feature_csv_upload'] = true;

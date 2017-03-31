@@ -12,7 +12,7 @@
 	function api_whosonfirst_places_getWithin(){
 
  		list($sw_lat, $sw_lon, $ne_lat, $ne_lon) = api_whosonfirst_utils_ensure_bbox();
-		
+
 		$more = array(
 			'wof:placetype_id' => 102312325,	# venues - PLEASE DO NOT HARDCODE ME
 		);
@@ -60,61 +60,10 @@
 	########################################################################
 
 	function api_wof_places_get_nearby(){
-
-		$lat = null;
-		$lon = null;
-
-		api_utils_features_ensure_enabled(array('spatial'));
-
-		if ($wofid = request_int64("id")){
-		
-			api_output_error(400, "This has not been implemented yet");
-		}
-
-		else {
-
-			$lat = request_float("latitude");
-
-			if (! $lat){
-				api_output_error(400, "Missing latitude");
-			}
-
-			if (! geo_utils_is_valid_latitude($lat)){
-				api_output_error(400, "Invalid latitude");
-			}
-
-			$lon = request_float("longitude");
-
-			if (! $lon){
-				api_output_error(400, "Missing longitude");
-			}
-
-			if (! geo_utils_is_valid_longitude($lon)){
-				api_output_error(400, "Invalid longitude");
-			}
-		}
-
-		if ($r = request_int32("radius")){
-
-			if (($r < 0) || ($r > 100)){
-				api_output_error(400, "Invalid radius");
-			}
-		}
-
-		else {
-			$r = 100;
-		}
-
-		$more = array(
-			'wof:placetype_id' => 102312325,	# venues - PLEASE DO NOT HARDCODE ME
-		);
-
-		if ($cursor = request_int32("cursor")){
-			$more['cursor'] = $cursor;
-		}
-
-		$rsp = whosonfirst_spatial_nearby_latlon($lat, $lon, $r, $more);
-		api_whosonfirst_places_foo($rsp);
+		// We used to do this lookup ourselves by talking to tile38, but
+		// now that there's a WOF API we just pass the request along.
+		// (20170331/dphiffer)
+		api_wof_utils_passthrough('whosonfirst.places.getNearby');
 	}
 
 	########################################################################
@@ -124,10 +73,10 @@
 		if (! $rsp['ok']){
 			api_output_error(500, $rsp['error']);
 		}
-		
+
 		# See this? It takes ~ 20-40 µs to fetch each name individually.
 		# Which isn't very much even when added up. There are two considerations
-		# here: 1) It's useful just to be able to append the name from the 
+		# here: 1) It's useful just to be able to append the name from the
 		# tile38 index itself 2) It might be just as fast to look up the
 		# entire record from ES itself. Basically what I am trying to say is
 		# that it's too soon so we're just going to do this for now...
@@ -154,7 +103,7 @@
 			}
 
 			list($id, $repo) = explode("#", $row['id']);
-			
+
 			$results[] = array(
 				'wof:name' => $props['wof:name'],
 				'wof:id' => $props['wof:id'],

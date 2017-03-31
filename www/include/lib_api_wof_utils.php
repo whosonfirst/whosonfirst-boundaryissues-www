@@ -63,4 +63,30 @@
 		$rsp = users_settings_set($user, "csv_$csv_id", $settings_json);
 	}
 
+	########################################################################
+
+	function api_wof_utils_passthrough($method, $more=array()){
+
+		$url = $GLOBALS['cfg']['wof_api_base_url'];
+		unset($_POST['access_token']);
+		$_POST['method'] = $method;
+		$_POST['api_key'] = $GLOBALS['cfg']['mazpen_api_key'];
+		$query = http_build_query($_POST);
+		$url = "$url?$query";
+		$headers = array();
+
+		$rsp = http_get($url, $headers, $more);
+		$out = json_decode($rsp['body'], 'as hash');
+
+		if ($rsp['ok']){
+			api_output_ok($out);
+		} else {
+			$error = $rsp['error'];
+			if ($out['error']['message']){
+				$error = $out['error']['message'];
+			}
+			api_output_error($rsp['code'], $error);
+		}
+	}
+
 	# the end
