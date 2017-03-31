@@ -36,6 +36,7 @@
 		<script src="{$cfg.abs_root_url}javascript/moment.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/bootstrap3-typeahead.min.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/slippymap.crosshairs.js"></script>
+		<script src="{$cfg.abs_root_url}javascript/levenshtein.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.chrome.js"></script>
 		<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.chrome.init.js"></script>
 

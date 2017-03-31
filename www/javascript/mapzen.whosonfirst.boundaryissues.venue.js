@@ -222,7 +222,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		update_name: function() {
-			self.set_property('wof:name', $('input[name="name"]').val());
+			var name = $('input[name="name"]').val();
+			self.set_property('wof:name', name);
+			self.check_nearby();
 		},
 
 		update_address: function() {
@@ -240,6 +242,95 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 			}
 			self.set_property('wof:tags', tags);
+		},
+
+		check_nearby: function() {
+
+			var center = self.map.getCenter();
+			var method = 'wof.places.get_nearby';
+			var args = {
+				latitude: center.lat,
+				longitude: center.lng,
+				placetype: 'venue',
+				per_page: 250
+			};
+			var onsuccess = function(rsp) {
+				var nearby = self.get_nearby_places(rsp.places);
+				if (nearby.length > 0) {
+					var place = nearby[0];
+					var wof_id = htmlspecialchars(place['wof:id']);
+					var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
+					var name = htmlspecialchars(place['wof:name']);
+					$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary">Same place</a> <a href="#" class="btn btn-default">Ignore</a></p></div>');
+					$('#dupe-alert a.btn-primary').click(function(e) {
+						e.preventDefault();
+						$('#venue form').append('<input type="hidden" name="wof_id" value="' + wof_id + '">');
+						$('#dupe-alert').remove();
+						$('#venue-response').html('<div class="alert alert-info">This CSV row will be merged with an existing record. Edit the <a href="' + url + '">full record</a>?</div>');
+					});
+					$('#dupe-alert a.btn-default').click(function(e) {
+						e.preventDefault();
+						$('#venue-response').html('');
+					});
+				}
+			};
+			var onerror = function(rsp) {
+				console.error(rsp);
+			};
+			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
+		},
+
+		get_nearby_places: function(places) {
+
+			var name = $('input[name="name"]').val();
+			var stop_list = ['the'];
+			var words = name.split(' ');
+			var nearby = [];
+			var ld, total_ld, place, place_words, place_word, word;
+
+			// Yes, that's right, get ready for triple-nested for
+			// loop! The short version is: check if any of words in
+			// the name are within a levenshtein distance of 3 of
+			// any place names near the given lat/lng.
+			// (20170331/dphiffer)
+
+			for (var i = 0; i < places.length; i++) {
+				ld = 0;
+				place = places[i];
+				place_words = place['wof:name'].split(' ');
+				for (var j = 0; j < place_words.length; j++) {
+					place_word = place_words[j].toLowerCase();
+					if (stop_list.indexOf(place_word) != -1) {
+						continue;
+					}
+					for (var k = 0; k < words.length; k++) {
+						word = words[k].toLowerCase();
+						if (stop_list.indexOf(word) != -1) {
+							continue;
+						}
+						ld = levenshteinDistance(word, place_word);
+						if (ld < 3) {
+							if (typeof place.total_ld == 'undefined') {
+								place.total_ld = 0;
+								nearby.push(place);
+							}
+						}
+						if (typeof place.total_ld != 'undefined') {
+							place.total_ld += ld;
+						}
+					}
+				}
+			}
+			nearby.sort(function(a, b) {
+				if (a.total_ld < b.total_ld) {
+					return -1;
+				} else if (b.total_ld < a.total_ld) {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
+			return nearby;
 		}
 	};
 
@@ -343,6 +434,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var lng = parseFloat(ll[2]);
 				self.map.setView([lat, lng], 16);
 				$('textarea[name="address"]').val('');
+				self.check_nearby();
 			} else {
 				self.geocode_address(address);
 			}
@@ -387,6 +479,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var lng = parseFloat(properties['geom:longitude']);
 			self.map.setView([lat, lng], 16);
 			slippymap.crosshairs.init(self.map);
+			self.check_nearby();
 		};
 
 		var onerror = function(rsp) {
@@ -430,9 +523,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				lng: lng
 			});
 			slippymap.crosshairs.init(self.map);
+			self.check_nearby();
 		} else {
 			self.geocode_address(assignments['addr:full'], function() {
 				slippymap.crosshairs.init(self.map);
+				self.check_nearby(); // check nearby
 			});
 		}
 

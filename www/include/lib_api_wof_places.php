@@ -68,6 +68,15 @@
 
 	########################################################################
 
+	function api_wof_places_search(){
+		// We used to do this lookup ourselves by talking to tile38, but
+		// now that there's a WOF API we just pass the request along.
+		// (20170331/dphiffer)
+		api_wof_utils_passthrough('whosonfirst.places.search');
+	}
+
+	########################################################################
+
 	function api_whosonfirst_places_foo(&$rsp){
 
 		if (! $rsp['ok']){

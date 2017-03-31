@@ -717,6 +717,14 @@ body.user-can-edit #edit-disallowed {
 	word-wrap: break-word;
 }
 
+.alert a.btn {
+	text-decoration: none;
+}
+
+.alert a.btn-primary {
+	color: #fff;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

@@ -169,6 +169,17 @@
 			),
 		),
 
+		"wof.places.search" => array(
+			"description" => "",
+			"documented" => 1,
+			"enabled" => 1,
+			"paginated" => 0,
+			"library" => "api_wof_places",
+			"parameters" => array(
+				# See https://mapzen.com/documentation/wof/methods/#whosonfirst.places.search
+			),
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,
