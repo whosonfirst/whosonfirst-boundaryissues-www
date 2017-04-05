@@ -58,6 +58,12 @@
 			$assignments['wof:name'] = $props['wof:name'];
 			$assignments['addr:full'] = $props['addr:full'];
 			$assignments['wof:tags'] = $props['wof:tags'];
+
+			// For some reason tags are getting encoded as a plain
+			// string, not an array of strings. (20170405/dphiffer)
+			if (is_scalar($assignments['wof:tags'])) {
+				$assignments['wof:tags'] = array($assignments['wof:tags']);
+			}
 		}
 
 		$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
