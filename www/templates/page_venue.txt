@@ -55,7 +55,6 @@
 					<div id="property-preview"></div>
 				</div>
 				<input type="submit" value="{$button_label | @esc}" class="btn btn-primary">
-				<div id="venue-dupes-notice" class="headroom">Please note: we presently don’t check for duplicate venues.</div>
 			</form>
 		</div>
 		<div class="col-md-6">
