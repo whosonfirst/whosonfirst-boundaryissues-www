@@ -195,20 +195,38 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var esc_address = encodeURIComponent(address);
 			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
 			var onsuccess = function(rsp) {
-				if (rsp && rsp.features &&
-				    rsp.features.length > 0) {
-					// For now, just go with result #1
-					var f = rsp.features[0];
-					var c = f.geometry.coordinates;
-					var lng = c[0];
-					var lat = c[1];
-					self.map.setView([lat, lng], 16);
+				if (rsp && rsp.features && rsp.features.length > 0) {
+					var html = '<ul>';
+					$.each(rsp.features, function(i, f) {
+						var c = f.geometry.coordinates;
+						var lng = c[0];
+						var lat = c[1];
+						var label = f.properties.name;
+						if (f.properties.locality) {
+							label += ', ' + f.properties.locality;
+						}
+						if (f.properties.region) {
+							label += ', ' + f.properties.region;
+						}
+						html += '<li><a href="#" data-lat="' + htmlspecialchars(lat) + '" data-lng="' + htmlspecialchars(lng) + '" class="geocoded">' + htmlspecialchars(label) + '</a></li>';
+					});
+					html += '</ul>';
 
-					var ll = self.map.getCenter();
-					self.lookup_hierarchy(ll);
-					self.set_property('geom:latitude', ll.lat);
-					self.set_property('geom:longitude', ll.lng);
+					if (! $('#venue-lookup-geocoded')) {
+						$('<div id="venue-lookup-geocoded"></div>').after('#venue-lookup-address');
+					}
+
+					$('#venue-lookup-geocoded').html(html);
+					$('#venue-lookup-geocoded a.geocoded').click(function(e) {
+						self.select_geocoded(e.target);
+					});
+
+					var first_link = $('#venue-lookup-geocoded a.geocoded').get(0);
+					self.select_geocoded(first_link);
+				} else {
+					$('#venue-lookup-geocoded').html('<i>No results</i>');
 				}
+
 				$('#venue-lookup-address').removeClass('loading');
 				if (cb) {
 					cb(rsp);
@@ -219,6 +237,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 			$('#venue-lookup-address').addClass('loading');
 			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+		},
+
+		select_geocoded: function(link) {
+			console.log(link);
+			var lat = parseFloat($(link).data('lat'));
+			var lng = parseFloat($(link).data('lng'));
+			self.map.setView([lat, lng], 16);
+			var ll = self.map.getCenter();
+			self.lookup_hierarchy(ll);
+			self.set_property('geom:latitude', ll.lat);
+			self.set_property('geom:longitude', ll.lng);
 		},
 
 		update_name: function() {
