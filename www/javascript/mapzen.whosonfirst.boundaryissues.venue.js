@@ -550,6 +550,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 			var key = $(input).attr('name');
 			var value = $(input).val();
+
+			if (key == 'edtf:cessation') {
+				if (value == '') {
+					value = 'uuuu';
+				} else {
+					self.set_property('mz:is_current', 0);
+				}
+			}
+
 			assignments[key] = value;
 
 			self.set_property(key, value);
