@@ -1,23 +1,23 @@
 {include file='inc_head.txt' nav_tab='add'}
 
-<div id="venue" class="container" data-crumb-save="{$crumb_save | @esc}">
+<div id="venue" class="container" data-crumb-save="{$crumb_save|escape}">
 	<div class="row">
 		<div class="col-md-12">
 			<h2>{$page_title | esc}</h2>
 			{if $csv_filename}
 				<p>
 				{if $prev_url}
-					<a href="{$prev_url | @esc}"><small class="glyphicon glyphicon-chevron-left"></small> prev</a>
+					<a href="{$prev_url|escape}"><small class="glyphicon glyphicon-chevron-left"></small> prev</a>
 				{else}
 					<span class="text-muted"><small class="glyphicon glyphicon-chevron-left"></small> prev</span>
 				{/if}
-				&nbsp;<span class="hey-look">{$csv_row | @esc} of {$csv_row_count | @esc}</span>&nbsp;
+				&nbsp;<span class="hey-look">{$csv_row|escape} of {$csv_row_count|escape}</span>&nbsp;
 				{if $next_url}
-					<a href="{$next_url | @esc}">next <small class="glyphicon glyphicon-chevron-right"></small></a>
+					<a href="{$next_url|escape}">next <small class="glyphicon glyphicon-chevron-right"></small></a>
 				{else}
 					<span class="text-muted">next <small class="glyphicon glyphicon-chevron-right"></small></span>
 				{/if}
-				&nbsp;&nbsp;&nbsp;<a href="{$cfg.abs_root_url | @esc}csv/{$csv_id | @esc}/">{$csv_filename | @esc}</a>
+				&nbsp;&nbsp;&nbsp;<a href="{$cfg.abs_root_url|escape}csv/{$csv_id|escape}/">{$csv_filename|escape}</a>
 				</p>
 			{/if}
 		</div>
@@ -33,7 +33,7 @@
 					<input type="hidden" name="wof_id" value="{$wof_id|escape}" id="wof_id">
 				{else}
 					{foreach from=$assignments key=key item=value}
-						<input type="hidden" name="{$key | @esc}" value="{$value | @esc}" class="property">
+						<input type="hidden" name="{$key|escape}" value="{$value|escape}" class="property">
 					{/foreach}
 				{/if}
 				<div id="venue-response" class="headroom">
@@ -45,26 +45,26 @@
 				</div>
 				<div class="form-group">
 					<label for="venue-name">Venue name</label>
-					<input type="text" name="name" id="venue-name" value="{$venue_name | @esc}">
+					<input type="text" name="name" id="venue-name" value="{$venue_name|escape}">
 				</div>
 				<div class="form-group">
 					<label for="venue-address">Address</label>
-					<textarea name="address" id="venue-address" cols="50" rows="3">{$venue_address | @esc}</textarea>
-					<a href="#" id="venue-lookup-address" data-api-key="{$mapzen_api_key | @esc}">find it on the map</a>
+					<textarea name="address" id="venue-address" cols="50" rows="3">{$venue_address|escape}</textarea>
+					<a href="#" id="venue-lookup-address" data-api-key="{$mapzen_api_key|escape}">find it on the map</a>
 				</div>
 				<div class="form-group">
 					<label for="venue-tags">Tags <small>(comma-separated)</small></label>
-					<input type="text" name="tags" id="venue-tags" value="{$venue_tags | @esc}">
+					<input type="text" name="tags" id="venue-tags" value="{$venue_tags|escape}">
 				</div>
 				<div class="form-group">
 					<small><a href="#" id="property-preview-link">Preview property assignments</a></small>
 					<div id="property-preview"></div>
 				</div>
-				<input type="submit" value="{$button_label | @esc}" class="btn btn-primary">
+				<input type="submit" value="{$button_label|escape}" id="submit-btn" class="btn btn-primary">
 			</form>
 		</div>
 		<div class="col-md-6">
-			<div id="map"{if $default_bbox} data-default-bbox="{$default_bbox | @esc}"{/if}></div>
+			<div id="map"{if $default_bbox} data-default-bbox="{$default_bbox|escape}"{/if}></div>
 		</div>
 	</div>
 </div>
