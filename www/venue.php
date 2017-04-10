@@ -45,24 +45,29 @@
 		);
 
 		if ($settings['wof_ids'] &&
-		    $settings['wof_ids'][$page - 1]) {
+		    $settings['wof_ids'][$page - 1] &&
+		    $settings['wof_ids'][$page - 1] != -1) {
 			$wof_id = $settings['wof_ids'][$page - 1];
 			$path = wof_utils_find_id($wof_id);
-			$geojson = file_get_contents($path);
-			$feature = json_decode($geojson, 'as hash');
-			$props = $feature['properties'];
+			if (file_exists($path)) {
+				$geojson = file_get_contents($path);
+				$feature = json_decode($geojson, 'as hash');
+				$props = $feature['properties'];
 
-			$GLOBALS['smarty']->assign('wof_id', $wof_id);
-			$GLOBALS['smarty']->assign('button_label', 'Save venue');
+				$GLOBALS['smarty']->assign('wof_id', $wof_id);
+				$GLOBALS['smarty']->assign('button_label', 'Save venue');
 
-			$assignments['wof:name'] = $props['wof:name'];
-			$assignments['addr:full'] = $props['addr:full'];
-			$assignments['wof:tags'] = $props['wof:tags'];
+				$assignments['wof:name'] = $props['wof:name'];
+				$assignments['addr:full'] = $props['addr:full'];
+				$assignments['wof:tags'] = $props['wof:tags'];
 
-			// For some reason tags are getting encoded as a plain
-			// string, not an array of strings. (20170405/dphiffer)
-			if (is_scalar($assignments['wof:tags'])) {
-				$assignments['wof:tags'] = array($assignments['wof:tags']);
+				// For some reason tags are getting encoded as a plain
+				// string, not an array of strings. (20170405/dphiffer)
+				if (is_scalar($assignments['wof:tags'])) {
+					$assignments['wof:tags'] = array($assignments['wof:tags']);
+				}
+			} else {
+				$GLOBALS['smarty']->assign('error_wof_not_found', 1);
 			}
 		}
 
