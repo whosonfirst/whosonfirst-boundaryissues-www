@@ -711,7 +711,7 @@ body.user-can-edit #edit-disallowed {
 	font-size: 14px;
 	font-family: menlo, monospace;
 	border-bottom: 1px solid #fff;
-	padding: 4px 0.5em;
+	padding: 8px 0.5em;
 	background: #ededed;
 	vertical-align: top;
 }

@@ -195,15 +195,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var esc_address = encodeURIComponent(address);
 			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
 			var onsuccess = function(rsp) {
-				console.log(rsp);
-				/*if (rsp && rsp.features && rsp.features.length == 1) {
+				if (rsp && rsp.features && rsp.features.length == 1) {
 					var c = rsp.features[0].geometry.coordinates;
 					var lng = c[0];
 					var lat = c[1];
 					self.select_geocoded(lat, lng);
-				} else*/ if (rsp && rsp.features) {
+				} else if (rsp && rsp.features && rsp.features.length > 1) {
 					var html = '<ul class="list-group">';
-					//console.log(rsp.features);
 					$.each(rsp.features, function(i, f) {
 						var c = f.geometry.coordinates;
 						var lng = c[0];
@@ -262,10 +260,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			self.set_property('geom:longitude', ll.lng);
 		},
 
-		update_name: function() {
+		update_name: function(disable_nearby_check) {
 			var name = $('input[name="name"]').val();
 			self.set_property('wof:name', name);
-			self.check_nearby();
+			if (! disable_nearby_check) {
+				self.check_nearby();
+			}
 		},
 
 		update_address: function() {
@@ -305,9 +305,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary">Same place</a> <a href="#" class="btn btn-default">Ignore</a></p></div>');
 					$('#dupe-alert a.btn-primary').click(function(e) {
 						e.preventDefault();
-						$('#venue form').append('<input type="hidden" name="wof_id" value="' + wof_id + '">');
+						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
 						$('#dupe-alert').remove();
 						$('#venue-response').html('<div class="alert alert-info">This CSV row will be merged with an existing record. Edit the <a href="' + url + '">full record</a>?</div>');
+						check_for_wof_id();
 					});
 					$('#dupe-alert a.btn-default').click(function(e) {
 						e.preventDefault();
@@ -516,11 +517,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		var onsuccess = function(rsp) {
 			properties = rsp.properties;
+			self.properties = properties;
 			var lat = parseFloat(properties['geom:latitude']);
 			var lng = parseFloat(properties['geom:longitude']);
 			self.map.setView([lat, lng], 16);
 			slippymap.crosshairs.init(self.map);
-			self.check_nearby();
+			check_for_assignments();
+			self.update_name("disable nearby check");
+			self.update_address();
+			self.update_tags();
 		};
 
 		var onerror = function(rsp) {
@@ -530,9 +535,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		var path = '/id/' + wof_id + '.geojson';
 		var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
 		mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
-
-		var path = '/id/' + wof_id + '/';
-		var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
 
 		return true;
 	}
@@ -563,7 +565,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			});
 			slippymap.crosshairs.init(self.map);
 			self.check_nearby();
-		} else {
+		} else if (assignments['addr:full']) {
 			self.geocode_address(assignments['addr:full'], function() {
 				slippymap.crosshairs.init(self.map);
 				self.check_nearby(); // check nearby
