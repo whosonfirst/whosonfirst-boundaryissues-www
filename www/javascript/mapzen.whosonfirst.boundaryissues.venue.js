@@ -522,7 +522,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var lng = parseFloat(properties['geom:longitude']);
 			self.map.setView([lat, lng], 16);
 			slippymap.crosshairs.init(self.map);
-			check_for_assignments();
+			check_for_assignments("disable nearby check");
 			self.update_name("disable nearby check");
 			self.update_address();
 			self.update_tags();
@@ -539,7 +539,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		return true;
 	}
 
-	function check_for_assignments() {
+	function check_for_assignments(disable_nearby_check) {
 		var $properties = $('input.property');
 		if ($properties.length == 0) {
 			return false;
@@ -564,11 +564,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				lng: lng
 			});
 			slippymap.crosshairs.init(self.map);
-			self.check_nearby();
+			if (! disable_nearby_check) {
+				self.check_nearby();
+			}
 		} else if (assignments['addr:full']) {
 			self.geocode_address(assignments['addr:full'], function() {
 				slippymap.crosshairs.init(self.map);
-				self.check_nearby(); // check nearby
+				if (! disable_nearby_check) {
+					self.check_nearby();
+				}
 			});
 		}
 
