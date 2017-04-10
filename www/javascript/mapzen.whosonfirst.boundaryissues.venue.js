@@ -195,8 +195,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var esc_address = encodeURIComponent(address);
 			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
 			var onsuccess = function(rsp) {
-				if (rsp && rsp.features && rsp.features.length > 0) {
-					var html = '<ul>';
+				console.log(rsp);
+				/*if (rsp && rsp.features && rsp.features.length == 1) {
+					var c = rsp.features[0].geometry.coordinates;
+					var lng = c[0];
+					var lat = c[1];
+					self.select_geocoded(lat, lng);
+				} else*/ if (rsp && rsp.features) {
+					var html = '<ul class="list-group">';
+					//console.log(rsp.features);
 					$.each(rsp.features, function(i, f) {
 						var c = f.geometry.coordinates;
 						var lng = c[0];
@@ -205,24 +212,32 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						if (f.properties.locality) {
 							label += ', ' + f.properties.locality;
 						}
-						if (f.properties.region) {
-							label += ', ' + f.properties.region;
+						if (f.properties.region_a) {
+							label += ', ' + f.properties.region_a;
 						}
-						html += '<li><a href="#" data-lat="' + htmlspecialchars(lat) + '" data-lng="' + htmlspecialchars(lng) + '" class="geocoded">' + htmlspecialchars(label) + '</a></li>';
+						html += '<li class="list-group-item"><a href="#" data-lat="' + htmlspecialchars(lat) + '" data-lng="' + htmlspecialchars(lng) + '" class="geocoded">' + htmlspecialchars(label) + '</a></li>';
 					});
 					html += '</ul>';
 
-					if (! $('#venue-lookup-geocoded')) {
-						$('<div id="venue-lookup-geocoded"></div>').after('#venue-lookup-address');
+					if ($('#venue-lookup-geocoded').length == 0) {
+						$('#venue-lookup-address').after('<div id="venue-lookup-geocoded"></div>');
 					}
 
 					$('#venue-lookup-geocoded').html(html);
 					$('#venue-lookup-geocoded a.geocoded').click(function(e) {
-						self.select_geocoded(e.target);
+						e.preventDefault();
+						var lat = parseFloat($(e.target).data('lat'));
+						var lng = parseFloat($(e.target).data('lng'));
+						self.select_geocoded(lat, lng);
+						$('#venue-lookup-geocoded').html('');
+						$('#venue-lookup-address').removeClass('choose-address');
 					});
 
 					var first_link = $('#venue-lookup-geocoded a.geocoded').get(0);
-					self.select_geocoded(first_link);
+					var lat = parseFloat($(first_link).data('lat'));
+					var lng = parseFloat($(first_link).data('lng'));
+					self.select_geocoded(lat, lng);
+					$('#venue-lookup-address').addClass('choose-address');
 				} else {
 					$('#venue-lookup-geocoded').html('<i>No results</i>');
 				}
@@ -239,10 +254,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
 		},
 
-		select_geocoded: function(link) {
-			console.log(link);
-			var lat = parseFloat($(link).data('lat'));
-			var lng = parseFloat($(link).data('lng'));
+		select_geocoded: function(lat, lng) {
 			self.map.setView([lat, lng], 16);
 			var ll = self.map.getCenter();
 			self.lookup_hierarchy(ll);

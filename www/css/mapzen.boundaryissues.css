@@ -633,6 +633,15 @@ body.user-can-edit #edit-disallowed {
 	color: #999;
 }
 
+#venue-lookup-address.choose-address::after {
+	content: " choose a result";
+	color: #999;
+}
+
+#venue-lookup-geocoded {
+	margin-top: 10px;
+}
+
 #csv-controls {
 	margin-top: 1em;
 }
