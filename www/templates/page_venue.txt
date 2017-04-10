@@ -26,11 +26,11 @@
 		<div class="col-md-6">
 			<form action="{$cfg.abs_root_url}venue/" method="post">
 				<input type="hidden" name="coords" value="">
-				<input type="hidden" name="csv_id" value="{$csv_id | @esc}" id="csv_id">
-				<input type="hidden" name="csv_row" value="{$csv_row | @esc}" id="csv_row">
-				<input type="hidden" name="csv_row_count" value="{$csv_row_count | @esc}" id="csv_row_count">
+				<input type="hidden" name="csv_id" value="{$csv_id|escape}" id="csv_id">
+				<input type="hidden" name="csv_row" value="{$csv_row|escape}" id="csv_row">
+				<input type="hidden" name="csv_row_count" value="{$csv_row_count|escape}" id="csv_row_count">
 				{if $wof_id}
-					<input type="hidden" name="wof_id" value="{$wof_id | @esc}" id="wof_id">
+					<input type="hidden" name="wof_id" value="{$wof_id|escape}" id="wof_id">
 				{else}
 					{foreach from=$assignments key=key item=value}
 						<input type="hidden" name="{$key | @esc}" value="{$value | @esc}" class="property">
@@ -38,7 +38,9 @@
 				{/if}
 				<div id="venue-response" class="headroom">
 					{if $error_wof_not_found}
-						<div class="alert alert-danger">This CSV row has a <code>wof_id</code> value that doesn’t match any known WOF records. Please proceed with caution.</div>
+						<div class="alert alert-danger">This CSV row has a <code>wof_id</code> value (<code>{$wof_id|escape}</code>) that doesn’t match any known WOF records. Please proceed with caution.</div>
+					{elseif $wof_id and $wof_id != -1}
+						<div class="alert alert-info">This CSV row has already been imported. Edit the <a href="{$cfg.abs_root_url}id/{$wof_id|escape}">full record</a>?</div>
 					{/if}
 				</div>
 				<div class="form-group">

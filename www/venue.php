@@ -48,13 +48,13 @@
 		    $settings['wof_ids'][$page - 1] &&
 		    $settings['wof_ids'][$page - 1] != -1) {
 			$wof_id = $settings['wof_ids'][$page - 1];
+			$GLOBALS['smarty']->assign('wof_id', $wof_id);
 			$path = wof_utils_find_id($wof_id);
 			if (file_exists($path)) {
 				$geojson = file_get_contents($path);
 				$feature = json_decode($geojson, 'as hash');
 				$props = $feature['properties'];
 
-				$GLOBALS['smarty']->assign('wof_id', $wof_id);
 				$GLOBALS['smarty']->assign('button_label', 'Save venue');
 
 				$assignments['wof:name'] = $props['wof:name'];

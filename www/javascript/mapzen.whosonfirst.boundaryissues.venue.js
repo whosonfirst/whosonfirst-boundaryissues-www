@@ -512,7 +512,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		};
 
 		var onerror = function(rsp) {
-			$('#venue-response').html('<div class="alert alert-danger">Something went wrong while retrieving the properties for this venue. Please proceed with caution.</div>');
 			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id);
 		};
 
@@ -522,7 +521,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		var path = '/id/' + wof_id + '/';
 		var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(path);
-		$('#venue-response').html('<div class="alert alert-info">This CSV row has already been imported. Edit the <a href="' + edit_url + '">full record</a>?</div>');
 
 		return true;
 	}
