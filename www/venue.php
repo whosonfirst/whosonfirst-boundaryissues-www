@@ -74,6 +74,10 @@
 		$path = $GLOBALS['cfg']['wof_pending_dir'] . 'csv/' . $settings['filename'];
 		$column_properties = explode(',', $settings['column_properties']);
 
+		if ($settings['geom_source']) {
+			$assignments['src:geom'] = $settings['geom_source'];
+		}
+
 		$csv_file_handle = fopen($path, 'r');
 
 		if ($settings['has_headers'] ||

@@ -646,10 +646,23 @@ body.user-can-edit #edit-disallowed {
 	margin-top: 1em;
 }
 
-#property-prefix {
+#csv-controls label[for="property-prefix"],
+#csv-controls label[for="geometry-source"] {
+	width: 138px;
+}
+
+#csv-controls .input-group {
+	margin-top: 10px;
+}
+
+#property-prefix, #geometry-source {
 	margin-left: 10px;
 	font-family: menlo, monospace;
 	font-size: 14px;
+}
+
+#geometry-source-link {
+	margin-left: 10px;
 }
 
 #csv-columns {

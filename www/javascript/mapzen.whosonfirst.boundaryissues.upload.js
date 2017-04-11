@@ -278,6 +278,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			csv_controls += ' <label for="csv-headers">First CSV row is column headers</label>';
 			csv_controls += '</div>';
 			csv_controls += '<div class="input-group">';
+			csv_controls += '<label for="geometry-source">Geometry source</label>';
+			csv_controls += '<input type="text" id="geometry-source" size="10" value="mapzen">';
+			csv_controls += '<span id="geometry-source-link"></span>';
+			csv_controls += '</div>';
+			csv_controls += '<div class="input-group">';
 			csv_controls += '<label for="property-prefix">Property prefix</label>';
 			csv_controls += '<input type="text" id="property-prefix" size="10" value="misc">';
 			csv_controls += '</div>';
@@ -345,7 +350,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 				update_preview();
 			});
-			$('#property-prefix').change(function() {
+
+			function update_property_prefix() {
 				var prefix = $('#property-prefix').val();
 				if (prefix == '') {
 					prefix = 'misc';
@@ -358,7 +364,47 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					var options = property_select_options(default_value, select.selectedIndex);
 					$(select).html(options);
 				});
-			});
+			}
+			$('#property-prefix').change(update_property_prefix);
+
+			function lookup_source() {
+				var source_id = $('#geometry-source').val();
+				if (source_id == '') {
+					$('#geometry-source').html('');
+					return;
+				}
+
+				function onsuccess(rsp) {
+					var found = false;
+					$.each(rsp, function(id, spec) {
+						if (spec.name == source_id) {
+							found = true;
+							var link = htmlspecialchars(spec.fullname);
+							if (spec.url) {
+								link = '<a href="https://github.com/whosonfirst/whosonfirst-sources/tree/master/sources#' + htmlspecialchars(source_id) + '">' + link + '</a>';
+							}
+							$('#geometry-source-link').html('Known source: ' + link);
+							$('#property-prefix').val(spec.prefix);
+							update_property_prefix();
+						}
+					});
+					if (! found) {
+						$('#geometry-source-link').html('<i>Unknown source</i> (see: <a href="https://github.com/whosonfirst/whosonfirst-sources/tree/master/sources#sources">whosonfirst-sources</a>)');
+					}
+				}
+
+				function onerror(rsp) {
+					$('#geometry-source-link').html('Error looking up source');
+					mapzen.whosonfirst.log.error(rsp);
+				}
+
+				var sources_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/sources.json');
+				var cache_ttl = 12 * 60 * 60 * 1000; // 12 hours
+				mapzen.whosonfirst.net.fetch(sources_url, onsuccess, onerror, cache_ttl);
+			}
+
+			lookup_source();
+			$('#geometry-source').change(lookup_source);
 		},
 
 		setup_map_preview: function(geojson) {
@@ -597,6 +643,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				data.append('column_properties', properties);
 				data.append('row_count', csv_row_count);
 				data.append('has_headers', has_headers);
+				data.append('geom_source', $('#geometry-source').val());
 
 			} else {
 
