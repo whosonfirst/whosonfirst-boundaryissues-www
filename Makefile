@@ -126,3 +126,6 @@ es-index:
 
 categories:
 	curl -s -o www/meta/categories.json https://raw.githubusercontent.com/whosonfirst/whosonfirst-categories/master/meta/categories.json
+
+sources:
+	curl -s -o www/meta/sources.json https://raw.githubusercontent.com/whosonfirst/whosonfirst-sources/master/data/sources-spec-latest.json
