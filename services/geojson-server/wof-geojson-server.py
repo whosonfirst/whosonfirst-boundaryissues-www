@@ -162,15 +162,17 @@ def nearby():
 
 		rsp = api.execute_method(method, args)
 
-		for pl in rsp['places']:
-			results.append(pl)
+		if rsp['places']:
+			for pl in rsp['places']:
+				results.append(pl)
 
 	method = "whosonfirst.places.getNearby"
 	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
 
 	rsp = api.execute_method(method, args)
-	for pl in rsp['places']:
-		results.append(pl)
+	if rsp['places']:
+		for pl in rsp['places']:
+			results.append(pl)
 
 	return jsonify(ok=1, results=results)
 
