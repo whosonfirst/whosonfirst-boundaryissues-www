@@ -60,10 +60,27 @@
 	########################################################################
 
 	function api_wof_places_get_nearby(){
-		// We used to do this lookup ourselves by talking to tile38, but
-		// now that there's a WOF API we just pass the request along.
-		// (20170331/dphiffer)
-		api_wof_utils_passthrough('whosonfirst.places.getNearby');
+		$vars = array(
+			'latitude' => post_float('latitude'),
+			'longitude' => post_float('longitude'),
+			'placetype' => post_str('placetype')
+		);
+		$query = http_build_query($vars);
+
+		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/nearby";
+		$headers = array();
+		$more = array(
+			'http_timeout' => 10 // let this run for up to 10s
+		);
+		$rsp = http_get("{$url}?$query", $headers, $more);
+
+		if (! $rsp['ok']) {
+			$error = $rsp['error'] ? $rsp['error'] : 'Error talking to the PIP service.';
+			api_output_error(400, $error);
+		}
+
+		$results = json_decode($rsp['body'], true);
+		api_output_ok($results);
 	}
 
 	########################################################################

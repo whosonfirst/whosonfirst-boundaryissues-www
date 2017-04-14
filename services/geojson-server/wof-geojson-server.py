@@ -133,11 +133,12 @@ def geojson_hierarchy():
 
 	return jsonify(ok=1, hierarchy=hierarchy, parents=parents)
 
-@app.route('/dupes', methods=['GET'])
-def dupes():
+@app.route('/nearby', methods=['GET'])
+def nearby():
 
 	# Please put me in a config file
 	access_key = "mapzen-Gvj9yGE"
+
 	api = mapzen.whosonfirst.api.client.Mapzen(access_key)
 
 	lat = float(request.args.get('latitude'))
