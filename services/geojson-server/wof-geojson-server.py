@@ -15,6 +15,7 @@ import mapzen.whosonfirst.search
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.pip.utils
+import mapzen.whosonfirst.api.client
 
 app = Flask(__name__)
 
@@ -131,6 +132,46 @@ def geojson_hierarchy():
 		return jsonify(ok=0, error=error)
 
 	return jsonify(ok=1, hierarchy=hierarchy, parents=parents)
+
+@app.route('/dupes', methods=['GET'])
+def dupes():
+
+	# Please put me in a config file
+	access_key = "mapzen-Gvj9yGE"
+	api = mapzen.whosonfirst.api.client.Mapzen(access_key)
+
+	lat = float(request.args.get('latitude'))
+	lng = float(request.args.get('longitude'))
+	name = request.args.get('name')
+
+	results = []
+
+	method = 'whosonfirst.places.getByLatLon'
+	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
+
+	rsp = api.execute_method(method, args)
+
+	places = rsp['places']
+	if (len(places) > 0):
+		first = places[0]
+		wofid = first['wof:id']
+
+		method = 'whosonfirst.places.search'
+		args = { 'neighbourhood_id': wofid, 'names': name, 'extras': 'addr:' }
+
+		rsp = api.execute_method(method, args)
+
+		for pl in rsp['places']:
+			results.append(pl)
+
+	method = "whosonfirst.places.getNearby"
+	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
+
+	rsp = api.execute_method(method, args)
+	for pl in rsp['places']:
+		results.append(pl)
+
+	return jsonify(ok=1, results=results)
 
 if __name__ == "__main__":
 	import sys
