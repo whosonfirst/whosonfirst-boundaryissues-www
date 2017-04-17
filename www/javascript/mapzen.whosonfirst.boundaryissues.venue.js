@@ -191,7 +191,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		geocode_address: function(address, cb) {
-			var api_key = $('#venue-lookup-address').data('api-key');
+			//var api_key = $('#venue-lookup-address').data('api-key');
+			// Hardcoding this until we work out the spatial stuff on prod
+			var api_key = 'mapzen-LhT76h5';
+
 			var esc_address = encodeURIComponent(address);
 			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
 			var onsuccess = function(rsp) {
@@ -286,36 +289,18 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		check_nearby: function() {
-
 			var center = self.map.getCenter();
 			var method = 'wof.places.get_nearby';
 			var args = {
 				latitude: center.lat,
 				longitude: center.lng,
 				placetype: 'venue',
+				name: $('input[name="name"]').val(),
 				per_page: 250
 			};
 			var onsuccess = function(rsp) {
-				var nearby = self.get_nearby_places(rsp.places);
-				if (nearby.length > 0) {
-					var place = nearby[0];
-					var wof_id = htmlspecialchars(place['wof:id']);
-					var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
-					var name = htmlspecialchars(place['wof:name']);
-					$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary">Same place</a> <a href="#" class="btn btn-default">Ignore</a></p></div>');
-					$('#dupe-alert a.btn-primary').click(function(e) {
-						e.preventDefault();
-						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
-						$('#dupe-alert').remove();
-						$('#venue-response').html('<div class="alert alert-info">This CSV row will be merged with <a href="' + url + '">the existing record</a>.</div>');
-						$('#submit-btn').attr('value', 'Save venue');
-						check_for_wof_id();
-					});
-					$('#dupe-alert a.btn-default').click(function(e) {
-						e.preventDefault();
-						$('#venue-response').html('');
-					});
-				}
+				// sudo convert this async chain into promises
+				self.check_neighborhood(rsp.places);
 			};
 			var onerror = function(rsp) {
 				console.error(rsp);
@@ -323,7 +308,57 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
 		},
 
-		get_nearby_places: function(places) {
+		check_neighborhood(places) {
+			if (! self.properties['wof:hierarchy']) {
+				// Ok, now we *really* should be using promises
+				// Just skip the neighborhood search for now.
+				console.log('skipping neighborhood search');
+				self.show_dupe_candidate(places);
+			}
+			var center = self.map.getCenter();
+			var method = 'wof.places.search';
+			var args = {
+				latitude: center.lat,
+				longitude: center.lng,
+				placetype: 'venue',
+				name: $('input[name="name"]').val(),
+				per_page: 250
+			};
+			var onsuccess = function(rsp) {
+				self.show_dupe_candidate(rsp.places);
+			};
+			var onerror = function(rsp) {
+				console.error(rsp);
+			};
+			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
+		},
+
+		show_dupe_candidate: function(places) {
+			var dupes = self.get_dupe_candidates(places);
+			if (dupes.length > 0) {
+				var place = dupes[0];
+				var wof_id = htmlspecialchars(place['wof:id']);
+				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
+				var name = htmlspecialchars(place['wof:name']);
+				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary">Same place</a> <a href="#" class="btn btn-default">Ignore</a></p></div>');
+				$('#dupe-alert a.btn-primary').click(function(e) {
+					e.preventDefault();
+					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
+					$('#dupe-alert').remove();
+					$('#venue-response').html('<div class="alert alert-info">This CSV row will be merged with <a href="' + url + '">the existing record</a>.</div>');
+					$('#submit-btn').attr('value', 'Save venue');
+					check_for_wof_id();
+				});
+				$('#dupe-alert a.btn-default').click(function(e) {
+					e.preventDefault();
+					$('#venue-response').html('');
+				});
+			} else {
+				$('#venue-response').html('');
+			}
+		},
+
+		get_dupe_candidates: function(places) {
 
 			var name = $('input[name="name"]').val();
 			var stop_list = ['the'];
@@ -584,6 +619,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.check_nearby();
 				}
 			});
+		} else {
+			console.log('We are on null island');
 		}
 
 		return true;

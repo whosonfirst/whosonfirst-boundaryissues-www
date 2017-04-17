@@ -136,6 +136,10 @@ def geojson_hierarchy():
 @app.route('/nearby', methods=['GET'])
 def nearby():
 
+	# PLEASE NOTE
+	# This method does not work. Leaving it here for debugging purposes.
+	# (20170416/dphiffer)
+
 	# Please put me in a config file
 	access_key = "mapzen-Gvj9yGE"
 
@@ -151,9 +155,11 @@ def nearby():
 	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
 
 	rsp = api.execute_method(method, args)
+	print method
+	print rsp
 
-	places = rsp['places']
-	if (len(places) > 0):
+	if (rsp['places'] and len(rsp['places']) > 0):
+		places = rsp['places']
 		first = places[0]
 		wofid = first['wof:id']
 
@@ -170,7 +176,12 @@ def nearby():
 	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
 
 	rsp = api.execute_method(method, args)
-	if rsp['places']:
+	# Getting an 513 error here
+	# (20170416/dphiffer)
+
+	print method
+	print rsp
+	if (rsp['places'] and len(rsp['places']) > 0):
 		for pl in rsp['places']:
 			results.append(pl)
 
