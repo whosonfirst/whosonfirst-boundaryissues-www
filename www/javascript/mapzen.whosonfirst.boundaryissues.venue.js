@@ -105,7 +105,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, onerror);
 		},
 
-		'lookup_hierarchy': function(ll) {
+		lookup_hierarchy: function(ll) {
+
+			self.looking_up_hierarchy = true;
 
 			var data = {
 				latitude: ll.lat,
@@ -114,6 +116,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 
 			var onsuccess = function(rsp) {
+				self.looking_up_hierarchy = false;
 				if (! rsp.ok) {
 					var message = 'Error reverse geocoding';
 					if (rsp.error) {
@@ -132,9 +135,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				} else {
 					self.set_property('wof:hierarchy', []);
 				}
+				if (self.hierarchy_callback) {
+					self.hierarchy_callback();
+				}
 			}
 
 			var onerror = function(rsp) {
+				self.looking_up_hierarchy = false;
 				mapzen.whosonfirst.log.error('Error reverse geocoding.');
 			};
 
@@ -299,6 +306,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				per_page: 250
 			};
 			var onsuccess = function(rsp) {
+				console.log('got places!', rsp.places);
 				// sudo convert this async chain into promises
 				self.check_neighborhood(rsp.places);
 			};
@@ -311,9 +319,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		check_neighborhood(places) {
 			if (! self.properties['wof:hierarchy']) {
 				// Ok, now we *really* should be using promises
-				// Just skip the neighborhood search for now.
-				console.log('skipping neighborhood search');
-				self.show_dupe_candidate(places);
+				if (self.looking_up_hierarchy) {
+					self.hierarchy_callback = function() {
+						self.check_neighborhood(places);
+						self.hierarchy_callback = null;
+					};
+				}
+				return;
 			}
 			var center = self.map.getCenter();
 			var method = 'wof.places.search';
@@ -333,15 +345,26 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
 		},
 
-		show_dupe_candidate: function(places) {
-			var dupes = self.get_dupe_candidates(places);
+		show_dupe_candidate: function(places, index) {
+			if (! index) {
+				index = 0;
+			}
+			if (! self.dupe_candidates) {
+				console.log(places);
+				// Cache the dupe candidates for 'next' button
+				var dupes = self.get_dupe_candidates(places);
+				self.dupe_candidates = dupes;
+			} else {
+				var dupes = self.dupe_candidates;
+			}
+			console.log('dupes', dupes);
 			if (dupes.length > 0) {
-				var place = dupes[0];
+				var place = dupes[index];
 				var wof_id = htmlspecialchars(place['wof:id']);
 				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
 				var name = htmlspecialchars(place['wof:name']);
-				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary">Same place</a> <a href="#" class="btn btn-default">Ignore</a></p></div>');
-				$('#dupe-alert a.btn-primary').click(function(e) {
+				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary" id="dupe-same">Same place</a> <a href="#" class="btn btn-default" id="dupe-next">Try next</a> <a href="#" class="btn btn-default" id="dupe-ignore">Ignore</a></p></div>');
+				$('#dupe-same').click(function(e) {
 					e.preventDefault();
 					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
 					$('#dupe-alert').remove();
@@ -349,9 +372,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					$('#submit-btn').attr('value', 'Save venue');
 					check_for_wof_id();
 				});
-				$('#dupe-alert a.btn-default').click(function(e) {
+				$('#dupe-ignore').click(function(e) {
 					e.preventDefault();
 					$('#venue-response').html('');
+				});
+				$('#dupe-next').click(function(e) {
+					e.preventDefault();
+					index++;
+					if (index == places.length) {
+						index = 0;
+					}
+					self.show_dupe_candidate(places, index);
 				});
 			} else {
 				$('#venue-response').html('');
