@@ -598,6 +598,10 @@ body.user-can-edit #edit-disallowed {
 	display: none;
 }
 
+#venue form {
+	margin-top: 2.5em;
+}
+
 #venue .form-group {
 	width: 100%;
 	max-width: 360px;
@@ -663,6 +667,46 @@ body.user-can-edit #edit-disallowed {
 
 #geometry-source-link {
 	margin-left: 10px;
+}
+
+#csv-columns {
+	margin-top: 1em;
+}
+
+#bbox-default {
+	float: right;
+	font-weight: normal;
+	font-size: 11px;
+	margin-right: 10px;
+}
+
+#bbox-default.bbox-saved::after {
+	content: " (saved)";
+	color: #999;
+}
+
+#venue-dupes-notice {
+	font-size: 12px;
+}
+
+#venue-lookup-address {
+	font-size: 11px;
+	font-weight: normal;
+}
+
+#venue-lookup-address.loading::after {
+	content: " (loading)";
+	color: #999;
+}
+
+#csv-controls {
+	margin-top: 1em;
+}
+
+#property-prefix {
+	margin-left: 10px;
+	font-family: menlo, monospace;
+	font-size: 14px;
 }
 
 #csv-columns {
