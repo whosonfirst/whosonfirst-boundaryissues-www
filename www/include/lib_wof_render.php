@@ -316,7 +316,7 @@
 		foreach ($values['properties'] as $key => $value){
 			if (preg_match('/^name:(.+)_x_(.+)$/', $key, $matches)){
 				list(, $lang, $type) = $matches;
-				if (! $names[$lang]){
+				if (! $names['properties'][$lang]){
 					$names['properties'][$lang] = array(
 						'type' => 'object',
 						'properties' => array()
@@ -333,6 +333,7 @@
 					);
 				}
 			}
+
 			if (empty($names['properties'][$lang]['properties']['preferred'])) {
 				$names['properties'][$lang]['properties']['preferred'] = array(
 					'type' => 'array'
