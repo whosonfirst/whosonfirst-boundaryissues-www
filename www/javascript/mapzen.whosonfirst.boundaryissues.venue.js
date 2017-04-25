@@ -339,11 +339,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p><a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a> ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a duplicate</a></p></div>');
 				$('#dupe-same').click(function(e) {
 					e.preventDefault();
-					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
 					$('#dupe-alert').remove();
-					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">This CSV row will be merged with <a href="' + url + '">the existing record</a>.</div>');
-					$('#submit-btn').attr('value', 'Save venue');
-					check_for_wof_id();
+					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Saving to server...</div>');
+					var success_cb = function() {
+						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
+						$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>.');
+						$('#submit-btn').attr('value', 'Save venue');
+						check_for_wof_id();
+					}
+					self.set_wof_id(wof_id, success_cb);
 				});
 				$('#dupe-ignore').click(function(e) {
 					e.preventDefault();
@@ -413,6 +417,31 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 			});
 			return nearby;
+		},
+
+		set_wof_id: function(wof_id, success_cb, error_cb) {
+
+			var data = {
+				crumb: $('#venue').data('crumb-update-csv'),
+				csv_id: $('#csv_id').val(),
+				csv_row: $('#csv_row').val(),
+				wof_id: wof_id
+			};
+
+			var onsuccess = function(rsp) {
+				if (success_cb) {
+					success_cb(rsp);
+				}
+			};
+
+			var onerror = function(rsp) {
+				if (error_cb) {
+					error_cb(rsp);
+				}
+				mapzen.whosonfirst.log.error("error calling wof.update_csv");
+			};
+
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.update_csv", data, onsuccess, onerror);
 		}
 	};
 

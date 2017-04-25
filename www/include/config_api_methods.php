@@ -42,6 +42,20 @@
 			)
 		),
 
+		"wof.update_csv" => array (
+			"description" => "Update CSV import settings.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "csv_id", "description" => "Which CSV settings to update", "documented" => 1, "required" => 1),
+				array("name" => "wof_id", "description" => "The WOF ID to assign to a CSV row (combine with 'csv_row').", "documented" => 1, "required" => 0),
+				array("name" => "csv_row", "description" => "Which CSV row to update the WOF ID for (combine with 'wof_id').", "documented" => 1, "required" => 0),
+			)
+		),
+
 		"wof.save" => array (
 			"description" => "Save a WOF record.",
 			"documented" => 1,

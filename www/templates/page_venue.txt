@@ -1,6 +1,6 @@
 {include file='inc_head.txt' nav_tab='add'}
 
-<div id="venue" class="container" data-crumb-save="{$crumb_save|escape}">
+<div id="venue" class="container" data-crumb-save="{$crumb_save|escape}" data-crumb-update-csv="{$crumb_update_csv|escape}">
 	<div class="row">
 		<div class="col-md-12">
 			<h2>{$page_title | esc}</h2>
@@ -61,6 +61,9 @@
 					<div id="property-preview"></div>
 				</div>
 				<input type="submit" value="{$button_label|escape}" id="submit-btn" class="btn btn-primary">
+				{if $next_url}
+					<a href="{$next_url|escape}" class="btn btn-default">Skip</a>
+				{/if}
 			</form>
 		</div>
 		<div class="col-md-6">
