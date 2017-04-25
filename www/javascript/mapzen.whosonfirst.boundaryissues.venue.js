@@ -296,6 +296,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		check_nearby: function() {
+			$('#venue-response').html('<div class="alert alert-info">Checking for nearby duplicates...</div>');
 			var center = self.map.getCenter();
 			var method = 'wof.places.get_nearby';
 			var args = {
@@ -330,7 +331,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var wof_id = htmlspecialchars(place['wof:id']);
 				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
 				var name = htmlspecialchars(place['wof:name']);
-				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary" id="dupe-same">Same place</a> <a href="#" class="btn btn-default" id="dupe-next">Try next</a> <a href="#" class="btn btn-default" id="dupe-ignore">Ignore</a></p></div>');
+				var dupe_next_btn = '';
+				if (dupes.length > 1) {
+					dupe_next_btn = '<a href="#" class="btn btn-sm btn-default" id="dupe-next">Try next</a>';
+				}
+				var dupe_num = '(' + (index + 1) + ' of ' + dupes.length + ')';
+				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p><a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a> ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a duplicate</a></p></div>');
 				$('#dupe-same').click(function(e) {
 					e.preventDefault();
 					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
@@ -346,7 +352,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$('#dupe-next').click(function(e) {
 					e.preventDefault();
 					index++;
-					if (index == places.length) {
+					if (index == dupes.length) {
 						index = 0;
 					}
 					self.show_dupe_candidate(places, index);
