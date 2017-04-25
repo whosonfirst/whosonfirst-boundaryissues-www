@@ -306,38 +306,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				per_page: 250
 			};
 			var onsuccess = function(rsp) {
-				console.log('got places!', rsp.places);
-				// sudo convert this async chain into promises
-				self.check_neighborhood(rsp.places);
-			};
-			var onerror = function(rsp) {
-				console.error(rsp);
-			};
-			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
-		},
-
-		check_neighborhood(places) {
-			if (! self.properties['wof:hierarchy']) {
-				// Ok, now we *really* should be using promises
-				if (self.looking_up_hierarchy) {
-					self.hierarchy_callback = function() {
-						self.check_neighborhood(places);
-						self.hierarchy_callback = null;
-					};
-				}
-				return;
-			}
-			var center = self.map.getCenter();
-			var method = 'wof.places.search';
-			var args = {
-				latitude: center.lat,
-				longitude: center.lng,
-				placetype: 'venue',
-				name: $('input[name="name"]').val(),
-				per_page: 250
-			};
-			var onsuccess = function(rsp) {
-				self.show_dupe_candidate(rsp.places);
+				self.show_dupe_candidate(rsp.results);
 			};
 			var onerror = function(rsp) {
 				console.error(rsp);
@@ -350,14 +319,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				index = 0;
 			}
 			if (! self.dupe_candidates) {
-				console.log(places);
 				// Cache the dupe candidates for 'next' button
 				var dupes = self.get_dupe_candidates(places);
 				self.dupe_candidates = dupes;
 			} else {
 				var dupes = self.dupe_candidates;
 			}
-			console.log('dupes', dupes);
 			if (dupes.length > 0) {
 				var place = dupes[index];
 				var wof_id = htmlspecialchars(place['wof:id']);

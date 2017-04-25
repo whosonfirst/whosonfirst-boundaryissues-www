@@ -136,10 +136,6 @@ def geojson_hierarchy():
 @app.route('/nearby', methods=['GET'])
 def nearby():
 
-	# PLEASE NOTE
-	# This method does not work. Leaving it here for debugging purposes.
-	# (20170416/dphiffer)
-
 	# Please put me in a config file
 	access_key = "mapzen-Gvj9yGE"
 
@@ -150,40 +146,38 @@ def nearby():
 	name = request.args.get('name')
 
 	results = []
+	result_ids = []
 
 	method = 'whosonfirst.places.getByLatLon'
 	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
 
 	rsp = api.execute_method(method, args)
-	print method
-	print rsp
 
 	if (rsp['places'] and len(rsp['places']) > 0):
-		places = rsp['places']
-		first = places[0]
-		wofid = first['wof:id']
+		for neighbourhood in rsp['places']:
 
-		method = 'whosonfirst.places.search'
-		args = { 'neighbourhood_id': wofid, 'names': name, 'extras': 'addr:' }
+			wofid = neighbourhood['wof:id']
+			method = 'whosonfirst.places.search'
+			args = { 'neighbourhood_id': wofid, 'names': name, 'extras': 'addr:', 'placetype': 'venue' }
 
-		rsp = api.execute_method(method, args)
+			rsp = api.execute_method(method, args)
 
-		if rsp['places']:
-			for pl in rsp['places']:
-				results.append(pl)
+			if rsp['places']:
+				for pl in rsp['places']:
+					if pl['wof:id'] not in result_ids:
+						result_ids.append(pl['wof:id'])
+						results.append(pl)
 
 	method = "whosonfirst.places.getNearby"
 	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
 
 	rsp = api.execute_method(method, args)
-	# Getting an 513 error here
-	# (20170416/dphiffer)
 
-	print method
-	print rsp
 	if (rsp['places'] and len(rsp['places']) > 0):
 		for pl in rsp['places']:
-			results.append(pl)
+			if pl['wof:id'] not in result_ids:
+				result_ids.append(pl['wof:id'])
+				results.append(pl)
 
 	return jsonify(ok=1, results=results)
 
