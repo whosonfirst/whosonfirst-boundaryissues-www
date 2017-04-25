@@ -341,7 +341,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					e.preventDefault();
 					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
 					$('#dupe-alert').remove();
-					$('#venue-response').html('<div class="alert alert-info">This CSV row will be merged with <a href="' + url + '">the existing record</a>.</div>');
+					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">This CSV row will be merged with <a href="' + url + '">the existing record</a>.</div>');
 					$('#submit-btn').attr('value', 'Save venue');
 					check_for_wof_id();
 				});
@@ -570,6 +570,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		var onerror = function(rsp) {
 			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id);
+			$('#dupe-merged').html('<strong>Error</strong> could not find data for that place.');
+			$('#dupe-merged').removeClass('alert-info');
+			$('#dupe-merged').addClass('alert-danger');
 		};
 
 		var path = '/id/' + wof_id + '.geojson';
