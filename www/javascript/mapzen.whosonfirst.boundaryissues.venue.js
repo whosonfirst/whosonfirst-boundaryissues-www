@@ -291,7 +291,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var tags = [];
 			for (var i = 0; i < tag_list.length; i++) {
 				var t = tag_list[i].trim();
-				if (t != '' && tags.indexOf(t) != -1) {
+				if (t != '' && tags.indexOf(t) == -1) {
 					tags.push(t);
 				}
 			}
