@@ -9,13 +9,14 @@ import flask
 from flask import Flask, request, jsonify
 
 import geojson
+import requests
+import json
 import mapzen.whosonfirst.geojson
 import mapzen.whosonfirst.export
 import mapzen.whosonfirst.search
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.pip.utils
-import mapzen.whosonfirst.api.client
 
 app = Flask(__name__)
 
@@ -137,9 +138,7 @@ def geojson_hierarchy():
 def nearby():
 
 	# Please put me in a config file
-	access_key = "mapzen-Gvj9yGE"
-
-	api = mapzen.whosonfirst.api.client.Mapzen(access_key)
+	api_key = "mapzen-Gvj9yGE"
 
 	lat = float(request.args.get('latitude'))
 	lng = float(request.args.get('longitude'))
@@ -149,32 +148,36 @@ def nearby():
 	result_ids = []
 
 	method = 'whosonfirst.places.getByLatLon'
-	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
+	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
 
-	rsp = api.execute_method(method, args)
+	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
+	data = json.loads(rsp.content)
 
-	if (rsp['places'] and len(rsp['places']) > 0):
-		for neighbourhood in rsp['places']:
+	if (data['places'] and len(data['places']) > 0):
+		for neighbourhood in data['places']:
 
 			wofid = neighbourhood['wof:id']
 			method = 'whosonfirst.places.search'
-			args = { 'neighbourhood_id': wofid, 'names': name, 'extras': 'addr:', 'placetype': 'venue' }
+			params = { 'api_key': api_key, 'method': method, 'neighbourhood_id': wofid, 'names': name, 'extras': 'addr:', 'placetype': 'venue' }
 
-			rsp = api.execute_method(method, args)
+			rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
+			data = json.loads(rsp.content)
 
-			if rsp['places']:
-				for pl in rsp['places']:
+			if data['places']:
+				for pl in data['places']:
 					if pl['wof:id'] not in result_ids:
 						result_ids.append(pl['wof:id'])
 						results.append(pl)
 
 	method = "whosonfirst.places.getNearby"
-	args = { 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
+	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
 
-	rsp = api.execute_method(method, args)
+	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
+	print rsp.content
+	data = json.loads(rsp.content)
 
-	if (rsp['places'] and len(rsp['places']) > 0):
-		for pl in rsp['places']:
+	if (data['places'] and len(data['places']) > 0):
+		for pl in data['places']:
 			if pl['wof:id'] not in result_ids:
 				result_ids.append(pl['wof:id'])
 				results.append(pl)
