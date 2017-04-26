@@ -136,7 +136,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.set_property('wof:hierarchy', []);
 				}
 				if (self.hierarchy_callback) {
-					self.hierarchy_callback();
+					self.hierarchy_callback(rsp.hierarchy);
 				}
 			}
 
@@ -480,6 +480,18 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				self.set_country(rsp.country);
 				slippymap.crosshairs.init(map);
 			});
+		} else {
+			self.hierarchy_callback = function(hier) {
+				if (hier.length > 0) {
+					// Note: given the possibility of
+					// breaches, this is a simplification
+					// (20170426/dphiffer)
+					var country_id = hier[0].country_id;
+					mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
+						self.set_country(country);
+					});
+				}
+			};
 		}
 
 		map.on('moveend', function() {
