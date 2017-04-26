@@ -791,6 +791,10 @@ body.user-can-edit #edit-disallowed {
 	color: #fff;
 }
 
+#dupe-alert .btn + .btn {
+	margin-left: 5px;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {
