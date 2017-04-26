@@ -599,7 +599,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		var onerror = function(rsp) {
 			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id);
-			$('#dupe-merged').html('<strong>Error</strong> could not find data for that place.');
+			$('#dupe-merged').html('<strong>Error</strong> could not find data for WOF ID ' + wof_id + '.');
 			$('#dupe-merged').removeClass('alert-info');
 			$('#dupe-merged').addClass('alert-danger');
 		};
