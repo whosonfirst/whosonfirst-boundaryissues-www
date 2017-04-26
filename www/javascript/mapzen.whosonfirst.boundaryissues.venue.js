@@ -270,12 +270,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			self.set_property('geom:longitude', ll.lng);
 		},
 
-		update_name: function(disable_nearby_check) {
+		update_name: function() {
 			var name = $('input[name="name"]').val();
 			self.set_property('wof:name', name);
-			if (! disable_nearby_check) {
-				self.check_nearby();
-			}
+			self.check_nearby();
 		},
 
 		update_address: function() {
@@ -301,6 +299,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		check_nearby: function() {
+
+			if (self.disable_nearby_check) {
+				return false;
+			}
+
 			$('#venue-response').html('<div class="alert alert-info">Checking for nearby duplicates...</div>');
 			var center = self.map.getCenter();
 			var method = 'wof.places.get_nearby';
@@ -587,6 +590,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			return false;
 		}
 
+		self.disable_nearby_check = true;
 		var wof_id = $('#wof_id').val();
 
 		var onsuccess = function(rsp) {
@@ -603,7 +607,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		};
 
 		var onerror = function(rsp) {
-			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id);
+			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id + ' from local repo');
 			$('#dupe-merged').html('<strong>Error</strong> could not find data for WOF ID ' + wof_id + '.');
 			$('#dupe-merged').removeClass('alert-info');
 			$('#dupe-merged').addClass('alert-danger');
@@ -616,7 +620,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		return true;
 	}
 
-	function check_for_assignments(disable_nearby_check) {
+	function check_for_assignments() {
 		var $properties = $('input.property');
 		if ($properties.length == 0) {
 			return false;
@@ -650,15 +654,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				lng: lng
 			});
 			slippymap.crosshairs.init(self.map);
-			if (! disable_nearby_check) {
-				self.check_nearby();
-			}
+			self.check_nearby();
 		} else if (assignments['addr:full']) {
 			self.geocode_address(assignments['addr:full'], function() {
 				slippymap.crosshairs.init(self.map);
-				if (! disable_nearby_check) {
-					self.check_nearby();
-				}
+				self.check_nearby();
 			});
 		} else {
 			console.log('We are on null island');
