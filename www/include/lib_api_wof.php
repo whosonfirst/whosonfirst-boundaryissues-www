@@ -150,6 +150,41 @@
 
 	########################################################################
 
+	function api_wof_update_csv() {
+
+		$csv_id = post_str('csv_id');
+		$settings = users_settings_get_single($GLOBALS['cfg']['user'], "csv_$csv_id");
+
+		if (! $settings) {
+			api_output_error(400, 'Could not find that CSV ID.');
+		}
+
+		$settings = json_decode($settings, 'as hash');
+		$updated = array();
+
+		$csv_row = post_int32('csv_row');
+		$wof_id = post_int64('wof_id');
+
+		if ($csv_row && $wof_id) {
+			$index = $csv_row - 1;
+			$wof_ids = $settings['wof_ids'];
+			$wof_ids[$index] = $wof_id;
+			$settings['wof_ids'] = $wof_ids;
+			$updated[] = 'wof_ids';
+		}
+
+		$settings = json_encode($settings);
+		users_settings_set($GLOBALS['cfg']['user'], "csv_$csv_id", $settings);
+
+		api_output_ok(array(
+			'ok' => 1,
+			'csv_id' => $csv_id,
+			'updated' => $updated
+		));
+	}
+
+	########################################################################
+
 	function api_wof_save() {
 
 		$geojson = post_str('geojson');

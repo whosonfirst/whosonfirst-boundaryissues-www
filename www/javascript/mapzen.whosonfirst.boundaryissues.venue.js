@@ -296,6 +296,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		check_nearby: function() {
+			$('#venue-response').html('<div class="alert alert-info">Checking for nearby duplicates...</div>');
 			var center = self.map.getCenter();
 			var method = 'wof.places.get_nearby';
 			var args = {
@@ -306,38 +307,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				per_page: 250
 			};
 			var onsuccess = function(rsp) {
-				console.log('got places!', rsp.places);
-				// sudo convert this async chain into promises
-				self.check_neighborhood(rsp.places);
-			};
-			var onerror = function(rsp) {
-				console.error(rsp);
-			};
-			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
-		},
-
-		check_neighborhood(places) {
-			if (! self.properties['wof:hierarchy']) {
-				// Ok, now we *really* should be using promises
-				if (self.looking_up_hierarchy) {
-					self.hierarchy_callback = function() {
-						self.check_neighborhood(places);
-						self.hierarchy_callback = null;
-					};
-				}
-				return;
-			}
-			var center = self.map.getCenter();
-			var method = 'wof.places.search';
-			var args = {
-				latitude: center.lat,
-				longitude: center.lng,
-				placetype: 'venue',
-				name: $('input[name="name"]').val(),
-				per_page: 250
-			};
-			var onsuccess = function(rsp) {
-				self.show_dupe_candidate(rsp.places);
+				self.show_dupe_candidate(rsp.results);
 			};
 			var onerror = function(rsp) {
 				console.error(rsp);
@@ -350,27 +320,34 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				index = 0;
 			}
 			if (! self.dupe_candidates) {
-				console.log(places);
 				// Cache the dupe candidates for 'next' button
 				var dupes = self.get_dupe_candidates(places);
 				self.dupe_candidates = dupes;
 			} else {
 				var dupes = self.dupe_candidates;
 			}
-			console.log('dupes', dupes);
 			if (dupes.length > 0) {
 				var place = dupes[index];
 				var wof_id = htmlspecialchars(place['wof:id']);
 				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
 				var name = htmlspecialchars(place['wof:name']);
-				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a></p><p><a href="#" class="btn btn-primary" id="dupe-same">Same place</a> <a href="#" class="btn btn-default" id="dupe-next">Try next</a> <a href="#" class="btn btn-default" id="dupe-ignore">Ignore</a></p></div>');
+				var dupe_next_btn = '';
+				if (dupes.length > 1) {
+					dupe_next_btn = '<a href="#" class="btn btn-sm btn-default" id="dupe-next">Try next</a>';
+				}
+				var dupe_num = '(' + (index + 1) + ' of ' + dupes.length + ')';
+				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p><a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a> ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a duplicate</a></p></div>');
 				$('#dupe-same').click(function(e) {
 					e.preventDefault();
-					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
 					$('#dupe-alert').remove();
-					$('#venue-response').html('<div class="alert alert-info">This CSV row will be merged with <a href="' + url + '">the existing record</a>.</div>');
-					$('#submit-btn').attr('value', 'Save venue');
-					check_for_wof_id();
+					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Saving to server...</div>');
+					var success_cb = function() {
+						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
+						$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>.');
+						$('#submit-btn').attr('value', 'Save venue');
+						check_for_wof_id();
+					}
+					self.set_wof_id(wof_id, success_cb);
 				});
 				$('#dupe-ignore').click(function(e) {
 					e.preventDefault();
@@ -379,7 +356,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$('#dupe-next').click(function(e) {
 					e.preventDefault();
 					index++;
-					if (index == places.length) {
+					if (index == dupes.length) {
 						index = 0;
 					}
 					self.show_dupe_candidate(places, index);
@@ -440,6 +417,31 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 			});
 			return nearby;
+		},
+
+		set_wof_id: function(wof_id, success_cb, error_cb) {
+
+			var data = {
+				crumb: $('#venue').data('crumb-update-csv'),
+				csv_id: $('#csv_id').val(),
+				csv_row: $('#csv_row').val(),
+				wof_id: wof_id
+			};
+
+			var onsuccess = function(rsp) {
+				if (success_cb) {
+					success_cb(rsp);
+				}
+			};
+
+			var onerror = function(rsp) {
+				if (error_cb) {
+					error_cb(rsp);
+				}
+				mapzen.whosonfirst.log.error("error calling wof.update_csv");
+			};
+
+			mapzen.whosonfirst.boundaryissues.api.api_call("wof.update_csv", data, onsuccess, onerror);
 		}
 	};
 
@@ -597,6 +599,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		var onerror = function(rsp) {
 			mapzen.whosonfirst.log.error("unable to load WOF ID " + wof_id);
+			$('#dupe-merged').html('<strong>Error</strong> could not find data for that place.');
+			$('#dupe-merged').removeClass('alert-info');
+			$('#dupe-merged').addClass('alert-danger');
 		};
 
 		var path = '/id/' + wof_id + '.geojson';

@@ -60,11 +60,6 @@
 	########################################################################
 
 	function api_wof_places_get_nearby(){
-		/*
-
-		// Switching all this back to use the passthrough, since I can't
-		// seem to get the Python version working.
-		// (20170416/dphiffer)
 
 		$vars = array(
 			'latitude' => post_float('latitude'),
@@ -89,8 +84,7 @@
 		$results = json_decode($rsp['body'], true);
 		api_output_ok($results);
 
-		*/
-		api_wof_utils_passthrough('whosonfirst.places.getNearby');
+		//api_wof_utils_passthrough('whosonfirst.places.getNearby');
 	}
 
 	########################################################################
