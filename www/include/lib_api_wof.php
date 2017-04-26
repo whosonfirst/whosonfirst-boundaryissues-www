@@ -100,6 +100,7 @@
 
 		$has_headers = post_bool('has_headers');
 		$geom_source = post_str('geom_source');
+		$common_tags = post_str('common_tags');
 
 		$user_id = $GLOBALS['cfg']['user']['id'];
 		$csv_id = random_string('10');
@@ -137,7 +138,8 @@
 			'row_count' => $row_count,
 			'wof_ids' => $wof_ids,
 			'has_headers' => $has_headers,
-			'geom_source' => $geom_source
+			'geom_source' => $geom_source,
+			'common_tags' => $common_tags
 		);
 		$csv_settings = json_encode($csv_settings);
 		users_settings_set($GLOBALS['cfg']['user'], "csv_$csv_id", $csv_settings);

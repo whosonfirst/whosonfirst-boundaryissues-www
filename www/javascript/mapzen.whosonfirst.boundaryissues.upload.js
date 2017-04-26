@@ -287,6 +287,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			csv_controls += '<label for="property-prefix">Property prefix</label>';
 			csv_controls += '<input type="text" id="property-prefix" size="10" value="misc">';
 			csv_controls += '</div>';
+			csv_controls += '<div class="input-group">';
+			csv_controls += '<label for="common-tags">Common tags</label>';
+			csv_controls += '<input type="text" id="common-tags" size="30" value="">';
+			csv_controls += '</div>';
 			csv_controls += '</div>';
 
 			var table = '<table id="csv-columns">';
@@ -661,6 +665,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				data.append('row_count', csv_row_count);
 				data.append('has_headers', has_headers);
 				data.append('geom_source', $('#geometry-source').val());
+				data.append('common_tags', $('#common-tags').val());
 
 			} else {
 

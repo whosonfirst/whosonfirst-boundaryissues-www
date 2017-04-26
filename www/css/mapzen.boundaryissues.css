@@ -651,7 +651,8 @@ body.user-can-edit #edit-disallowed {
 }
 
 #csv-controls label[for="property-prefix"],
-#csv-controls label[for="geometry-source"] {
+#csv-controls label[for="geometry-source"],
+#csv-controls label[for="common-tags"] {
 	width: 138px;
 }
 
@@ -707,6 +708,10 @@ body.user-can-edit #edit-disallowed {
 	margin-left: 10px;
 	font-family: menlo, monospace;
 	font-size: 14px;
+}
+
+#common-tags {
+	margin-left: 10px;
 }
 
 #csv-columns {

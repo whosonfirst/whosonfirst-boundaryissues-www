@@ -40,9 +40,17 @@
 			$GLOBALS['smarty']->assign('prev_url', $prev_url);
 		}
 
+		$tags = array();
+		if ($settings['common_tags']) {
+			$tags = explode(',', $settings['common_tags']);
+			$tags = array_map('trim', $tags);
+		}
+
 		$assignments = array(
-			'wof:tags' => array()
+			'wof:tags' => $tags
 		);
+
+
 
 		if ($settings['wof_ids'] &&
 		    $settings['wof_ids'][$page - 1] &&
