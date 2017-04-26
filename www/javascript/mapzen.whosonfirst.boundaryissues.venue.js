@@ -279,7 +279,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		update_address: function() {
-			self.set_property('addr:full', $('textarea[name="address"]').val());
+			var address = $('textarea[name="address"]').val();
+			if (address != '') {
+				self.set_property('addr:full', address);
+			} else {
+				delete self.properties['wof:address'];
+			}
 		},
 
 		update_tags: function() {
