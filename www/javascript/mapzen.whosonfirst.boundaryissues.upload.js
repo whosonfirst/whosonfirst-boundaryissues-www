@@ -185,22 +185,23 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var options = '';
 				options += '<option value=""' + selected_attr(0, index_selected) + '>(ignore column)</option>';
 				options += '<option' + selected_attr(1, index_selected) + '>' + default_value + '</option>';
-				options += '<option' + selected_attr(2, index_selected) + '>wof:id</option>';
-				options += '<option' + selected_attr(3, index_selected) + '>wof:name</option>';
-				options += '<option' + selected_attr(4, index_selected) + '>geom:latitude</option>';
-				options += '<option' + selected_attr(5, index_selected) + '>geom:longitude</option>';
-				options += '<option' + selected_attr(6, index_selected) + '>addr:full</option>';
-				options += '<option' + selected_attr(7, index_selected) + '>addr:housenumber</option>';
-				options += '<option' + selected_attr(8, index_selected) + '>addr:street</option>';
-				options += '<option' + selected_attr(9, index_selected) + '>addr:housenumber addr:street</option>';
-				options += '<option' + selected_attr(10, index_selected) + '>addr:postcode</option>';
-				options += '<option' + selected_attr(11, index_selected) + '>addr:city</option>';
-				options += '<option' + selected_attr(12, index_selected) + '>addr:state</option>';
-				options += '<option' + selected_attr(13, index_selected) + '>addr:province</option>';
-				options += '<option' + selected_attr(14, index_selected) + '>addr:phone</option>';
-				options += '<option' + selected_attr(15, index_selected) + '>wof:tags</option>';
-				options += '<option' + selected_attr(16, index_selected) + '>edtf:inception</option>';
-				options += '<option' + selected_attr(17, index_selected) + '>edtf:cessation</option>';
+				options += '<option' + selected_attr(2, index_selected) + '>Concordance...</option>';
+				options += '<option' + selected_attr(3, index_selected) + '>wof:id</option>';
+				options += '<option' + selected_attr(4, index_selected) + '>wof:name</option>';
+				options += '<option' + selected_attr(5, index_selected) + '>geom:latitude</option>';
+				options += '<option' + selected_attr(6, index_selected) + '>geom:longitude</option>';
+				options += '<option' + selected_attr(7, index_selected) + '>addr:full</option>';
+				options += '<option' + selected_attr(8, index_selected) + '>addr:housenumber</option>';
+				options += '<option' + selected_attr(9, index_selected) + '>addr:street</option>';
+				options += '<option' + selected_attr(10, index_selected) + '>addr:housenumber addr:street</option>';
+				options += '<option' + selected_attr(11, index_selected) + '>addr:postcode</option>';
+				options += '<option' + selected_attr(12, index_selected) + '>addr:city</option>';
+				options += '<option' + selected_attr(13, index_selected) + '>addr:state</option>';
+				options += '<option' + selected_attr(14, index_selected) + '>addr:province</option>';
+				options += '<option' + selected_attr(15, index_selected) + '>addr:phone</option>';
+				options += '<option' + selected_attr(16, index_selected) + '>wof:tags</option>';
+				options += '<option' + selected_attr(17, index_selected) + '>edtf:inception</option>';
+				options += '<option' + selected_attr(18, index_selected) + '>edtf:cessation</option>';
 				return options;
 			}
 
@@ -212,24 +213,24 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (typeof default_index != 'undefined') {
 					index_selected = default_index;
 					if (column == 'wof_id') {
-						index_selected = 2;
+						index_selected = 3;
 					}
 				} else {
 					var index_selected = 1;
 					if (column == 'wof_id') {
-						index_selected = 2;
-					} else if (column == 'name') {
 						index_selected = 3;
-					} else if (column == 'latitude') {
+					} else if (column == 'name') {
 						index_selected = 4;
-					} else if (column == 'longitude') {
+					} else if (column == 'latitude') {
 						index_selected = 5;
-					} else if (column == 'address') {
+					} else if (column == 'longitude') {
 						index_selected = 6;
+					} else if (column == 'address') {
+						index_selected = 7;
 					} else if (column == 'city') {
-						index_selected = 11;
-					} else if (column == 'state') {
 						index_selected = 12;
+					} else if (column == 'state') {
+						index_selected = 13;
 					}
 				}
 
@@ -319,6 +320,22 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			table += '</table>';
 			$('#upload-preview-props').html(csv_controls + table);
+
+			$('#upload-preview-props select').change(function(e) {
+				var select = e.target;
+				if (select.selectedIndex == 2) {
+					var default_concordance = select.options[1].value;
+					var concordance_id = prompt('How would you like to store this concordance?', default_concordance);
+					if (concordance_id) {
+						var html = $(select).html();
+						var option = '<option>Concordance: ' + htmlspecialchars(concordance_id) + '</option>';
+						html = html.replace(/<option[^>]*>Concordance[^<]+?<\/option>/, option);
+						$(select).html(html);
+						select.selectedIndex = 2;
+					}
+				}
+				return true;
+			});
 
 			check_if_ready();
 			update_row_count();

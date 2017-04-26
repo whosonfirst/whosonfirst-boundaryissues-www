@@ -595,8 +595,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var lng = parseFloat(properties['geom:longitude']);
 			self.map.setView([lat, lng], 16);
 			slippymap.crosshairs.init(self.map);
-			check_for_assignments("disable nearby check");
-			self.update_name("disable nearby check");
+			check_for_assignments();
+			self.update_name();
 			self.update_address();
 			self.update_tags();
 		};
@@ -632,10 +632,18 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				} else {
 					self.set_property('mz:is_current', 0);
 				}
+			} else if (key.substr(0, 13) == 'Concordance: ') {
+				var concordance_id = key.substr(13);
+				key = 'wof:concordances';
+				var concordances = self.properties[key];
+				if (! concordances) {
+					concordances = {};
+				}
+				concordances[concordance_id] = value;
+				value = concordances;
 			}
 
 			assignments[key] = value;
-
 			self.set_property(key, value);
 		});
 
