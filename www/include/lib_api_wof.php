@@ -165,7 +165,8 @@
 		$updated = array();
 
 		$csv_row = post_int32('csv_row');
-		$wof_id = post_int64('wof_id');
+		$wof_id = post_str('wof_id');
+		$wof_id = intval($wof_id);
 
 		if ($csv_row && $wof_id) {
 			$index = $csv_row - 1;
@@ -197,7 +198,10 @@
 		$rsp = wof_save_feature($geojson);
 
 		if (! $rsp['ok']) {
-			$error = $rsp['error'] ? $rsp['error'] : 'Error saving WOF record.';
+			$error = 'Error saving WOF record';
+			if ($rsp['error']) {
+				$error .= ": {$rsp['error']}";
+			}
 			api_output_error(400, $error);
 		}
 
