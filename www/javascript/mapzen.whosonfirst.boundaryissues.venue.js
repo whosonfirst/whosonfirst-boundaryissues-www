@@ -112,7 +112,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var data = {
 				latitude: ll.lat,
 				longitude: ll.lng,
-				placetype: 'venue'
+				placetype: 'neighbourhood'
 			};
 
 			var onsuccess = function(rsp) {
@@ -344,16 +344,27 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					dupe_next_btn = '<a href="#" class="btn btn-sm btn-default" id="dupe-next">Try next</a>';
 				}
 				var dupe_num = '(' + (index + 1) + ' of ' + dupes.length + ')';
-				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to <a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p><a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a> ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a duplicate</a></p></div>');
+				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to:<br><a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p><a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a> ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a duplicate</a></p></div>');
 				$('#dupe-same').click(function(e) {
 					e.preventDefault();
 					$('#dupe-alert').remove();
 					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Saving to server...</div>');
 					var success_cb = function() {
 						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
-						$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>.');
+						$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
 						$('#submit-btn').attr('value', 'Save venue');
 						check_for_wof_id();
+						$('#dupe-undo').click(function(e) {
+							e.preventDefault();
+							self.set_wof_id(-1, function(rsp) {
+								if (rsp.updated &&
+								    rsp.updated.indexOf('wof_ids') !== -1) {
+									self.check_nearby();
+								} else {
+									$('#venue-response').html('<div class="alert alert-danger">Uh oh, something went wrong unmarking this row as a duplicate.</div>');
+								}
+							});
+						});
 					}
 					self.set_wof_id(wof_id, success_cb);
 				});
