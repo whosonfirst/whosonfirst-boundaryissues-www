@@ -552,12 +552,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		$('#venue form').submit(function(e) {
 			e.preventDefault();
-			if ($('input[name="name"]').val() != '') {
+			if ($('input[name="name"]').val() == '') {
+				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
+			} else if (! 'wof:hierarchy' in self.properties) {
+				$('#venue-response').html('<div class="alert alert-warning">Oops, the hierarchy has not been assigned. Try again in a moment?</div>');
+			} else if (self.properties['wof:parent_id'] != -1 &&
+			           self.properties['wof:parent_id'] != self.properties['wof:hierarchy'][0].neighbourhood_id) {
+				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent ID does not match the hierarchy neighbourhood_id.</div>');
+			} else {
 				$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
 				var geojson = self.generate_geojson();
 				self.save_to_server(geojson, onsuccess, onerror);
-			} else {
-				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
 			}
 		});
 
