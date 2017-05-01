@@ -271,12 +271,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		update_name: function() {
+			console.log('update_name');
 			var name = $('input[name="name"]').val();
 			self.set_property('wof:name', name);
 			self.check_nearby();
 		},
 
 		update_address: function() {
+			console.log('update_address');
 			var address = $('textarea[name="address"]').val();
 			if (address != '') {
 				self.set_property('addr:full', address);
@@ -286,6 +288,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		update_tags: function() {
+			console.log('update_tags');
 			var tag_list = $('input[name="tags"]').val();
 			tag_list = tag_list.split(',');
 			var tags = [];
@@ -349,16 +352,39 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					e.preventDefault();
 					$('#dupe-alert').remove();
 					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Saving to server...</div>');
+
 					var success_cb = function() {
 						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
 						$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
 						$('#submit-btn').attr('value', 'Save venue');
+
+						// TODO: do something more sophisticated here, taking
+						// the selected property selection into account. Right
+						// now we just clobber the existing value with the one
+						// from the merge target.
+						// (20170430/dphiffer)
+						$('input[name="name"]').val(name);
+						$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
+						$('input[name="tags"]').val(htmlspecialchars(place['wof:tags']));
+
 						check_for_wof_id();
 						$('#dupe-undo').click(function(e) {
 							e.preventDefault();
 							self.set_wof_id(-1, function(rsp) {
 								if (rsp.updated &&
 								    rsp.updated.indexOf('wof_ids') !== -1) {
+									$('#venue-response').html('');
+									var assignments = check_for_assignments();
+									if (assignments['wof:name']) {
+										$('input[name="name"]').val(assignments['wof:name']);
+									}
+									if (assignments['addr:full']) {
+										$('textarea[name="address"]').val(assignments['addr:full']);
+									}
+									if (assignments['wof:tags']) {
+										$('input[name="tags"]').val(assignments['wof:tags']);
+									}
+									self.disable_nearby_check = false;
 									self.check_nearby();
 								} else {
 									$('#venue-response').html('<div class="alert alert-danger">Uh oh, something went wrong unmarking this row as a duplicate.</div>');
@@ -651,7 +677,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	function check_for_assignments() {
 		var $properties = $('input.property');
 		if ($properties.length == 0) {
-			return false;
+			return null;
 		}
 		var assignments = {};
 		$properties.each(function(i, input) {
@@ -700,7 +726,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			console.log('We are on null island');
 		}
 
-		return true;
+		return assignments;
 	}
 
 	$(document).ready(function() {
