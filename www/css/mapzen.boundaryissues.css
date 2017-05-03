@@ -796,6 +796,28 @@ body.user-can-edit #edit-disallowed {
 	margin-left: 5px;
 }
 
+#dupe-alert .dropdown-toggle {
+	margin-left: 0 !important;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left: 1px solid #4e3d66;
+}
+
+#dupe-same {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+#dupe-alert .btn-group {
+	vertical-align: top;
+	margin-top: 2px;
+	margin-right: 5px;
+}
+
+.btn-group .btn {
+	margin: 0;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

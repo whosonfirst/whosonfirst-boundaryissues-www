@@ -342,57 +342,68 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var wof_id = htmlspecialchars(place['wof:id']);
 				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
 				var name = htmlspecialchars(place['wof:name']);
+
+				var dupe_same_btn = '<div class="btn-group">' +
+					'<a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a>' +
+					'<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+					'<span class="caret"></span>' +
+					'<span class="sr-only">Toggle Dropdown</span>' +
+					'</button>' +
+					'<ul class="dropdown-menu">' +
+					'<li><a href="#" id="dupe-assign">Assign dupe by WOF ID...</a></li>' +
+					'</ul>' +
+					'</div>';
+
 				var dupe_next_btn = '';
 				if (dupes.length > 1) {
 					dupe_next_btn = '<a href="#" class="btn btn-sm btn-default" id="dupe-next">Try next</a>';
 				}
+
+				var dupe_assignment_callback = function() {
+					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
+					$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
+					$('#submit-btn').attr('value', 'Save venue');
+
+					// TODO: do something more sophisticated here, taking
+					// the selected property selection into account. Right
+					// now we just clobber the existing value with the one
+					// from the merge target.
+					// (20170430/dphiffer)
+					$('input[name="name"]').val(name);
+					$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
+					$('input[name="tags"]').val(htmlspecialchars(place['wof:tags']));
+
+					check_for_wof_id();
+					$('#dupe-undo').click(function(e) {
+						e.preventDefault();
+						self.set_wof_id(-1, function(rsp) {
+							if (rsp.updated &&
+							    rsp.updated.indexOf('wof_ids') !== -1) {
+								$('#venue-response').html('');
+								var assignments = check_for_assignments();
+								if (assignments['wof:name']) {
+									$('input[name="name"]').val(assignments['wof:name']);
+								}
+								if (assignments['addr:full']) {
+									$('textarea[name="address"]').val(assignments['addr:full']);
+								}
+								if (assignments['wof:tags']) {
+									$('input[name="tags"]').val(assignments['wof:tags']);
+								}
+								self.disable_nearby_check = false;
+								self.check_nearby();
+							} else {
+								$('#venue-response').html('<div class="alert alert-danger">Uh oh, something went wrong unmarking this row as a duplicate.</div>');
+							}
+						});
+					});
+				};
+
 				var dupe_num = '(' + (index + 1) + ' of ' + dupes.length + ')';
-				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to:<br><a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p><a href="#" class="btn btn-sm btn-primary" id="dupe-same">Same place</a> ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a duplicate</a></p></div>');
+				$('#venue-response').html('<div id="dupe-alert" class="alert alert-danger"><p>Does this record exist already? This seems similar to:<br><a href="' + url + '" class="hey-look">' + name + '</a> ' + dupe_num + '</p><p>' + dupe_same_btn + ' ' + dupe_next_btn + ' <a href="#" class="btn btn-sm btn-default" id="dupe-ignore">Not a dupe</a></p></div>');
 				$('#dupe-same').click(function(e) {
 					e.preventDefault();
-					$('#dupe-alert').remove();
-					$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Saving to server...</div>');
-
-					var success_cb = function() {
-						$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
-						$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
-						$('#submit-btn').attr('value', 'Save venue');
-
-						// TODO: do something more sophisticated here, taking
-						// the selected property selection into account. Right
-						// now we just clobber the existing value with the one
-						// from the merge target.
-						// (20170430/dphiffer)
-						$('input[name="name"]').val(name);
-						$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
-						$('input[name="tags"]').val(htmlspecialchars(place['wof:tags']));
-
-						check_for_wof_id();
-						$('#dupe-undo').click(function(e) {
-							e.preventDefault();
-							self.set_wof_id(-1, function(rsp) {
-								if (rsp.updated &&
-								    rsp.updated.indexOf('wof_ids') !== -1) {
-									$('#venue-response').html('');
-									var assignments = check_for_assignments();
-									if (assignments['wof:name']) {
-										$('input[name="name"]').val(assignments['wof:name']);
-									}
-									if (assignments['addr:full']) {
-										$('textarea[name="address"]').val(assignments['addr:full']);
-									}
-									if (assignments['wof:tags']) {
-										$('input[name="tags"]').val(assignments['wof:tags']);
-									}
-									self.disable_nearby_check = false;
-									self.check_nearby();
-								} else {
-									$('#venue-response').html('<div class="alert alert-danger">Uh oh, something went wrong unmarking this row as a duplicate.</div>');
-								}
-							});
-						});
-					}
-					self.set_wof_id(wof_id, success_cb);
+					self.set_wof_id(wof_id, dupe_assignment_callback);
 				});
 				$('#dupe-ignore').click(function(e) {
 					e.preventDefault();
@@ -405,6 +416,25 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						index = 0;
 					}
 					self.show_dupe_candidate(places, index);
+				});
+				$('#dupe-assign').click(function(e) {
+					e.preventDefault();
+					var user_wof_id = prompt('Which WOF ID should we merge into?');
+					user_wof_id = parseInt(user_wof_id);
+					if (user_wof_id) {
+						wof_id = user_wof_id;
+						url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
+						var onerror = function() {
+							mapzen.whosonfirst.log.error("Error fetching WOF record");
+						};
+						mapzen.whosonfirst.net.fetch(url + '.geojson', function(rsp) {
+							var props = rsp.properties;
+							name = props['wof:name'];
+							self.set_wof_id(wof_id, dupe_assignment_callback);
+							self.set_property('wof:hierarchy', props['wof:hierarchy']);
+							self.set_property('wof:parent_id', props['wof:parent_id']);
+						}, onerror);
+					}
 				});
 			} else {
 				$('#venue-response').html('');
@@ -486,7 +516,40 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				mapzen.whosonfirst.log.error("error calling wof.update_csv");
 			};
 
+			$('#dupe-alert').remove();
+			$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Talking to the server...</div>');
+
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.update_csv", data, onsuccess, onerror);
+		},
+
+		is_valid_parent_id: function(hierarchies, parent_id) {
+
+			// This exists to prevent a venue from being parented
+			// by the wrong placetype. (20170503/dphiffer)
+
+			var valid_placetypes = ["building", "address", "intersection", "campus", "microhood", "neighbourhood"];
+
+			if (parent_id < 0) {
+				return true;
+			}
+
+			if (hierarchies.length < 1) {
+				// We should have at least one hierarchy
+				return false;
+			}
+
+			var h = hierarchies[0];
+
+			for (var i = 0; i < valid_placetypes.length; i++) {
+				var pt = valid_placetypes[i];
+				var pt_id = pt + "_id";
+				if (parent_id == h[pt_id]) {
+					return true;
+				}
+			}
+
+			// We should have returned true above, if not: INVALID
+			return false;
 		}
 	};
 
@@ -577,14 +640,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}
 
 		$('#venue form').submit(function(e) {
+			var parent_id = self.properties['wof:parent_id'];
+			var hierarchy = self.properties['wof:hierarchy'];
 			e.preventDefault();
 			if ($('input[name="name"]').val() == '') {
 				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
 			} else if (! 'wof:hierarchy' in self.properties) {
 				$('#venue-response').html('<div class="alert alert-warning">Oops, the hierarchy has not been assigned. Try again in a moment?</div>');
-			} else if (self.properties['wof:parent_id'] != -1 &&
-			           self.properties['wof:parent_id'] != self.properties['wof:hierarchy'][0].neighbourhood_id) {
-				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent ID does not match the hierarchy neighbourhood_id.</div>');
+			} else if (! self.is_valid_parent_id(hierarchy, parent_id)) {
+				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent ID is invalid.</div>');
 			} else {
 				$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
 				var geojson = self.generate_geojson();
