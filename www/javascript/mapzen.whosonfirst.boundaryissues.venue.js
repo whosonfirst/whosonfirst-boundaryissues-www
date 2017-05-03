@@ -112,7 +112,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var data = {
 				latitude: ll.lat,
 				longitude: ll.lng,
-				placetype: 'neighbourhood'
+				placetype: 'venue'
 			};
 
 			var onsuccess = function(rsp) {
