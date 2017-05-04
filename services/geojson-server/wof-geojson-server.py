@@ -125,6 +125,16 @@ def geojson_hierarchy():
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
+	# Ok, here is a weird situation. Let's say you've got a venue out in the
+	# desert. Its usual parents like neighbourhood or microhood don't exist out
+	# here. But we still want to build a hierarchy if our first attempt comes
+	# up empty. We're just gonna retry, with locality as the new placetype.
+	# Eventually this will probably get handled in a Python library, but for now
+	# we'll just do it the HULKSMASH way. (20170504/dphiffer)
+	if placetype == 'venue' and len(parents) == 0:
+		placetype = 'locality'
+		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype, pip_server=pip_server)
+
 	try:
 		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, wof_id, placetype)
 	except Exception, e:
