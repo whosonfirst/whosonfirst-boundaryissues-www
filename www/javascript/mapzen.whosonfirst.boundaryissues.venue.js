@@ -624,10 +624,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var csv_row = parseInt($('#csv_row').val());
 				var csv_row_count = parseInt($('#csv_row_count').val());
 				if (csv_row == csv_row_count) {
-					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/');
+					var redirect = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/');
 				} else {
-					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/' + (csv_row + 1) + '/');
+					var redirect = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + csv_id + '/' + (csv_row + 1) + '/');
 				}
+				window.location = redirect;
 			} else {
 				var edit_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + id + '/');
 				$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
