@@ -307,6 +307,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				return false;
 			}
 
+			var name = $('input[name="name"]').val();
+			if (name == '') {
+				return false;
+			}
+
 			$('#venue-response').html('<div class="alert alert-info">Checking for nearby duplicates...</div>');
 			var center = self.map.getCenter();
 			var method = 'wof.places.get_nearby';
@@ -314,7 +319,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				latitude: center.lat,
 				longitude: center.lng,
 				placetype: 'venue',
-				name: $('input[name="name"]').val(),
+				name: name,
 				per_page: 250
 			};
 			var onsuccess = function(rsp) {
@@ -614,7 +619,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	function setup_form() {
 
 		function onsuccess(id) {
-			if ($('#csv_id').length > 0) {
+			if ($('#csv_id').val() != "") {
 				var csv_id = $('#csv_id').val();
 				var csv_row = parseInt($('#csv_row').val());
 				var csv_row_count = parseInt($('#csv_row_count').val());
@@ -804,7 +809,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				return;
 			}
 
-			var bbox_init = $('#csv_id').length == 0;
+			var bbox_init = ($('#csv_id').val() == "");
 			setup_map(bbox_init);
 			setup_form();
 			setup_address();
