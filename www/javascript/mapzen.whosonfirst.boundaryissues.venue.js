@@ -148,7 +148,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.pip", data, onsuccess, onerror);
 		},
 
-		'show_feature_pin': function(map, geocoder, feature) {
+		update_coordinates: function() {
+			var ll = self.map.getCenter();
+			self.lookup_hierarchy(ll);
+			self.set_property('geom:latitude', ll.lat);
+			self.set_property('geom:longitude', ll.lng);
+		},
+
+		show_feature_pin: function(map, geocoder, feature) {
 			var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
 			var popup = geocoder.marker.bindPopup(html).openPopup();
 			var props = feature.properties;
@@ -525,36 +532,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			$('#venue-response').html('<div class="alert alert-info" id="dupe-merged">Talking to the server...</div>');
 
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.update_csv", data, onsuccess, onerror);
-		},
-
-		is_valid_parent_id: function(hierarchies, parent_id) {
-
-			// This exists to prevent a venue from being parented
-			// by the wrong placetype. (20170503/dphiffer)
-
-			var valid_placetypes = ["building", "address", "intersection", "campus", "microhood", "neighbourhood"];
-
-			if (parent_id < 0) {
-				return true;
-			}
-
-			if (hierarchies.length < 1) {
-				// We should have at least one hierarchy
-				return false;
-			}
-
-			var h = hierarchies[0];
-
-			for (var i = 0; i < valid_placetypes.length; i++) {
-				var pt = valid_placetypes[i];
-				var pt_id = pt + "_id";
-				if (parent_id == h[pt_id]) {
-					return true;
-				}
-			}
-
-			// We should have returned true above, if not: INVALID
-			return false;
 		}
 	};
 
@@ -604,12 +581,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 		}
 
-		map.on('moveend', function() {
-			var ll = map.getCenter();
-			self.lookup_hierarchy(ll);
-			self.set_property('geom:latitude', ll.lat);
-			self.set_property('geom:longitude', ll.lng);
-		});
+		map.on('moveend', self.update_coordinates);
 
 		geocoder.on('select', function(e) {
 			self.show_feature_pin(map, geocoder, e.feature);
@@ -651,10 +623,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			e.preventDefault();
 			if ($('input[name="name"]').val() == '') {
 				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
-			} else if (! 'wof:hierarchy' in self.properties) {
+			} else if (! ('wof:hierarchy' in self.properties)) {
+				self.update_coordinates();
 				$('#venue-response').html('<div class="alert alert-warning">Oops, the hierarchy has not been assigned. Try again in a moment?</div>');
-			} else if (! self.is_valid_parent_id(hierarchy, parent_id)) {
-				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent ID is invalid.</div>');
+			} else if (! ('wof:parent_id' in self.properties)) {
+				self.update_coordinates();
+				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent WOF ID has not been assigned. Try again in a moment?</div>');
 			} else {
 				$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
 				var geojson = self.generate_geojson();
