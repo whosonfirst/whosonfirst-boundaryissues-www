@@ -107,6 +107,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		lookup_hierarchy: function(ll) {
 
+			$('#venue #parent').html('Loading...');
 			self.looking_up_hierarchy = true;
 
 			var data = {
@@ -127,8 +128,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 				if (rsp.parents && rsp.parents.length == 1) {
 					self.set_property('wof:parent_id', rsp.parents[0].Id);
+					var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + rsp.parents[0].Id);
+					var link = '<a href="' + url + '">' + rsp.parents[0].Name + '</a> (' + rsp.parents[0].Placetype + ')';
+					$('#venue #parent').html(link);
 				} else {
 					self.set_property('wof:parent_id', -1);
+					$('#venue #parent').html('<i>Unknown parent</i>');
 				}
 				if (rsp.hierarchy) {
 					self.set_property('wof:hierarchy', rsp.hierarchy);
@@ -541,6 +546,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
 		var map = mapzen.whosonfirst.leaflet.tangram.map('map');
+		map.on('moveend', self.update_coordinates);
 		self.map = map;
 		var hash = new L.Hash(map);
 
@@ -580,8 +586,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 			};
 		}
-
-		map.on('moveend', self.update_coordinates);
 
 		geocoder.on('select', function(e) {
 			self.show_feature_pin(map, geocoder, e.feature);

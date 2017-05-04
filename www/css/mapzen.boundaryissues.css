@@ -823,6 +823,11 @@ body.user-can-edit #edit-disallowed {
 	font-weight: bold;
 }
 
+#venue #parent {
+	float: left;
+	font-size: 11px;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {
