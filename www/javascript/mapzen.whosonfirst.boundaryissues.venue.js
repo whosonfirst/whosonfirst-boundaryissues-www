@@ -770,6 +770,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				}
 				concordances[concordance_id] = value;
 				value = concordances;
+			} else if (key.substr(0, 8) == 'Custom: ') {
+				key = key.substr(8);
 			}
 
 			assignments[key] = value;

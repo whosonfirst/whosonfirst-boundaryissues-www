@@ -186,51 +186,56 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				options += '<option value=""' + selected_attr(0, index_selected) + '>(ignore column)</option>';
 				options += '<option' + selected_attr(1, index_selected) + '>' + default_value + '</option>';
 				options += '<option' + selected_attr(2, index_selected) + '>Concordance...</option>';
-				options += '<option' + selected_attr(3, index_selected) + '>wof:id</option>';
-				options += '<option' + selected_attr(4, index_selected) + '>wof:name</option>';
-				options += '<option' + selected_attr(5, index_selected) + '>geom:latitude</option>';
-				options += '<option' + selected_attr(6, index_selected) + '>geom:longitude</option>';
-				options += '<option' + selected_attr(7, index_selected) + '>addr:full</option>';
-				options += '<option' + selected_attr(8, index_selected) + '>addr:housenumber</option>';
-				options += '<option' + selected_attr(9, index_selected) + '>addr:street</option>';
-				options += '<option' + selected_attr(10, index_selected) + '>addr:housenumber addr:street</option>';
-				options += '<option' + selected_attr(11, index_selected) + '>addr:postcode</option>';
-				options += '<option' + selected_attr(12, index_selected) + '>addr:city</option>';
-				options += '<option' + selected_attr(13, index_selected) + '>addr:state</option>';
-				options += '<option' + selected_attr(14, index_selected) + '>addr:province</option>';
-				options += '<option' + selected_attr(15, index_selected) + '>addr:phone</option>';
-				options += '<option' + selected_attr(16, index_selected) + '>wof:tags</option>';
-				options += '<option' + selected_attr(17, index_selected) + '>edtf:inception</option>';
-				options += '<option' + selected_attr(18, index_selected) + '>edtf:cessation</option>';
+				options += '<option' + selected_attr(3, index_selected) + '>Custom...</option>';
+				options += '<option' + selected_attr(4, index_selected) + '>wof:id</option>';
+				options += '<option' + selected_attr(5, index_selected) + '>wof:name</option>';
+				options += '<option' + selected_attr(6, index_selected) + '>geom:latitude</option>';
+				options += '<option' + selected_attr(7, index_selected) + '>geom:longitude</option>';
+				options += '<option' + selected_attr(8, index_selected) + '>addr:full</option>';
+				options += '<option' + selected_attr(9, index_selected) + '>addr:housenumber</option>';
+				options += '<option' + selected_attr(10, index_selected) + '>addr:street</option>';
+				options += '<option' + selected_attr(11, index_selected) + '>addr:housenumber addr:street</option>';
+				options += '<option' + selected_attr(12, index_selected) + '>addr:postcode</option>';
+				options += '<option' + selected_attr(13, index_selected) + '>addr:city</option>';
+				options += '<option' + selected_attr(14, index_selected) + '>addr:state</option>';
+				options += '<option' + selected_attr(15, index_selected) + '>addr:province</option>';
+				options += '<option' + selected_attr(16, index_selected) + '>addr:phone</option>';
+				options += '<option' + selected_attr(17, index_selected) + '>wof:tags</option>';
+				options += '<option' + selected_attr(18, index_selected) + '>edtf:inception</option>';
+				options += '<option' + selected_attr(19, index_selected) + '>edtf:cessation</option>';
 				return options;
 			}
 
 			var property_select_html = function(column, default_index) {
 
 				var name = 'property-' + htmlspecialchars(column);
-				var default_value = 'misc:' + column.replace(/\W/, '_');
+				var default_value = 'misc:' + column.trim().replace(/\W/, '_');
 
 				if (typeof default_index != 'undefined') {
 					index_selected = default_index;
 					if (column == 'wof_id') {
-						index_selected = 3;
+						index_selected = 4;
 					}
 				} else {
 					var index_selected = 1;
 					if (column == 'wof_id') {
-						index_selected = 3;
-					} else if (column == 'name') {
 						index_selected = 4;
-					} else if (column == 'latitude') {
+					} else if (column == 'name') {
 						index_selected = 5;
-					} else if (column == 'longitude') {
+					} else if (column == 'latitude' ||
+					           column == 'lat') {
 						index_selected = 6;
-					} else if (column == 'address') {
+					} else if (column == 'longitude' ||
+					           column == 'long' ||
+					           column == 'lng' ||
+					           column == 'lon') {
 						index_selected = 7;
+					} else if (column == 'address') {
+						index_selected = 8;
 					} else if (column == 'city') {
-						index_selected = 12;
-					} else if (column == 'state') {
 						index_selected = 13;
+					} else if (column == 'state') {
+						index_selected = 14;
 					}
 				}
 
@@ -327,15 +332,24 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			$('#upload-preview-props select').change(function(e) {
 				var select = e.target;
+				var default_value = select.options[1].value;
 				if (select.selectedIndex == 2) {
-					var default_concordance = select.options[1].value;
-					var concordance_id = prompt('How would you like to store this concordance?', default_concordance);
+					var concordance_id = prompt('How would you like to store this concordance?', default_value);
 					if (concordance_id) {
 						var html = $(select).html();
 						var option = '<option>Concordance: ' + htmlspecialchars(concordance_id) + '</option>';
 						html = html.replace(/<option[^>]*>Concordance[^<]+?<\/option>/, option);
 						$(select).html(html);
 						select.selectedIndex = 2;
+					}
+				} else if (select.selectedIndex == 3) {
+					var concordance_id = prompt('What WOF property would you like to use?', default_value);
+					if (concordance_id) {
+						var html = $(select).html();
+						var option = '<option>Custom: ' + htmlspecialchars(concordance_id) + '</option>';
+						html = html.replace(/<option[^>]*>Custom[^<]+?<\/option>/, option);
+						$(select).html(html);
+						select.selectedIndex = 3;
 					}
 				}
 				return true;
@@ -381,7 +395,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 				$('select.column').each(function(i, select) {
 					var column = $(select).data('column');
-					var default_value = prefix + ':' + column.replace(/\W/, '_');
+					var default_value = prefix + ':' + column.trim().replace(/\W/, '_');
 					var options = property_select_options(default_value, select.selectedIndex);
 					$(select).html(options);
 				});
