@@ -178,7 +178,7 @@
 
 		// Huh, there is already a wof:repo property. Just use that.
 		if ($props['wof:repo']) {
-			return $props['wof:repo'];
+			return array('ok' => 1, 'repo' => $props['wof:repo']);
 		}
 
 		// These placetypes are kept separately from whosonfirst-data

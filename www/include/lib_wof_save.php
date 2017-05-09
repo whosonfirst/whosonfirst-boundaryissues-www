@@ -112,7 +112,12 @@
 			$user_id = $GLOBALS['cfg']['user']['id'];
 		}
 
-		$repo = wof_utils_pickrepo($feature);
+		$rsp = wof_utils_pickrepo($feature);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$repo = $rsp['repo'];
+
 		if (! users_acl_can_edit($GLOBALS['cfg']['user'], $repo)) {
 			return array(
 				'ok' => 0,
