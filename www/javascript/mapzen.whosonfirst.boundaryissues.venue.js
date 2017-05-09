@@ -387,8 +387,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					// from the merge target.
 					// (20170430/dphiffer)
 					$('input[name="name"]').val(name);
-					$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
-					$('input[name="tags"]').val(htmlspecialchars(place['wof:tags']));
+					if ('addr:full' in place) {
+						$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
+					}
+
+					if ('wof:tags' in place) {
+						$('input[name="tags"]').val(htmlspecialchars(place['wof:tags']));
+					}
 
 					check_for_wof_id();
 					$('#dupe-undo').click(function(e) {
