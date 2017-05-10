@@ -504,6 +504,10 @@
 		foreach ($wof as $repo_path => $pending) {
 
 			if ($options['verbose']) {
+				echo "----- REPO: $repo_path -----\n";
+			}
+
+			if ($options['verbose']) {
 				echo "cd $repo_path\n";
 			}
 
@@ -540,6 +544,16 @@
 			// Pull down changes from origin
 			if ($options['verbose']) {
 				echo "git pull --rebase origin $branch\n";
+			}
+
+			if (! file_exists($repo_path)) {
+				// Something something email Dan?
+				// (20170509/dphiffer)
+				if ($options['verbose']) {
+					echo "Oh noes! We have no repo $repo_path\n";
+				}
+				error_log("Oh noes! We have no repo $repo_path");
+				continue;
 			}
 
 			if (! $options['dry_run']) {
@@ -593,6 +607,14 @@
 					if (! $options['dry_run']) {
 						mkdir($data_dir, 0775, true);
 					}
+				}
+
+				if (empty($update['diff'])) {
+					if ($options['verbose']) {
+						echo "$pending_path has no property updates! (skipping)\n";
+					}
+					$saved[$wof_id] = $updates;
+					continue;
 				}
 
 				if ($options['verbose']) {
@@ -649,7 +671,7 @@
 					}
 				}
 
-				$message = "* $wof_name ($wof_id) saved by $author";
+				$message = ":round_pushpin: $wof_name ($wof_id) saved by $author";
 				if ($options['verbose']) {
 					echo "$message\n";
 				}
@@ -662,8 +684,25 @@
 				$notifications[$user_id][$wof_id] = $wof_name;
 			}
 
+			if (empty($messages)) {
+				if ($options['verbose']) {
+					echo "No pending updates for $repo_path (skipping)\n";
+				}
+				continue;
+			}
+
+			$num_updates = count($messages);
+			$messages = implode("\n", $messages);
+			$args .= ' --message=' . escapeshellarg($messages);
+			$message = ":floppy_disk: Boundary Issues: $num_updates updates";
+
+			if ($num_updates == 1) {
+				$message = ":floppy_disk: Boundary Issues: saved $wof_name";
+			}
+
 			if ($options['verbose']) {
-				echo "git commit \"$message\" $args\n";
+				$esc_message = escapeshellarg($message);
+				echo "git commit --message=$esc_message $args\n";
 			}
 
 			if (! $options['dry_run']) {
@@ -703,6 +742,11 @@
 		}
 
 		// Clean up the pending index files
+
+		if ($options['verbose']) {
+			echo "----- CLEANING UP -----\n";
+		}
+
 		$updated = array();
 
 		foreach ($saved as $wof_id => $updates) {
@@ -728,6 +772,7 @@
 		}
 
 		// Clean up any empty data directories
+
 		$find_path = $GLOBALS['find_path'];
 		$pending_dir = realpath(wof_utils_pending_dir('', null, $branch));
 		if ($options['verbose']) {
@@ -735,33 +780,6 @@
 		}
 		if (! $options['dry_run']) {
 			exec("$find_path $pending_dir -type d -empty -delete");
-		}
-
-		if ($branch == 'master' &&
-		    $GLOBALS['cfg']['enable_feature_update_s3']) {
-
-			// Schedule S3 updates
-			foreach ($saved as $wof_id => $updates) {
-
-				if ($options['verbose']) {
-					echo "schedule update_s3: $wof_id\n";
-				}
-
-				if (! $options['dry_run']) {
-					$rsp = offline_tasks_schedule_task('update_s3', array(
-						'wof_id' => $wof_id
-					));
-				}
-			}
-		}
-
-		$messages = implode("\n", $messages);
-		$args .= ' --message=' . escapeshellarg($messages);
-		$num_updates = count($saved);
-		$message = "Boundary Issues: $num_updates updates";
-
-		if ($num_updates == 1) {
-			$message = "Boundary Issues: saved $wof_name";
 		}
 
 		// Send out notifications
@@ -794,6 +812,10 @@
 				$payload['url'] = $url;
 			}
 			notifications_publish($payload);
+		}
+
+		if ($options['verbose']) {
+			echo "----- ALL DONE -----\n";
 		}
 
 		return array(
@@ -842,6 +864,16 @@
 
 		if (is_scalar($existing) &&
 		    is_scalar($pending)) {
+			if (is_numeric($existing) && is_numeric($pending) &&
+			    empty($existing) && empty($pending)) {
+				// Ok, this is mostly to stop all these awful
+				// commits that just change geom:area from 0.0
+				// to 0. It's the same thing! Zero is zero.
+				// Eventually we will track down the cause and
+				// fix it, until then: no more commits!
+				// (20170509/dphiffer)
+				return false;
+			}
 			return ($existing !== $pending);
 		} else if (is_scalar($existing) != is_scalar($pending)) {
 			return true;

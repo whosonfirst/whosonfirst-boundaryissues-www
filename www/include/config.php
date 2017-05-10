@@ -212,8 +212,6 @@
 	$GLOBALS['cfg']['abs_root_suffix_env'] = 'HTTP_X_PROXY_PATH';	# ignored if 'abs_root_suffix' is not empty
 	$GLOBALS['cfg']['data_abs_root_url'] = "https://whosonfirst.mapzen.com/data/";
 
-	$GLOBALS['cfg']['enable_feature_update_s3'] = 0;
-
 	# Hard-coding these paths will save some stat() ops
 
 	$GLOBALS['cfg']['smarty_template_dir'] = realpath(dirname(__FILE__) . '/../templates/');
