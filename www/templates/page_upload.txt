@@ -11,11 +11,18 @@
 				<input type="file" name="geojson_file">
 			</span>
 			{if $cfg.enable_feature_csv_upload}
-			<span class="hey-look">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
-			<span class="btn btn-default btn-file">
-				Choose CSV file
-				<input type="file" name="csv_file">
-			</span>
+				<span class="hey-look">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+				<span class="btn btn-default btn-file">
+					Choose CSV file
+					<input type="file" name="csv_file">
+				</span>
+			{/if}
+			{if $cfg.enable_feature_pipeline}
+				<span class="hey-look">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
+				<span class="btn btn-default btn-file">
+					Choose zip file
+					<input type="file" name="zip_file">
+				</span>
 			{/if}
 			<input type="submit" value="Upload" id="upload-btn" class="btn" disabled="disabled">
 			<div id="upload-result"></div>
