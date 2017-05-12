@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS `boundaryissues_pipeline`;
+
+CREATE TABLE `boundaryissues_pipeline` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(255) DEFAULT NULL,
+  `filename` varchar(255) DEFAULT NULL,
+  `meta` text,
+  `phase` varchar(255) DEFAULT 'pending',
+  `created` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

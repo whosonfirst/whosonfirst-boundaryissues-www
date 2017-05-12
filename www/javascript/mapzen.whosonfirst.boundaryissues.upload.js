@@ -16,10 +16,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    csv_file,
 	    csv_row_count,
 	    csv_preview_row = 1,
+	    zip_file,
 	    upload_is_ready = false,
 	    properties_are_ready = false,
 	    is_collection,
 	    is_csv,
+	    is_zip,
 	    feature_count,
 	    VenueIcon,
 	    poi_icon_base;
@@ -37,11 +39,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			$preview_props = $('#upload-preview-props');
 
 			var preview_handler = function(file, cb) {
-				var reader = new FileReader();
-				reader.onload = function() {
-					cb(reader.result);
-				};
-				if (file) {
+				if (file && is_zip) {
+					JSZip.loadAsync(file).then(function(zip) {
+						cb(file, zip);
+					});
+				} else if (file) {
+					var reader = new FileReader();
+					reader.onload = function() {
+						cb(reader.result);
+					};
 					reader.readAsText(file);
 				} else {
 					mapzen.whosonfirst.log.error('No file to preview.');
@@ -53,6 +59,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				geojson_file = e.target.files[0];
 				preview_handler(geojson_file, self.preview_geojson);
 				$form.find('input[name=csv_file]')[0].setAttribute('disabled', 'disabled');
+				$form.find('input[name=zip_file]')[0].setAttribute('disabled', 'disabled');
 			});
 
 			// Preview the CSV when the file input's onchange fires
@@ -61,6 +68,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				csv_file = e.target.files[0];
 				preview_handler(csv_file, self.preview_csv);
 				$form.find('input[name=geojson_file]')[0].setAttribute('disabled', 'disabled');
+				$form.find('input[name=zip_file]')[0].setAttribute('disabled', 'disabled');
+			});
+
+			// Preview the Zip when the file input's onchange fires
+			$form.find('input[name=zip_file]').on('change', function(e){
+				is_zip = true;
+				zip_file = e.target.files[0];
+				preview_handler(zip_file, self.preview_zip);
+				$form.find('input[name=geojson_file]')[0].setAttribute('disabled', 'disabled');
+				$form.find('input[name=csv_file]')[0].setAttribute('disabled', 'disabled');
 			});
 
 			// Intercept the form submit event and upload the file via API
@@ -440,6 +457,33 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			lookup_source();
 			$('#geometry-source').change(lookup_source);
+		},
+
+		preview_zip: function(file, zip) {
+			var name = file.name;
+			var match = name.match(/^(.+)\.zip$/);
+			var dir = match[1];
+			var meta_file = false;
+			var meta_path = dir + '/' + 'meta.json';
+			var files = [];
+			for (var path in zip.files) {
+				if (path == meta_path) {
+					meta_file = true;
+				} else if (path.substr(0, dir.length) == dir) {
+					console.log(path);
+					files.push(file);
+				}
+			}
+			if (meta_file) {
+				zip.file(meta_path).async("string").then(function(meta_json) {
+					if (meta_json) {
+						var meta = JSON.parse(meta_json);
+						console.log(meta);
+					}
+				});
+			} else {
+				console.error('Could not find meta.json');
+			}
 		},
 
 		setup_map_preview: function(geojson) {

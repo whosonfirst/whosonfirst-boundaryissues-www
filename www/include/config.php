@@ -108,6 +108,8 @@
 	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data/';
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/';
 
+	$GLOBALS['cfg']['enable_feature_pipeline'] = false;
+
 	$GLOBALS['cfg']['enable_feature_save_via_github_api'] = false;
 	$GLOBALS['cfg']['wof_github_owner'] = 'whosonfirst-data';
 
