@@ -470,19 +470,35 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (path == meta_path) {
 					meta_file = true;
 				} else if (path.substr(0, dir.length) == dir) {
-					console.log(path);
-					files.push(file);
+					files.push(path);
 				}
 			}
 			if (meta_file) {
 				zip.file(meta_path).async("string").then(function(meta_json) {
 					if (meta_json) {
 						var meta = JSON.parse(meta_json);
-						console.log(meta);
+						if (! meta) {
+							$('#upload-preview-props').html('Could not parse meta.json');
+						} else if (! meta.type) {
+							$('#upload-preview-props').html('meta.json has no "type" value.');
+						} else {
+							var html = '<strong>' + file.name + '</strong>: ' + meta.type + ' import';
+							html += '<ul>';
+							for (var i = 0; i < files.length; i++) {
+								var filename = files[i].substr(dir.length + 1);
+								if (filename != '') {
+									html += '<li>' + filename + '</li>';
+								}
+							}
+							html += '</ul>';
+							$('#upload-preview-props').html(html);
+						}
+					} else {
+						$('#upload-preview-props').html('Could not load meta.json');
 					}
 				});
 			} else {
-				console.error('Could not find meta.json');
+				$('#upload-preview-props').html('Could not find meta.json');
 			}
 		},
 
