@@ -200,8 +200,26 @@
 			api_output_ok($rsp);
 		}
 
+		$meta = $rsp['meta'];
+		$now = date('Y-m-d H:i:s');
+		$meta_json = json_encode($meta);
+
+		$rsp = db_insert('boundaryissues_pipeline', array(
+			'filename' => $_FILES["upload_file"]['name'],
+			'type' => $meta['type'],
+			'meta' => $meta_json,
+			'phase' => 'pending',
+			'created' => $now,
+			'updated' => $now
+		));
+		if (! $rsp['ok']) {
+			// Pass the errors through on a 200 response
+			api_output_ok($rsp);
+		}
+
 		api_output_ok(array(
-			'ok' => 1
+			'ok' => 1,
+			'pipeline_id' => $rsp['insert_id']
 		));
 	}
 

@@ -107,6 +107,7 @@
 				$names[] = $matches[1];
 			}
 		}
+		$meta['files'] = $names;
 
 		if (! $meta) {
 			$err[] = 'No meta.json file found';
@@ -125,7 +126,7 @@
 		if ($err) {
 			return array('ok' => 0, 'errors' => $err);
 		} else {
-			return array('ok' => 1);
+			return array('ok' => 1, 'meta' => $meta);
 		}
 	}
 
