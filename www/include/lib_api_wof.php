@@ -188,6 +188,19 @@
 
 	########################################################################
 
+	function api_wof_upload_zip() {
+
+		if (! $_FILES["upload_file"]) {
+			api_output_error(400, 'Please include an upload_file.');
+		}
+
+		api_output_ok(array(
+			'ok' => 1
+		));
+	}
+
+	########################################################################
+
 	function api_wof_save() {
 
 		$geojson = post_str('geojson');
