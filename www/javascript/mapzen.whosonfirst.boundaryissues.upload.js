@@ -497,11 +497,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 						}
 						$('#upload-preview-props').html(html);
 					} else {
-						$('#upload-preview-props').html('Could not load meta.json');
+						$('#upload-preview-props').html('<div class="alert alert-danger">Could not load <strong>meta.json</strong></div>');
 					}
 				});
 			} else {
-				$('#upload-preview-props').html('Could not find meta.json');
+				$('#upload-preview-props').html('<div class="alert alert-danger">Could not find <strong>meta.json</strong></div>');
 			}
 		},
 
@@ -512,7 +512,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return err;
 			}
 			if (! meta.type) {
-				err.push('No error.type property found');
+				err.push("No 'type' property found in meta.json");
 			} else {
 				var fn = 'validate_' + meta.type + '_zip';
 				self[fn](meta, err);
@@ -831,6 +831,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			} else if (rsp.error && rsp.error.message) {
 				$result.html('Error: ' + rsp.error.message);
 				mapzen.whosonfirst.log.error(rsp.error.message);
+			} else if (rsp.errors) {
+				$result.html('Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul>');
+				mapzen.whosonfirst.log.error(rsp.errors.join(', '));
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
 				mapzen.whosonfirst.log.error(rsp);

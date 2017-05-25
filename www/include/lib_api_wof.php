@@ -194,6 +194,12 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
+		$rsp = api_wof_utils_validate_zip($_FILES["upload_file"]);
+		if (! $rsp['ok']) {
+			// Pass the errors through on a 200 response
+			api_output_ok($rsp);
+		}
+
 		api_output_ok(array(
 			'ok' => 1
 		));
