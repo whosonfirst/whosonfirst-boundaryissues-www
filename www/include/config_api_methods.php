@@ -56,6 +56,18 @@
 			)
 		),
 
+		"wof.upload_zip" => array (
+			"description" => "Upload a zip file for pipeline processing.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "upload_file", "description" => "A zip file, multipart encoded", "documented" => 1, "required" => 1),
+			)
+		),
+
 		"wof.save" => array (
 			"description" => "Save a WOF record.",
 			"documented" => 1,
