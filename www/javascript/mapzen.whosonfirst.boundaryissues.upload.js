@@ -477,10 +477,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				zip.file(meta_path).async("string").then(function(meta_json) {
 					if (meta_json) {
 						var meta = JSON.parse(meta_json);
-						if (! meta) {
-							$('#upload-preview-props').html('Could not parse meta.json');
-						} else if (! meta.type) {
-							$('#upload-preview-props').html('meta.json has no "type" value.');
+						var err = self.validate_zip(meta);
+						if (err && err.length > 0) {
+							var html = '<div class="alert alert-danger">Could not process <strong>' + name + '</strong>:<ul><li>' + err.join('</li><li>') + '</li></ul></div>';
+							$('#upload-preview-props').html(html);
 						} else {
 							var html = '<strong>' + file.name + '</strong>: ' + meta.type + ' import';
 							html += '<ul>';
@@ -491,14 +491,38 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 								}
 							}
 							html += '</ul>';
-							$('#upload-preview-props').html(html);
+							upload_is_ready = true;
+							$('#upload-btn').addClass('btn-primary');
+							$('#upload-btn').attr('disabled', false);
 						}
+						$('#upload-preview-props').html(html);
 					} else {
 						$('#upload-preview-props').html('Could not load meta.json');
 					}
 				});
 			} else {
 				$('#upload-preview-props').html('Could not find meta.json');
+			}
+		},
+
+		validate_zip: function(meta) {
+			var err = [];
+			if (! meta) {
+				err.push('Could not parse meta.json');
+				return err;
+			}
+			if (! meta.type) {
+				err.push('No error.type property found');
+			} else {
+				var fn = 'validate_' + meta.type + '_zip';
+				self[fn](meta, err);
+			}
+			return err;
+		},
+
+		validate_neighbourhood_zip: function(meta, err) {
+			if (! meta.parent_id) {
+				err.push('No parent_id property found');
 			}
 		},
 
