@@ -44,4 +44,18 @@
 		return $rsp;
 	}
 
+	########################################################################
+
+	function wof_s3_delete($path) {
+
+		$bucket = array(
+			'id' => $GLOBALS['cfg']['aws']['s3_bucket'],
+			'key' => $GLOBALS['cfg']['aws']['access_key'],
+			'secret' => $GLOBALS['cfg']['aws']['access_secret'],
+		);
+
+		$rsp = s3_delete($bucket, $path);
+		return $rsp;
+	}
+
 	# the end

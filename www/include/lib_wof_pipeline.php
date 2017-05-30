@@ -1,5 +1,13 @@
 <?php
 
+	// The 'photos' prefix here is temporary until we sort out the
+	// requisite S3 permissions. (20170530/dphiffer)
+	$GLOBALS['cfg']['wof_pipeline_base_path'] = 'photos/pipeline';
+
+	loadlib('wof_s3');
+
+	########################################################################
+
 	function wof_pipeline_create($upload, $meta) {
 
 		$now = date('Y-m-d H:i:s');
@@ -40,16 +48,22 @@
 
 	function wof_pipeline_upload_files($upload, $meta, $pipeline_id) {
 
-		// The 'photos' prefix here is temporary until we sort out the
-		// requisite S3 permissions. (20170530/dphiffer)
-		$dir = "photos/pipeline/$pipeline_id";
+		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
 
+		// Upload zip file
+		$data = file_get_contents($upload['tmp_name']);
+		$path = "$dir/{$upload['name']}";
+		$rsp = wof_s3_put_data($data, $path);
+		wof_pipeline_log($pipeline_id, "Uploaded {$upload['name']}", json_encode($rsp));
+
+		// Read contents of files from zip file
 		$rsp = wof_pipeline_read_zip_contents($upload, $meta['files']);
 		if (! $rsp['ok']) {
-			api_output_ok($rsp);
+			return $rsp;
 		}
 		$contents = $rsp['contents'];
 
+		// Upload each file
 		foreach ($contents as $file => $data) {
 			$path = "$dir/$file";
 			$rsp = wof_s3_put_data($data, $path);
@@ -130,7 +144,7 @@
 		while ($entry = zip_read($fh)) {
 			$path = zip_entry_name($entry);
 			$name = preg_replace("/^$basename\//", '', $path);
-			if (in_array($name, $files)) {
+			if (in_array($name, $files) || $name == 'meta.json') {
 				$data[$name] = zip_entry_read($entry);
 			}
 		}
@@ -156,6 +170,56 @@
 			'details' => $details_esc,
 			'created_at' => $now
 		));
+		return $rsp;
+	}
+
+	########################################################################
+
+	function wof_pipeline_cleanup($pipeline_id) {
+
+		$pipeline_id = intval($pipeline_id);
+
+		$rsp = db_fetch("
+			SELECT *
+			FROM boundaryissues_pipeline
+			WHERE id = $pipeline_id
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$meta = json_decode($rsp['rows'][0]['meta'], 'as hash');
+		$zip_file = $rsp['rows'][0]['filename'];
+
+		$rsp = wof_pipeline_cleanup_file($pipeline_id, $zip_file);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		$rsp = wof_pipeline_cleanup_file($pipeline_id, 'meta.json');
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		foreach ($meta['files'] as $filename) {
+			$rsp = wof_pipeline_cleanup_file($pipeline_id, $filename);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		}
+
+		return array(
+			'ok' => 1
+		);
+	}
+
+	########################################################################
+
+	function wof_pipeline_cleanup_file($pipeline_id, $filename) {
+		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
+		$path = "$dir/$filename";
+		$rsp = wof_s3_delete($path);
+		wof_pipeline_log($pipeline_id, "Deleted $filename", json_encode($rsp));
 		return $rsp;
 	}
 
