@@ -46,6 +46,10 @@
 		),
 	);
 
+	$GLOBALS['cfg']['aws']['s3_bucket'] = 'whosonfirst.mapzen.com';
+	$GLOBALS['cfg']['aws']['access_key'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['aws']['access_secret'] = 'READ-FROM-SECRETS';
+
 	# Configure user access by role and capability. If a user is a member of
 	# a given role (as defined in the `users_roles` database table), then
 	# checks for access will try to match the list of capabilities avail-
