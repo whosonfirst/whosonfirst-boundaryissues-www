@@ -44,11 +44,15 @@
 		// requisite S3 permissions. (20170530/dphiffer)
 		$dir = "photos/pipeline/$pipeline_id";
 
-		foreach ($meta['files'] as $file) {
+		$rsp = wof_pipeline_read_zip_contents($upload, $meta['files']);
+		if (! $rsp['ok']) {
+			api_output_ok($rsp);
+		}
+		$contents = $rsp['contents'];
+
+		foreach ($contents as $file => $data) {
 			$path = "$dir/$file";
-			$data = wof_pipeline_read_zip_file($upload, $file);
 			$rsp = wof_s3_put_data($data, $path);
-			$rsp = array('ok' => 1);
 			wof_pipeline_log($pipeline_id, "Uploaded $file", json_encode($rsp));
 			if (! $rsp['ok']) {
 				api_output_ok($rsp);
@@ -69,11 +73,7 @@
 		$err = array();
 		$basename = basename($upload['name'], '.zip');
 
-		$rsp = wof_pipeline_zip_file_handle($upload['tmp_name']);
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-		$fh = $rsp['handle'];
+		$fh = zip_open($upload['tmp_name']);
 
 		while ($entry = zip_read($fh)) {
 			$name = zip_entry_name($entry);
@@ -100,29 +100,13 @@
 			}
 		}
 
+		zip_close($fh);
+
 		if ($err) {
 			return array('ok' => 0, 'errors' => $err);
 		} else {
 			return array('ok' => 1, 'meta' => $meta);
 		}
-	}
-
-	########################################################################
-
-	function wof_pipeline_zip_file_handle($filename) {
-		if (! $GLOBALS['cfg']["zip_file_$filename"]) {
-			$GLOBALS['cfg']["zip_file_$filename"] = zip_open($filename);
-		}
-		if (! is_resource($GLOBALS['cfg']["zip_file_$filename"])) {
-			return array(
-				'ok' => 0,
-				'error' => "Could not open zip file $filename"
-			);
-		}
-		return array(
-			'ok' => 1,
-			'handle' => $GLOBALS['cfg']["zip_file_$filename"]
-		);
 	}
 
 	########################################################################
@@ -137,30 +121,25 @@
 
 	########################################################################
 
-	function wof_pipeline_read_zip_file($upload, $zipped_filename) {
+	function wof_pipeline_read_zip_contents($upload, $files) {
 
 		$basename = basename($upload['name'], '.zip');
-
-		$rsp = wof_pipeline_zip_file_handle($upload['tmp_name']);
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-		$fh = $rsp['handle'];
+		$fh = zip_open($upload['tmp_name']);
+		$data = array();
 
 		while ($entry = zip_read($fh)) {
-			$name = zip_entry_name($entry);
-			if ($name == "$basename/$zipped_filename") {
-				$data = zip_entry_read($entry);
-				return array(
-					'ok' => 1,
-					'data' => $data
-				);
+			$path = zip_entry_name($entry);
+			$name = preg_replace("/^$basename\//", '', $path);
+			if (in_array($name, $files)) {
+				$data[$name] = zip_entry_read($entry);
 			}
 		}
 
+		zip_close($fh);
+
 		return array(
-			'ok' => 0,
-			'error' => "Could not read $zipped_filename from {$upload['name']} ({$upload['tmp_name']})"
+			'ok' => 1,
+			'contents' => $data
 		);
 	}
 

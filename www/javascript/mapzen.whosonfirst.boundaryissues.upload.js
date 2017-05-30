@@ -831,6 +831,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			} else if (rsp.error && rsp.error.message) {
 				$result.html('Error: ' + rsp.error.message);
 				mapzen.whosonfirst.log.error(rsp.error.message);
+			} else if (rsp.error && typeof rsp.error == 'string') {
+				$result.html('Error: ' + rsp.error);
+				mapzen.whosonfirst.log.error(rsp.error);
 			} else if (rsp.errors) {
 				$result.html('Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul>');
 				mapzen.whosonfirst.log.error(rsp.errors.join(', '));
