@@ -4,6 +4,8 @@
 	loadlib('wof_utils');
 	loadlib('wof_photos');
 	loadlib('wof_save');
+	loadlib('wof_s3');
+	loadlib('wof_pipeline');
 	loadlib('users_settings');
 	loadlib('uuid');
 
@@ -194,32 +196,27 @@
 			api_output_error(400, 'Please include an upload_file.');
 		}
 
-		$rsp = api_wof_utils_validate_zip($_FILES["upload_file"]);
+		$rsp = wof_pipeline_validate_zip($_FILES["upload_file"]);
 		if (! $rsp['ok']) {
 			// Pass the errors through on a 200 response
 			api_output_ok($rsp);
 		}
-
 		$meta = $rsp['meta'];
-		$now = date('Y-m-d H:i:s');
-		$meta_json = json_encode($meta);
 
-		$rsp = db_insert('boundaryissues_pipeline', array(
-			'filename' => $_FILES["upload_file"]['name'],
-			'type' => $meta['type'],
-			'meta' => $meta_json,
-			'phase' => 'pending',
-			'created' => $now,
-			'updated' => $now
-		));
+		$rsp = wof_pipeline_create($_FILES["upload_file"], $meta);
 		if (! $rsp['ok']) {
-			// Pass the errors through on a 200 response
+			api_output_ok($rsp);
+		}
+		$pipeline_id = $rsp['pipeline_id'];
+
+		$rsp = wof_pipeline_upload_files($_FILES["upload_file"], $meta, $pipeline_id);
+		if (! $rsp['ok']) {
 			api_output_ok($rsp);
 		}
 
 		api_output_ok(array(
 			'ok' => 1,
-			'pipeline_id' => $rsp['insert_id']
+			'pipeline_id' => $pipeline_id
 		));
 	}
 
