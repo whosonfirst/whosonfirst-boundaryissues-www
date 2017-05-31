@@ -1,0 +1,32 @@
+{capture assign="page_title"}{$pipeline_filename} ({$pipeline_id}){/capture}
+{include file='inc_head.txt' nav_tab='edit'}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Pipeline {$pipeline_id|@escape}</h2>
+			<small><a href="{$pipeline_url|@escape}">{$pipeline_filename|@escape}</a> ({$pipeline_type|@escape})</small>
+		</div>
+	</div>
+	<div class="pipeline-log">
+		{foreach from=$logs item=log}
+			<div class="pipeline-log-row">
+				<div class="row">
+					<div class="col-md-9 pipeline-log-summary">{$log.summary|@escape}</div>
+					<div class="col-md-3 pipeline-log-date">{$log.created_at|@escape}</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 pipeline-log-details">{$log.details|@escape}</div>
+				</div>
+			</div>
+		{/foreach}
+	</div>
+</div>
+
+{literal}
+<script>
+$('.pipeline-log-summary').click(function(e) {
+	$(e.target).closest('.pipeline-log-row').toggleClass('show-details');
+});
+</script>
+{/literal}

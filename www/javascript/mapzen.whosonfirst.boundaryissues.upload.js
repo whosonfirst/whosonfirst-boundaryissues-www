@@ -699,9 +699,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 
 			var onsuccess = function(rsp) {
-				console.log(rsp);
 				if (is_csv && rsp.csv_id) {
 					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/csv/' + rsp.csv_id + '/1/');
+				} else if (is_zip && rsp.pipeline_id) {
+					window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/pipeline/' + rsp.pipeline_id + '/');
 				} else {
 					self.show_result(rsp);
 					mapzen.whosonfirst.log.debug(rsp);
