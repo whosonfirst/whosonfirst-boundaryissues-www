@@ -17,7 +17,7 @@
 					<input type="file" name="csv_file">
 				</span>
 			{/if}
-			{if $cfg.enable_feature_pipeline}
+			{if $cfg.enable_feature_pipeline && $crumb_upload_zip}
 				<span class="hey-look">&nbsp;&nbsp;or&nbsp;&nbsp;</span>
 				<span class="btn btn-default btn-file">
 					Choose zip file

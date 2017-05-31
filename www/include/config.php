@@ -73,10 +73,12 @@
 
 		*/
 		'admin' => array(
-			'can_invite_users'
+			'can_invite_users',
+			'pipeline'
 		),
 		'staff' => array(
-			'can_edit_all_repos'
+			'can_edit_all_repos',
+			'pipeline'
 		),
 		'users' => array(
 			'can_edit_whosonfirst-data-venue-us-ny',
