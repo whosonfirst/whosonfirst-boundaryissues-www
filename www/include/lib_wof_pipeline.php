@@ -36,7 +36,7 @@
 		}
 
 		$pipeline_id = $rsp['insert_id'];
-		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta_json);
+		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
 
 		return array(
 			'ok' => 1,
@@ -53,8 +53,8 @@
 		// Upload zip file
 		$data = file_get_contents($upload['tmp_name']);
 		$path = "$dir/{$upload['name']}";
-		$rsp = wof_s3_put_data($data, $path);
-		wof_pipeline_log($pipeline_id, "Uploaded {$upload['name']}", json_encode($rsp));
+		$rsp = wof_s3_put($data, $path);
+		wof_pipeline_log($pipeline_id, "Uploaded {$upload['name']}", $rsp);
 
 		// Read contents of files from zip file
 		$rsp = wof_pipeline_read_zip_contents($upload, $meta['files']);
@@ -66,16 +66,44 @@
 		// Upload each file
 		foreach ($contents as $file => $data) {
 			$path = "$dir/$file";
-			$rsp = wof_s3_put_data($data, $path);
-			wof_pipeline_log($pipeline_id, "Uploaded $file", json_encode($rsp));
+			$rsp = wof_s3_put($data, $path);
+			wof_pipeline_log($pipeline_id, "Uploaded $file", $rsp);
 			if (! $rsp['ok']) {
-				api_output_ok($rsp);
+				return $rsp;
 			}
 		}
 
 		return array(
 			'ok' => 1,
 			'uploaded' => $meta['files']
+		);
+	}
+
+	########################################################################
+
+	function wof_pipeline_download_files($pipeline) {
+
+		$pipeline_id = intval($pipeline['id']);
+		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id";
+		if (! file_exists($dir)) {
+			mkdir($dir, 0755, true);
+		}
+
+		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
+
+		foreach ($pipeline['meta']['files'] as $file) {
+			$rsp = wof_s3_get("$remote_dir/$file");
+			wof_pipeline_log($pipeline_id, "Downloaded $file", $rsp);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			file_put_contents("$dir/$file", $rsp['body']);
+		}
+
+		return array(
+			'ok' => 1,
+			'dir' => $dir,
+			'files' => $pipeline['meta']['files']
 		);
 	}
 
@@ -159,7 +187,10 @@
 
 	########################################################################
 
-	function wof_pipeline_log($pipeline_id, $summary, $details) {
+	function wof_pipeline_log($pipeline_id, $summary, $details = '') {
+		if (! is_scalar($details)) {
+			$details = var_export($details, true);
+		}
 		$pipeline_id = intval($pipeline_id);
 		$summary_esc = addslashes($summary);
 		$details_esc = addslashes($details);
@@ -175,38 +206,47 @@
 
 	########################################################################
 
-	function wof_pipeline_cleanup($pipeline_id) {
-
+	function wof_pipeline_phase($pipeline_id, $phase) {
 		$pipeline_id = intval($pipeline_id);
+		$phase_esc = addslashes($phase);
+		$now = date('Y-m-d H:i:s');
 
-		$rsp = db_fetch("
-			SELECT *
-			FROM boundaryissues_pipeline
-			WHERE id = $pipeline_id
-		");
+		$rsp = db_update('boundaryissues_pipeline', array(
+			'phase' => $phase_esc,
+			'updated' => $now
+		), "id = $pipeline_id");
+
+		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
+		return $rsp;
+	}
+
+	########################################################################
+
+	function wof_pipeline_cleanup($pipeline) {
+
+		$meta = $pipeline['meta'];
+		$zip_file = $pipeline['filename'];
+
+		$rsp = wof_pipeline_cleanup_file($pipeline, $zip_file);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
-		$meta = json_decode($rsp['rows'][0]['meta'], 'as hash');
-		$zip_file = $rsp['rows'][0]['filename'];
-
-		$rsp = wof_pipeline_cleanup_file($pipeline_id, $zip_file);
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-
-		$rsp = wof_pipeline_cleanup_file($pipeline_id, 'meta.json');
+		$rsp = wof_pipeline_cleanup_file($pipeline, 'meta.json');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
 
 		foreach ($meta['files'] as $filename) {
-			$rsp = wof_pipeline_cleanup_file($pipeline_id, $filename);
+			$rsp = wof_pipeline_cleanup_file($pipeline, $filename);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
 		}
+
+		$pipeline_id = intval($pipeline['id']);
+		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id";
+		rmdir($local_dir);
 
 		return array(
 			'ok' => 1
@@ -215,12 +255,50 @@
 
 	########################################################################
 
-	function wof_pipeline_cleanup_file($pipeline_id, $filename) {
-		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
-		$path = "$dir/$filename";
-		$rsp = wof_s3_delete($path);
-		wof_pipeline_log($pipeline_id, "Deleted $filename", json_encode($rsp));
+	function wof_pipeline_cleanup_file($pipeline, $filename) {
+		$pipeline_id = intval($pipeline['id']);
+		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
+		$remote_path = "$remote_dir/$filename";
+		$rsp = wof_s3_delete($remote_path);
+		wof_pipeline_log($pipeline_id, "Deleted $filename", $rsp);
+
+		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id";
+		$local_path = "$local_dir/$filename";
+		if (file_exists($local_path)) {
+			unlink($local_path);
+		}
+
 		return $rsp;
+	}
+
+	########################################################################
+
+	function wof_pipeline_next() {
+		$rsp = db_fetch("
+			SELECT *
+			FROM boundaryissues_pipeline
+			WHERE phase = 'pending'
+			ORDER BY created
+			LIMIT 1
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		if (! $rsp['rows']) {
+			return array(
+				'ok' => 1,
+				'pipeline' => null
+			);
+		}
+
+		$pipeline = $rsp['rows'][0];
+
+		$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
+		return array(
+			'ok' => 1,
+			'pipeline' => $pipeline
+		);
 	}
 
 	# the end
