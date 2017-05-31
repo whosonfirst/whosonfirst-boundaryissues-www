@@ -2,7 +2,7 @@
 
 	// The 'photos' prefix here is temporary until we sort out the
 	// requisite S3 permissions. (20170530/dphiffer)
-	$GLOBALS['cfg']['wof_pipeline_base_path'] = 'photos/pipeline';
+	$GLOBALS['cfg']['wof_pipeline_base_path'] = 'photos/pipeline/';
 
 	loadlib('wof_s3');
 
@@ -71,12 +71,13 @@
 
 	function wof_pipeline_upload_files($upload, $meta, $pipeline_id) {
 
-		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id/";
+		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}$pipeline_id/";
 
 		// Upload zip file
 		$data = file_get_contents($upload['tmp_name']);
 		$path = "$dir{$upload['name']}";
-		$rsp = wof_s3_put($data, $path);
+		$args = array('acl' => rawurlencode('public-read'));
+		$rsp = wof_s3_put($data, $path, $args);
 		wof_pipeline_log($pipeline_id, "Uploaded {$upload['name']}", $rsp);
 
 		// Read contents of files from zip file
@@ -112,7 +113,7 @@
 			mkdir($dir, 0755, true);
 		}
 
-		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id/";
+		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}$pipeline_id/";
 
 		foreach ($pipeline['meta']['files'] as $file) {
 			$rsp = wof_s3_get("$remote_dir$file");
@@ -301,7 +302,7 @@
 
 	function wof_pipeline_cleanup_file($pipeline, $filename) {
 		$pipeline_id = intval($pipeline['id']);
-		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id/";
+		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}$pipeline_id/";
 		$remote_path = "$remote_dir$filename";
 		$rsp = wof_s3_delete($remote_path);
 		wof_pipeline_log($pipeline_id, "Deleted $filename", $rsp);
