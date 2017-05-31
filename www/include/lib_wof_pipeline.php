@@ -46,13 +46,36 @@
 
 	########################################################################
 
+	function wof_pipeline_get($id) {
+		$id = intval($id);
+		$rsp = db_fetch("
+			SELECT *
+			FROM boundaryissues_pipeline
+			WHERE id = $id
+		");
+		if (! $rsp['ok'] ||
+		    ! $rsp['rows']) {
+			return $rsp;
+		}
+
+		$pipeline = $rsp['rows'][0];
+		$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
+
+		return array(
+			'ok' => 1,
+			'pipeline' => $pipeline
+		);
+	}
+
+	########################################################################
+
 	function wof_pipeline_upload_files($upload, $meta, $pipeline_id) {
 
-		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
+		$dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id/";
 
 		// Upload zip file
 		$data = file_get_contents($upload['tmp_name']);
-		$path = "$dir/{$upload['name']}";
+		$path = "$dir{$upload['name']}";
 		$rsp = wof_s3_put($data, $path);
 		wof_pipeline_log($pipeline_id, "Uploaded {$upload['name']}", $rsp);
 
@@ -65,7 +88,7 @@
 
 		// Upload each file
 		foreach ($contents as $file => $data) {
-			$path = "$dir/$file";
+			$path = "$dir$file";
 			$rsp = wof_s3_put($data, $path);
 			wof_pipeline_log($pipeline_id, "Uploaded $file", $rsp);
 			if (! $rsp['ok']) {
@@ -84,20 +107,20 @@
 	function wof_pipeline_download_files($pipeline) {
 
 		$pipeline_id = intval($pipeline['id']);
-		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id";
+		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
 		if (! file_exists($dir)) {
 			mkdir($dir, 0755, true);
 		}
 
-		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
+		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id/";
 
 		foreach ($pipeline['meta']['files'] as $file) {
-			$rsp = wof_s3_get("$remote_dir/$file");
+			$rsp = wof_s3_get("$remote_dir$file");
 			wof_pipeline_log($pipeline_id, "Downloaded $file", $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
-			file_put_contents("$dir/$file", $rsp['body']);
+			file_put_contents("$dir$file", $rsp['body']);
 		}
 
 		return array(
@@ -245,7 +268,7 @@
 		}
 
 		$pipeline_id = intval($pipeline['id']);
-		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id";
+		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
 		rmdir($local_dir);
 
 		return array(
@@ -257,13 +280,13 @@
 
 	function wof_pipeline_cleanup_file($pipeline, $filename) {
 		$pipeline_id = intval($pipeline['id']);
-		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id";
-		$remote_path = "$remote_dir/$filename";
+		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}/$pipeline_id/";
+		$remote_path = "$remote_dir$filename";
 		$rsp = wof_s3_delete($remote_path);
 		wof_pipeline_log($pipeline_id, "Deleted $filename", $rsp);
 
-		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id";
-		$local_path = "$local_dir/$filename";
+		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
+		$local_path = "$local_dir$filename";
 		if (file_exists($local_path)) {
 			unlink($local_path);
 		}
