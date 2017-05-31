@@ -214,6 +214,9 @@
 			api_output_ok($rsp);
 		}
 
+		// Clean up the upload file
+		unlink($_FILES["upload_file"]['tmp_name']);
+
 		api_output_ok(array(
 			'ok' => 1,
 			'pipeline_id' => $pipeline_id
