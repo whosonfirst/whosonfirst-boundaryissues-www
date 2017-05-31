@@ -3,6 +3,10 @@
 include('include/init.php');
 loadlib('wof_pipeline');
 
+if (! users_acl_check_access($GLOBALS['cfg']['user'], 'pipeline')) {
+	error_404();
+}
+
 $id = get_int64('id');
 $rsp = wof_pipeline_get($id);
 
