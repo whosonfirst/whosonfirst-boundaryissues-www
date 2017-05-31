@@ -229,6 +229,27 @@
 
 	########################################################################
 
+	function wof_pipeline_log_dump($id) {
+
+		$id = intval($id);
+		$rsp = db_fetch("
+			SELECT *
+			FROM boundaryissues_pipeline_log
+			WHERE pipeline_id = $id
+			ORDER BY created_at
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		return array(
+			'ok' => 1,
+			'logs' => $rsp['rows']
+		);
+	}
+
+	########################################################################
+
 	function wof_pipeline_phase($pipeline_id, $phase) {
 		$pipeline_id = intval($pipeline_id);
 		$phase_esc = addslashes($phase);

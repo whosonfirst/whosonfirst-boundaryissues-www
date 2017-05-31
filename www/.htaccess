@@ -80,6 +80,7 @@ RewriteRule ^csv/(.+)/?$         csv.php?id=$1      [L,QSA]
 RewriteRule ^id/(\d+)/?$         id.php?id=$1       [L,QSA]
 RewriteRule ^id/(\d+)\.geojson$  geojson.php?id=$1  [L,QSA]
 RewriteRule ^id/(\d+)/photos$    photos.php?id=$1   [L,QSA]
+RewriteRule ^pipeline/(\d+)/?$   pipeline.php?id=$1 [L,QSA]
 RewriteRule ^search/?$           search.php         [L,QSA]
 
 # Test pages

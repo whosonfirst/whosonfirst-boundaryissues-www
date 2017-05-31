@@ -828,6 +828,36 @@ body.user-can-edit #edit-disallowed {
 	font-size: 11px;
 }
 
+.pipeline-log {
+	padding: 1em 0 5em 0;
+	border-bottom: 1px solid #dedede;
+}
+
+.pipeline-log-row {
+	padding: 5px 0;
+	border-top: 1px solid #dedede;
+}
+
+.pipeline-log-summary {
+	cursor: pointer;
+}
+
+.pipeline-log-summary:hover {
+	color: #FF7B7B;
+}
+
+.pipeline-log-details {
+	display: none;
+}
+
+.pipeline-log-row.show-details .pipeline-log-details {
+	display: block;
+	white-space: pre;
+	font-family: menlo, monospace;
+	font-size: 11px;
+	margin-top: 5px;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {
