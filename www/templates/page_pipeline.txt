@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<h2>Pipeline {$pipeline_id|@escape}</h2>
-			<small><a href="{$pipeline_url|@escape}">{$pipeline_filename|@escape}</a> ({$pipeline_type|@escape})</small>
+			<small>{$pipeline_filename|@escape} (<span class="hey-look">{$pipeline_phase|@escape}</span> {$pipeline_type|@escape} pipeline)</small>
 		</div>
 	</div>
 	<div class="pipeline-log">

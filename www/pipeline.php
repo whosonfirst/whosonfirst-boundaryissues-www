@@ -16,7 +16,7 @@ $pipeline = $rsp['pipeline'];
 $GLOBALS['smarty']->assign('pipeline_id', $id);
 $GLOBALS['smarty']->assign('pipeline_type', $pipeline['type']);
 $GLOBALS['smarty']->assign('pipeline_filename', $pipeline['filename']);
-$GLOBALS['smarty']->assign('pipeline_url', '#');
+$GLOBALS['smarty']->assign('pipeline_phase', $pipeline['phase']);
 
 $rsp = wof_pipeline_log_dump($id);
 if ($rsp['logs']) {
