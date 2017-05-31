@@ -38,7 +38,8 @@
 
 		$pipeline_id = $rsp['insert_id'];
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
-		slack_bot_msg("$filename ({$meta['type']} pipeline $pipeline_id): pending");
+		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
+		slack_bot_msg("<$url|$filename> ({$meta['type']} pipeline $pipeline_id): pending");
 
 		return array(
 			'ok' => 1,
@@ -265,7 +266,8 @@
 		), "id = $pipeline_id");
 
 		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
-		slack_bot_msg("{$pipeline['filename']} ({$pipeline['type']} pipeline $pipeline_id): $phase");
+		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
+		slack_bot_msg("<$url|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id): $phase");
 
 		return $rsp;
 	}
