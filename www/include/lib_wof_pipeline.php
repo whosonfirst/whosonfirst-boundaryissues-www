@@ -5,6 +5,7 @@
 	$GLOBALS['cfg']['wof_pipeline_base_path'] = 'photos/pipeline/';
 
 	loadlib('wof_s3');
+	loadlib('slack_bot');
 
 	########################################################################
 
@@ -37,6 +38,7 @@
 
 		$pipeline_id = $rsp['insert_id'];
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
+		slack_bot_msg("$filename ({$meta['type']} pipeline $pipeline_id): pending");
 
 		return array(
 			'ok' => 1,
@@ -251,8 +253,9 @@
 
 	########################################################################
 
-	function wof_pipeline_phase($pipeline_id, $phase) {
-		$pipeline_id = intval($pipeline_id);
+	function wof_pipeline_phase($pipeline, $phase) {
+
+		$pipeline_id = intval($pipeline['id']);
 		$phase_esc = addslashes($phase);
 		$now = date('Y-m-d H:i:s');
 
@@ -262,6 +265,8 @@
 		), "id = $pipeline_id");
 
 		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
+		slack_bot_msg("{$pipeline['filename']} ({$pipeline['type']} pipeline $pipeline_id): $phase");
+
 		return $rsp;
 	}
 
