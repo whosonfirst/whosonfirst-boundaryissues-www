@@ -208,10 +208,21 @@ DROP TABLE IF EXISTS `boundaryissues_pipeline`;
 CREATE TABLE `boundaryissues_pipeline` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `type` varchar(255) DEFAULT NULL,
-  `filename` varchar(255) DEFAULT NULL,
-  `meta` text,
+  `repo` varchar(255),
   `phase` varchar(255) DEFAULT 'pending',
+  `filename` varchar(255) DEFAULT NULL,
+  `url` varchar(255),
+  `meta` text,
   `created` datetime DEFAULT NULL,
   `updated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `boundaryissues_pipeline_log`;
+
+CREATE TABLE `boundaryissues_pipeline_log` (
+  `pipeline_id` int(11) unsigned NOT NULL,
+  `summary` varchar(255) DEFAULT NULL,
+  `details` text,
+  `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
