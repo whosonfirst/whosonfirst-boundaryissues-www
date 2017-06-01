@@ -81,7 +81,6 @@
 		$path = "$dir{$upload['name']}";
 		$args = array('acl' => rawurlencode('public-read'));
 		$rsp = wof_s3_put($data, $path, $args);
-		wof_pipeline_log($pipeline_id, "Uploaded {$upload['name']}", $rsp);
 
 		// Read contents of files from zip file
 		$rsp = wof_pipeline_read_zip_contents($upload, $meta['files']);
@@ -94,16 +93,20 @@
 		foreach ($contents as $file => $data) {
 			$path = "$dir$file";
 			$rsp = wof_s3_put($data, $path);
-			wof_pipeline_log($pipeline_id, "Uploaded $file", $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
 		}
 
-		return array(
+		$result = array(
 			'ok' => 1,
-			'uploaded' => $meta['files']
+			'url' => "http://{$GLOBALS['cfg']['aws']['s3_bucket']}.s3.amazonaws.com/$dir",
+			'files' => $meta['files']
 		);
+
+		wof_pipeline_log($pipeline_id, "Uploaded files to S3", $result);
+
+		return $result;
 	}
 
 	########################################################################
@@ -120,18 +123,21 @@
 
 		foreach ($pipeline['meta']['files'] as $file) {
 			$rsp = wof_s3_get("$remote_dir$file");
-			wof_pipeline_log($pipeline_id, "Downloaded $file", $rsp);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
 			file_put_contents("$dir$file", $rsp['body']);
 		}
 
-		return array(
+		$result = array(
 			'ok' => 1,
 			'dir' => $dir,
 			'files' => $pipeline['meta']['files']
 		);
+
+		wof_pipeline_log($pipeline_id, "Downloaded files from S3", $result);
+
+		return $result;
 	}
 
 	########################################################################
@@ -278,31 +284,39 @@
 
 		$meta = $pipeline['meta'];
 		$zip_file = $pipeline['filename'];
+		$files = array();
 
 		$rsp = wof_pipeline_cleanup_file($pipeline, $zip_file);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
+		$files[] = $zip_file;
 
 		$rsp = wof_pipeline_cleanup_file($pipeline, 'meta.json');
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
+		$files[] = 'meta.json';
 
 		foreach ($meta['files'] as $filename) {
 			$rsp = wof_pipeline_cleanup_file($pipeline, $filename);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
+			$files[] = $filename;
 		}
 
 		$pipeline_id = intval($pipeline['id']);
 		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
 		rmdir($local_dir);
 
-		return array(
-			'ok' => 1
+		$result = array(
+			'ok' => 1,
+			'files' => $files
 		);
+		wof_pipeline_log($pipeline_id, "Cleaned up files", $result);
+
+		return $result;
 	}
 
 	########################################################################
@@ -312,7 +326,6 @@
 		$remote_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}$pipeline_id/";
 		$remote_path = "$remote_dir$filename";
 		$rsp = wof_s3_delete($remote_path);
-		wof_pipeline_log($pipeline_id, "Deleted $filename", $rsp);
 
 		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
 		$local_path = "$local_dir$filename";
