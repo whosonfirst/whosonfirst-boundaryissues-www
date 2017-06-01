@@ -29,6 +29,7 @@
 			'type' => $meta['type'],
 			'meta' => $meta_json_esc,
 			'phase' => 'pending',
+			'repo' => 'whosonfirst-data',
 			'created' => $now,
 			'updated' => $now
 		));
@@ -37,9 +38,18 @@
 		}
 
 		$pipeline_id = $rsp['insert_id'];
+
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
 		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
 		slack_bot_msg("<$url|$filename> ({$meta['type']} pipeline $pipeline_id): pending");
+
+		// Ok, here is where we encode the URL into the DB record, since
+		// we are going to need it later from the cron-run
+		// process_pipeline.php (which doesn't know how to figure out
+		// the proper abs_root_url. (20170601/dphiffer)
+		db_update('boundaryissues_pipeline', array(
+			'url' => $url
+		), "id = $pipeline_id");
 
 		return array(
 			'ok' => 1,
@@ -271,9 +281,13 @@
 			'updated' => $now
 		), "id = $pipeline_id");
 
+		$notification = '';
+		if ($phase == 'failed') {
+			$notification = ' <!here>';
+		}
+
 		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
-		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
-		slack_bot_msg("<$url|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id): $phase");
+		slack_bot_msg("<{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id): $phase$notification");
 
 		return $rsp;
 	}
@@ -343,8 +357,8 @@
 			SELECT *
 			FROM boundaryissues_pipeline
 			WHERE phase = 'pending'
+			GROUP BY repo
 			ORDER BY created
-			LIMIT 1
 		");
 		if (! $rsp['ok']) {
 			return $rsp;
@@ -353,16 +367,51 @@
 		if (! $rsp['rows']) {
 			return array(
 				'ok' => 1,
-				'pipeline' => null
+				'next' => array()
 			);
 		}
 
-		$pipeline = $rsp['rows'][0];
+		$pending = $rsp['rows'];
+		$rsp = db_fetch("
+			SELECT repo
+			FROM boundaryissues_pipeline
+			WHERE phase = 'in_progress'
+			   OR phase = 'next'
+			GROUP BY repo
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
 
-		$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
+		$repo_locked = array();
+		foreach ($rsp['rows'] as $in_progress) {
+			$repo_locked[] = $in_progress['repo'];
+		}
+
+		$next = array();
+		$ids = array();
+		foreach ($pending as $pipeline) {
+			if (in_array($pipeline['repo'], $repo_locked)) {
+				continue;
+			}
+			$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
+			$next[] = $pipeline;
+			$ids[] = intval($pipeline['id']);
+		}
+
+		$id_list = implode(', ', $ids);
+		$now = date('Y-m-d H:i:s');
+		$rsp = db_update('boundaryissues_pipeline', array(
+			'phase' => 'next',
+			'updated' => $now
+		), "id IN ($id_list)");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
 		return array(
 			'ok' => 1,
-			'pipeline' => $pipeline
+			'next' => $next
 		);
 	}
 

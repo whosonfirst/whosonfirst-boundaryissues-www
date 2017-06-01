@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS `boundaryissues_pipeline_log`;
+
+CREATE TABLE `boundaryissues_pipeline_log` (
+  `pipeline_id` int(11) unsigned NOT NULL,
+  `summary` varchar(255) DEFAULT NULL,
+  `details` text,
+  `created_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE boundaryissues_pipeline ADD COLUMN repo VARCHAR(255) AFTER meta;
+ALTER TABLE boundaryissues_pipeline ADD COLUMN url VARCHAR(255) AFTER repo;
