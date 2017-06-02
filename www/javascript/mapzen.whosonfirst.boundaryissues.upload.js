@@ -463,47 +463,84 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var name = file.name;
 			var match = name.match(/^(.+)\.zip$/);
 			var dir = match[1];
-			var meta_file = false;
-			var meta_path = dir + '/' + 'meta.json';
 			var files = [];
 			for (var path in zip.files) {
-				if (path == meta_path) {
-					meta_file = true;
-				} else if (path.substr(0, dir.length) == dir) {
+				if (path.substr(0, dir.length) == dir) {
 					files.push(path);
 				}
 			}
-			if (meta_file) {
-				zip.file(meta_path).async("string").then(function(meta_json) {
-					if (meta_json) {
-						var meta = JSON.parse(meta_json);
-						var err = self.validate_zip(meta);
-						if (err && err.length > 0) {
-							var html = '<div class="alert alert-danger">Could not process <strong>' + name + '</strong>:<ul><li>' + err.join('</li><li>') + '</li></ul></div>';
-							$('#upload-preview-props').html(html);
-						} else {
-							var html = '<strong>' + file.name + '</strong>: ' + meta.type + ' import';
-							html += '<ul>';
-							for (var i = 0; i < files.length; i++) {
-								var filename = files[i].substr(dir.length + 1);
-								if (filename != '') {
-									html += '<li>' + filename + '</li>';
-								}
-							}
-							html += '</ul>';
-							upload_is_ready = true;
-							$('#upload-btn').addClass('btn-primary');
-							$('#upload-btn').attr('disabled', false);
-						}
+			var html = self.pipeline_controls();
+			html += '<p><strong>' + file.name + '</strong></p>';
+			html += '<ul>';
+			for (var i = 0; i < files.length; i++) {
+				var filename = files[i].substr(dir.length + 1);
+				if (filename != '') {
+					html += '<li>' + filename + '</li>';
+				}
+			}
+			html += '</ul>';
+			$('#upload-preview-props').html(html);
+
+			$('#pipeline-type').change(function() {
+				var type = $('#pipeline-type').val();
+				console.log('type = ' + type);
+				self.pipeline_options(type);
+			});
+		},
+
+		pipeline_controls: function() {
+
+			var types = [
+				'neighbourhood',
+				'remove_properties'
+			];
+
+			var html = '<select id="pipeline-type">';
+			html += '<option>Select a pipeline type...</option>';
+			for (var i = 0; i < types.length; i++) {
+				html += '<option>' + types[i] + '</option>';
+			}
+			html += '</select>';
+
+			html += '<div id="pipeline-options"></div>';
+
+			return html;
+		},
+
+		pipeline_options: function(type) {
+			var html = '';
+			if (type == 'neighbourhood') {
+				html = '<p>Your zip file should include a selection of GeoJSON FeatureCollection files: cessation.geojson, cessation_points.geojson, deprecated.geojson, no_wof_boroughs.geojson, no_wof_macrohoods.geojson, no_wof_microhoods.geojson, no_wof_microhoods_points.geojson, no_wof_neighbourhoods.geojson, wof_campus.geojson, wof_locality.geojson, wof_neighbourhoods.geojson</p>';
+				html += '<div class="input-group">';
+				html += '<label for="parent_id">Parent ID</label>';
+				html += '<input type="text" id="parent_id">';
+				html += '</div>';
+			} else if (type == 'remove_properties') {
+				html = '<div class="input-group">';
+				html += '<label for="property_list">Property list (comma-separated)</label>';
+				html += '<input type="text" id="property_list">';
+				html += '</div>';
+			}
+			$('#pipeline-options').html(html);
+		},
+			/*zip.file(meta_path).async("string").then(function(meta_json) {
+				if (meta_json) {
+					var meta = JSON.parse(meta_json);
+					var err = self.validate_zip(meta);
+					if (err && err.length > 0) {
+						var html = '<div class="alert alert-danger">Could not process <strong>' + name + '</strong>:<ul><li>' + err.join('</li><li>') + '</li></ul></div>';
 						$('#upload-preview-props').html(html);
 					} else {
-						$('#upload-preview-props').html('<div class="alert alert-danger">Could not load <strong>meta.json</strong></div>');
+						upload_is_ready = true;
+						$('#upload-btn').addClass('btn-primary');
+						$('#upload-btn').attr('disabled', false);
 					}
-				});
-			} else {
-				$('#upload-preview-props').html('<div class="alert alert-danger">Could not find <strong>meta.json</strong></div>');
-			}
-		},
+
+				} else {
+					$('#upload-preview-props').html('<div class="alert alert-danger">Could not load <strong>meta.json</strong></div>');
+				}
+			});
+		},*/
 
 		validate_zip: function(meta) {
 			var err = [];
