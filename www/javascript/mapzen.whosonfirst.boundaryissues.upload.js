@@ -534,7 +534,14 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var html = '';
 			if (type == 'neighbourhood') {
-				html = '<p>Your zip file should include a selection of GeoJSON FeatureCollection files. ([</p>';
+
+				var process_venues_checked = meta.process_venues ? ' checked="checked"' : '';
+
+				html = '<p>Your zip file should include a selection of GeoJSON FeatureCollection files.</p>';
+				html += '<div class="input-group">';
+				html += '<input type="checkbox" id="process_venues"' + process_venues_checked + '>';
+				html += '<label for="process_venues">Process descendant venues</label>';
+				html += '</div>';
 			} else if (type == 'remove_properties') {
 
 				var property_list = meta.property_list || '';
@@ -561,6 +568,29 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			html += '</div>';
 
 			$('#pipeline-options').html(html);
+
+			upload_is_ready = true;
+			$('#upload-btn').addClass('btn-primary');
+			$('#upload-btn').attr('disabled', false);
+		},
+
+		get_meta_json: function() {
+			var meta = self.meta || {
+				slack_handle: '',
+				generate_meta_files: false
+			};
+
+			meta.type = $('#pipeline-type').val();
+			meta.slack_handle = $('#slack_handle').val();
+			meta.generate_meta_files = $('#generate_meta_files')[0].checked;
+
+			if (meta.type == 'neighbourhood') {
+				meta.process_venues = $('#process_venues')[0].checked;
+			} else if (meta.type == 'remove_properties') {
+				meta.property_list = $('#property_list').val();
+			}
+
+			return JSON.stringify(meta);
 		},
 
 		setup_map_preview: function(geojson) {
@@ -818,7 +848,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			} else if (is_zip) {
 
-				// noop
+				data.append('meta_json', self.get_meta_json());
 
 			} else {
 

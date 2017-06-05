@@ -862,7 +862,8 @@ body.user-can-edit #edit-disallowed {
 	padding: 1em 0;
 }
 
-#pipeline-options input {
+#pipeline-options input,
+#pipeline-type {
 	display: block;
 	margin-top: 0.5em;
 }
