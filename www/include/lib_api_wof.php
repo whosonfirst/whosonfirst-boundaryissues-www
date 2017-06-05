@@ -201,7 +201,13 @@
 			// Pass the errors through on a 200 response
 			api_output_ok($rsp);
 		}
-		$meta = $rsp['meta'];
+
+		$meta_json = post_str('meta_json');
+		if ($meta_json) {
+			$meta = json_decode($meta_json, 'as hash');
+		} else {
+			$meta = $rsp['meta'];
+		}
 
 		$rsp = wof_pipeline_create($_FILES["upload_file"], $meta);
 		if (! $rsp['ok']) {
