@@ -858,6 +858,19 @@ body.user-can-edit #edit-disallowed {
 	margin-top: 5px;
 }
 
+#pipeline-options {
+	padding: 1em 0;
+}
+
+#pipeline-options input {
+	display: block;
+	margin-top: 0.5em;
+}
+
+#pipeline-options .input-group {
+	margin-top: 1em;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

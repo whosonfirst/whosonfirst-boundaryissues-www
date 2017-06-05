@@ -469,6 +469,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					files.push(path);
 				}
 			}
+
 			var html = self.pipeline_controls();
 			html += '<p><strong>' + file.name + '</strong></p>';
 			html += '<ul>';
@@ -477,13 +478,23 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (filename != '') {
 					html += '<li>' + filename + '</li>';
 				}
+				if (filename == 'meta.json') {
+					zip.file(dir + '/meta.json')
+					   .async('string')
+					   .then(function(meta_json) {
+						self.meta = JSON.parse(meta_json);
+						if (self.meta.type) {
+							$('#pipeline-type').val(self.meta.type);
+							self.pipeline_options(self.meta.type);
+						}
+					});
+				}
 			}
 			html += '</ul>';
 			$('#upload-preview-props').html(html);
 
 			$('#pipeline-type').change(function() {
 				var type = $('#pipeline-type').val();
-				console.log('type = ' + type);
 				self.pipeline_options(type);
 			});
 		},
@@ -495,12 +506,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				'remove_properties'
 			];
 
-			var html = '<select id="pipeline-type">';
+			var html = '<div class="input-group">';
+			html += '<label for="pipeline-type">Pipeline type</label>';
+			html += '<select id="pipeline-type">';
 			html += '<option>Select a pipeline type...</option>';
 			for (var i = 0; i < types.length; i++) {
 				html += '<option>' + types[i] + '</option>';
 			}
 			html += '</select>';
+			html += '</div>';
 
 			html += '<div id="pipeline-options"></div>';
 
@@ -508,59 +522,45 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		pipeline_options: function(type) {
+
+			if (self.meta) {
+				var meta = self.meta;
+			} else {
+				var meta = {
+					slack_handle: '',
+					generate_meta_files: false
+				};
+			}
+
 			var html = '';
 			if (type == 'neighbourhood') {
-				html = '<p>Your zip file should include a selection of GeoJSON FeatureCollection files: cessation.geojson, cessation_points.geojson, deprecated.geojson, no_wof_boroughs.geojson, no_wof_macrohoods.geojson, no_wof_microhoods.geojson, no_wof_microhoods_points.geojson, no_wof_neighbourhoods.geojson, wof_campus.geojson, wof_locality.geojson, wof_neighbourhoods.geojson</p>';
-				html += '<div class="input-group">';
-				html += '<label for="parent_id">Parent ID</label>';
-				html += '<input type="text" id="parent_id">';
-				html += '</div>';
+				html = '<p>Your zip file should include a selection of GeoJSON FeatureCollection files. ([</p>';
 			} else if (type == 'remove_properties') {
-				html = '<div class="input-group">';
-				html += '<label for="property_list">Property list (comma-separated)</label>';
-				html += '<input type="text" id="property_list">';
+
+				var property_list = meta.property_list || '';
+
+				html = '<p>Your zip file should include a CSV file called <code>remove_properties.csv</code>.</p>';
+				html += '<div class="input-group">';
+				html += '<label for="property_list">Properties to remove (comma-separated)</label>';
+				html += '<input type="text" id="property_list" value="' + htmlspecialchars(property_list) + '">';
 				html += '</div>';
-			}
-			$('#pipeline-options').html(html);
-		},
-			/*zip.file(meta_path).async("string").then(function(meta_json) {
-				if (meta_json) {
-					var meta = JSON.parse(meta_json);
-					var err = self.validate_zip(meta);
-					if (err && err.length > 0) {
-						var html = '<div class="alert alert-danger">Could not process <strong>' + name + '</strong>:<ul><li>' + err.join('</li><li>') + '</li></ul></div>';
-						$('#upload-preview-props').html(html);
-					} else {
-						upload_is_ready = true;
-						$('#upload-btn').addClass('btn-primary');
-						$('#upload-btn').attr('disabled', false);
-					}
-
-				} else {
-					$('#upload-preview-props').html('<div class="alert alert-danger">Could not load <strong>meta.json</strong></div>');
-				}
-			});
-		},*/
-
-		validate_zip: function(meta) {
-			var err = [];
-			if (! meta) {
-				err.push('Could not parse meta.json');
-				return err;
-			}
-			if (! meta.type) {
-				err.push("No 'type' property found in meta.json");
 			} else {
-				var fn = 'validate_' + meta.type + '_zip';
-				self[fn](meta, err);
+				$('#pipeline-options').html('Unknown pipeline type: ' + type);
+				return false;
 			}
-			return err;
-		},
 
-		validate_neighbourhood_zip: function(meta, err) {
-			if (! meta.parent_id) {
-				err.push('No parent_id property found');
-			}
+			var slack_handle = meta.slack_handle || '';
+			var meta_files_checked = meta.generate_meta_files ? ' checked="checked"' : '';
+
+			html += '<div class="input-group">';
+			html += '<label for="slack_handle">Ping my Slack handle when finished</label>';
+			html += '<input type="text" id="slack_handle" value="' + htmlspecialchars(slack_handle) + '">';
+			html += '</div>';
+			html += '<div class="input-group">';
+			html += '<input type="checkbox" id="generate_meta_files"' + meta_files_checked + '><label for="generate_meta_files">Generate meta files on completion</label>';
+			html += '</div>';
+
+			$('#pipeline-options').html(html);
 		},
 
 		setup_map_preview: function(geojson) {
