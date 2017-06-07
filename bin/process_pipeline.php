@@ -32,6 +32,7 @@
 		}
 
 		$rsp = $handler($pipeline, 'dry run');
+		wof_pipeline_log($pipeline['id'], "Dry run: $handler", $rsp);
 		if (! $rsp['ok']) {
 			wof_pipeline_phase($pipeline, 'failed');
 			wof_pipeline_cleanup($pipeline);
@@ -39,6 +40,7 @@
 		}
 
 		$rsp = $handler($pipeline);
+		wof_pipeline_log($pipeline['id'], "Execute: $handler", $rsp);
 		if (! $rsp['ok']) {
 			wof_pipeline_phase($pipeline, 'failed');
 			wof_pipeline_cleanup($pipeline);

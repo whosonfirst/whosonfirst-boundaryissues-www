@@ -31,9 +31,6 @@
 	########################################################################
 
 	function wof_pipeline_remove_properties($pipeline, $dry_run = false) {
-		wof_pipeline_log($pipeline['id'], "Running wof_pipeline_remove_properties", array(
-			'dry_run' => $dry_run
-		));
 
 		$dir = $pipeline['dir'];
 		$csv_path = "$dir/remove_properties.csv";
@@ -65,6 +62,7 @@
 			$ids[] = $row[0];
 		}
 
+		$updated = array();
 		foreach ($ids as $id) {
 			$path = wof_utils_find_id($id);
 			if (! $path) {
@@ -75,7 +73,7 @@
 			}
 
 			$json = file_get_contents($path);
-			$feature = json_decode($contents, 'as hash');
+			$feature = json_decode($json, 'as hash');
 			if (! $feature) {
 				return array(
 					'ok' => 0,
@@ -96,7 +94,8 @@
 			}
 
 			$feature['properties'] = $props;
-			$rsp = wof_geojson_save($geojson, $branch);
+			$geojson = json_encode($feature);
+			$rsp = wof_geojson_encode($geojson);
 
 			if (! $rsp['ok']) {
 				$rsp['error'] = "Error from GeoJSON service: {$rsp['error']}";
@@ -104,10 +103,17 @@
 			}
 
 			if (! $dry_run) {
-				$geojson = $rsp['geojson'];
+				$geojson = $rsp['encoded'];
 				file_put_contents($path, $geojson);
 			}
+
+			$updated[] = $path;
 		}
+
+		return array(
+			'ok' => 1,
+			'updated' => $updated
+		);
 	}
 
 	# the end
