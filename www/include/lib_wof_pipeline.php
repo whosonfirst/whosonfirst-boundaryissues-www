@@ -281,7 +281,15 @@
 
 		$notification = '';
 		if ($phase == 'failed') {
-			$notification = ' <!here>';
+			if ($pipeline['meta']['slack_handle']) {
+				$notification = " @{$pipeline['meta']['slack_handle']}";
+			} else {
+				$notification = ' <!here>';
+			}
+		} else if ($phase == 'success') {
+			if ($pipeline['meta']['slack_handle']) {
+				$notification = " @{$pipeline['meta']['slack_handle']}";
+			}
 		}
 
 		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
