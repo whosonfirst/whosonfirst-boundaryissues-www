@@ -6,6 +6,8 @@
 
 	loadlib('wof_s3');
 	loadlib('slack_bot');
+	loadlib('wof_pipeline_neighbourhood');
+	loadlib('wof_pipeline_remove_properties');
 
 	########################################################################
 
@@ -152,7 +154,11 @@
 
 	########################################################################
 
-	function wof_pipeline_validate_zip($upload) {
+	function wof_pipeline_validate_zip($upload, $meta = null) {
+
+		if ($meta) {
+			$meta = json_decode($meta, 'as hash');
+		}
 
 		$names = array();
 		$err = array();
@@ -162,10 +168,10 @@
 
 		while ($entry = zip_read($fh)) {
 			$name = zip_entry_name($entry);
-			if ($name == "$basename/meta.json") {
+			if (! $meta && $name == "$basename/meta.json") {
 				$json = zip_entry_read($entry);
 				$meta = json_decode($json, 'as hash');
-			} else if (preg_match("/^$basename\/([^\/]+\.geojson)\$/", $name, $matches)) {
+			} else if (preg_match("/^$basename\/([^\/]+\.(geojson|csv))\$/", $name, $matches)) {
 				$names[] = $matches[1];
 			}
 		}
@@ -177,10 +183,12 @@
 			if (! $meta['type']) {
 				$err[] = "meta.json has no 'type' property";
 			} else {
-				$fn = "wof_pipeline_validate_{$meta['type']}_zip";
+				$fn = "wof_pipeline_{$meta['type']}_validate";
 				if (function_exists($fn)) {
 					$rsp = $fn($meta, $names);
-					$err = array_merge($err, $rsp);
+					if (! $rsp['ok']) {
+						$err = array_merge($err, $rsp['errors']);
+					}
 				}
 			}
 		}
@@ -192,16 +200,6 @@
 		} else {
 			return array('ok' => 1, 'meta' => $meta);
 		}
-	}
-
-	########################################################################
-
-	function wof_pipeline_validate_neighbourhood_zip($meta, $names) {
-		$err = array();
-		if (! $meta['parent_id']) {
-			$err[] = "No 'parent_id' property found in meta.json";
-		}
-		return $err;
 	}
 
 	########################################################################
