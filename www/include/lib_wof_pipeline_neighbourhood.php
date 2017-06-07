@@ -1,5 +1,17 @@
 <?php
 
+	########################################################################
+
+	function wof_pipeline_neighbourhood_validate($pipeline) {
+		// Disabled for now.
+		return array(
+			'ok' => 0,
+			'error' => "This pipeline isn't working yet."
+		);
+	}
+
+	########################################################################
+
 	function wof_pipeline_neighbourhood($pipeline, $dry_run = false) {
 		wof_pipeline_log($pipeline['id'], "Running wof_pipeline_neighbourhood", array(
 			'dry_run' => $dry_run
