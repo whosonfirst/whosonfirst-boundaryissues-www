@@ -1391,8 +1391,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 			self.show_hierarchy(hierarchy);
 
-			if (hierarchy.country_id) {
-				self.set_country_properties(hierarchy.country_id);
+			if (hierarchy.length == 1 && hierarchy[0].country_id) {
+				self.set_country_properties(hierarchy[0].country_id);
 			}
 			self.set_property('wof:hierarchy', hierarchy);
 		},
