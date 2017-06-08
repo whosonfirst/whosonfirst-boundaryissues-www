@@ -6,6 +6,7 @@
 
 	loadlib('wof_s3');
 	loadlib('slack_bot');
+	loadlib('wof_pipeline_utils');
 	loadlib('wof_pipeline_neighbourhood');
 	loadlib('wof_pipeline_remove_properties');
 
@@ -43,7 +44,7 @@
 
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
 		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
-		slack_bot_msg("<$url|$filename> ({$meta['type']} pipeline $pipeline_id): pending");
+		slack_bot_msg("pending: <$url|$filename> ({$meta['type']} pipeline $pipeline_id)");
 
 		// Ok, here is where we encode the URL into the DB record, since
 		// we are going to need it later from the cron-run
@@ -150,6 +151,17 @@
 		wof_pipeline_log($pipeline_id, "Downloaded files from S3", $result);
 
 		return $result;
+	}
+
+	########################################################################
+
+	function wof_pipeline_finish($pipeline, $phase) {
+		wof_pipeline_phase($pipeline, $phase);
+		wof_pipeline_cleanup($pipeline);
+
+		$repo_path = wof_pipeline_repo_path($pipeline);
+		$rsp = git_execute($repo_path, "checkout master");
+		wof_pipeline_log($pipeline['id'], "Resetting {$pipeline['repo']} to master branch", $rsp);
 	}
 
 	########################################################################
@@ -293,7 +305,7 @@
 		}
 
 		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
-		slack_bot_msg("<{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id): $phase$notification");
+		slack_bot_msg("$phase: <{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id)$notification");
 
 		return $rsp;
 	}
