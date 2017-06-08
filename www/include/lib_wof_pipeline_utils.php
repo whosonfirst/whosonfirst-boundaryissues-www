@@ -4,15 +4,18 @@
 
 	function wof_pipeline_generate_meta_files($pipeline) {
 
-		$repo = wof_pipeline_repo_path($pipeline);
+		$repo_data_path = wof_pipeline_repo_path($pipeline);
+		$repo_path = dirname($repo_data_path);
 
+		$cmd = "cd $repo_path && /usr/local/bin/wof-build-metafiles";
 		$output = array();
-		exec("cd $repo && wof-build-metafiles", $output);
+		exec($cmd, $output);
 
 		$output = implode("\n", $output);
 
 		return array(
 			'ok' => 1,
+			'cmd' => $cmd,
 			'output' => $output
 		);
 	}
