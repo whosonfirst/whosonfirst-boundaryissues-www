@@ -105,7 +105,7 @@
 			);
 		}
 
-		$success_regex = "/(.{7}\.\..{7})\s+$curr_branch\s+->\s+$remote\/$branch/m";
+		$success_regex = "/[0-9a-f]{7}\.\.[0-9a-f]{7}/m";
 		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
 		if (! preg_match($success_regex, $git_pull_output, $success_match) &&
 		    ! preg_match($no_changes_regex, $git_pull_output)) {
@@ -116,7 +116,7 @@
 		}
 
 		if ($success_match) {
-			$rsp['commit_hashes'] = $success_match[1];
+			$rsp['commit_hashes'] = $success_match[0];
 		}
 
 		return $rsp;
@@ -147,14 +147,18 @@
 			);
 		}
 
-		$update_regex = "/.{7}\.\..{7}\s+$curr_branch -> $branch/m";
+		$update_regex = "/[0-9a-f]{7}\.\.[0-9a-f]{7}/m";
 		$new_repo_regex = "/\[new branch\]\s+$curr_branch -> $branch/m";
-		if (! preg_match($update_regex, $git_push_output) &&
+		if (! preg_match($update_regex, $git_push_output, $update_match) &&
 		    ! preg_match($new_repo_regex, $git_push_output)) {
 			return array(
 				'ok' => 0,
 				'error' => "Error from git push: $git_push_output"
 			);
+		}
+
+		if ($update_match) {
+			$rsp['commit_hashes'] = $update_match[0];
 		}
 
 		return $rsp;
