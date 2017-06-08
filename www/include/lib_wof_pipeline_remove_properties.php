@@ -63,6 +63,7 @@
 		}
 
 		$updated = array();
+		$warnings = array();
 		foreach ($ids as $id) {
 			$path = wof_utils_find_id($id);
 			if (! $path) {
@@ -85,12 +86,10 @@
 
 			foreach ($property_list as $prop) {
 				if (! isset($props[$prop])) {
-					return array(
-						'ok' => 0,
-						'error' => 'Could not find property ' . $prop . ' in WOF ID ' . $id
-					);
+					$warnings[] = 'Could not find property ' . $prop . ' in WOF ID ' . $id;
+				} else {
+					unset($props[$prop]);
 				}
-				unset($props[$prop]);
 			}
 
 			$feature['properties'] = $props;
@@ -110,10 +109,16 @@
 			$updated[] = $path;
 		}
 
-		return array(
+		$rsp = array(
 			'ok' => 1,
 			'updated' => $updated
 		);
+
+		if ($warnings) {
+			$rsp['warnings'] = $warnings;
+		}
+
+		return $rsp;
 	}
 
 	# the end

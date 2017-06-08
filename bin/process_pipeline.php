@@ -66,7 +66,8 @@
 		$updated = $rsp['updated'];
 		foreach ($updated as $path) {
 			$rsp = git_add($repo_path, $path);
-			wof_pipeline_log($pipeline['id'], "Add updated files to git index", $rsp);
+			$basename = basename($path);
+			wof_pipeline_log($pipeline['id'], "Add $basename to git index", $rsp);
 			if (! $rsp['ok']) {
 				wof_pipeline_finish($pipeline, 'failed');
 				continue;
