@@ -79,8 +79,11 @@
 			'can_edit_whosonfirst-data-venue-us-ca',
 			'can_edit_whosonfirst-data-venue-us-dc',
 			'can_edit_whosonfirst-data-venue-us-or',
+			'can_edit_whosonfirst-data-venue-us-nv',
 			'can_edit_whosonfirst-data-venue-au',
 			'can_edit_whosonfirst-data-venue-ca',
+			'can_edit_whosonfirst-data-venue-de',
+			'can_edit_whosonfirst-data-venue-gb',
 		),
 	);
 
