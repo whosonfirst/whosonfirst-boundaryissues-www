@@ -267,6 +267,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		setup_properties: function() {
 
+			self.setup_property_schema();
 			self.group_properties();
 			self.setup_add_property();
 
@@ -401,6 +402,23 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.initial_wof_value = wof;
 				});
 			}
+		},
+
+		setup_property_schema: function() {
+
+			var onsuccess = function(rsp) {
+				self.property_schema = rsp;
+			};
+
+			var onerror = function() {
+				mapzen.whosonfirst.log.error("could not load property schema");
+			}
+
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/whosonfirst.schema');
+			var args = {
+				cache_ttl: 3 * 60 * 60 * 1000 // 3 hours
+			};
+			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror, args);
 		},
 
 		setup_add_property: function(){
@@ -1028,11 +1046,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				alert('Oops, there is already a property with that name.');
 				return;
 			}
+
 			var remove = '<button class="btn btn-remove-item">-</button>';
+			var type = '';
+
+			if (self.property_schema) {
+				var props = self.property_schema.allOf[1].properties.properties.properties;
+				if (props[key] && props[key].type) {
+					type = ' data-type="' + htmlspecialchars(props[key].type) + '"';
+				}
+			}
+
 			var $newRow = $(
 				'<tr class="object-property property-visible property-editable property-deletable">' +
 					'<th>' + key + '</th>' +
-					'<td><input type="text" name="' + context + '.' + key + '" class="property">' + remove + '</td>' +
+					'<td><input type="text" name="' + context + '.' + key + '" class="property"' + type + '>' + remove + '</td>' +
 				'</tr>'
 			);
 			if ($addRow.length) {
