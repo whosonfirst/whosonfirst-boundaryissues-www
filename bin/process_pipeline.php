@@ -137,7 +137,7 @@
 				continue;
 			}
 
-			$meta_path = dirname($repo_path) . '/meta');
+			$meta_path = dirname($repo_path) . '/meta';
 			$rsp = git_add($repo_path, "$meta_path/*");
 			wof_pipeline_log($pipeline['id'], "Add meta files to git index", $rsp);
 			if (! $rsp['ok']) {

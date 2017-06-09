@@ -107,8 +107,11 @@
 
 		$success_regex = "/[0-9a-f]{7}\.\.[0-9a-f]{7}/m";
 		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
+		$no_changes_regex_alt = "/Already up-to-date./m";
+
 		if (! preg_match($success_regex, $git_pull_output, $success_match) &&
-		    ! preg_match($no_changes_regex, $git_pull_output)) {
+		    ! preg_match($no_changes_regex, $git_pull_output) &&
+		    ! preg_match($no_changes_regex_alt, $git_pull_output)) {
 			return array(
 				'ok' => 0,
 				'error' => "Error from git pull: $git_pull_output"
@@ -239,6 +242,8 @@
 
 		$rsp = array(
 			'ok' => 1,
+			'cwd' => $cwd,
+			'cmd' => $cmd,
 			'output' => trim($output),
 			'error' => trim($error),
 			'rsp' => trim($error) . trim($output)

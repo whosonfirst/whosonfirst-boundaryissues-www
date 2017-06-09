@@ -84,29 +84,34 @@
 
 			$props = $feature['properties'];
 
+			$removed_prop = false;
 			foreach ($property_list as $prop) {
-				if (! isset($props[$prop])) {
-					$warnings[] = 'Could not find property ' . $prop . ' in WOF ID ' . $id;
+				$rsp = wof_pipeline_remove_property($props, $prop);
+				if (! $rsp['ok']) {
+					$warnings[] = $rsp['error'];
 				} else {
-					unset($props[$prop]);
+					$props = $rsp['properties'];
+					$removed_prop = true;
 				}
 			}
 
-			$feature['properties'] = $props;
-			$geojson = json_encode($feature);
-			$rsp = wof_geojson_encode($geojson);
+			if ($removed_prop) {
+				$feature['properties'] = $props;
+				$geojson = json_encode($feature);
+				$rsp = wof_geojson_encode($geojson);
 
-			if (! $rsp['ok']) {
-				$rsp['error'] = "Error from GeoJSON service: {$rsp['error']}";
-				return $rsp;
+				if (! $rsp['ok']) {
+					$rsp['error'] = "Error from GeoJSON service: {$rsp['error']}";
+					return $rsp;
+				}
+
+				if (! $dry_run) {
+					$geojson = $rsp['encoded'];
+					file_put_contents($path, $geojson);
+				}
+
+				$updated[] = $path;
 			}
-
-			if (! $dry_run) {
-				$geojson = $rsp['encoded'];
-				file_put_contents($path, $geojson);
-			}
-
-			$updated[] = $path;
 		}
 
 		$rsp = array(
@@ -119,6 +124,53 @@
 		}
 
 		return $rsp;
+	}
+
+	########################################################################
+
+	function wof_pipeline_remove_property($properties, $name) {
+
+		// We use dot notation to indicate a nested property structure,
+		// the same way jq does. e.g., wof:concordances.4sq:id
+		$path = explode('.', $name);
+		$step = array_shift($path);
+
+		if (count($path) == 0) {
+			// Leaf of the property path
+			if (isset($properties[$step])) {
+				// Leaf exists, remove it
+				unset($properties[$step]);
+				return array(
+					'ok' => 1,
+					'properties' => $properties
+				);
+			} else {
+				// Leaf does not exist
+				return array(
+					'ok' => 0,
+					'error' => "Could not find property $step"
+				);
+			}
+		} else if (isset($properties[$step])) {
+			// Follow the next step in the tree
+			$sub_props = $properties[$step];
+			$sub_path = implode('.', $path);
+			$rsp = wof_pipeline_remove_property($sub_props, $sub_path);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$properties[$step] = $rsp['properties'];
+			return array(
+				'ok' => 1,
+				'properties' => $properties
+			);
+		} else {
+			// Cannot follow the next step in the tree
+			return array(
+				'ok' => 0,
+				'error' => "Could not find sub-property $step"
+			);
+		}
 	}
 
 	# the end
