@@ -85,6 +85,12 @@
 						"wof:geomhash": {
 							"type": "string"
 						},
+						"wof:population": {
+							"type": "integer"
+						},
+						"wof:population_rank": {
+							"type": "integer"
+						},
 						"mz:is_current": {
 							"type": "integer",
 							"default": 1
