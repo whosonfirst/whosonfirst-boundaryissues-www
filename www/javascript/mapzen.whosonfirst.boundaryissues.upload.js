@@ -903,7 +903,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$result.html('Error: ' + rsp.error);
 				mapzen.whosonfirst.log.error(rsp.error);
 			} else if (rsp.errors) {
-				$result.html('Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul>');
+				$result.html('<div class="alert alert-danger">Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul></div>');
 				mapzen.whosonfirst.log.error(rsp.errors.join(', '));
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
