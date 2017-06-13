@@ -32,7 +32,7 @@
 			'type' => $meta['type'],
 			'meta' => $meta_json_esc,
 			'phase' => 'pending',
-			'repo' => 'whosonfirst-data',
+			'repo' => $meta['repo'],
 			'created' => $now,
 			'updated' => $now
 		));
@@ -187,6 +187,7 @@
 				$names[] = $matches[1];
 			}
 		}
+
 		$meta['files'] = $names;
 
 		if (! $meta) {
@@ -207,10 +208,27 @@
 
 		zip_close($fh);
 
-		if ($err) {
-			return array('ok' => 0, 'errors' => $err);
+		$fn = "wof_pipeline_{$meta['type']}_repo";
+		if (function_exists($fn)) {
+			$rsp = $fn($upload, $names);
+			if (! $rsp['ok']) {
+				$err[] = $rsp['error'];
+			}
+			$meta['repo'] = $rsp['repo'];
 		} else {
-			return array('ok' => 1, 'meta' => $meta);
+			$err[] = 'Could not determine repo for pipeline.';
+		}
+
+		if ($err) {
+			return array(
+				'ok' => 0,
+				'errors' => $err
+			);
+		} else {
+			return array(
+				'ok' => 1,
+				'meta' => $meta
+			);
 		}
 	}
 
@@ -340,7 +358,9 @@
 
 		$pipeline_id = intval($pipeline['id']);
 		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
-		rmdir($local_dir);
+		if (file_exists($local_dir)) {
+			rmdir($local_dir);
+		}
 
 		$result = array(
 			'ok' => 1,

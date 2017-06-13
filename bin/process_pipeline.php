@@ -64,6 +64,12 @@
 		}
 
 		$updated = $rsp['updated'];
+		if (count($updated) == 0) {
+			wof_pipeline_log($pipeline['id'], "No files modified, bailing out", $rsp);
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
 		foreach ($updated as $path) {
 			$rsp = git_add($repo_path, $path);
 			$basename = basename($path);
