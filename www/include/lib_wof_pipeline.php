@@ -18,6 +18,10 @@
 		$meta_json = json_encode($meta);
 		$meta_json_esc = addslashes($meta_json);
 
+		if ($meta['slack_handle']) {
+			users_settings_set($GLOBALS['cfg']['user'], 'slack_handle', $meta['slack_handle']);
+		}
+
 		$filename = $_FILES["upload_file"]['name'];
 		if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $filename)) {
 			return array(
@@ -32,7 +36,7 @@
 			'type' => $meta['type'],
 			'meta' => $meta_json_esc,
 			'phase' => 'pending',
-			'repo' => 'whosonfirst-data',
+			'repo' => $meta['repo'],
 			'created' => $now,
 			'updated' => $now
 		));
@@ -173,7 +177,6 @@
 		}
 
 		$names = array();
-		$err = array();
 		$basename = basename($upload['name'], '.zip');
 
 		$fh = zip_open($upload['tmp_name']);
@@ -187,31 +190,51 @@
 				$names[] = $matches[1];
 			}
 		}
+
 		$meta['files'] = $names;
 
 		if (! $meta) {
-			$err[] = 'No meta.json file found';
-		} else {
-			if (! $meta['type']) {
-				$err[] = "meta.json has no 'type' property";
-			} else {
-				$fn = "wof_pipeline_{$meta['type']}_validate";
-				if (function_exists($fn)) {
-					$rsp = $fn($meta, $names);
-					if (! $rsp['ok']) {
-						$err = array_merge($err, $rsp['errors']);
-					}
-				}
+			return array(
+				'ok' => 0,
+				'error' => 'No meta.json file found'
+			);
+		}
+
+		if (! $meta['type']) {
+			return array(
+				'ok' => 0,
+				'error' => "meta.json has no 'type' property"
+			);
+		}
+
+		$fn = "wof_pipeline_{$meta['type']}_validate";
+		if (function_exists($fn)) {
+			$rsp = $fn($meta, $names);
+			if (! $rsp['ok']) {
+				return $rsp;
 			}
+		}
+
+		$fn = "wof_pipeline_{$meta['type']}_repo";
+		if (function_exists($fn)) {
+			$rsp = $fn($upload, $names);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+			$meta['repo'] = $rsp['repo'];
+		} else if (! $meta['repo']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not determine repo for pipeline.'
+			);
 		}
 
 		zip_close($fh);
 
-		if ($err) {
-			return array('ok' => 0, 'errors' => $err);
-		} else {
-			return array('ok' => 1, 'meta' => $meta);
-		}
+		return array(
+			'ok' => 1,
+			'meta' => $meta
+		);
 	}
 
 	########################################################################
@@ -340,7 +363,9 @@
 
 		$pipeline_id = intval($pipeline['id']);
 		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
-		rmdir($local_dir);
+		if (file_exists($local_dir)) {
+			rmdir($local_dir);
+		}
 
 		$result = array(
 			'ok' => 1,

@@ -27,6 +27,11 @@
 	if (users_acl_check_access($GLOBALS['cfg']['user'], 'pipeline')) {
 		$crumb_upload_zip = crumb_generate('api', 'wof.upload_zip');
 		$GLOBALS['smarty']->assign("crumb_upload_zip", $crumb_upload_zip);
+
+		$slack_handle = users_settings_get_single($GLOBALS['cfg']['user'], 'slack_handle');
+		if ($slack_handle) {
+			$GLOBALS['smarty']->assign('slack_handle', $slack_handle);
+		}
 	}
 
 	$GLOBALS['smarty']->display('page_upload.txt');

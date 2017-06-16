@@ -30,6 +30,59 @@
 
 	########################################################################
 
+	function wof_pipeline_remove_properties_repo($upload, $files) {
+
+		$files = array('remove_properties.csv');
+		$rsp = wof_pipeline_read_zip_contents($upload, $files);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+
+		if (! $rsp['contents']['remove_properties.csv']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not read remove_properties.csv'
+			);
+		}
+
+		$lines = explode("\n", $rsp['contents']['remove_properties.csv']);
+		$first_line = str_getcsv($lines[0]);
+
+		if (is_numeric($first_line[0])) {
+			// No header row
+			$wof_id = intval($first_line[0]);
+		} else if ($lines[1]) {
+			$second_line = str_getcsv($lines[1]);
+			if (is_numeric($second_line[0])) {
+				$wof_id = intval($second_line[0]);
+			}
+		}
+
+		if (! $wof_id) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not find a WOF ID in the first column of remove_properties.csv ' . $debug
+			);
+		}
+
+		$wof_id = intval($wof_id);
+		$repo_path = wof_utils_id2repopath($wof_id);
+
+		if (! $repo_path) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not find a repo path for WOF ID ' . $wof_id
+			);
+		}
+
+		return array(
+			'ok' => 1,
+			'repo' => basename(dirname($repo_path))
+		);
+	}
+
+	########################################################################
+
 	function wof_pipeline_remove_properties($pipeline, $dry_run = false) {
 
 		$dir = $pipeline['dir'];

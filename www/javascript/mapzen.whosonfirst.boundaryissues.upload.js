@@ -502,6 +502,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		pipeline_controls: function() {
 
 			var types = [
+				'meta_files',
 				'neighbourhood',
 				'remove_properties'
 			];
@@ -533,7 +534,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 
 			var html = '';
-			if (type == 'neighbourhood') {
+			if (type == 'meta_files') {
+
+				var repo = meta.repo || 'whosonfirst-data';
+
+				html += '<div class="input-group">';
+				html += '<label for="repo">Repo to build meta files for</label>';
+				html += '<input type="text" id="repo" value="' + htmlspecialchars(repo) + '">';
+				html += '</div>';
+
+			} else if (type == 'neighbourhood') {
 
 				var process_venues_checked = meta.process_venues ? ' checked="checked"' : '';
 
@@ -556,16 +566,17 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return false;
 			}
 
-			var slack_handle = meta.slack_handle || '';
+			var default_slack_handle = $('#upload-form').data('slack-handle');
+			var slack_handle = meta.slack_handle || default_slack_handle || '';
 			var meta_files_checked = meta.generate_meta_files ? ' checked="checked"' : '';
 
 			html += '<div class="input-group">';
 			html += '<label for="slack_handle">Ping my Slack handle when finished</label>';
 			html += '<input type="text" id="slack_handle" value="' + htmlspecialchars(slack_handle) + '">';
 			html += '</div>';
-			html += '<div class="input-group">';
-			html += '<input type="checkbox" id="generate_meta_files"' + meta_files_checked + '><label for="generate_meta_files">Generate meta files on completion</label>';
-			html += '</div>';
+			//html += '<div class="input-group">';
+			//html += '<input type="checkbox" id="generate_meta_files"' + meta_files_checked + '><label for="generate_meta_files">Generate meta files on completion</label>';
+			//html += '</div>';
 
 			$('#pipeline-options').html(html);
 
@@ -582,7 +593,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			meta.type = $('#pipeline-type').val();
 			meta.slack_handle = $('#slack_handle').val();
-			meta.generate_meta_files = $('#generate_meta_files')[0].checked;
+			//meta.generate_meta_files = $('#generate_meta_files')[0].checked;
 
 			if (meta.type == 'neighbourhood') {
 				meta.process_venues = $('#process_venues')[0].checked;
@@ -903,7 +914,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$result.html('Error: ' + rsp.error);
 				mapzen.whosonfirst.log.error(rsp.error);
 			} else if (rsp.errors) {
-				$result.html('Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul>');
+				$result.html('<div class="alert alert-danger">Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul></div>');
 				mapzen.whosonfirst.log.error(rsp.errors.join(', '));
 			} else {
 				$result.html('Oh noes, an error! Check the JavaScript console?');
