@@ -99,7 +99,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			} else {
 				self.setup_map_geometry();
 			}
-			var geocoder = L.control.geocoder('search-o3YYmTI', {
+
+			// sudo move me to stack.json
+			// (20170616/dphiffer)
+			var geocoder = L.control.geocoder('mapzen-LhT76h5', {
 				markers: {
 					icon: new VenueIcon()
 				}
