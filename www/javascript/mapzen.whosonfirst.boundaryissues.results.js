@@ -27,7 +27,10 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				'map',
 				lat, lon, zoom
 			);
-			L.control.geocoder('search-o3YYmTI', {
+
+			// sudo move me to stack.json
+			// (20170616/dphiffer)
+			L.control.geocoder('mapzen-LhT76h5', {
 				markers: {
 					icon: new VenueIcon()
 				}

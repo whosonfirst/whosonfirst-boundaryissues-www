@@ -566,7 +566,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 		});
 
-		var geocoder = L.control.geocoder('search-o3YYmTI', {
+		// sudo move me to stack.json
+		// (20170617/dphiffer)
+		var geocoder = L.control.geocoder('mapzen-LhT76h5', {
 			markers: {
 				icon: new VenueIcon()
 			}
