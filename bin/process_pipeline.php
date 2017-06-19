@@ -5,6 +5,7 @@
 	loadlib('git');
 	loadlib('wof_pipeline');
 	loadlib('wof_pipeline_utils');
+	loadlib('wof_pipeline_meta_files');
 	loadlib('wof_pipeline_neighbourhood');
 	loadlib('wof_pipeline_remove_properties');
 
@@ -29,6 +30,20 @@
 		$repo_path = wof_pipeline_repo_path($pipeline);
 		$branch = "pipeline-{$pipeline['id']}";
 
+		$rsp = git_execute($repo_path, "checkout master");
+		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not checkout master branch", $rsp);
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
+		$rsp = git_pull($repo_path, 'origin', 'master');
+		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not pull from origin master", $rsp);
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
 		$rsp = git_execute($repo_path, "checkout -b $branch");
 		wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: $branch", $rsp);
 		if (! $rsp['ok']) {
@@ -38,6 +53,7 @@
 
 		$rsp = wof_pipeline_download_files($pipeline);
 		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not download files", $rsp);
 			wof_pipeline_finish($pipeline, 'failed');
 			continue;
 		}
@@ -45,6 +61,7 @@
 		$pipeline['dir'] = $rsp['dir'];
 		$handler = "wof_pipeline_{$pipeline['type']}";
 		if (! function_exists($handler)) {
+			wof_pipeline_log($pipeline['id'], "Could not find $handler handler");
 			wof_pipeline_finish($pipeline, 'failed');
 			continue;
 		}
@@ -107,6 +124,13 @@
 			continue;
 		}
 
+		$rsp = git_pull($repo_path, 'origin', 'staging-work');
+		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not pull from origin staging-work", $rsp);
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
 		$rsp = git_pull($repo_path, 'origin', $branch);
 		wof_pipeline_log($pipeline['id'], "Merge into staging-work branch", $rsp);
 		if (! $rsp['ok']) {
@@ -135,6 +159,11 @@
 			continue;
 		}
 
+		/*
+
+		// meta_files is now a dedicated pipeline, so let's not confuse
+		// things by having an option. (20170615/dphiffer)
+
 		if ($pipeline['meta']['generate_meta_files']) {
 			$rsp = wof_pipeline_generate_meta_files($pipeline);
 			wof_pipeline_log($pipeline['id'], "Generate meta files", $rsp);
@@ -159,10 +188,24 @@
 				wof_pipeline_finish($pipeline, 'failed');
 				continue;
 			}
-		}
+		}*/
 
 		$rsp = git_push($repo_path);
 		wof_pipeline_log($pipeline['id'], "Push commit to origin master", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
+		$rsp = git_execute($repo_path, "branch -d $branch");
+		wof_pipeline_log($pipeline['id'], "Delete local branch $branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
+		$rsp = git_execute($repo_path, "push origin --delete $branch");
+		wof_pipeline_log($pipeline['id'], "Delete remote branch $branch", $rsp);
 		if (! $rsp['ok']) {
 			wof_pipeline_finish($pipeline, 'failed');
 			continue;
