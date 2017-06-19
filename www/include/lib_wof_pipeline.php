@@ -30,20 +30,14 @@
 		if ($meta['upload']) {
 			$upload = $meta['upload'];
 			unset($meta['upload']);
-
-			$filename = $upload['name'];
-			if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $filename)) {
-				return array(
-					'ok' => 0,
-					'error' => 'Invalid filename. Please use only alphanumerics, _ (underbar), or - (hyphen).'
-				);
-			}
-			$filename_esc = addslashes($filename);
-
 			$rsp = wof_pipeline_validate_zip($upload, $meta);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
+			$meta = $rsp['meta'];
+
+			$filename = $upload['name'];
+			$filename_esc = addslashes($filename);
 		} else {
 			$filename = null;
 			$filename_esc = null;
@@ -203,6 +197,13 @@
 
 		$names = array();
 		$basename = basename($upload['name'], '.zip');
+
+		if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $upload['name'])) {
+			return array(
+				'ok' => 0,
+				'error' => 'Invalid filename. Please use only alphanumerics, _ (underbar), or - (hyphen).'
+			);
+		}
 
 		$fh = zip_open($upload['tmp_name']);
 
