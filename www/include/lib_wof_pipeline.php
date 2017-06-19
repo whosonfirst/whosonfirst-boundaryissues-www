@@ -12,7 +12,7 @@
 
 	########################################################################
 
-	function wof_pipeline_create($upload, $meta) {
+	function wof_pipeline_create($meta) {
 
 		$fn = "wof_pipeline_{$meta['type']}_defaults";
 		if (function_exists($fn)) {
@@ -21,21 +21,33 @@
 
 		$meta_json = json_encode($meta);
 		$meta_json_esc = addslashes($meta_json);
-
 		$now = date('Y-m-d H:i:s');
 
 		if ($meta['slack_handle']) {
 			users_settings_set($GLOBALS['cfg']['user'], 'slack_handle', $meta['slack_handle']);
 		}
 
-		$filename = $_FILES["upload_file"]['name'];
-		if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $filename)) {
-			return array(
-				'ok' => 0,
-				'error' => 'Invalid filename. Please use only alphanumerics, _ (underbar), or - (hyphen).'
-			);
+		if ($meta['upload']) {
+			$upload = $meta['upload'];
+			unset($meta['upload']);
+
+			$filename = $upload['name'];
+			if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $filename)) {
+				return array(
+					'ok' => 0,
+					'error' => 'Invalid filename. Please use only alphanumerics, _ (underbar), or - (hyphen).'
+				);
+			}
+			$filename_esc = addslashes($filename);
+
+			$rsp = wof_pipeline_validate_zip($upload, $meta);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		} else {
+			$filename = null;
+			$filename_esc = null;
 		}
-		$filename_esc = addslashes($filename);
 
 		$rsp = db_insert('boundaryissues_pipeline', array(
 			'filename' => $filename_esc,
@@ -49,8 +61,18 @@
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-
 		$pipeline_id = $rsp['insert_id'];
+
+		if (! $filename_esc) {
+			$filename_esc = addslashes("Pipeline $pipeline_id");
+		}
+
+		if ($upload) {
+			$rsp = wof_pipeline_upload_files($upload, $meta, $pipeline_id);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		}
 
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
 		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
@@ -61,6 +83,7 @@
 		// process_pipeline.php (which doesn't know how to figure out
 		// the proper abs_root_url. (20170601/dphiffer)
 		db_update('boundaryissues_pipeline', array(
+			'filename' => $filename_esc,
 			'url' => $url
 		), "id = $pipeline_id");
 

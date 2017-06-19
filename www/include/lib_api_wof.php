@@ -197,25 +197,14 @@
 		}
 
 		$meta_json = post_str('meta_json');
+		$meta = json_decode($meta_json, 'as hash');
+		$meta['upload'] = $_FILES["upload_file"];
 
-		$rsp = wof_pipeline_validate_zip($_FILES["upload_file"], $meta_json);
-		if (! $rsp['ok']) {
-			// Pass the errors through on a 200 response
-			api_output_ok($rsp);
-		}
-
-		$meta = $rsp['meta'];
-
-		$rsp = wof_pipeline_create($_FILES["upload_file"], $meta);
+		$rsp = wof_pipeline_create($meta);
 		if (! $rsp['ok']) {
 			api_output_ok($rsp);
 		}
 		$pipeline_id = $rsp['pipeline_id'];
-
-		$rsp = wof_pipeline_upload_files($_FILES["upload_file"], $meta, $pipeline_id);
-		if (! $rsp['ok']) {
-			api_output_ok($rsp);
-		}
 
 		// Clean up the upload file
 		unlink($_FILES["upload_file"]['tmp_name']);
