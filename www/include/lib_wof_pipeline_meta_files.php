@@ -2,6 +2,15 @@
 
 	########################################################################
 
+	function wof_pipeline_meta_files_defaults($meta) {
+		$defaults = array(
+			'branch_merge' => false
+		);
+		return array_merge($defaults, $meta);
+	}
+
+	########################################################################
+
 	function wof_pipeline_meta_files_validate($meta, $names) {
 		if (! $meta['repo']) {
 			return array(

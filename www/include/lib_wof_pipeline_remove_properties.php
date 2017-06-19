@@ -4,6 +4,15 @@
 
 	########################################################################
 
+	function wof_pipeline_remove_properties_defaults($meta) {
+		$defaults = array(
+			'branch_merge' => true
+		);
+		return array_merge($defaults, $meta);
+	}
+
+	########################################################################
+
 	function wof_pipeline_remove_properties_validate($meta, $names) {
 
 		$errors = array();

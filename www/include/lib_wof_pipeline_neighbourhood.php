@@ -2,6 +2,15 @@
 
 	########################################################################
 
+	function wof_pipeline_neighbourhood_defaults($meta) {
+		$defaults = array(
+			'branch_merge' => true
+		);
+		return array_merge($defaults, $meta);
+	}
+
+	########################################################################
+
 	function wof_pipeline_neighbourhood_validate($pipeline) {
 		// Disabled for now.
 		return array(

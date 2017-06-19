@@ -14,9 +14,15 @@
 
 	function wof_pipeline_create($upload, $meta) {
 
-		$now = date('Y-m-d H:i:s');
+		$fn = "wof_pipeline_{$meta['type']}_defaults";
+		if (function_exists($fn)) {
+			$meta = $fn($meta);
+		}
+
 		$meta_json = json_encode($meta);
 		$meta_json_esc = addslashes($meta_json);
+
+		$now = date('Y-m-d H:i:s');
 
 		if ($meta['slack_handle']) {
 			users_settings_set($GLOBALS['cfg']['user'], 'slack_handle', $meta['slack_handle']);
