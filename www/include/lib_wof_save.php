@@ -436,6 +436,7 @@
 
 		$wof = array();
 		$existing = array();
+		$repos = array();
 		$filename_regex = '/(\d+)-(\d+)-(\d+)-(.+)\.geojson$/';
 		$index_dir = wof_utils_pending_dir('index', null, $branch);
 
@@ -739,6 +740,8 @@
 					return $rsp;
 				}
 			}
+
+			$repos[] = basename(dirname($repo_path));
 		}
 
 		// Clean up the pending index files
@@ -820,7 +823,8 @@
 
 		return array(
 			'ok' => 1,
-			'saved' => $updated
+			'saved' => $updated,
+			'repos' => $repos
 		);
 	}
 

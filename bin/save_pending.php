@@ -5,6 +5,7 @@
 	loadlib("offline_tasks_gearman");
 	loadlib("uuid");
 	loadlib("logstash");
+	loadlib("wof_pipeline");
 
 	$options = array(
 		'verbose' => false,    // -v or --verbose
@@ -44,6 +45,7 @@
 	}
 
 	$rsp = wof_save_pending($options);
+	$repos = $rsp['repos'];
 
 	if ($options['verbose']) {
 		var_export($rsp);
@@ -62,6 +64,13 @@
 			'microtime' => $now
 		);
 		logstash_publish('offline_tasks', $event);
+
+		foreach ($repos as $repo) {
+			wof_pipeline_create(array(
+				'type' => 'meta_files',
+				'repo' => $repo
+			));
+		}
 
 		// Delete the lock file; all done!
 		unlink($lockfile);
