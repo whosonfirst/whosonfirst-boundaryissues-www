@@ -6,7 +6,7 @@ var yourapp = lampzen || {};
 // if #2 is not to your taste then you should update the code below accordinlgy
 // (20160701/thisisaaronland)
 
-yourapp.api = (function(){
+mapzen.whosonfirst.boundaryissues.api = (function(){
 
     var _api = undefined;
 
@@ -15,8 +15,8 @@ yourapp.api = (function(){
 	'init': function(){
 
 	    _api = new flamework.api();
-	    _api.set_handler('endpoint', yourapp.api.endpoint);
-	    _api.set_handler('accesstoken', yourapp.api.accesstoken);
+	    _api.set_handler('endpoint', mapzen.whosonfirst.boundaryissues.api.endpoint);
+	    _api.set_handler('accesstoken', mapzen.whosonfirst.boundaryissues.api.accesstoken);
 	},
 
 	'call': function(method, data, on_success, on_error){

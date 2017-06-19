@@ -1,0 +1,36 @@
+{capture assign="page_title"}Links for {$wof_name} ({$wof_id}){/capture}
+{include file='inc_head.txt' nav_tab='edit'}
+
+<div class="container">
+	<div class="row">
+		<h2>Links for <span id="wof_name">{$wof_name|@escape}</span></h2>
+		<small>{$wof_id|@wof_utils_id2relpath|@escape}</small>
+	</div>
+
+	<div class="row">
+	{if $user_can_edit != 'user-can-edit'}
+		<div class="alert alert-info">Sorry, you don't have permissions to add links for this Who's On First ID.</div>
+	{else}
+
+		<form class="form-inline">
+		      	<input type="hidden" name="wofid" value="{$wof_id|@escape}" />
+			
+			<div class="form-group">
+				<label for="url">URL</label>
+				<input type="text" name="url" id="url" placeholder="Add a URL to associate with this WOF ID" value="" class="form-control"/>
+			</div>
+			<div class="form-group">
+				<button class="btn btn-primary">Add URL</button>
+			</div>
+		</form>
+
+		<h3>Existing links</h3>
+
+		<ul class="list">
+
+		</ul>
+	{/if}
+	</div>
+</div>
+
+{include file='inc_foot.txt'}
