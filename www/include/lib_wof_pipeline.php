@@ -201,10 +201,6 @@
 
 	function wof_pipeline_validate_zip($upload, $meta = null) {
 
-		if ($meta) {
-			$meta = json_decode($meta, 'as hash');
-		}
-
 		$names = array();
 		$basename = basename($upload['name'], '.zip');
 
