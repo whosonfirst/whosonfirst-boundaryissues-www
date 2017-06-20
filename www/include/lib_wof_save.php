@@ -426,12 +426,11 @@
 				return $rsp;
 			}
 			$saved = array_merge($saved, $rsp['saved']);
-			if ($rsp['repos']) {
-				$repos = array_merge($repos, $rsp['repos']);
+
+			if ($branch == 'master') {
+				$repos = array_unique($rsp['repos']);
 			}
 		}
-
-		$repos = array_unique($repos);
 
 		$saved_json = json_encode($saved);
 		return array(
