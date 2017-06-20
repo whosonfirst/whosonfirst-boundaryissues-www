@@ -407,6 +407,7 @@
 		}
 
 		$saved = array();
+		$repos = array();
 		$branches = glob("{$GLOBALS['cfg']['wof_pending_dir']}*");
 		foreach ($branches as $branch) {
 			if (! is_dir($branch)) {
@@ -421,12 +422,16 @@
 				return $rsp;
 			}
 			$saved = array_merge($saved, $rsp['saved']);
+			$repos = array_merge($repos, $rsp['repos']);
 		}
+
+		$repos = array_unique($repos);
 
 		$saved_json = json_encode($saved);
 		return array(
 			'ok' => 1,
-			'saved' => $saved_json
+			'saved' => $saved_json,
+			'repos' => $repos
 		);
 	}
 
