@@ -415,6 +415,10 @@
 			}
 			$branch = basename($branch);
 			$rsp = wof_save_pending_branch($branch, $options);
+			if ($options['verbose']) {
+				echo "wof_save_pending_branch: $branch\n";
+				print_r($rsp);
+			}
 			audit_trail("wof_save_pending_branch", $rsp, array(
 				'branch' => $branch
 			));
@@ -422,7 +426,9 @@
 				return $rsp;
 			}
 			$saved = array_merge($saved, $rsp['saved']);
-			$repos = array_merge($repos, $rsp['repos']);
+			if ($rsp['repos']) {
+				$repos = array_merge($repos, $rsp['repos']);
+			}
 		}
 
 		$repos = array_unique($repos);
@@ -747,6 +753,10 @@
 			}
 
 			$repos[] = basename(dirname($repo_path));
+			if ($options['verbose']) {
+				echo "Adding to repos list:\n";
+				print_r($repos);
+			}
 		}
 
 		// Clean up the pending index files
