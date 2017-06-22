@@ -140,8 +140,24 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				} else {
 					self.set_property('wof:hierarchy', []);
 				}
-				if (self.hierarchy_callback) {
-					self.hierarchy_callback(rsp.hierarchy);
+				if (rsp.hierarchy.length > 0) {
+					var country_id = -1;
+					for (var i = 0; i < rsp.hierarchy.length; i++) {
+						if (rsp.hierarchy[i].country_id &&
+						    country_id == -1) {
+							// Found a country ID, use that
+							country_id = rsp.hierarchy[i].country_id;
+						} else if (rsp.hierarchy[i].country_id &&
+						           rsp.hierarchy[i].country_id != country_id) {
+							// Not all hierarchies match
+							country_id = -1;
+						}
+					}
+					if (country_id != -1) {
+						mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
+							self.set_country(country);
+						});
+					}
 				}
 			}
 
@@ -580,18 +596,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				self.set_country(rsp.country);
 				slippymap.crosshairs.init(map);
 			});
-		} else {
-			self.hierarchy_callback = function(hier) {
-				if (hier.length > 0) {
-					// Note: given the possibility of
-					// breaches, this is a simplification
-					// (20170426/dphiffer)
-					var country_id = hier[0].country_id;
-					mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
-						self.set_country(country);
-					});
-				}
-			};
 		}
 
 		geocoder.on('select', function(e) {
