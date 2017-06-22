@@ -640,13 +640,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}
 
 		$('#venue form').submit(function(e) {
+			e.preventDefault();
 			if (self.country_id == -1) {
 				$('#venue-response').html('<div class="alert alert-danger alert-country">We could not pick a country for this venue.</div>');
 				return;
 			}
 			var parent_id = self.properties['wof:parent_id'];
 			var hierarchy = self.properties['wof:hierarchy'];
-			e.preventDefault();
 			if ($('input[name="name"]').val() == '') {
 				$('#venue-response').html('<div class="alert alert-warning">Oops, you forgot to enter a name for your venue.</div>');
 			} else if (! ('wof:hierarchy' in self.properties)) {
