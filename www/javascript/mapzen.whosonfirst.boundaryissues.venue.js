@@ -49,6 +49,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			if (props['wof:country']) {
 				self.set_property('wof:country', props['wof:country']);
 			}
+
+			self.country_id = country.properties['wof:id'];
 		},
 
 		generate_feature: function() {
