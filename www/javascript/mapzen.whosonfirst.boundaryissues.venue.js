@@ -140,8 +140,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				} else {
 					self.set_property('wof:hierarchy', []);
 				}
+
+				var country_id = -1;
 				if (rsp.hierarchy.length > 0) {
-					var country_id = -1;
 					for (var i = 0; i < rsp.hierarchy.length; i++) {
 						if (rsp.hierarchy[i].country_id &&
 						    country_id == -1) {
@@ -153,11 +154,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 							country_id = -1;
 						}
 					}
-					if (country_id != -1) {
-						mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
-							self.set_country(country);
-						});
+				}
+				if (country_id == -1) {
+					mapzen.whosonfirst.log.error('Error choosing a country ID.');
+					$('#venue-response').html('<div class="alert alert-danger alert-country">We could not pick a country for this venue.</div>');
+				} else {
+					if ($('#venue-response .alert-country').length > 0) {
+						$('#venue-response').html('');
 					}
+					mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
+						self.set_country(country);
+					});
 				}
 			}
 
@@ -633,6 +640,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}
 
 		$('#venue form').submit(function(e) {
+			if (self.country_id == -1) {
+				$('#venue-response').html('<div class="alert alert-danger alert-country">We could not pick a country for this venue.</div>');
+				return;
+			}
 			var parent_id = self.properties['wof:parent_id'];
 			var hierarchy = self.properties['wof:hierarchy'];
 			e.preventDefault();
