@@ -104,7 +104,7 @@
 
 					{if $events}
 						<h4>Event log</h4>
-						{include file='inc_event_log.txt'}
+						{include file='inc_event_log.txt' show_rev_arg=1}
 					{/if}
 				</div>
 			</div>

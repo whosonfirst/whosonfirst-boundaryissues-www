@@ -1,6 +1,14 @@
 <ul class="event-log">
 	{foreach from=$events item=event}
-		<li class="event" data-created="{$event.created|@escape}">{if $event.details.url}<a href="{$event.details.url|@escape}">{/if}{if $event.user}<img src="{$event.user.avatar|@escape}" alt="&nbsp;👤&nbsp;" class="avatar">{/if}{$event.summary|@escape}{if $event.details.url}</a>{/if}
+		<li class="event" data-created="{$event.created|@escape}">
+			{if $event.details.url}
+				<a href="{$event.details.url|@escape}{if $show_rev_arg}?{$event.details.url_rev_arg|@escape}{/if}">
+			{/if}
+			{if $event.user}
+				<img src="{$event.user.avatar|@escape}" alt="&nbsp;👤&nbsp;" class="avatar">
+			{/if}
+			{$event.summary|@escape}
+			{if $event.details.url}</a>{/if}
 		</li>
 	{/foreach}
 </ul>

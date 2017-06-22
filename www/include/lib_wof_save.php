@@ -249,7 +249,8 @@
 			$summary = "Saved {$feature['properties']['wof:name']}";
 			$details = array(
 				'filename' => $pending_index_file,
-				'url' => "/id/{$feature['properties']['wof:id']}/?rev=$pending_index_file"
+				'url' => "/id/{$feature['properties']['wof:id']}/",
+				'url_rev_arg' => "rev=$pending_index_file"
 			);
 			$wof_ids = array(
 				$feature['properties']['wof:id']
@@ -512,6 +513,7 @@
 			);
 		}
 
+		$repo_lookup = array();
 		foreach ($wof as $repo_path => $pending) {
 
 			if ($options['verbose']) {
@@ -668,6 +670,7 @@
 					}
 				}
 				$saved[$wof_id] = $updates;
+				$repo_lookup[$wof_id] = basename(dirname($repo_path));
 
 				if ($authors[$user_id]) {
 					$author = $authors[$user_id];
@@ -823,7 +826,8 @@
 			);
 			if ($commit_hash) {
 				$owner = $GLOBALS['cfg']['wof_github_owner'];
-				$repo = $GLOBALS['cfg']['wof_github_repo'];
+				$wof_id = $wof_ids[0];
+				$repo = $repo_lookup[$wof_id];
 				$url = "https://github.com/$owner/$repo/commit/$commit_hash";
 				$payload['commit_hash'] = $commit_hash;
 				$payload['url'] = $url;
