@@ -30,8 +30,9 @@
 
 		$repo_data_path = wof_pipeline_repo_path($pipeline);
 		$repo_path = dirname($repo_data_path);
+		$bi_root = dirname(dirname(__DIR__));
 
-		$cmd = "cd $repo_path && /usr/local/bin/wof-build-metafiles";
+		$cmd = "cd $repo_path && $bi_root/bin/wof-build-metafiles";
 		$output = array();
 
 		if (! $dry_run) {
