@@ -2,6 +2,10 @@
 
 	include("init_local.php");
 
+	if (! $GLOBALS['cfg']['enable_feature_pipeline']) {
+		exit;
+	}
+
 	loadlib('git');
 	loadlib('wof_pipeline');
 	loadlib('wof_pipeline_utils');

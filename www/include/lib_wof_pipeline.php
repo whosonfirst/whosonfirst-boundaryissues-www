@@ -14,6 +14,13 @@
 
 	function wof_pipeline_create($meta) {
 
+		if (! $GLOBALS['cfg']['enable_feature_pipeline']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Pipeline feature is disabled.'
+			);
+		}
+
 		$fn = "wof_pipeline_{$meta['type']}_defaults";
 		if (function_exists($fn)) {
 			$meta = $fn($meta);
