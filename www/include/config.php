@@ -81,24 +81,7 @@
 			'pipeline'
 		),
 		'users' => array(
-			'can_edit_whosonfirst-data-venue-au',
-			'can_edit_whosonfirst-data-venue-ca',
-			'can_edit_whosonfirst-data-venue-de',
-			'can_edit_whosonfirst-data-venue-es',
-			'can_edit_whosonfirst-data-venue-fr',
-			'can_edit_whosonfirst-data-venue-gb',
-			'can_edit_whosonfirst-data-venue-us-az',
-			'can_edit_whosonfirst-data-venue-us-ca',
-			'can_edit_whosonfirst-data-venue-us-dc',
-			'can_edit_whosonfirst-data-venue-us-fl',
-			'can_edit_whosonfirst-data-venue-us-il',
-			'can_edit_whosonfirst-data-venue-us-mi',
-			'can_edit_whosonfirst-data-venue-us-nv',
-			'can_edit_whosonfirst-data-venue-us-ny',
-			'can_edit_whosonfirst-data-venue-us-or',
-			'can_edit_whosonfirst-data-venue-us-tx',
-			'can_edit_whosonfirst-data-venue-us-ut',
-			'can_edit_whosonfirst-data-venue-us-wa',
+			'can_edit_whosonfirst-data-venue-*'
 		),
 	);
 

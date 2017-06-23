@@ -41,7 +41,18 @@
 		$capabilities = users_acl_get_capabilities($roles);
 
 		// Is the capability is in the list of things the user can do?
-		return in_array($capability, $capabilities);
+		if (in_array($capability, $capabilities)) {
+			return true;
+		}
+
+		// Allow for wildcards, e.g., can_edit-whosonfirst-data-venue*
+		foreach ($capabilities as $test) {
+			if (fnmatch($test, $capability)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	########################################################################
