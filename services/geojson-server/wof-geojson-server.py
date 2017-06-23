@@ -132,8 +132,8 @@ def geojson_hierarchy():
 	# Eventually this will probably get handled in a Python library, but for now
 	# we'll just do it the HULKSMASH way. (20170504/dphiffer)
 	if placetype == 'venue' and len(parents) == 0:
-		placetype = 'locality'
-		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype, pip_server=pip_server)
+		shim_placetype = 'locality'
+		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, shim_placetype, pip_server=pip_server)
 
 	try:
 		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, wof_id, placetype)
