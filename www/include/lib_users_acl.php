@@ -34,6 +34,11 @@
 
 	function users_acl_check_access($user, $capability) {
 
+		if (! preg_match('/^[a-z0-9_*-]+$/i', $capability)) {
+			error_log("users_acl_check_access: invalid capability '$capability'");
+			return false;
+		}
+
 		// What roles have been assigned to the user?
 		$roles = users_acl_get_roles($user);
 
@@ -47,6 +52,10 @@
 
 		// Allow for wildcards, e.g., can_edit-whosonfirst-data-venue*
 		foreach ($capabilities as $test) {
+			if (! preg_match('/^[a-z0-9_*-]+$/i', $test)) {
+				error_log("users_acl_check_access: invalid capability '$test'");
+				return false;
+			}
 			if (fnmatch($test, $capability)) {
 				return true;
 			}
