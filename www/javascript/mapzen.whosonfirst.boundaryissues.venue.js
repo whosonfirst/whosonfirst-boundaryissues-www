@@ -189,14 +189,16 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
 			var popup = geocoder.marker.bindPopup(html).openPopup();
 			var props = feature.properties;
+			var ll = geocoder.marker.getLatLng();
 			if (feature.bbox) {
 				mapzen.whosonfirst.boundaryissues.bbox.set_bbox(map, feature.bbox);
+			} else {
+				map.panTo(ll);
 			}
 			$('#geocoder-marker-select').click(function(e) {
 				e.preventDefault();
 				popup.closePopup();
 				geocoder.collapse();
-				var ll = geocoder.marker.getLatLng();
 				map.removeLayer(geocoder.marker);
 				map.setView(ll, 16);
 				self.set_property('geom:latitude', ll.lat);
@@ -608,6 +610,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}
 
 		geocoder.on('select', function(e) {
+			geocoder.collapse();
 			self.show_feature_pin(map, geocoder, e.feature);
 		});
 	}
