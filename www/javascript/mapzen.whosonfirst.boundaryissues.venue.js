@@ -211,9 +211,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var regex = new RegExp('^' + props.name);
 				var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
 
-				if (! $('textarea[name="address"]').val()) {
-					$('textarea[name="address"]').val(address);
-				}
+				$('textarea[name="address"]').val(address);
 				self.set_property('addr:full', address);
 
 				if (props.housenumber) {
