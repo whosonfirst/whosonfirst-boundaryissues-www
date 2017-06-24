@@ -266,25 +266,14 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var check_if_ready = function() {
 				var has_id = false;
 				var has_name = false;
-				var has_addr = false;
-				var has_lat = false;
-				var has_lng = false;
 				$('#upload-preview-props select').each(function(i, select) {
 					if ($(select).val() == 'wof:id') {
 						has_id = true;
 					} else if ($(select).val() == 'wof:name') {
 						has_name = true;
-					} else if ($(select).val() == 'addr:full') {
-						has_addr = true;
-					} else if ($(select).val() == 'geom:latitude') {
-						has_lat = true;
-					} else if ($(select).val() == 'geom:longitude') {
-						has_lng = true;
 					}
 				});
-				if (has_id || (
-				    has_name &&
-				    (has_addr || has_lat && has_lng))) {
+				if (has_id || has_name) {
 					upload_is_ready = true;
 					$('#upload-btn').addClass('btn-primary');
 					$('#upload-btn').attr('disabled', false);
