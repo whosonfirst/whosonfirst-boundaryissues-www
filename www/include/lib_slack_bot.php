@@ -8,7 +8,10 @@
 
 	function slack_bot_msg($msg){
 		if (! $GLOBALS['cfg']['enable_feature_slack_bot']){
-			return;
+			return array(
+				'ok' => 0,
+				'error' => 'enable_feature_slack_bot not enabled'
+			);
 		}
 
 		$msg = preg_replace_callback('/@([a-zA-Z0-9_]+)/i', function($matches) {
