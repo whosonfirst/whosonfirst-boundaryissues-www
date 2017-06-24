@@ -105,9 +105,9 @@
 			);
 		}
 
-		$success_regex = "/[0-9a-f]{7}\.\.[0-9a-f]{7}/m";
+		$success_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
 		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
-		$no_changes_regex_alt = "/Already up-to-date./m";
+		$no_changes_regex_alt = "/up-to-date/m";
 
 		if (! preg_match($success_regex, $git_pull_output, $success_match) &&
 		    ! preg_match($no_changes_regex, $git_pull_output) &&
@@ -150,10 +150,12 @@
 			);
 		}
 
-		$update_regex = "/[0-9a-f]{7}\.\.[0-9a-f]{7}/m";
+		$update_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
 		$new_repo_regex = "/\[new branch\]\s+$curr_branch -> $branch/m";
+		$no_changes_regex = '/up-to-date/m';
 		if (! preg_match($update_regex, $git_push_output, $update_match) &&
-		    ! preg_match($new_repo_regex, $git_push_output)) {
+		    ! preg_match($new_repo_regex, $git_push_output) &&
+		    ! preg_match($no_changes_regex, $git_push_output)) {
 			return array(
 				'ok' => 0,
 				'error' => "Error from git push: $git_push_output"
