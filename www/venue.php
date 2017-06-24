@@ -121,7 +121,30 @@
 
 		$GLOBALS['smarty']->assign_by_ref('assignments', $assignments);
 		$GLOBALS['smarty']->assign('venue_name', $assignments['wof:name']);
-		$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
+		if ($assignments['addr:full']) {
+			$GLOBALS['smarty']->assign('venue_address', $assignments['addr:full']);
+		} else {
+			// NOTE: this is all very US-centric address formatting
+			// (20170624/dphiffer)
+			$addr = '';
+			if ($assignments['addr:housenumber']) {
+				$addr .= $assignments['addr:housenumber'];
+			}
+			if ($assignments['addr:street']) {
+				if ($addr) {
+					$addr .= ' ';
+				}
+				$addr .= $assignments['addr:street'];
+			}
+			if ($assignments['addr:city']) {
+				if ($addr) {
+					$addr .= ', ';
+				}
+				$addr .= $assignments['addr:city'];
+			}
+			$GLOBALS['smarty']->assign('venue_address', $addr);
+		}
+
 		$GLOBALS['smarty']->assign('venue_tags', $assignments['wof:tags']);
 
 	} else {

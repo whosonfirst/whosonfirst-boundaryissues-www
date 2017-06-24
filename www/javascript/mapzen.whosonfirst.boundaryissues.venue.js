@@ -797,6 +797,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				slippymap.crosshairs.init(self.map);
 				self.check_nearby();
 			});
+		} else if ($('textarea[name="address"]').val() != '') {
+			var addr = $('textarea[name="address"]').val();
+			self.geocode_address(addr, function() {
+				slippymap.crosshairs.init(self.map);
+				self.check_nearby();
+			});
 		} else {
 			console.log('We are on null island');
 		}
