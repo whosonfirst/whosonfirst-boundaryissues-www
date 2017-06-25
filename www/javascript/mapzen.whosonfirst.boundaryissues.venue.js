@@ -207,9 +207,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				//self.update_coordinates(ll, true);
 				//self.set_marker(geocoder.marker);
 
-				// This is a US-centric way of encoding an address
-				var regex = new RegExp('^' + props.name);
-				var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
+				var address = self.get_geocoded_address(feature);
 
 				$('textarea[name="address"]').val(address);
 				self.set_property('addr:full', address);
@@ -247,6 +245,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					var lng = c[0];
 					var lat = c[1];
 					self.select_geocoded(lat, lng);
+
+					var address = self.get_geocoded_address(rsp.features[0]);
+					$('textarea[name="address"]').val(address);
+					self.set_property('addr:full', address);
 				} else if (rsp && rsp.features && rsp.features.length > 1) {
 					var html = '<ul class="list-group">';
 					$.each(rsp.features, function(i, f) {
@@ -260,7 +262,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						if (f.properties.region_a) {
 							label += ', ' + f.properties.region_a;
 						}
-						html += '<li class="list-group-item"><a href="#" data-lat="' + htmlspecialchars(lat) + '" data-lng="' + htmlspecialchars(lng) + '" class="geocoded">' + htmlspecialchars(label) + '</a></li>';
+						var address = self.get_geocoded_address(f);
+						html += '<li class="list-group-item"><a href="#" data-lat="' + htmlspecialchars(lat) + '" data-lng="' + htmlspecialchars(lng) + '" data-address="' + htmlspecialchars(address) + '" class="geocoded">' + htmlspecialchars(label) + '</a></li>';
 					});
 					html += '</ul>';
 
@@ -274,6 +277,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						var lat = parseFloat($(e.target).data('lat'));
 						var lng = parseFloat($(e.target).data('lng'));
 						self.select_geocoded(lat, lng);
+
+						var address = $(e.target).data('address');
+						$('textarea[name="address"]').val(address);
+						self.set_property('addr:full', address);
+
 						$('#venue-lookup-geocoded').html('');
 						$('#venue-lookup-address').removeClass('choose-address');
 					});
@@ -297,6 +305,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 			$('#venue-lookup-address').addClass('loading');
 			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror);
+		},
+
+		get_geocoded_address: function(feature) {
+
+			// This is a US-centric way of encoding an address
+			// (20170625/dphiffer)
+
+			var props = feature.properties;
+			var regex = new RegExp('^' + props.name);
+			var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
+			return address;
 		},
 
 		select_geocoded: function(lat, lng) {
