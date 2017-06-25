@@ -314,7 +314,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 			var props = feature.properties;
 			var regex = new RegExp('^' + props.name);
-			var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
+			if (props.housenumber && props.street) {
+				var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
+			} else {
+				var address = props.label;
+			}
 			return address;
 		},
 
