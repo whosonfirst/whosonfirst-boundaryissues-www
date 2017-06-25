@@ -208,9 +208,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				//self.set_marker(geocoder.marker);
 
 				var address = self.get_geocoded_address(feature);
-
-				$('textarea[name="address"]').val(address);
-				self.set_property('addr:full', address);
+				if (address != '') {
+					$('textarea[name="address"]').val(address);
+					self.set_property('addr:full', address);
+				}
 
 				if (props.housenumber) {
 					self.set_property('addr:housenumber', props.housenumber);
@@ -247,8 +248,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.select_geocoded(lat, lng);
 
 					var address = self.get_geocoded_address(rsp.features[0]);
-					$('textarea[name="address"]').val(address);
-					self.set_property('addr:full', address);
+					if (address != '') {
+						$('textarea[name="address"]').val(address);
+						self.set_property('addr:full', address);
+					}
 				} else if (rsp && rsp.features && rsp.features.length > 1) {
 					var html = '<ul class="list-group">';
 					$.each(rsp.features, function(i, f) {
@@ -279,8 +282,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						self.select_geocoded(lat, lng);
 
 						var address = $(e.target).data('address');
-						$('textarea[name="address"]').val(address);
-						self.set_property('addr:full', address);
+						if (address != '') {
+							$('textarea[name="address"]').val(address);
+							self.set_property('addr:full', address);
+						}
 
 						$('#venue-lookup-geocoded').html('');
 						$('#venue-lookup-address').removeClass('choose-address');
@@ -315,11 +320,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			var props = feature.properties;
 			var regex = new RegExp('^' + props.name);
 			if (props.housenumber && props.street) {
-				var address = props.label.replace(regex, props.housenumber + ' ' + props.street);
+				return props.label.replace(regex, props.housenumber + ' ' + props.street);
 			} else {
-				var address = props.label;
+				return '';
 			}
-			return address;
 		},
 
 		select_geocoded: function(lat, lng) {
