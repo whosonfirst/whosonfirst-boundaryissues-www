@@ -604,6 +604,12 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var scene  = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 			mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
+			// For now we just assume everyone using BI can read English. This
+			// should be configurable. (20170704/dphiffer)
+			mapzen.whosonfirst.leaflet.tangram.scene_options({
+				ux_language: 'en'
+			});
+
 			var swlat = 37.70120736474139;
 			var swlon = -122.68707275390624;
 			var nelat = 37.80924146650164;

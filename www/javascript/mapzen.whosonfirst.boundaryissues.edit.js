@@ -93,6 +93,12 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 			mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
+			// For now we just assume everyone using BI can read English. This
+			// should be configurable. (20170704/dphiffer)
+			mapzen.whosonfirst.leaflet.tangram.scene_options({
+				ux_language: 'en'
+			});
+
 			var placetype = $('input[name="properties.wof:placetype"]').val();
 			if (placetype == 'venue') {
 				self.setup_map_marker();

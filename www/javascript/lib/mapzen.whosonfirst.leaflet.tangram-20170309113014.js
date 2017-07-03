@@ -5,6 +5,7 @@ mapzen.whosonfirst.leaflet = mapzen.whosonfirst.leaflet || {};
 mapzen.whosonfirst.leaflet.tangram = (function(){
 
 	var _scenefile = '/static/tangram/scene.yaml'
+	var _scene_options = {};
 	var _cache = {};
 
 	var self = {
@@ -28,14 +29,14 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 
 			return map;
 		},
-		
+
 		'map': function(id){
 
 			if (! _cache[id]){
 				var map = L.map(id);
 				map.scrollWheelZoom.disable();
 
-				var tangram = self.tangram();
+				var tangram = self.tangram(self.scenefile(), self.scene_options());
 				tangram.addTo(map);
 
 				_cache[id] = map;
@@ -44,17 +45,28 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 			return _cache[id];
 		},
 
-		'tangram': function(scene){
+		'tangram': function(scenefile, options){
 
-			var scene = self.scenefile();
+			if (! scenefile) {
+				scenefile = self.scenefile();
+			}
+
+			if (! options) {
+				options = self.scene_options();
+			}
+
+			var scene = {
+				import: scenefile,
+				global: options
+			};
 
 			var tangram = Tangram.leafletLayer({
 				scene: scene,
 				numWorkers: 2,
-        			unloadInvisibleTiles: false,
-				updateWhenIdle: false
+				unloadInvisibleTiles: false,
+				updateWhenIdle: false,
 			});
-			
+
 			return tangram;
 		},
 
@@ -65,6 +77,15 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 			}
 
 			return _scenefile;
+		},
+
+		'scene_options': function(options){
+
+			if (options){
+				_scene_options = L.extend(_scene_options, options);
+			}
+
+			return _scene_options;
 		}
 	};
 

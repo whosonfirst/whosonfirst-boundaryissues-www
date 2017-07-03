@@ -602,6 +602,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		var scene = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/tangram/refill.yaml');
 		mapzen.whosonfirst.leaflet.tangram.scenefile(scene);
 
+		// For now we just assume everyone using BI can read English. This
+		// should be configurable. (20170704/dphiffer)
+		mapzen.whosonfirst.leaflet.tangram.scene_options({
+			ux_language: 'en'
+		});
+
 		var map = mapzen.whosonfirst.leaflet.tangram.map('map');
 		map.on('moveend', self.update_coordinates);
 		self.map = map;
