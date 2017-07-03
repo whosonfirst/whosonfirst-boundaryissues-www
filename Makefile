@@ -1,4 +1,4 @@
-TIMESTAMP = $(shell date +%Y%m%d%H%M%S)
+$(eval TIMESTAMP = $(shell date +%Y%m%d%H%M%S))
 JS_GITHUB = https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master
 JSON_SCHEMA_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-json-schema/master
 WOF_PROPERTY_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-properties/master
