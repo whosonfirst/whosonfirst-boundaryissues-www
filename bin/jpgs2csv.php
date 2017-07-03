@@ -35,8 +35,16 @@ fputcsv($csv, array(
 $count = 0;
 foreach ($jpgs as $jpg) {
 	$exif = exif_read_data("$dir/$jpg");
+	if (empty($exif["GPSLongitude"]) ||
+	    empty($exif['GPSLongitudeRef']) ||
+	    empty($exif["GPSLatitude"]) ||
+	    empty($exif['GPSLatitudeRef'])) {
+		echo "$jpg: no geotag data found (skipping)\n";
+		continue;
+	}
 	$lon = get_geo_exif($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
 	$lat = get_geo_exif($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
+	echo "$jpg: $lat, $lon\n";
 	fputcsv($csv, array($jpg, $lat, $lon));
 	$count++;
 }
