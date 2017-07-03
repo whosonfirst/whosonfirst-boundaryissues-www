@@ -64,7 +64,7 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 				scene: scene,
 				numWorkers: 2,
 				unloadInvisibleTiles: false,
-				updateWhenIdle: false,
+				updateWhenIdle: false
 			});
 
 			return tangram;
