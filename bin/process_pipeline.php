@@ -95,6 +95,13 @@
 			continue;
 		}
 
+		$rsp = wof_pipeline_preprocess($repo_path);
+		wof_pipeline_log($pipeline['id'], "Preprocess: $handler", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'failed');
+			continue;
+		}
+
 		foreach ($updated as $path) {
 			$rsp = git_add($repo_path, $path);
 			$basename = basename($path);

@@ -491,4 +491,56 @@
 		);
 	}
 
+	########################################################################
+
+	function wof_pipeline_preprocess($repo_path) {
+
+		$ensure_props = array('wof:parent_id', 'wof:repo');
+
+		if (substr($repo_path, 0, 15) != '/usr/local/data') {
+			return array(
+				'ok' => 0,
+				'error' => 'repo_path must be inside of /usr/local/data'
+			);
+		}
+
+		if (substr($repo_path, -6, 6) == '/data/') {
+			// Trim the trailing 'data/'
+			$repo_path = substr($repo_path, 0, -5);
+		}
+
+		foreach ($ensure_props as $prop) {
+
+			$output = array();
+			$cmd = "/usr/local/bin/wof-ensure-property -repo $repo_path -property $prop";
+			exec($cmd, $output);
+
+			if (! $output || $output[0] != 'id,path,details') {
+				return array(
+					'ok' => 0,
+					'cmd' => $cmd,
+					'error' => implode("\n", $output)
+				);
+			}
+
+			if (count($output) > 1) {
+				$wof_ids = array();
+				for ($i = 1; $i < count($output); $i++) {
+					$row = str_getcsv($output[$i]);
+					$wof_ids[] = $row[0];
+				}
+				return array(
+					'ok' => 0,
+					'error' => "Could not find '$prop' in WOF records: " . implode(', ', $wof_ids)
+				);
+			}
+		}
+
+		return array(
+			'ok' => 1,
+			'ensured_properties' => $ensure_props,
+			'repo_path' => $repo_path
+		);
+	}
+
 	# the end
