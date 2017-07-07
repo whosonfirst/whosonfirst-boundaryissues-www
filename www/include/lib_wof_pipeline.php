@@ -495,6 +495,7 @@
 
 	function wof_pipeline_preprocess($repo_path) {
 
+		$root = dirname(dirname(__DIR__));
 		$ensure_props = array('wof:parent_id', 'wof:repo');
 
 		if (substr($repo_path, 0, 15) != '/usr/local/data') {
@@ -512,7 +513,7 @@
 		foreach ($ensure_props as $prop) {
 
 			$output = array();
-			$cmd = "/usr/local/bin/wof-ensure-property -repo $repo_path -property $prop";
+			$cmd = "$root/bin/wof-ensure-property -repo $repo_path -property $prop";
 			exec($cmd, $output);
 
 			if (! $output || $output[0] != 'id,path,details') {
