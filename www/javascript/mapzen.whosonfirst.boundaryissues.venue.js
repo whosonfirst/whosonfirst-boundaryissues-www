@@ -664,6 +664,9 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$('#venue-response').html('<div class="alert alert-success">Your venue has been saved. You can <a href="' + edit_url + '">edit the WOF record</a> or add another venue.</div>');
 				self.reset_properties();
 				window.scrollTo(0, 0);
+				if (self.on_save) {
+					self.on_save();
+				}
 			}
 		}
 
@@ -742,6 +745,87 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				$('#property-preview').html(html);
 			}
 		});
+	}
+
+	var geotagged = null;
+	var geotagged_index = 0;
+	function setup_geotagged() {
+		var id = location.search.match(/geotagged=(\d+)/);
+		if (! id) {
+			return;
+		}
+
+		var load_photo = function(index) {
+			geotagged_index = index;
+			geotagged.item(geotagged_index, function(photo) {
+				var nav = '<span id="venue-geotagged-prev"><small class="glyphicon glyphicon-chevron-left"></small> prev</span>';
+				nav += '<span id="venue-geotagged-index" data-index="0">' + (geotagged_index + 1) + ' of ' + geotagged.count + '</span>';
+				nav += '<span id="venue-geotagged-next">next <small class="glyphicon glyphicon-chevron-right"></small></span>';
+				if (photo.geotags) {
+					var ll = [photo.geotags.latitude, photo.geotags.longitude];
+					self.map.setView(ll, 17);
+					var status = 'Found geotagged coordinates in photo<br>';
+					status += '<small>' + photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6) + '</small>';
+				} else {
+					var status = '<i>No geotags found in photo</i><br>';
+				}
+				status = '<div id="venue-geotagged-status">' + status + '</div>';
+				var img = '<div id="venue-geotagged-img"><img src="' + photo.data_uri + '" class="geotagged thumbnail ' + photo.orientation + '"></div>';
+				var controls = '<div id="venue-geotagged-controls">' + nav + status + '</div><br class="clear">';
+				$('#venue-geotagged').html(img  + controls);
+				$('#venue-geotagged').removeClass('hidden');
+				var ratio = photo.exif.PixelXDimension / photo.exif.PixelYDimension;
+				var w = $('#venue-geotagged-img').width();
+
+				if (photo.orientation.indexOf('rotate-90') != -1) {
+					var h = Math.round(w * ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(90deg) scale(' + ratio + ')');
+				} else if (photo.orientation.indexOf('rotate-180') != -1) {
+					var h = Math.round(w / ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(180deg)');
+				} else if (photo.orientation.indexOf('rotate-270') != -1) {
+					var h = Math.round(w * ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(270deg) scale(' + ratio + ')');
+				} else {
+					var h = Math.round(w / ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0)');
+				}
+
+				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', h);
+				if (geotagged_index > 0) {
+					$('#venue-geotagged-prev').addClass('active');
+				}
+				if (geotagged_index < geotagged.count - 1) {
+					$('#venue-geotagged-next').addClass('active');
+				}
+				$('#venue-geotagged-next').click(function(e) {
+					if (! $('#venue-geotagged-next').hasClass('active')) {
+						return;
+					}
+					load_photo(geotagged_index + 1);
+				});
+				$('#venue-geotagged-prev').click(function(e) {
+					if (! $('#venue-geotagged-prev').hasClass('active')) {
+						return;
+					}
+					load_photo(geotagged_index - 1);
+				});
+			});
+		};
+
+		mapzen.whosonfirst.geotagged.load_from_localforage(id[1], function(rsp) {
+			if (! rsp) {
+				return;
+			}
+			geotagged = rsp;
+			load_photo(0);
+		});
+
+		self.on_save = function() {
+			if (geotagged_index < geotagged.count - 1) {
+				load_photo(geotagged_index + 1);
+			}
+		};
 	}
 
 	function check_for_wof_id() {
@@ -859,6 +943,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			setup_form();
 			setup_address();
 			setup_preview();
+			setup_geotagged();
 			if (! check_for_wof_id()) {
 				check_for_assignments();
 			}

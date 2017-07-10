@@ -24,7 +24,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    is_zip,
 	    feature_count,
 	    VenueIcon,
-	    poi_icon_base;
+	    poi_icon_base,
+	    geotagged;
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 
@@ -112,7 +113,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				    ! properties_are_ready) {
 					return;
 				}
-				self.post_file();
+				if (geotagged) {
+					self.save_geotagged();
+				} else {
+					self.post_file();
+				}
 			});
 
 			// Listen for updates on FeatureCollection uploads
@@ -516,21 +521,26 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
-		preview_geotagged: function(geotagged) {
-			if (! geotagged.length) {
+		preview_geotagged: function(rsp) {
+			if (! rsp.length) {
 				return;
 			}
+			geotagged = rsp;
 			var html = '';
 			for (var i = 0; i < geotagged.length; i++) {
 				var g = geotagged[i];
 				var orientation = g.orientation.replace('"', '');
-				html += '<div class="geotagged ' + orientation + '"></div>';
+				html += '<div class="geotagged thumbnail square ' + orientation + '"></div>';
 			}
 			$('#upload-preview-props').html(html);
 			$('#upload-preview-props .geotagged').each(function(i, div) {
 				var data_uri = geotagged[i].data_uri.replace('"', '');
 				$(div).css('background-image', 'url("' + data_uri + '")');
 			});
+
+			upload_is_ready = true;
+			$('#upload-btn').addClass('btn-primary');
+			$('#upload-btn').attr('disabled', false);
 		},
 
 		pipeline_controls: function() {
@@ -929,6 +939,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			// Show some user feedback
 			$result.html('Uploading...');
+		},
+
+		save_geotagged: function() {
+			mapzen.whosonfirst.geotagged.save_to_localforage(geotagged, function(id) {
+				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/venue/?geotagged=' + id);
+				window.location = url;
+			});
 		},
 
 		show_result: function(rsp) {

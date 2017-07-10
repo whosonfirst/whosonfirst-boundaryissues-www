@@ -878,10 +878,25 @@ body.user-can-edit #edit-disallowed {
 
 .geotagged {
 	float: left;
+	width: 100%;
+	height: auto;
+}
+
+.geotagged.thumbnail {
 	width: 240px;
+}
+
+.geotagged.thumbnail.square {
+	float: left;
 	height: 240px;
 	background-size: cover;
 	background-color: #dedede;
+}
+
+.geotagged:last-child::after {
+	content: "";
+	display: table;
+	clear: both;
 }
 
 .geotagged.rotate-90 {
@@ -900,10 +915,59 @@ body.user-can-edit #edit-disallowed {
 	transform: scale(-1, 1);
 }
 
-.geotagged:last-child::after {
-	content: "";
-	display: table;
+.geotagged.flip-horiz.rotate-90 {
+	transform: scale(-1, 1) rotate(90deg);
+}
+
+.geotagged.flip-horiz.rotate-180 {
+	transform: scale(-1, 1) rotate(180deg);
+}
+
+.geotagged.flip-horiz.rotate-270 {
+	transform: scale(-1, 1) rotate(270deg);
+}
+
+.geotagged.thumbnail {
+	transition: none;
+}
+
+#venue-geotagged-img,
+#venue-geotagged-controls {
+	width: 50%;
+	float: left;
+	position: relative;
+}
+
+#venue-geotagged-status {
+	position: absolute;
+	bottom: 0;
+	left: 15px;
+}
+
+#venue-geotagged-controls {
+	padding-left: 15px;
+}
+
+#venue-geotagged .clear {
 	clear: both;
+}
+
+#venue-geotagged-img img {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+#venue-geotagged-index {
+	font-weight: bold;
+	margin: 0 10px;
+}
+
+#venue-geotagged-next.active,
+#venue-geotagged-prev.active {
+	font-weight: bold;
+	cursor: pointer;
+	color: #FF7B7B;
 }
 
 @media screen and (max-width: 480px) {

@@ -38,6 +38,49 @@ mapzen.whosonfirst.geotagged = (function() {
 			console.error(msg);
 		},
 
+		save_to_localforage: function(geotagged, cb) {
+			localforage.getItem('geotagged_index').then(function(rsp) {
+				var id = (new Date()).getTime();
+				var count = geotagged.length;
+				if (! rsp) {
+					var index = [];
+				} else {
+					var index = rsp;
+				}
+				index.push({
+					id: id,
+					count: count
+				});
+				var i = 0;
+				var save_item = function() {
+					localforage.setItem('geotagged_' + id + '_' + i, geotagged[i]).then(function() {
+						if (i < count) {
+							i++;
+							save_item();
+						} else {
+							cb(id);
+						}
+					});
+				};
+				localforage.setItem('geotagged_index', index).then(save_item);
+			});
+		},
+
+		load_from_localforage: function(id, cb) {
+			localforage.getItem('geotagged_index').then(function(index) {
+				for (var i = 0; i < index.length; i++) {
+					if (index[i].id == id) {
+						geotagged = index[i];
+						geotagged.item = function(index, cb) {
+							localforage.getItem('geotagged_' + this.id + '_' + index).then(cb);
+						};
+						cb(geotagged);
+					}
+				}
+				cb(null);
+			});
+		},
+
 		process_next_file: function() {
 			if (_queue.length == 0) {
 				self.onsuccess(self.data, self.index);
@@ -65,6 +108,7 @@ mapzen.whosonfirst.geotagged = (function() {
 			if (data.Orientation) {
 				_pending.orientation = self.parse_orientation(data);
 			}
+			_pending.exif = data;
 			_reader.onload = self.handle_data_uri;
 			_reader.readAsDataURL(_file);
 		},
@@ -143,6 +187,28 @@ mapzen.whosonfirst.geotagged = (function() {
 			_pending = null;
 			_file = null;
 			self.process_next_file();
+		},
+
+		reset_localforage: function(target) {
+			localforage.getItem('geotagged_index').then(function(index) {
+				if (! index) {
+					return;
+				}
+				for (var i = 0; i < index.length; i++) {
+					var geotagged = index[i];
+					if (! target || target == geotagged.id) {
+						for (var j = 0; j < geotagged.count; j++) {
+							var item = 'geotagged_' + geotagged.id + '_' + j;
+							console.log('removing ' + item);
+							localforage.removeItem(item);
+						}
+					}
+				}
+				if (! target) {
+					console.log('removing geotagged_index');
+					localforage.removeItem('geotagged_index');
+				}
+			});
 		}
 	}
 
