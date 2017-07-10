@@ -65,24 +65,43 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (e.target.files.length == 1) {
 					var ext = e.target.files[0].name.match(/\.\w+$/);
 					if (ext.length < 1 ||
-					    format_list.indexOf(ext[0]) == -1) {
+					    format_list.indexOf(ext[0].toLowerCase()) == -1) {
 						preview_error('Please upload files with one of <strong>' + formats + '</strong> file extension');
 						return;
-					} else if (ext[0] == '.geojson') {
+					}
+
+					ext = ext[0].toLowerCase();
+					if (ext == '.geojson') {
 						geojson_file = e.target.files[0];
 						preview_handler(geojson_file, self.preview_geojson);
-					} else if (ext[0] == '.csv') {
+					} else if (ext == '.csv') {
 						is_csv = true;
 						csv_file = e.target.files[0];
 						preview_handler(csv_file, self.preview_csv);
-					} else if (ext[0] == '.zip') {
+					} else if (ext == '.zip') {
 						is_zip = true;
 						zip_file = e.target.files[0];
 						preview_handler(zip_file, self.preview_zip);
+					} else if (ext == '.jpg' || ext == '.jpeg') {
+						mapzen.whosonfirst.geotagged.init([e.target.files[0]], self.preview_geotagged, preview_error);
 					}
+				} else if (e.target.files.length > 0) {
+					var photos = [];
+					for (var i = 0; i < e.target.files.length; i++) {
+						if (e.target.files[i].name.match(/\.jpe?g$/i)) {
+							photos.push(e.target.files[i]);
+						}
+					}
+
+					if (photos.length == 0) {
+						// welp, there are more than one file, but none are JPEGs
+						preview_error('Please upload only <strong>one file at a time</strong>');
+						return;
+					}
+
+					mapzen.whosonfirst.geotagged.init(photos, self.preview_geotagged, preview_error);
 				} else {
-					preview_error('Please upload only <strong>one file at a time</strong>');
-					return;
+					$('#upload-status').html('<small>Accepted formats: ' + format_list.join(', ') + '</small>');
 				}
 			});
 
@@ -494,6 +513,23 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			$('#pipeline-type').change(function() {
 				var type = $('#pipeline-type').val();
 				self.pipeline_options(type);
+			});
+		},
+
+		preview_geotagged: function(geotagged) {
+			if (! geotagged.length) {
+				return;
+			}
+			var html = '';
+			for (var i = 0; i < geotagged.length; i++) {
+				var g = geotagged[i];
+				var orientation = g.orientation.replace('"', '');
+				html += '<div class="geotagged ' + orientation + '"></div>';
+			}
+			$('#upload-preview-props').html(html);
+			$('#upload-preview-props .geotagged').each(function(i, div) {
+				var data_uri = geotagged[i].data_uri.replace('"', '');
+				$(div).css('background-image', 'url("' + data_uri + '")');
 			});
 		},
 

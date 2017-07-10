@@ -876,6 +876,36 @@ body.user-can-edit #edit-disallowed {
 	margin-top: 1em;
 }
 
+.geotagged {
+	float: left;
+	width: 240px;
+	height: 240px;
+	background-size: cover;
+	background-color: #dedede;
+}
+
+.geotagged.rotate-90 {
+	transform: rotate(90deg);
+}
+
+.geotagged.rotate-180 {
+	transform: rotate(180deg);
+}
+
+.geotagged.rotate-270 {
+	transform: rotate(270deg);
+}
+
+.geotagged.flip-horiz {
+	transform: scale(-1, 1);
+}
+
+.geotagged:last-child::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

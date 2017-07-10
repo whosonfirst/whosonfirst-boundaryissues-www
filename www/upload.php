@@ -46,6 +46,11 @@
 		}
 	}
 
+	if ($GLOBALS['cfg']['enable_feature_geotagged_photos']) {
+		$upload_formats[] = '.jpg';
+		$upload_formats[] = '.jpeg';
+	}
+
 	$upload_formats = implode(', ', $upload_formats);
 	$GLOBALS['smarty']->assign('upload_formats', $upload_formats);
 
