@@ -54,30 +54,36 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 			};
 
+			var preview_error = function(msg) {
+				$('#upload-status').html('<small class="caveat">' + msg + '</small>');
+			};
+
 			// Preview the GeoJSON when the file input's onchange fires
-			$form.find('input[name=geojson_file]').on('change', function(e){
-				geojson_file = e.target.files[0];
-				preview_handler(geojson_file, self.preview_geojson);
-				$form.find('input[name=csv_file]')[0].setAttribute('disabled', 'disabled');
-				$form.find('input[name=zip_file]')[0].setAttribute('disabled', 'disabled');
-			});
-
-			// Preview the CSV when the file input's onchange fires
-			$form.find('input[name=csv_file]').on('change', function(e){
-				is_csv = true;
-				csv_file = e.target.files[0];
-				preview_handler(csv_file, self.preview_csv);
-				$form.find('input[name=geojson_file]')[0].setAttribute('disabled', 'disabled');
-				$form.find('input[name=zip_file]')[0].setAttribute('disabled', 'disabled');
-			});
-
-			// Preview the Zip when the file input's onchange fires
-			$form.find('input[name=zip_file]').on('change', function(e){
-				is_zip = true;
-				zip_file = e.target.files[0];
-				preview_handler(zip_file, self.preview_zip);
-				$form.find('input[name=geojson_file]')[0].setAttribute('disabled', 'disabled');
-				$form.find('input[name=csv_file]')[0].setAttribute('disabled', 'disabled');
+			$form.find('input[name=file]').on('change', function(e) {
+				var formats = $(e.target).data('formats');
+				var format_list = formats.match(/\.\w+/g);
+				if (e.target.files.length == 1) {
+					var ext = e.target.files[0].name.match(/\.\w+$/);
+					if (ext.length < 1 ||
+					    format_list.indexOf(ext[0]) == -1) {
+						preview_error('Please upload files with one of <strong>' + formats + '</strong> file extension');
+						return;
+					} else if (ext[0] == '.geojson') {
+						geojson_file = e.target.files[0];
+						preview_handler(geojson_file, self.preview_geojson);
+					} else if (ext[0] == '.csv') {
+						is_csv = true;
+						csv_file = e.target.files[0];
+						preview_handler(csv_file, self.preview_csv);
+					} else if (ext[0] == '.zip') {
+						is_zip = true;
+						zip_file = e.target.files[0];
+						preview_handler(zip_file, self.preview_zip);
+					}
+				} else {
+					preview_error('Please upload only <strong>one file at a time</strong>');
+					return;
+				}
 			});
 
 			// Intercept the form submit event and upload the file via API
@@ -401,7 +407,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				}
 				$('select.column').each(function(i, select) {
 					var column = $(select).data('column');
-					var default_value = prefix + ':' + column.trim().replace(/\W/, '_');
+					if (typeof column == 'string') {
+						column = column.trim().replace(/\W/, '_');
+					}
+					var default_value = prefix + ':' + column;
 					var options = property_select_options(default_value, select.selectedIndex);
 					$(select).html(options);
 				});
@@ -563,9 +572,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			html += '<label for="slack_handle">Ping my Slack handle when finished</label>';
 			html += '<input type="text" id="slack_handle" value="' + htmlspecialchars(slack_handle) + '">';
 			html += '</div>';
-			//html += '<div class="input-group">';
-			//html += '<input type="checkbox" id="generate_meta_files"' + meta_files_checked + '><label for="generate_meta_files">Generate meta files on completion</label>';
-			//html += '</div>';
 
 			$('#pipeline-options').html(html);
 

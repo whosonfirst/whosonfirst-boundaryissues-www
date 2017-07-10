@@ -21,10 +21,22 @@
 	$crumb_upload_collection = crumb_generate('api', 'wof.upload_collection');
 	$GLOBALS['smarty']->assign("crumb_upload_collection", $crumb_upload_collection);
 
-	$crumb_upload_csv = crumb_generate('api', 'wof.upload_csv');
-	$GLOBALS['smarty']->assign("crumb_upload_csv", $crumb_upload_csv);
+	$upload_formats = array('.geojson');
 
-	if (users_acl_check_access($GLOBALS['cfg']['user'], 'pipeline')) {
+	if ($GLOBALS['cfg']['enable_feature_csv_upload']) {
+
+		$upload_formats[] = '.csv';
+
+		$crumb_upload_csv = crumb_generate('api', 'wof.upload_csv');
+		$GLOBALS['smarty']->assign("crumb_upload_csv", $crumb_upload_csv);
+	}
+
+
+	if ($GLOBALS['cfg']['enable_feature_pipeline'] &&
+	    users_acl_check_access($GLOBALS['cfg']['user'], 'pipeline')) {
+
+		$upload_formats[] = '.zip';
+
 		$crumb_upload_zip = crumb_generate('api', 'wof.upload_zip');
 		$GLOBALS['smarty']->assign("crumb_upload_zip", $crumb_upload_zip);
 
@@ -33,6 +45,9 @@
 			$GLOBALS['smarty']->assign('slack_handle', $slack_handle);
 		}
 	}
+
+	$upload_formats = implode(', ', $upload_formats);
+	$GLOBALS['smarty']->assign('upload_formats', $upload_formats);
 
 	$GLOBALS['smarty']->display('page_upload.txt');
 	exit();

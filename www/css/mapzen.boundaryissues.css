@@ -18,6 +18,10 @@ nav#header {
 	margin-bottom: 2em;
 }
 
+#upload-status {
+	margin: 1em 0;
+}
+
 #map {
 	margin-bottom: 0.5em;
 }
