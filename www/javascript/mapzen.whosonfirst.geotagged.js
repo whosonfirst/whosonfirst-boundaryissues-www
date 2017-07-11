@@ -14,6 +14,7 @@ mapzen.whosonfirst.geotagged = (function() {
 
 		init: function(files, onsuccess, onerror) {
 			_queue = files;
+			_queue.reverse();
 			_reader.onload = self.handle_data_uri;
 			if (onsuccess) {
 				self.onsuccess = onsuccess;
