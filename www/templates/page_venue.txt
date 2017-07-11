@@ -36,6 +36,7 @@
 						<input type="hidden" name="{$key|escape}" value="{$value|escape}" class="property">
 					{/foreach}
 				{/if}
+				<div id="venue-geotagged" class="alert alert-info headroom hidden"></div>
 				<div id="venue-response" class="headroom">
 					{if $error_wof_not_found}
 						<div class="alert alert-danger">This CSV row has a <code>wof_id</code> value (<code>{$wof_id|escape}</code>) that doesn’t match any known WOF records. Please proceed with caution.</div>
@@ -43,7 +44,6 @@
 						<div class="alert alert-info">This CSV row has already been imported. Edit the <a href="{$cfg.abs_root_url}id/{$wof_id|escape}">full record</a>?</div>
 					{/if}
 				</div>
-				<div id="venue-geotagged" class="alert alert-info hidden"></div>
 				<div class="form-group">
 					<label for="venue-name">Venue name</label>
 					<input type="text" name="name" id="venue-name" value="{$venue_name|escape}">
