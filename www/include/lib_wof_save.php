@@ -411,7 +411,7 @@
 		$repos = array();
 		$branches = glob("{$GLOBALS['cfg']['wof_pending_dir']}*");
 		foreach ($branches as $branch) {
-			if (! is_dir($branch)) {
+			if (! is_dir($branch) || $branch == 'csv') {
 				continue;
 			}
 			$branch = basename($branch);
@@ -529,6 +529,7 @@
 				'cwd' => $repo_path
 			));
 			if (! $rsp['ok']) {
+				slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 				return $rsp;
 			}
 			if ($rsp['selected'] == $branch) {
@@ -549,6 +550,7 @@
 						'cmd' => "git checkout {$new_branch}$branch"
 					));
 					if (! $rsp['ok']) {
+						slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 						return $rsp;
 					}
 				}
@@ -576,6 +578,7 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
+					slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 					return $rsp;
 				}
 			}
@@ -642,6 +645,7 @@
 						'branch' => $branch
 					));
 					if (! $rsp['ok']) {
+						slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 						return $rsp;
 					}
 				}
@@ -666,6 +670,7 @@
 						'path' => $data_path
 					));
 					if (! $rsp['ok']) {
+						slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 						return $rsp;
 					}
 				}
@@ -729,6 +734,7 @@
 					'args' => $args
 				));
 				if (! $rsp['ok']) {
+					slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 					return $rsp;
 				}
 				if (preg_match('/^\[\w+\s+(.+?)\]/', $rsp['rsp'], $matches)) {
@@ -750,6 +756,7 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
+					slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
 					return $rsp;
 				}
 			}
