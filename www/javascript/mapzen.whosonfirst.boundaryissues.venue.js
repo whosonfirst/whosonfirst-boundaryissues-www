@@ -750,10 +750,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	var geotagged = null;
 	var geotagged_index = 0;
 	function setup_geotagged() {
-		var id = location.search.match(/geotagged=(\d+)/);
-		if (! id) {
+		var geotagged_id = location.search.match(/geotagged=(\d+)/);
+		if (! geotagged_id) {
 			return;
 		}
+		geotagged_id = geotagged_id[1];
 
 		var load_photo = function(index) {
 			geotagged_index = index;
@@ -813,7 +814,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			});
 		};
 
-		mapzen.whosonfirst.geotagged.load_from_localforage(id[1], function(rsp) {
+		mapzen.whosonfirst.geotagged.load_from_localforage(geotagged_id, function(rsp) {
 			if (! rsp) {
 				return;
 			}
@@ -824,6 +825,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		self.on_save = function() {
 			if (geotagged_index < geotagged.count - 1) {
 				load_photo(geotagged_index + 1);
+			} else {
+				window.onbeforeunload = function() {
+					mapzen.whosonfirst.geotagged.reset_localforage(geotagged_id);
+				};
 			}
 		};
 	}
