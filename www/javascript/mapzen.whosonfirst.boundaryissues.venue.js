@@ -765,6 +765,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				if (photo.geotags) {
 					var ll = [photo.geotags.latitude, photo.geotags.longitude];
 					self.map.setView(ll, 17);
+					self.update_coordinates();
 					var status = 'Found geotagged coordinates in photo<br>';
 					status += '<small>' + photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6) + '</small>';
 				} else {
