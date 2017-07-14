@@ -195,15 +195,13 @@
 
 		if (! preg_match('/[0-9a-zA-Z_-]+/', $pipeline['repo'])) {
 			// Safety check: make sure the repo looks ok
-			wof_pipeline_log($pipeline['id'], "Bad repo value: {$pipeline['repo']}");
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Bad repo value: {$pipeline['repo']}");
 			return false;
 		}
 
 		$pipeline['handler'] = "wof_pipeline_{$pipeline['type']}";
 		if (! function_exists($pipeline['handler'])) {
-			wof_pipeline_log($pipeline['id'], "Could not find {$pipeline['handler']} handler");
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Could not find {$pipeline['handler']} handler");
 			return false;
 		}
 
@@ -211,15 +209,13 @@
 
 		$rsp = git_execute($repo_path, "checkout master");
 		if (! $rsp['ok']) {
-			wof_pipeline_log($pipeline['id'], "Could not checkout master branch", $rsp);
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Could not checkout master branch", $rsp);
 			return false;
 		}
 
 		$rsp = git_pull($repo_path, 'origin', 'master');
 		if (! $rsp['ok']) {
-			wof_pipeline_log($pipeline['id'], "Could not pull from origin master", $rsp);
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Could not pull from origin master", $rsp);
 			return false;
 		}
 
@@ -228,7 +224,7 @@
 			$rsp = git_execute($repo_path, "checkout -b $branch");
 			wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: {$pipeline['branch']}", $rsp);
 			if (! $rsp['ok']) {
-				wof_pipeline_finish($pipeline, 'error');
+				wof_pipeline_finish($pipeline, 'error', "Could not create branch {$pipeline['branch']}", $rsp);
 				return false;
 			}
 		}
@@ -247,8 +243,7 @@
 		if ($pipeline['files']) {
 			$rsp = wof_pipeline_download_files($pipeline);
 			if (! $rsp['ok']) {
-				wof_pipeline_log($pipeline['id'], "Could not download files", $rsp);
-				wof_pipeline_finish($pipeline, 'error');
+				wof_pipeline_finish($pipeline, 'error', "Could not download files", $rsp);
 				return false;
 			}
 			$pipeline['dir'] = $rsp['dir'];
@@ -258,7 +253,7 @@
 		$rsp = $handler($pipeline, 'dry run');
 		wof_pipeline_log($pipeline['id'], "Dry run: $handler", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Dry run error from $handler", $rsp);
 			return false;
 		}
 
@@ -266,14 +261,13 @@
 		$rsp = $handler($pipeline);
 		wof_pipeline_log($pipeline['id'], "Execute: $handler", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Execution error from $handler", $rsp);
 			return false;
 		}
 
 		$updated = $rsp['updated'];
 		if (count($updated) == 0) {
-			wof_pipeline_log($pipeline['id'], "No files modified, bailing out", $rsp);
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "No files modified, bailing out");
 			return false;
 		}
 
@@ -286,10 +280,11 @@
 
 	function wof_pipeline_commit($pipeline) {
 
+		$repo_path = wof_pipeline_repo_path($pipeline);
+
 		$rsp = wof_pipeline_preprocess($repo_path);
-		wof_pipeline_log($pipeline['id'], "Preprocess: $handler", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Preprocessing error from $repo_path", $rsp);
 			return false;
 		}
 
@@ -298,7 +293,7 @@
 			$basename = basename($path);
 			wof_pipeline_log($pipeline['id'], "Add $basename to git index", $rsp);
 			if (! $rsp['ok']) {
-				wof_pipeline_finish($pipeline, 'error');
+				wof_pipeline_finish($pipeline, 'error', "Error adding $basename to git index", $rsp);
 				return false;
 			}
 		}
@@ -312,6 +307,10 @@
 
 		$commit_msg = "$emoji pipeline $pipeline_id: {$pipeline['filename']} ({$pipeline['type']})";
 		$rsp = git_commit($repo_path, $commit_msg);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error', "Error committing to $repo_path", $rsp);
+			return false;
+		}
 
 		$how_many = count($updated);
 		if ($how_many == 1) {
@@ -330,6 +329,8 @@
 
 	function wof_pipeline_push($pipeline) {
 
+		$repo_path = wof_pipeline_repo_path($pipeline);
+
 		if ($pipeline['branch_merge']) {
 			$branch = $pipeline['branch'];
 		} else {
@@ -339,7 +340,7 @@
 		$rsp = git_push($repo_path);
 		wof_pipeline_log($pipeline['id'], "Push commit to origin $branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "Error pushing $repo_path (branch $branch)", $rsp);
 			return false;
 		}
 
@@ -357,6 +358,8 @@
 
 	function wof_pipeline_merge($pipeline) {
 
+		$repo_path = wof_pipeline_repo_path($pipeline);
+
 		if (! $pipeline['branch_merge']) {
 			wof_pipeline_log($pipeline['id'], "No merge required");
 			return true;
@@ -365,63 +368,62 @@
 		$rsp = git_execute($repo_path, "checkout staging-work");
 		wof_pipeline_log($pipeline['id'], "Checkout staging-work branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error checking out staging-work branch", $rsp);
 			return false;
 		}
 
 		$rsp = git_pull($repo_path, 'origin', 'staging-work');
 		if (! $rsp['ok']) {
-			wof_pipeline_log($pipeline['id'], "Could not pull from origin staging-work", $rsp);
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error pulling from origin staging-work", $rsp);
 			return false;
 		}
 
 		$rsp = git_pull($repo_path, 'origin', $branch);
 		wof_pipeline_log($pipeline['id'], "Merge into staging-work branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error merging into staging-work", $rsp);
 			return false;
 		}
 
 		$rsp = git_push($repo_path);
 		wof_pipeline_log($pipeline['id'], "Push commit to origin staging-work", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error pushing to origin staging-work", $rsp);
 			return false;
 		}
 
 		$rsp = git_execute($repo_path, "checkout master");
 		wof_pipeline_log($pipeline['id'], "Checkout master branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error checking out master branch", $rsp);
 			return false;
 		}
 
 		$rsp = git_pull($repo_path, 'origin', $branch);
 		wof_pipeline_log($pipeline['id'], "Merge into master branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error merging $branch into master", $rsp);
 			return false;
 		}
 
 		$rsp = git_execute($repo_path, "branch -d $branch");
 		wof_pipeline_log($pipeline['id'], "Delete local branch $branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error deleting local $branch branch", $rsp);
 			return false;
 		}
 
 		$rsp = git_execute($repo_path, "push origin --delete $branch");
 		wof_pipeline_log($pipeline['id'], "Delete remote branch $branch", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error deleting remote $branch branch", $rsp);
 			return false;
 		}
 
 		$rsp = git_push($repo_path);
 		wof_pipeline_log($pipeline['id'], "Push commit to origin master", $rsp);
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error');
+			wof_pipeline_finish($pipeline, 'error', "$repo_path pushing to origin master", $rsp);
 			continue;
 		}
 
@@ -430,7 +432,7 @@
 
 	########################################################################
 
-	function wof_pipeline_finish($pipeline, $phase) {
+	function wof_pipeline_finish($pipeline, $phase, $debug = null, $rsp = null) {
 
 		wof_pipeline_phase($pipeline, $phase);
 
@@ -440,7 +442,19 @@
 			$rsp = git_execute($repo_path, "checkout master");
 			wof_pipeline_log($pipeline['id'], "Resetting {$pipeline['repo']} to master branch", $rsp);
 		} else {
-			wof_repo_set_status($pipeline['repo'], 'inactive');
+			if (! $debug) {
+				$debug = "Something went wrong, but I don’t know what";
+			}
+			wof_pipeline_log($pipeline['id'], $debug, $rsp);
+			$debug = "Pipeline {$pipeline['id']}: $debug";
+			if ($rsp) {
+				$debug .= "\nResponse:\n";
+				$debug .= var_export($rsp, 'return values');
+			}
+			$debug .= "\nDetails:\n";
+			$debug .= var_export($pipeline, 'return values');
+
+			wof_repo_set_status($pipeline['repo'], 'inactive', $debug);
 		}
 	}
 
