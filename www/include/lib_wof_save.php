@@ -89,6 +89,7 @@
 	loadlib("wof_schema");
 	loadlib("wof_events");
 	loadlib("users_settings");
+	loadlib("wof_repo");
 
 	########################################################################
 
@@ -520,6 +521,23 @@
 				echo "----- REPO: $repo_path -----\n";
 			}
 
+			$repo_name = basename(dirname($repo_path));
+
+			if (! file_exists($repo_path)) {
+				if ($options['verbose']) {
+					echo "Repo $repo_name needs to be cloned\n";
+					slack_bot_msg(":warning: save_pending.php: repo $repo_name needs to be cloned");
+				}
+				continue;
+			}
+
+			if (! wof_repo_is_active($repo_name)) {
+				if ($options['verbose']) {
+					echo "Skipping inactive $repo_name\n";
+				}
+				continue;
+			}
+
 			if ($options['verbose']) {
 				echo "cd $repo_path\n";
 			}
@@ -529,8 +547,7 @@
 				'cwd' => $repo_path
 			));
 			if (! $rsp['ok']) {
-				slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-				return $rsp;
+				return wof_save_pending_error($rsp);
 			}
 			if ($rsp['selected'] == $branch) {
 				if ($options['verbose']) {
@@ -550,8 +567,7 @@
 						'cmd' => "git checkout {$new_branch}$branch"
 					));
 					if (! $rsp['ok']) {
-						slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-						return $rsp;
+						return wof_save_pending_error($rsp);
 					}
 				}
 			}
@@ -561,16 +577,6 @@
 				echo "git pull --rebase origin $branch\n";
 			}
 
-			if (! file_exists($repo_path)) {
-				// Something something email Dan?
-				// (20170509/dphiffer)
-				if ($options['verbose']) {
-					echo "Oh noes! We have no repo $repo_path\n";
-				}
-				error_log("Oh noes! We have no repo $repo_path");
-				continue;
-			}
-
 			if (! $options['dry_run']) {
 				$rsp = wof_save_pending_pull($repo_path, $branch);
 				audit_trail("wof_save_pending_pull", $rsp, array(
@@ -578,8 +584,7 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
-					slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-					return $rsp;
+					return wof_save_pending_error($rsp);
 				}
 			}
 
@@ -645,8 +650,7 @@
 						'branch' => $branch
 					));
 					if (! $rsp['ok']) {
-						slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-						return $rsp;
+						return wof_save_pending_error($rsp);
 					}
 				}
 
@@ -670,8 +674,7 @@
 						'path' => $data_path
 					));
 					if (! $rsp['ok']) {
-						slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-						return $rsp;
+						return wof_save_pending_error($rsp);
 					}
 				}
 				$saved[$wof_id] = $updates;
@@ -734,8 +737,7 @@
 					'args' => $args
 				));
 				if (! $rsp['ok']) {
-					slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-					return $rsp;
+					return wof_save_pending_error($rsp);
 				}
 				if (preg_match('/^\[\w+\s+(.+?)\]/', $rsp['rsp'], $matches)) {
 					$commit_hash = $matches[1];
@@ -756,8 +758,7 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
-					slack_bot_msg(":warning: save_pending.php: {$rsp['error']}");
-					return $rsp;
+					return wof_save_pending_error($rsp);
 				}
 			}
 
@@ -851,6 +852,20 @@
 			'saved' => $updated,
 			'repos' => $repos
 		);
+	}
+
+	########################################################################
+
+	function wof_save_pending_error($rsp) {
+		if ($rsp['error']) {
+			$error = $rsp['error'];
+		} else {
+			$error = 'something went wrong, but I don’t know what';
+		}
+		$debug = "save_pending.php: $error";
+		slack_bot_msg(":warning: $debug");
+		wof_repo_set_status($repo_name, 'inactive', $debug);
+		return $rsp;
 	}
 
 	########################################################################
