@@ -220,18 +220,32 @@
 		}
 
 		if ($pipeline['branch_merge']) {
-			$pipeline['branch'] = "pipeline-{$pipeline['id']}";
-			$rsp = git_execute($repo_path, "checkout -b $branch");
-			wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: {$pipeline['branch']}", $rsp);
-			if (! $rsp['ok']) {
-				wof_pipeline_finish($pipeline, 'error', "Could not create branch {$pipeline['branch']}", $rsp);
-				return false;
-			}
+			wof_pipeline_phase($pipeline, 'branch');
+		} else {
+			wof_pipeline_phase($pipeline, 'execute');
+		}
+
+		return true;
+	}
+
+	########################################################################
+
+	function wof_pipeline_branch(&$pipeline) {
+
+		if (! $pipeline['branch_merge']) {
+			return true;
+		}
+
+		$pipeline['branch'] = "pipeline-{$pipeline['id']}";
+		$rsp = git_execute($repo_path, "checkout -b $branch");
+		wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: {$pipeline['branch']}", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error', "Could not create branch {$pipeline['branch']}", $rsp);
+			return false;
 		}
 
 		wof_pipeline_phase($pipeline, 'execute');
 
-		return true;
 	}
 
 	########################################################################
@@ -312,7 +326,7 @@
 			return false;
 		}
 
-		$how_many = count($updated);
+		$how_many = count($pipeline['updated']);
 		if ($how_many == 1) {
 			$how_many .= ' file';
 		} else {
@@ -347,8 +361,10 @@
 		if ($pipeline['user_confirmation']) {
 			wof_pipeline_phase($pipeline, 'confirm');
 			return false;
-		} else {
+		} else if ($pipeline['branch_merge']) {
 			wof_pipeline_phase($pipeline, 'merge');
+		} else {
+			wof_pipeline_finish($pipeline, 'success');
 		}
 
 		return true;
@@ -361,7 +377,6 @@
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
 		if (! $pipeline['branch_merge']) {
-			wof_pipeline_log($pipeline['id'], "No merge required");
 			return true;
 		}
 
@@ -426,6 +441,8 @@
 			wof_pipeline_finish($pipeline, 'error', "$repo_path pushing to origin master", $rsp);
 			continue;
 		}
+
+		wof_pipeline_finish($pipeline, 'success');
 
 		return true;
 	}

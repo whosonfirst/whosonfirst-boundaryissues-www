@@ -35,6 +35,10 @@
 				if (! wof_pipeline_prepare($pipeline)) {
 					continue 2;
 				}
+			case 'branch':
+				if (! wof_pipeline_branch($pipeline)) {
+					continue 2;
+				}
 			case 'execute':
 				if (! wof_pipeline_execute($pipeline)) {
 					continue 2;
@@ -52,6 +56,4 @@
 					continue 2;
 				}
 		}
-
-		wof_pipeline_finish($pipeline, 'success');
 	}
