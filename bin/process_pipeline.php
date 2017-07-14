@@ -21,11 +21,6 @@
 
 	foreach ($rsp['next'] as $pipeline) {
 
-		// Skip for now, if the repo is inactive
-		if (! wof_repo_is_active($pipeline['repo'])) {
-			continue;
-		}
-
 		if ($pipeline['phase'] == 'next') {
 			$phase = 'prepare';
 			wof_pipeline_phase($pipeline, 'prepare');

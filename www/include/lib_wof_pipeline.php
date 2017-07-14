@@ -454,7 +454,7 @@
 			$debug .= "\nDetails:\n";
 			$debug .= var_export($pipeline, 'return values');
 
-			wof_repo_set_status($pipeline['repo'], 'inactive', $debug);
+			wof_repo_set_status($pipeline['repo'], 'pipeline_error', $debug);
 		}
 	}
 
@@ -701,6 +701,7 @@
 			GROUP BY repo
 			ORDER BY created
 		");
+
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
@@ -712,29 +713,15 @@
 			);
 		}
 
-		$pending = $rsp['rows'];
-		$rsp = db_fetch("
-			SELECT repo
-			FROM boundaryissues_pipeline
-			WHERE phase = 'in_progress'
-			   OR phase = 'next'
-			GROUP BY repo
-		");
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-
-		$repo_locked = array();
-		foreach ($rsp['rows'] as $in_progress) {
-			$repo_locked[] = $in_progress['repo'];
-		}
-
 		$next = array();
 		$ids = array();
-		foreach ($pending as $pipeline) {
-			if (in_array($pipeline['repo'], $repo_locked)) {
+		foreach ($rsp['rows'] as $pipeline) {
+
+			if (! wof_repo_is_ready($pipeline['repo'])) {
 				continue;
 			}
+
+			wof_repo_set_status($pipeline['repo'], 'pipeline');
 			$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
 			$next[] = $pipeline;
 			$ids[] = intval($pipeline['id']);
@@ -742,10 +729,14 @@
 
 		$id_list = implode(', ', $ids);
 		$now = date('Y-m-d H:i:s');
-		$rsp = db_update('boundaryissues_pipeline', array(
-			'phase' => 'next',
-			'updated' => $now
-		), "id IN ($id_list)");
+
+		if ($id_list) {
+			$rsp = db_update('boundaryissues_pipeline', array(
+				'phase' => 'next',
+				'updated' => $now
+			), "id IN ($id_list)");
+		}
+
 		if (! $rsp['ok']) {
 			return $rsp;
 		}

@@ -1,6 +1,6 @@
 <?php
 
-	function wof_repo_init($repo, $status = 'active') {
+	function wof_repo_init($repo, $status = 'ready') {
 		$esc_repo = addslashes($repo);
 		$esc_status = addslashes($status);
 		$now = date('Y-m-d H:i:s');
@@ -13,9 +13,9 @@
 
 	########################################################################
 
-	function wof_repo_is_active($repo) {
+	function wof_repo_is_ready($repo) {
 		$rsp = wof_repo_get_status($repo);
-		return ($rsp['ok'] && $rsp['status'] == 'active');
+		return ($rsp['ok'] && $rsp['status'] == 'ready');
 	}
 
 	########################################################################
@@ -58,7 +58,7 @@
 
 		if ($debug) {
 			$values['debug'] = $debug;
-		} else if ($status == 'active') {
+		} else if ($status == 'ready') {
 			$values['debug'] = '';
 		}
 

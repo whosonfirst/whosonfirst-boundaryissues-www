@@ -531,12 +531,13 @@
 				continue;
 			}
 
-			if (! wof_repo_is_active($repo_name)) {
+			if (! wof_repo_is_ready($repo_name)) {
 				if ($options['verbose']) {
-					echo "Skipping inactive $repo_name\n";
+					echo "Skipping $repo_name\n";
 				}
 				continue;
 			}
+			wof_repo_set_status($repo_name, 'save_pending');
 
 			if ($options['verbose']) {
 				echo "cd $repo_path\n";
@@ -864,7 +865,7 @@
 		}
 		$debug = "save_pending.php: $error";
 		slack_bot_msg(":warning: $debug");
-		wof_repo_set_status($repo_name, 'inactive', $debug);
+		wof_repo_set_status($repo_name, 'save_pending_error', $debug);
 		return $rsp;
 	}
 
