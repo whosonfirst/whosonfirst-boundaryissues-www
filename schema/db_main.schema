@@ -226,3 +226,12 @@ CREATE TABLE `boundaryissues_pipeline_log` (
   `details` text,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `boundaryissues_repo`;
+
+CREATE TABLE `boundaryissues_repo` (
+  `repo` varchar(255) NOT NULL DEFAULT '',
+  `status` varchar(255) NOT NULL DEFAULT 'inactive',
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`repo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
