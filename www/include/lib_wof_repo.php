@@ -57,7 +57,8 @@
 		$where = "repo = '$esc_repo'";
 
 		if ($debug) {
-			$values['debug'] = $debug;
+			$esc_debug = addslashes($debug);
+			$values['debug'] = $esc_debug;
 		} else if ($status == 'ready') {
 			$values['debug'] = '';
 		}

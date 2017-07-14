@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 @app.before_request
 def init():
-	flask.g.wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/')
+	flask.g.wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/data/whosonfirst-pending/')
 
 @app.route('/encode', methods=['POST'])
 def geojson_encode():

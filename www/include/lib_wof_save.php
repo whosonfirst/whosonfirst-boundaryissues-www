@@ -208,6 +208,13 @@
 
 		$pending_path = wof_utils_id2abspath($data_dir, $wof_id);
 
+		if (! file_exists($pending_path)) {
+			return array(
+				'ok' => 0,
+				'error' => 'Couldn’t find the GeoJSON output from the GeoJSON service'
+			);
+		}
+
 		// Look up the git hash of the pending save
 		$rsp = git_execute($data_dir, "hash-object $pending_path");
 		if (! $rsp['ok']) {
@@ -533,7 +540,7 @@
 
 			if (! wof_repo_is_ready($repo_name)) {
 				if ($options['verbose']) {
-					echo "Skipping $repo_name\n";
+					echo "Skipping $repo_name (not ready)\n";
 				}
 				continue;
 			}
@@ -548,7 +555,7 @@
 				'cwd' => $repo_path
 			));
 			if (! $rsp['ok']) {
-				return wof_save_pending_error($rsp);
+				return wof_save_pending_error($repo_name, $rsp);
 			}
 			if ($rsp['selected'] == $branch) {
 				if ($options['verbose']) {
@@ -568,7 +575,7 @@
 						'cmd' => "git checkout {$new_branch}$branch"
 					));
 					if (! $rsp['ok']) {
-						return wof_save_pending_error($rsp);
+						return wof_save_pending_error($repo_name, $rsp);
 					}
 				}
 			}
@@ -585,7 +592,7 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
-					return wof_save_pending_error($rsp);
+					return wof_save_pending_error($repo_name, $rsp);
 				}
 			}
 
@@ -651,7 +658,7 @@
 						'branch' => $branch
 					));
 					if (! $rsp['ok']) {
-						return wof_save_pending_error($rsp);
+						return wof_save_pending_error($repo_name, $rsp);
 					}
 				}
 
@@ -675,7 +682,7 @@
 						'path' => $data_path
 					));
 					if (! $rsp['ok']) {
-						return wof_save_pending_error($rsp);
+						return wof_save_pending_error($repo_name, $rsp);
 					}
 				}
 				$saved[$wof_id] = $updates;
@@ -738,7 +745,7 @@
 					'args' => $args
 				));
 				if (! $rsp['ok']) {
-					return wof_save_pending_error($rsp);
+					return wof_save_pending_error($repo_name, $rsp);
 				}
 				if (preg_match('/^\[\w+\s+(.+?)\]/', $rsp['rsp'], $matches)) {
 					$commit_hash = $matches[1];
@@ -759,7 +766,7 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
-					return wof_save_pending_error($rsp);
+					return wof_save_pending_error($repo_name, $rsp);
 				}
 			}
 
@@ -845,6 +852,14 @@
 		}
 
 		if ($options['verbose']) {
+			echo "Resetting repos to 'ready' state\n";
+		}
+
+		foreach ($repos as $repo) {
+			wof_repo_set_status($repo, 'ready');
+		}
+
+		if ($options['verbose']) {
 			echo "----- ALL DONE -----\n";
 		}
 
@@ -857,15 +872,15 @@
 
 	########################################################################
 
-	function wof_save_pending_error($rsp) {
+	function wof_save_pending_error($repo_name, $rsp) {
 		if ($rsp['error']) {
 			$error = $rsp['error'];
 		} else {
-			$error = 'something went wrong, but I don’t know what';
+			$error = 'Something went wrong, but I don’t know what';
 		}
 		$debug = "save_pending.php: $error";
 		slack_bot_msg(":warning: $debug");
-		wof_repo_set_status($repo_name, 'save_pending_error', $debug);
+		wof_repo_set_status($repo_name, 'save_pending_error', $debug, $rsp);
 		return $rsp;
 	}
 

@@ -189,7 +189,7 @@
 
 	########################################################################
 
-	function wof_pipeline_prepare($pipeline) {
+	function wof_pipeline_prepare(&$pipeline) {
 
 		wof_pipeline_log($pipeline['id'], "Preparing {$pipeline['type']} pipeline", $rsp);
 
@@ -236,7 +236,7 @@
 
 	########################################################################
 
-	function wof_pipeline_execute($pipeline) {
+	function wof_pipeline_execute(&$pipeline) {
 
 		$handler = $pipeline['handler'];
 
@@ -265,8 +265,8 @@
 			return false;
 		}
 
-		$updated = $rsp['updated'];
-		if (count($updated) == 0) {
+		$pipeline['updated'] = $rsp['updated'];
+		if (count($pipeline['updated']) == 0) {
 			wof_pipeline_finish($pipeline, 'error', "No files modified, bailing out");
 			return false;
 		}
@@ -278,7 +278,7 @@
 
 	########################################################################
 
-	function wof_pipeline_commit($pipeline) {
+	function wof_pipeline_commit(&$pipeline) {
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
@@ -288,7 +288,7 @@
 			return false;
 		}
 
-		foreach ($updated as $path) {
+		foreach ($pipeline['updated'] as $path) {
 			$rsp = git_add($repo_path, $path);
 			$basename = basename($path);
 			wof_pipeline_log($pipeline['id'], "Add $basename to git index", $rsp);
@@ -327,7 +327,7 @@
 
 	########################################################################
 
-	function wof_pipeline_push($pipeline) {
+	function wof_pipeline_push(&$pipeline) {
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
@@ -356,7 +356,7 @@
 
 	########################################################################
 
-	function wof_pipeline_merge($pipeline) {
+	function wof_pipeline_merge(&$pipeline) {
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
@@ -432,7 +432,7 @@
 
 	########################################################################
 
-	function wof_pipeline_finish($pipeline, $phase, $debug = null, $rsp = null) {
+	function wof_pipeline_finish(&$pipeline, $phase, $debug = null, $rsp = null) {
 
 		wof_pipeline_phase($pipeline, $phase);
 
@@ -441,6 +441,7 @@
 			$repo_path = wof_pipeline_repo_path($pipeline);
 			$rsp = git_execute($repo_path, "checkout master");
 			wof_pipeline_log($pipeline['id'], "Resetting {$pipeline['repo']} to master branch", $rsp);
+			wof_repo_set_status($pipeline['repo'], 'ready');
 		} else {
 			if (! $debug) {
 				$debug = "Something went wrong, but I don’t know what";

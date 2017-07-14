@@ -21,15 +21,13 @@
 
 	foreach ($rsp['next'] as $pipeline) {
 
-		if ($pipeline['phase'] == 'next') {
-			$phase = 'prepare';
-			wof_pipeline_phase($pipeline, 'prepare');
-		} else if ($pipeline['phase'] == 'confirmed') {
+		if ($pipeline['phase'] == 'confirmed') {
 			$phase = 'merge';
 		} else if ($pipeline['phase'] == 'resume') {
 			$phase = $pipeline['meta']['last_phase'];
 		} else {
-			$phase = $pipeline['phase'];
+			$phase = 'prepare';
+			wof_pipeline_phase($pipeline, 'prepare');
 		}
 
 		switch ($phase) {
