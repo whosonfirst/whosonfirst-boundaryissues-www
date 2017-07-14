@@ -189,13 +189,259 @@
 
 	########################################################################
 
-	function wof_pipeline_finish($pipeline, $phase) {
-		wof_pipeline_phase($pipeline, $phase);
-		wof_pipeline_cleanup($pipeline);
+	function wof_pipeline_prepare($pipeline) {
+
+		wof_pipeline_log($pipeline['id'], "Preparing {$pipeline['type']} pipeline", $rsp);
+
+		if (! preg_match('/[0-9a-zA-Z_-]+/', $pipeline['repo'])) {
+			// Safety check: make sure the repo looks ok
+			wof_pipeline_log($pipeline['id'], "Bad repo value: {$pipeline['repo']}");
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$pipeline['handler'] = "wof_pipeline_{$pipeline['type']}";
+		if (! function_exists($pipeline['handler'])) {
+			wof_pipeline_log($pipeline['id'], "Could not find {$pipeline['handler']} handler");
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
+
 		$rsp = git_execute($repo_path, "checkout master");
-		wof_pipeline_log($pipeline['id'], "Resetting {$pipeline['repo']} to master branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not checkout master branch", $rsp);
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_pull($repo_path, 'origin', 'master');
+		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not pull from origin master", $rsp);
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		if ($pipeline['branch_merge']) {
+			$pipeline['branch'] = "pipeline-{$pipeline['id']}";
+			$rsp = git_execute($repo_path, "checkout -b $branch");
+			wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: {$pipeline['branch']}", $rsp);
+			if (! $rsp['ok']) {
+				wof_pipeline_finish($pipeline, 'error');
+				return false;
+			}
+		}
+
+		wof_pipeline_phase($pipeline, 'execute');
+
+		return true;
+	}
+
+	########################################################################
+
+	function wof_pipeline_execute($pipeline) {
+
+		$handler = $pipeline['handler'];
+
+		if ($pipeline['files']) {
+			$rsp = wof_pipeline_download_files($pipeline);
+			if (! $rsp['ok']) {
+				wof_pipeline_log($pipeline['id'], "Could not download files", $rsp);
+				wof_pipeline_finish($pipeline, 'error');
+				return false;
+			}
+			$pipeline['dir'] = $rsp['dir'];
+		}
+
+		// Dry run of the pipeline function
+		$rsp = $handler($pipeline, 'dry run');
+		wof_pipeline_log($pipeline['id'], "Dry run: $handler", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		// Actual f'realz run of the pipeline function
+		$rsp = $handler($pipeline);
+		wof_pipeline_log($pipeline['id'], "Execute: $handler", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$updated = $rsp['updated'];
+		if (count($updated) == 0) {
+			wof_pipeline_log($pipeline['id'], "No files modified, bailing out", $rsp);
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		wof_pipeline_phase($pipeline, 'commit');
+
+		return true;
+	}
+
+	########################################################################
+
+	function wof_pipeline_commit($pipeline) {
+
+		$rsp = wof_pipeline_preprocess($repo_path);
+		wof_pipeline_log($pipeline['id'], "Preprocess: $handler", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		foreach ($updated as $path) {
+			$rsp = git_add($repo_path, $path);
+			$basename = basename($path);
+			wof_pipeline_log($pipeline['id'], "Add $basename to git index", $rsp);
+			if (! $rsp['ok']) {
+				wof_pipeline_finish($pipeline, 'error');
+				return false;
+			}
+		}
+
+		$pipeline_id = intval($pipeline['id']);
+		$emoji = ':horse:';
+
+		if ($pipeline['commit_emoji']) {
+			$emoji = $pipeline['commit_emoji'];
+		}
+
+		$commit_msg = "$emoji pipeline $pipeline_id: {$pipeline['filename']} ({$pipeline['type']})";
+		$rsp = git_commit($repo_path, $commit_msg);
+
+		$how_many = count($updated);
+		if ($how_many == 1) {
+			$how_many .= ' file';
+		} else {
+			$how_many .= ' files';
+		}
+		wof_pipeline_log($pipeline['id'], "Commit changes to $how_many", $rsp);
+
+		wof_pipeline_phase($pipeline, 'push');
+
+		return true;
+	}
+
+	########################################################################
+
+	function wof_pipeline_push($pipeline) {
+
+		if ($pipeline['branch_merge']) {
+			$branch = $pipeline['branch'];
+		} else {
+			$branch = 'master';
+		}
+
+		$rsp = git_push($repo_path);
+		wof_pipeline_log($pipeline['id'], "Push commit to origin $branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		if ($pipeline['user_confirmation']) {
+			wof_pipeline_phase($pipeline, 'confirm');
+			return false;
+		} else {
+			wof_pipeline_phase($pipeline, 'merge');
+		}
+
+		return true;
+	}
+
+	########################################################################
+
+	function wof_pipeline_merge($pipeline) {
+
+		if (! $pipeline['branch_merge']) {
+			wof_pipeline_log($pipeline['id'], "No merge required");
+			return true;
+		}
+
+		$rsp = git_execute($repo_path, "checkout staging-work");
+		wof_pipeline_log($pipeline['id'], "Checkout staging-work branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_pull($repo_path, 'origin', 'staging-work');
+		if (! $rsp['ok']) {
+			wof_pipeline_log($pipeline['id'], "Could not pull from origin staging-work", $rsp);
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_pull($repo_path, 'origin', $branch);
+		wof_pipeline_log($pipeline['id'], "Merge into staging-work branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_push($repo_path);
+		wof_pipeline_log($pipeline['id'], "Push commit to origin staging-work", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_execute($repo_path, "checkout master");
+		wof_pipeline_log($pipeline['id'], "Checkout master branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_pull($repo_path, 'origin', $branch);
+		wof_pipeline_log($pipeline['id'], "Merge into master branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_execute($repo_path, "branch -d $branch");
+		wof_pipeline_log($pipeline['id'], "Delete local branch $branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_execute($repo_path, "push origin --delete $branch");
+		wof_pipeline_log($pipeline['id'], "Delete remote branch $branch", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			return false;
+		}
+
+		$rsp = git_push($repo_path);
+		wof_pipeline_log($pipeline['id'], "Push commit to origin master", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error');
+			continue;
+		}
+
+		return true;
+	}
+
+	########################################################################
+
+	function wof_pipeline_finish($pipeline, $phase) {
+
+		wof_pipeline_phase($pipeline, $phase);
+
+		if ($phase == 'success') {
+			wof_pipeline_cleanup($pipeline);
+			$repo_path = wof_pipeline_repo_path($pipeline);
+			$rsp = git_execute($repo_path, "checkout master");
+			wof_pipeline_log($pipeline['id'], "Resetting {$pipeline['repo']} to master branch", $rsp);
+		} else {
+			wof_repo_set_status($pipeline['repo'], 'inactive');
+		}
 	}
 
 	########################################################################
@@ -339,16 +585,21 @@
 	function wof_pipeline_phase($pipeline, $phase) {
 
 		$pipeline_id = intval($pipeline['id']);
+
+		$pipeline['meta']['last_phase'] = $pipeline['phase'];
+		$meta = json_encode($pipeline['meta']);
+
 		$phase_esc = addslashes($phase);
 		$now = date('Y-m-d H:i:s');
 
 		$rsp = db_update('boundaryissues_pipeline', array(
+			'meta' => $meta,
 			'phase' => $phase_esc,
 			'updated' => $now
 		), "id = $pipeline_id");
 
 		$notification = '';
-		if ($phase == 'failed') {
+		if ($phase == 'error') {
 			if ($pipeline['meta']['slack_handle']) {
 				$notification = " @{$pipeline['meta']['slack_handle']}";
 			} else {
