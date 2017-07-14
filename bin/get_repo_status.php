@@ -9,8 +9,13 @@ if (count($argv) < 2) {
 
 $repo = $argv[1];
 $rsp = wof_repo_get_status($repo);
+
 if ($rsp['ok'] && $rsp['status']) {
 	echo "$repo: {$rsp['status']}\n";
+	echo "Updated: {$rsp['updated']}\n";
+	if ($rsp['debug']) {
+		echo "Debug:\n{$rsp['debug']}\n";
+	}
 } else {
 	var_export($rsp);
 }

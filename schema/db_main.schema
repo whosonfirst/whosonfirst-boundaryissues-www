@@ -232,6 +232,7 @@ DROP TABLE IF EXISTS `boundaryissues_repo`;
 CREATE TABLE `boundaryissues_repo` (
   `repo` varchar(255) NOT NULL DEFAULT '',
   `status` varchar(255) NOT NULL DEFAULT 'inactive',
+  `debug` text,
   `updated` datetime DEFAULT NULL,
   PRIMARY KEY (`repo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

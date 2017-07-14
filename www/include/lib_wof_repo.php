@@ -23,7 +23,7 @@
 	function wof_repo_get_status($repo) {
 		$esc_repo = addslashes($repo);
 		$rsp = db_fetch("
-			SELECT status
+			SELECT *
 			FROM boundaryissues_repo
 			WHERE repo = '$esc_repo'
 		");
@@ -38,23 +38,31 @@
 			);
 		}
 
-		$status = $rsp['rows'][0]['status'];
-		return array(
-			'ok' => 1,
-			'status' => $status
-		);
+		$rsp = array_merge(array('ok' => 1), $rsp['rows'][0]);
+		return $rsp;
 	}
 
 	########################################################################
 
-	function wof_repo_set_status($repo, $status) {
+	function wof_repo_set_status($repo, $status, $debug = null) {
+
 		$esc_repo = addslashes($repo);
 		$esc_status = addslashes($status);
 		$now = date('Y-m-d H:i:s');
-		return db_update('boundaryissues_repo', array(
+
+		$values = array(
 			'status' => $esc_status,
 			'updated' => $now
-		), "repo = '$esc_repo'");
+		);
+		$where = "repo = '$esc_repo'";
+
+		if ($debug) {
+			$values['debug'] = $debug;
+		} else if ($status == 'active') {
+			$values['debug'] = '';
+		}
+
+		return db_update('boundaryissues_repo', $values, $where);
 	}
 
 	# the end
