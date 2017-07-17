@@ -387,6 +387,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				per_page: 250
 			};
 			var onsuccess = function(rsp) {
+				self.dupe_candidates = null;
 				self.show_dupe_candidate(rsp.results);
 			};
 			var onerror = function(rsp) {
