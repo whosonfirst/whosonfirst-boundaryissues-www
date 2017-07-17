@@ -475,7 +475,7 @@
 			$debug .= "\nDetails:\n";
 			$debug .= var_export($pipeline, 'return values');
 
-			wof_repo_set_status($pipeline['repo'], 'pipeline_error', $debug);
+			wof_repo_set_status($pipeline['repo'], 'pipeline error', $debug);
 		}
 	}
 

@@ -222,29 +222,22 @@
 		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
 		$cwd = preg_replace('/data\/?$/', '', $data_dir);
 
+		wof_repo_set_status($repo, 'cloning');
+
 		$org = $GLOBALS['cfg']['wof_github_owner'];
 		$url = "git@github.com:$org/$repo.git";
 
-		$output = array(
-			'repo' => $repo,
-			'cwd' => $cwd,
-			'url' => $url
-		);
-
-		wof_repo_set_status($repo, 'cloning');
 		$rsp = git_clone($cwd, $url);
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$output['git_clone'] = $rsp;
-		wof_repo_set_status($repo, 'cloned', $rsp['output']);
+		wof_repo_set_status($repo, 'cloned repo', $rsp['output']);
 
 		offline_tasks_schedule_task('setup_repo_lfs', array(
 			'repo' => $repo
 		));
 
-		$output['ok'] = 1;
-		return $output;
+		return $rsp;
 	}
 
 	########################################################################
@@ -267,6 +260,8 @@
 				'error' => 'Repo name can only have letters and hyphens'
 			);
 		}
+
+		wof_repo_set_status($repo, 'setting up lfs');
 
 		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
 		$cwd = preg_replace('/data\/?$/', '', $data_dir);
@@ -306,7 +301,7 @@ END;
 		$debug = "git lfs fetch\n{$output['lfs_fetch']['output']}\n";
 		$debug = "git lfs checkout\n{$output['lfs_checkout']['output']}";
 
-		wof_repo_set_status($repo, 'setup_lfs', $debug);
+		wof_repo_set_status($repo, 'setup lfs', $debug);
 
 		offline_tasks_schedule_task('index_repo', array(
 			'repo' => $repo
@@ -338,6 +333,8 @@ END;
 		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
 		$cwd = preg_replace('/data\/?$/', '', $data_dir);
 
+		wof_repo_set_status($repo, 'indexing');
+
 		$output = '';
 		$wof_es_index = '/usr/local/bin/wof-es-index';
 		$index = $GLOBALS['cfg']['wof_elasticsearch_index'];
@@ -348,7 +345,7 @@ END;
 		exec($cmd, $output);
 
 		$debug = "$cmd\n$output";
-		wof_repo_set_status($repo, 'index', $debug);
+		wof_repo_set_status($repo, 'indexed', $debug);
 		wof_repo_set_status($repo, 'ready');
 
 		return array(

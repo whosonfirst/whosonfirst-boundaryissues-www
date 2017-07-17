@@ -544,7 +544,7 @@
 				}
 				continue;
 			}
-			wof_repo_set_status($repo_name, 'save_pending');
+			wof_repo_set_status($repo_name, 'saving pending');
 
 			if ($options['verbose']) {
 				echo "cd $repo_path\n";
@@ -880,7 +880,7 @@
 		}
 		$debug = "save_pending.php: $error";
 		slack_bot_msg(":warning: $debug");
-		wof_repo_set_status($repo_name, 'save_pending_error', $debug, $rsp);
+		wof_repo_set_status($repo_name, 'save pending error', $debug, $rsp);
 		return $rsp;
 	}
 
