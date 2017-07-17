@@ -26,6 +26,8 @@
 			SELECT *
 			FROM boundaryissues_repo
 			WHERE repo = '$esc_repo'
+			ORDER BY updated DESC
+			LIMIT 1
 		");
 		if (! $rsp['ok']) {
 			return $rsp;
@@ -51,19 +53,31 @@
 		$now = date('Y-m-d H:i:s');
 
 		$values = array(
+			'repo' => $esc_repo,
 			'status' => $esc_status,
 			'updated' => $now
 		);
-		$where = "repo = '$esc_repo'";
 
 		if ($debug) {
-			$esc_debug = addslashes($debug);
-			$values['debug'] = $esc_debug;
-		} else if ($status == 'ready') {
-			$values['debug'] = '';
+			$values['debug'] = addslashes($debug);
 		}
 
-		return db_update('boundaryissues_repo', $values, $where);
+		return db_insert('boundaryissues_repo', $values);
+	}
+
+	########################################################################
+
+	function wof_repo_search($args) {
+
+		if ($args['repo']) {
+			$esc_repo = addslashes($args['repo']);
+			$sql = "SELECT * FROM boundaryissues_repo WHERE repo = '$esc_repo' ORDER BY id DESC";
+			return db_fetch_paginated($sql, $args);
+		} else {
+			$sql = "SELECT cur.* FROM boundaryissues_repo cur LEFT JOIN boundaryissues_repo next ON cur.repo = next.repo AND cur.id < next.id WHERE next.id IS NULL ORDER BY id DESC";
+			return db_fetch($sql, $args);
+		}
+
 	}
 
 	# the end
