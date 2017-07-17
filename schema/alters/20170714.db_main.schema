@@ -1,7 +1,10 @@
+DROP TABLE IF EXISTS `boundaryissues_repo`;
+
 CREATE TABLE `boundaryissues_repo` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
   `repo` varchar(255) NOT NULL DEFAULT '',
   `status` varchar(255) NOT NULL DEFAULT 'inactive',
   `debug` text,
   `updated` datetime DEFAULT NULL,
-  PRIMARY KEY (`repo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
