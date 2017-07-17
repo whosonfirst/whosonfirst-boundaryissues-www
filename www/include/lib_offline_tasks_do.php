@@ -298,8 +298,8 @@ END;
 		$output['lfs_checkout'] = $rsp;
 
 		$debug = "git lfs pull\n{$output['lfs_pull']['output']}\n";
-		$debug = "git lfs fetch\n{$output['lfs_fetch']['output']}\n";
-		$debug = "git lfs checkout\n{$output['lfs_checkout']['output']}";
+		$debug .= "git lfs fetch\n{$output['lfs_fetch']['output']}\n";
+		$debug .= "git lfs checkout\n{$output['lfs_checkout']['output']}";
 
 		wof_repo_set_status($repo, 'setup lfs', $debug);
 
@@ -335,7 +335,7 @@ END;
 
 		wof_repo_set_status($repo, 'indexing');
 
-		$output = '';
+		$output = array();
 		$wof_es_index = '/usr/local/bin/wof-es-index';
 		$index = $GLOBALS['cfg']['wof_elasticsearch_index'];
 		$host = $GLOBALS['cfg']['wof_elasticsearch_host'];
@@ -344,6 +344,7 @@ END;
 		$cmd = "$wof_es_index -s $cwd --index=$index --host=$host --port=$port";
 		exec($cmd, $output);
 
+		$output = implode("\n", $output);
 		$debug = "$cmd\n$output";
 		wof_repo_set_status($repo, 'indexed', $debug);
 		wof_repo_set_status($repo, 'ready');
