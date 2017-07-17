@@ -26,6 +26,14 @@
 
 		$args = "clone $url";
 
+		mkdir($cwd, 0755, true);
+		if (! file_exists($cwd)) {
+			return array(
+				'ok' => 0,
+				'error' => "Could not create '$cwd' directory"
+			);
+		}
+
 		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {
 			return array(
