@@ -779,15 +779,17 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				var ratio = photo.exif.PixelXDimension / photo.exif.PixelYDimension;
 				var w = $('#venue-geotagged-img').width();
 
-				if (photo.orientation.indexOf('rotate-90') != -1) {
-					var h = Math.round(w * ratio);
-					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(90deg) scale(' + ratio + ')');
-				} else if (photo.orientation.indexOf('rotate-180') != -1) {
-					var h = Math.round(w / ratio);
-					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(180deg)');
-				} else if (photo.orientation.indexOf('rotate-270') != -1) {
-					var h = Math.round(w * ratio);
-					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(270deg) scale(' + ratio + ')');
+				if (photo.orientation) {
+					if (photo.orientation.indexOf('rotate-90') != -1) {
+						var h = Math.round(w * ratio);
+						$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(90deg) scale(' + ratio + ')');
+					} else if (photo.orientation.indexOf('rotate-180') != -1) {
+						var h = Math.round(w / ratio);
+						$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(180deg)');
+					} else if (photo.orientation.indexOf('rotate-270') != -1) {
+						var h = Math.round(w * ratio);
+						$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(270deg) scale(' + ratio + ')');
+					}
 				} else {
 					var h = Math.round(w / ratio);
 					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0)');

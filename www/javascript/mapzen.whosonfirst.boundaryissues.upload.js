@@ -529,7 +529,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var html = '';
 			for (var i = 0; i < geotagged.length; i++) {
 				var g = geotagged[i];
-				var orientation = g.orientation.replace('"', '');
+				if (g.orientation) {
+					var orientation = g.orientation.replace('"', '');
+				} else {
+					var orientation = '';
+				}
 				html += '<div class="geotagged thumbnail square ' + orientation + '"></div>';
 			}
 			$('#upload-preview-props').html(html);
