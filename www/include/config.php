@@ -74,11 +74,15 @@
 		*/
 		'admin' => array(
 			'can_invite_users',
-			'pipeline'
+			'can_upload_pipelines',
+			'can_view_pipelines',
+			'can_view_offline_tasks',
+			'can_view_repos'
 		),
 		'staff' => array(
 			'can_edit_all_repos',
-			'pipeline'
+			'can_upload_pipelines',
+			'can_view_pipelines'
 		),
 		'users' => array(
 			'can_edit_whosonfirst-data-venue-*'

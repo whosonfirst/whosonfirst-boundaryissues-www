@@ -3,7 +3,7 @@
 include('include/init.php');
 loadlib('wof_pipeline');
 
-if (! users_acl_check_access($GLOBALS['cfg']['user'], 'pipeline')) {
+if (! users_acl_check_access($GLOBALS['cfg']['user'], 'can_view_pipelines')) {
 	error_404();
 }
 

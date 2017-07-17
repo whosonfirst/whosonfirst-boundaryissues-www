@@ -33,7 +33,7 @@
 
 
 	if ($GLOBALS['cfg']['enable_feature_pipeline'] &&
-	    users_acl_check_access($GLOBALS['cfg']['user'], 'pipeline')) {
+	    users_acl_check_access($GLOBALS['cfg']['user'], 'can_upload_pipelines')) {
 
 		$upload_formats[] = '.zip';
 
