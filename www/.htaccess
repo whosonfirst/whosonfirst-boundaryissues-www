@@ -180,6 +180,7 @@ RewriteRule ^recent/created(/page([0-9]+))?/?$					recent.php?created=1&page=$2	
 
 RewriteRule ^offline-?tasks(/page([0-9]+))?/?$					offline_tasks.php?page=$2	[L,QSA]
 RewriteRule ^audit-?trail(/page([0-9]+))?/?$					audit_trail.php?page=$2	[L,QSA]
+RewriteRule ^repos(/page([0-9]+))?/?$						repos.php?page=$2	[L,QSA]
 
 RewriteRule ^invite/?$							invite.php?%{QUERY_STRING} [L]
 RewriteRule ^invite(?:/([^/]+))?/?$					invite.php?code=$1&%{QUERY_STRING} [L]
