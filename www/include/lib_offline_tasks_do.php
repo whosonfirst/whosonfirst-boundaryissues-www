@@ -200,6 +200,166 @@
 
 	########################################################################
 
+	$GLOBALS['offline_tasks_do_handlers']['clone_repo'] = 'offline_tasks_do_clone_repo';
+
+	function offline_tasks_do_clone_repo($data){
+
+		if (! $GLOBALS['cfg']['enable_feature_multi_repo']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Cannot clone repo if enable_feature_multi_repo is turned off'
+			);
+		}
+
+		$repo = $data['repo'];
+		if (! preg_match('/^[a-z-]+$/i', $repo)) {
+			return array(
+				'ok' => 0,
+				'error' => 'Repo name can only have letters and hyphens'
+			);
+		}
+
+		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
+		$cwd = preg_replace('/data\/?$/', '', $data_dir);
+
+		$org = $GLOBALS['cfg']['wof_github_owner'];
+		$url = "git@github.com:$org/$repo.git";
+
+		$output = array(
+			'repo' => $repo,
+			'cwd' => $cwd,
+			'url' => $url
+		);
+
+		wof_repo_set_status($repo, 'cloning');
+		$rsp = git_clone($cwd, $url);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$output['git_clone'] = $rsp;
+		wof_repo_set_status($repo, 'cloned', $rsp['output']);
+
+		offline_tasks_schedule_task('setup_repo_lfs', array(
+			'repo' => $repo
+		));
+
+		$output['ok'] = 1;
+		return $output;
+	}
+
+	########################################################################
+
+	$GLOBALS['offline_tasks_do_handlers']['setup_repo_lfs'] = 'offline_tasks_do_setup_repo_lfs';
+
+	function offline_tasks_do_setup_repo_lfs($data){
+
+		if (! $GLOBALS['cfg']['enable_feature_multi_repo']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Cannot clone repo if enable_feature_multi_repo is turned off'
+			);
+		}
+
+		$repo = $data['repo'];
+		if (! preg_match('/^[a-z-]+$/i', $repo)) {
+			return array(
+				'ok' => 0,
+				'error' => 'Repo name can only have letters and hyphens'
+			);
+		}
+
+		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
+		$cwd = preg_replace('/data\/?$/', '', $data_dir);
+
+		$fh = fopen("$cwd/.git/config", 'a');
+		$lfs_config = <<<END
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+END;
+		fwrite($fh, $lfs_config);
+		fclose($fh);
+
+		$output = array();
+
+		$rsp = git_execute($cwd, "lfs pull");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$output['lfs_pull'] = $rsp;
+
+		$rsp = git_execute($cwd, "lfs fetch");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$output['lfs_fetch'] = $rsp;
+
+		$rsp = git_execute($cwd, "lfs checkout");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$output['lfs_checkout'] = $rsp;
+
+		$debug = "git lfs pull\n{$output['lfs_pull']['output']}\n";
+		$debug = "git lfs fetch\n{$output['lfs_fetch']['output']}\n";
+		$debug = "git lfs checkout\n{$output['lfs_checkout']['output']}";
+
+		wof_repo_set_status($repo, 'setup_lfs', $debug);
+
+		offline_tasks_schedule_task('index_repo', array(
+			'repo' => $repo
+		));
+
+	}
+
+	########################################################################
+
+	$GLOBALS['offline_tasks_do_handlers']['index_repo'] = 'offline_tasks_do_index_repo';
+
+	function offline_tasks_do_index_repo($data){
+
+		if (! $GLOBALS['cfg']['enable_feature_multi_repo']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Cannot clone repo if enable_feature_multi_repo is turned off'
+			);
+		}
+
+		$repo = $data['repo'];
+		if (! preg_match('/^[a-z-]+$/i', $repo)) {
+			return array(
+				'ok' => 0,
+				'error' => 'Repo name can only have letters and hyphens'
+			);
+		}
+
+		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
+		$cwd = preg_replace('/data\/?$/', '', $data_dir);
+
+		$output = '';
+		$wof_es_index = '/usr/local/bin/wof-es-index';
+		$index = $GLOBALS['cfg']['wof_elasticsearch_index'];
+		$host = $GLOBALS['cfg']['wof_elasticsearch_host'];
+		$port = $GLOBALS['cfg']['wof_elasticsearch_port'];
+
+		$cmd = "$wof_es_index -s $cwd --index=$index --host=$host --port=$port";
+		exec($cmd, $output);
+
+		$debug = "$cmd\n$output";
+		wof_repo_set_status($repo, 'index', $debug);
+		wof_repo_set_status($repo, 'ready');
+
+		return array(
+			'ok' => 1,
+			'cmd' => $cmd,
+			'output' => $output
+		);
+	}
+
+	########################################################################
+
 	$GLOBALS['offline_tasks_do_handlers']['omgwtf'] = 'offline_tasks_do_omgwtf';
 
 	function offline_tasks_do_omgwtf($data){
