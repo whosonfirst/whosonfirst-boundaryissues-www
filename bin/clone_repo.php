@@ -13,6 +13,8 @@ if (file_exists("/usr/local/data/{$argv[1]}/")) {
 	die("/usr/local/data/{$argv[1]}/ already exists\n");
 }
 
-$rsp = offline_tasks_schedule_task('clone_repo', $argv[1]);
+$rsp = offline_tasks_schedule_task('clone_repo', array(
+	'repo' => $argv[1]
+));
 var_export($rsp);
 echo "\n";

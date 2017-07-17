@@ -24,7 +24,7 @@
 
 	function git_clone($cwd, $url) {
 
-		$args = "clone $url";
+		$args = "clone $url $cwd";
 
 		mkdir($cwd, 0755, true);
 		if (! file_exists($cwd)) {
