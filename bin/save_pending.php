@@ -67,6 +67,7 @@
 
 		foreach ($repos as $repo) {
 			wof_pipeline_create(array(
+				'name' => $repo,
 				'type' => 'meta_files',
 				'repo' => $repo
 			));

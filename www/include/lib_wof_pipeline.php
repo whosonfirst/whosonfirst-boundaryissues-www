@@ -45,6 +45,9 @@
 
 			$filename = $upload['name'];
 			$filename_esc = addslashes($filename);
+		} else if ($meta['name']) {
+			$filename = $meta['name'];
+			$filename_esc = addslashes($filename);
 		} else {
 			$filename = null;
 			$filename_esc = null;
