@@ -3,10 +3,9 @@
 	include("include/init.php");
 	loadlib("offline_tasks_search");
 
-	login_ensure_loggedin();
-	
-	# TO DO: check a config flag to see whether there are ACLs in place
-	# (20160411/thisisaaronland)
+	if (! users_acl_check_access($GLOBALS['cfg']['user'], 'can_view_offline_tasks')) {
+		error_404();
+	}
 
 	$args = array();
 	$query = array();
