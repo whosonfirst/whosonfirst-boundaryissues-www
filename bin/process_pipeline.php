@@ -3,7 +3,12 @@
 	include("init_local.php");
 
 	if (! $GLOBALS['cfg']['enable_feature_pipeline']) {
-		exit;
+		die("enable_feature_pipeline is disabled.\n");;
+	}
+
+	$lockfile = "{$GLOBALS['cfg']['wof_pending_dir']}PIPELINE_LOCKFILE";
+	if (file_exists($lockfile)) {
+		die("Looks like process_pipeline.php might already be running.\n");
 	}
 
 	loadlib('git');
@@ -18,6 +23,9 @@
 	    ! $rsp['next']) {
 		exit;
 	}
+
+	// Set a lock file so we don't run more than one pipeline at a time
+	touch($lockfile);
 
 	foreach ($rsp['next'] as $pipeline) {
 
@@ -57,3 +65,6 @@
 				}
 		}
 	}
+
+	// Delete the lock file; all done!
+	unlink($lockfile);
