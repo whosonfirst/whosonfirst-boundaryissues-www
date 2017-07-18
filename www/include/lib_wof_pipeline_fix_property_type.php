@@ -32,10 +32,10 @@
 			);
 		}
 
-		if (! $meta['type']) {
+		if (! $meta['property_type']) {
 			return array(
 				'ok' => 0,
-				'error' => 'No type specified.'
+				'error' => 'No property_type specified.'
 			);
 		}
 
@@ -54,7 +54,7 @@
 
 		$esc_repo = escapeshellarg($repo_path);
 		$esc_property = escapeshellarg($pipeline['property']);
-		$esc_type = escapeshellarg($pipeline['type']);
+		$esc_type = escapeshellarg($pipeline['property_type']);
 
 		$args = "-repo $esc_repo -property $esc_property -type $esc_type";
 		$cmd = "$bi_root/bin/wof-ensure-property $args";
