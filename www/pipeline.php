@@ -22,6 +22,9 @@ $GLOBALS['smarty']->assign('pipeline_type', $pipeline['type']);
 $GLOBALS['smarty']->assign('pipeline_filename', $pipeline['filename']);
 $GLOBALS['smarty']->assign('pipeline_phase', $pipeline['phase']);
 
+$GLOBALS['smarty']->assign('pipeline_repo', $pipeline['meta']['repo']);
+$GLOBALS['smarty']->assign('pipeline_branch', $pipeline['meta']['branch']);
+
 $rsp = wof_pipeline_log_dump($id);
 if ($rsp['logs']) {
 	$GLOBALS['smarty']->assign('logs', $rsp['logs']);

@@ -6,6 +6,12 @@
 		<div class="col-md-12">
 			<h2>Pipeline {$pipeline_id|@escape}</h2>
 			<small>{$pipeline_filename|@escape} (<span class="hey-look">{$pipeline_phase|@escape}</span> {$pipeline_type|@escape} pipeline)</small>
+			{if $pipeline_phase == 'confirm'}
+				<form action="." class="alert alert-info">
+					This pipeline requires user confirmation before it can get merged. Branch: <a href="https://github.com/{$cfg.wof_github_owner|escape}/{$pipeline_repo|escape}/tree/{$pipeline_branch|@escape}">{$pipeline_branch|@escape}</a> (<a href="https://github.com/{$cfg.wof_github_owner|escape}/{$pipeline_repo|escape}/compare/{$pipeline_branch|@escape}">diff</a>)
+					<input type="submit" value="Confirm">
+				</form>
+			{/if}
 		</div>
 	</div>
 	<div class="pipeline-log">
