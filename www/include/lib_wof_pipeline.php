@@ -9,6 +9,7 @@
 	loadlib('wof_pipeline_utils');
 	loadlib('wof_pipeline_neighbourhood');
 	loadlib('wof_pipeline_remove_properties');
+	loadlib('wof_pipeline_fix_property_type');
 
 	########################################################################
 
