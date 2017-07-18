@@ -552,7 +552,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var types = [
 				'meta_files',
 				'neighbourhood',
-				'remove_properties'
+				'remove_properties',
+				'fix_property_type'
 			];
 
 			var html = '<div class="input-group">';
@@ -608,6 +609,20 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				html += '<div class="input-group">';
 				html += '<label for="property_list">Properties to remove (comma-separated)</label>';
 				html += '<input type="text" id="property_list" value="' + htmlspecialchars(property_list) + '">';
+				html += '</div>';
+			} else if (type == 'fix_property_type') {
+
+				var property = meta.property || '';
+				var property_type = meta.property_type || '';
+
+				html += '<div class="input-group">';
+				html += '<label for="property">Property to check</label>';
+				html += '<input type="text" id="property" value="' + htmlspecialchars(property) + '">';
+				html += '</div>';
+
+				html += '<div class="input-group">';
+				html += '<label for="property">Property type</label>';
+				html += '<input type="text" id="property_type" value="' + htmlspecialchars(property_type) + '">';
 				html += '</div>';
 			} else {
 				$('#pipeline-options').html('Unknown pipeline type: ' + type);
