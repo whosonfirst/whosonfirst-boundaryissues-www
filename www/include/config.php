@@ -77,7 +77,8 @@
 			'can_upload_pipelines',
 			'can_view_pipelines',
 			'can_view_offline_tasks',
-			'can_view_repos'
+			'can_view_repos',
+			'can_github_oauth'
 		),
 		'staff' => array(
 			'can_edit_all_repos',
@@ -487,8 +488,11 @@
 
 	$GLOBALS['cfg']['github_oauth_key'] = 'READ-FROM-SECRETS';
 	$GLOBALS['cfg']['github_oauth_secret'] = 'READ-FROM-SECRETS';
-	$GLOBALS['cfg']['github_api_scope'] = 'user:email,repo';
-	$GLOBALS['cfg']['github_oauth_callback'] = 'auth/';
+	$GLOBALS['cfg']['github_api_scope'] = 'repo';
+	$GLOBALS['cfg']['github_oauth_callback'] = 'github_auth/';
+
+	// This one you should generate by visiting "(root url)/github_oauth/"
+	$GLOBALS['cfg']['github_token'] = 'READ-FROM-SECRETS';
 
 	# END OF flamework-github-sso stuff
 
