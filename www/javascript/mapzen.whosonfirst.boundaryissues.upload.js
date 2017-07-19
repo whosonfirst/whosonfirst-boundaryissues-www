@@ -553,7 +553,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				'meta_files',
 				'neighbourhood',
 				'remove_properties',
-				'fix_property_type'
+				'fix_property_type',
+				'merge_pr'
 			];
 
 			var html = '<div class="input-group">';
@@ -623,6 +624,20 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				html += '<div class="input-group">';
 				html += '<label for="property">Property type</label>';
 				html += '<input type="text" id="property_type" value="' + htmlspecialchars(property_type) + '">';
+				html += '</div>';
+			} else if (type == 'merge_pr') {
+
+				var repo = meta.repo || '';
+				var pr_number = meta.pr_number || '';
+
+				html += '<div class="input-group">';
+				html += '<label for="property">Repository</label>';
+				html += '<input type="text" id="repo" value="' + htmlspecialchars(repo) + '">';
+				html += '</div>';
+
+				html += '<div class="input-group">';
+				html += '<label for="property">Pull request number</label>';
+				html += '<input type="text" id="pr_number" value="' + htmlspecialchars(pr_number) + '">';
 				html += '</div>';
 			} else {
 				$('#pipeline-options').html('Unknown pipeline type: ' + type);
