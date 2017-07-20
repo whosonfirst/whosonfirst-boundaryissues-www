@@ -140,6 +140,11 @@
 		}
 		$contents = $rsp['contents'];
 
+		if (empty($contents)) {
+			// No files to upload
+			return array('ok' => 1, 'files' => array());
+		}
+
 		// Upload each file
 		foreach ($contents as $file => $data) {
 			$path = "$dir$file";
@@ -193,7 +198,7 @@
 
 	########################################################################
 
-	function wof_pipeline_prepare(&$pipeline) {
+	function wof_pipeline_prepare($pipeline) {
 
 		wof_pipeline_log($pipeline['id'], "Preparing {$pipeline['type']} pipeline", $rsp);
 
@@ -203,9 +208,9 @@
 			return false;
 		}
 
-		$pipeline['handler'] = "wof_pipeline_{$pipeline['type']}";
-		if (! function_exists($pipeline['handler'])) {
-			wof_pipeline_finish($pipeline, 'error', "Could not find {$pipeline['handler']} handler");
+		$handler = "wof_pipeline_{$pipeline['type']}";
+		if (! function_exists($handler)) {
+			wof_pipeline_finish($pipeline, 'error', "Could not find {$handler} handler");
 			return false;
 		}
 
@@ -223,7 +228,7 @@
 			return false;
 		}
 
-		if ($pipeline['branch_merge']) {
+		if ($pipeline['meta']['branch_merge']) {
 			wof_pipeline_phase($pipeline, 'branch');
 		} else {
 			wof_pipeline_phase($pipeline, 'execute');
@@ -234,31 +239,35 @@
 
 	########################################################################
 
-	function wof_pipeline_branch(&$pipeline) {
+	function wof_pipeline_branch($pipeline) {
 
-		if (! $pipeline['branch_merge']) {
+		if (! $pipeline['meta']['branch_merge']) {
 			return true;
 		}
 
-		$pipeline['branch'] = "pipeline-{$pipeline['id']}";
+		$repo_path = wof_pipeline_repo_path($pipeline);
+		$branch = "pipeline-{$pipeline['id']}";
+
 		$rsp = git_execute($repo_path, "checkout -b $branch");
-		wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: {$pipeline['branch']}", $rsp);
+		wof_pipeline_log($pipeline['id'], "New {$pipeline['repo']} branch: $branch", $rsp);
+
 		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "Could not create branch {$pipeline['branch']}", $rsp);
+			wof_pipeline_finish($pipeline, 'error', "Could not create branch $branch", $rsp);
 			return false;
 		}
 
 		wof_pipeline_phase($pipeline, 'execute');
 
+		return true;
 	}
 
 	########################################################################
 
-	function wof_pipeline_execute(&$pipeline) {
+	function wof_pipeline_execute($pipeline) {
 
-		$handler = $pipeline['handler'];
+		$handler = "wof_pipeline_{$pipeline['type']}";
 
-		if ($pipeline['files']) {
+		if ($pipeline['meta']['files']) {
 			$rsp = wof_pipeline_download_files($pipeline);
 			if (! $rsp['ok']) {
 				wof_pipeline_finish($pipeline, 'error', "Could not download files", $rsp);
@@ -296,7 +305,7 @@
 
 	########################################################################
 
-	function wof_pipeline_commit(&$pipeline) {
+	function wof_pipeline_commit($pipeline) {
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
@@ -349,8 +358,8 @@
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
-		if ($pipeline['branch_merge']) {
-			$branch = $pipeline['branch'];
+		if ($pipeline['meta']['branch_merge']) {
+			$branch = "pipeline-{$pipeline['id']}";
 		} else {
 			$branch = 'master';
 		}
@@ -362,10 +371,10 @@
 			return false;
 		}
 
-		if ($pipeline['user_confirmation']) {
+		if ($pipeline['meta']['user_confirmation']) {
 			wof_pipeline_phase($pipeline, 'confirm');
 			return false;
-		} else if ($pipeline['branch_merge']) {
+		} else if ($pipeline['meta']['branch_merge']) {
 			wof_pipeline_phase($pipeline, 'merge');
 		} else {
 			wof_pipeline_finish($pipeline, 'success');
@@ -380,7 +389,7 @@
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
 
-		if (! $pipeline['branch_merge']) {
+		if (! $pipeline['meta']['branch_merge']) {
 			return true;
 		}
 
@@ -459,9 +468,6 @@
 
 		if ($phase == 'success') {
 			wof_pipeline_cleanup($pipeline);
-			$repo_path = wof_pipeline_repo_path($pipeline);
-			$rsp = git_execute($repo_path, "checkout master");
-			wof_pipeline_log($pipeline['id'], "Resetting {$pipeline['repo']} to master branch", $rsp);
 			wof_repo_set_status($pipeline['repo'], 'ready');
 		} else {
 			if (! $debug) {
@@ -622,7 +628,23 @@
 
 		$pipeline_id = intval($pipeline['id']);
 
-		$pipeline['meta']['last_phase'] = $pipeline['phase'];
+		// Reload the pipeline, to get the current phase
+		$rsp = wof_pipeline_get($pipeline_id);
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$pipeline = $rsp['pipeline'];
+
+		if ($pipeline['phase'] == 'cancelled') {
+			return array(
+				'ok' => 0,
+				'error' => 'Pipeline was cancelled.'
+			);
+		}
+
+		if ($pipeline['phase'] != 'error') {
+			$pipeline['meta']['last_phase'] = $pipeline['phase'];
+		}
 		$meta = json_encode($pipeline['meta']);
 
 		$phase_esc = addslashes($phase);
@@ -673,12 +695,14 @@
 		}
 		$files[] = 'meta.json';
 
-		foreach ($meta['files'] as $filename) {
-			$rsp = wof_pipeline_cleanup_file($pipeline, $filename);
-			if (! $rsp['ok']) {
-				return $rsp;
+		if ($meta['files']) {
+			foreach ($meta['files'] as $filename) {
+				$rsp = wof_pipeline_cleanup_file($pipeline, $filename);
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
+				$files[] = $filename;
 			}
-			$files[] = $filename;
 		}
 
 		$pipeline_id = intval($pipeline['id']);
@@ -692,6 +716,14 @@
 			'files' => $files
 		);
 		wof_pipeline_log($pipeline_id, "Cleaned up files", $result);
+
+		$repo_path = wof_pipeline_repo_path($pipeline);
+
+		$rsp = git_execute($repo_path, "stash");
+		wof_pipeline_log($pipeline['id'], "Stashed modifications from {$pipeline['repo']}", $rsp);
+
+		$rsp = git_execute($repo_path, "checkout master");
+		wof_pipeline_log($pipeline['id'], "Reset {$pipeline['repo']} to master branch", $rsp);
 
 		return $result;
 	}
@@ -715,11 +747,13 @@
 
 	########################################################################
 
-	function wof_pipeline_next() {
+	function wof_pipeline_next($verbose = false) {
 		$rsp = db_fetch("
 			SELECT *
 			FROM boundaryissues_pipeline
 			WHERE phase = 'pending'
+			   OR phase = 'confirmed'
+			   OR phase = 'retry'
 			GROUP BY repo
 			ORDER BY created
 		");
@@ -729,6 +763,9 @@
 		}
 
 		if (! $rsp['rows']) {
+			if ($verbose) {
+				echo "wof_pipeline_next: no pending pipelines found\n";
+			}
 			return array(
 				'ok' => 1,
 				'next' => array()
@@ -736,31 +773,24 @@
 		}
 
 		$next = array();
-		$ids = array();
 		foreach ($rsp['rows'] as $pipeline) {
 
-			if (! wof_repo_is_ready($pipeline['repo'])) {
+			if ($verbose) {
+				echo "wof_pipeline_next: checking pipeline {$pipeline['id']}\n";
+			}
+
+			if ($pipeline['phase'] == 'pending' &&
+			    ! wof_repo_is_ready($pipeline['repo'])) {
+				if ($verbose) {
+					echo "wof_pipeline_next: repo {$pipeline['repo']} is not ready\n";
+				}
 				continue;
 			}
 
-			wof_repo_set_status($pipeline['repo'], 'pipeline');
+			wof_repo_set_status($pipeline['repo'], "pipeline {$pipeline['id']}");
 			$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
+
 			$next[] = $pipeline;
-			$ids[] = intval($pipeline['id']);
-		}
-
-		$id_list = implode(', ', $ids);
-		$now = date('Y-m-d H:i:s');
-
-		if ($id_list) {
-			$rsp = db_update('boundaryissues_pipeline', array(
-				'phase' => 'next',
-				'updated' => $now
-			), "id IN ($id_list)");
-		}
-
-		if (! $rsp['ok']) {
-			return $rsp;
 		}
 
 		return array(
