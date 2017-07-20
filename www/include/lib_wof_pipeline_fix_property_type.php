@@ -53,8 +53,8 @@
 		$bi_root = dirname(dirname(__DIR__));
 
 		$esc_repo = escapeshellarg($repo_path);
-		$esc_property = escapeshellarg($pipeline['property']);
-		$esc_type = escapeshellarg($pipeline['property_type']);
+		$esc_property = escapeshellarg($pipeline['meta']['property']);
+		$esc_type = escapeshellarg($pipeline['meta']['property_type']);
 
 		$args = "-repo $esc_repo -property $esc_property -type $esc_type";
 		$cmd = "$bi_root/bin/wof-ensure-property $args";
