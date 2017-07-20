@@ -26,7 +26,7 @@
 			SELECT *
 			FROM boundaryissues_repo
 			WHERE repo = '$esc_repo'
-			ORDER BY updated DESC
+			ORDER BY id DESC
 			LIMIT 1
 		");
 		if (! $rsp['ok']) {
