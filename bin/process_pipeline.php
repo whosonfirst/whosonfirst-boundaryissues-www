@@ -6,6 +6,8 @@
 		die("enable_feature_pipeline is disabled.\n");;
 	}
 
+	$verbose = (array_search('--verbose', $argv) != false);
+
 	$lockfile = "{$GLOBALS['cfg']['wof_pending_dir']}PIPELINE_LOCKFILE";
 	if (file_exists($lockfile)) {
 		die("Looks like process_pipeline.php might already be running.\n");
@@ -18,7 +20,14 @@
 	loadlib('wof_pipeline_neighbourhood');
 	loadlib('wof_pipeline_remove_properties');
 
-	$rsp = wof_pipeline_next();
+	$rsp = wof_pipeline_next($verbose);
+
+	if ($verbose) {
+		echo "wof_pipeline_next:\n";
+		var_export($rsp);
+		echo "\n";
+	}
+
 	if (! $rsp['ok'] ||
 	    ! $rsp['next']) {
 		exit;
@@ -31,12 +40,12 @@
 
 		if ($pipeline['phase'] == 'confirmed') {
 			$phase = 'merge';
-		} else if ($pipeline['phase'] == 'resume') {
+		} else if ($pipeline['phase'] == 'retry') {
 			$phase = $pipeline['meta']['last_phase'];
 		} else {
 			$phase = 'prepare';
-			wof_pipeline_phase($pipeline, 'prepare');
 		}
+		wof_pipeline_phase($pipeline, $phase);
 
 		switch ($phase) {
 			case 'prepare':
