@@ -6,6 +6,7 @@
 	loadlib('wof_save');
 	loadlib('wof_s3');
 	loadlib('wof_photos');
+	loadlib('wof_repo');
 	loadlib('http');
 
 	$GLOBALS['offline_tasks_do_handlers'] = array();
