@@ -613,8 +613,14 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				html += '</div>';
 			} else if (type == 'fix_property_type') {
 
+				var repo = meta.repo || '';
 				var property = meta.property || '';
 				var property_type = meta.property_type || '';
+
+				html += '<div class="input-group">';
+				html += '<label for="repo">Repository</label>';
+				html += '<input type="text" id="repo" value="' + htmlspecialchars(repo) + '">';
+				html += '</div>';
 
 				html += '<div class="input-group">';
 				html += '<label for="property">Property to check</label>';
@@ -631,7 +637,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var pr_number = meta.pr_number || '';
 
 				html += '<div class="input-group">';
-				html += '<label for="property">Repository</label>';
+				html += '<label for="repo">Repository</label>';
 				html += '<input type="text" id="repo" value="' + htmlspecialchars(repo) + '">';
 				html += '</div>';
 
