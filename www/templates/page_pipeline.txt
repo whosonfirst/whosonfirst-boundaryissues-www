@@ -5,11 +5,29 @@
 	<div class="row">
 		<div class="col-md-12">
 			<h2>Pipeline {$pipeline_id|@escape}</h2>
-			<small>{$pipeline_filename|@escape} (<span class="hey-look">{$pipeline_phase|@escape}</span> {$pipeline_type|@escape} pipeline)</small>
-			{if $pipeline_phase == 'confirm'}
-				<form action="." class="alert alert-info">
-					This pipeline requires user confirmation before it can get merged. Branch: <a href="https://github.com/{$cfg.wof_github_owner|escape}/{$pipeline_repo|escape}/tree/{$pipeline_branch|@escape}">{$pipeline_branch|@escape}</a> (<a href="https://github.com/{$cfg.wof_github_owner|escape}/{$pipeline_repo|escape}/compare/{$pipeline_branch|@escape}">diff</a>)
-					<input type="submit" value="Confirm">
+			<small>{$pipeline_filename|@escape} (<span id="pipeline-phase" class="hey-look">{$pipeline_phase|@escape}</span> {$pipeline_type|@escape} pipeline)</small>
+			{if $pipeline_phase == 'error'}
+				<form id="pipeline-update" method="post" action="." class="alert alert-danger headroom" data-crumb="{$crumb_update|escape}" data-id="{$pipeline_id|@escape}">
+					This pipeline hit an error.
+					<div class="headroom">
+						<input type="submit" value="Retry" class="btn btn-primary">
+						<input type="submit" value="Cancel" class="btn btn-default">
+					</div>
+				</form>
+			{elseif $pipeline_phase == 'confirm'}
+				<form id="pipeline-update" method="post" action="." class="alert alert-info headroom" data-crumb="{$crumb_update|escape}" data-id="{$pipeline_id|@escape}">
+					This pipeline requires user confirmation before it can get merged. Branch: <a href="https://github.com/{$cfg.wof_github_owner|escape}/{$pipeline_repo|escape}/tree/{$pipeline_branch|@escape}">{$pipeline_branch|@escape}</a> (<a href="https://github.com/{$cfg.wof_github_owner|escape}/{$pipeline_repo|escape}/compare/{$pipeline_branch|@escape}">diff</a>).
+					<div class="headroom">
+						<input type="submit" value="Confirm" class="btn btn-primary">
+						<input type="submit" value="Cancel" class="btn btn-default">
+					</div>
+				</form>
+			{elseif $pipeline_phase != 'cancelled' and $pipeline_phase != 'success'}
+				<form id="pipeline-update" method="post" action="." class="alert alert-info headroom" data-crumb="{$crumb_update|escape}" data-id="{$pipeline_id|@escape}">
+					Pipeline is {if $pipeline_phase == 'pending' or $pipeline_phase == 'next'}waiting{else}running{/if}.
+					<div class="headroom">
+						<input type="submit" value="Cancel" class="btn btn-default">
+					</div>
 				</form>
 			{/if}
 		</div>
@@ -33,6 +51,44 @@
 <script>
 $('.pipeline-log-summary').click(function(e) {
 	$(e.target).closest('.pipeline-log-row').toggleClass('show-details');
+});
+$('#pipeline-update').submit(function(e) {
+	e.preventDefault();
+
+	var crumb = $(e.target).data('crumb');
+	var id = $(e.target).data('id');
+
+	if (e.originalEvent && e.originalEvent.explicitOriginalTarget) {
+		var action = e.originalEvent.explicitOriginalTarget.value.toLowerCase();
+		$('#pipeline-update').removeClass('alert-danger');
+		$('#pipeline-update').addClass('alert-info');
+		$('#pipeline-update').html('Loading...');
+
+		var onsuccess = function(rsp) {
+			if (rsp.pipeline) {
+				var phase = rsp.pipeline.phase;
+				$('#pipeline-phase').html(phase);
+				$('#pipeline-update').addClass('hidden');
+			} else {
+				$('#pipeline-update').removeClass('alert-info');
+				$('#pipeline-update').addClass('alert-danger');
+				$('#pipeline-update').html('Error: unexpected response from server.');
+			}
+		};
+
+		var onerror = function(rsp) {
+			$('#pipeline-update').removeClass('alert-info');
+			$('#pipeline-update').addClass('alert-danger');
+			$('#pipeline-update').html('Error: ' + rsp.error.message);
+		};
+
+		var data = {
+			crumb: crumb,
+			id: id,
+			action: action
+		};
+		mapzen.whosonfirst.boundaryissues.api.api_call('wof.pipeline.update', data, onsuccess, onerror);
+	}
 });
 </script>
 {/literal}

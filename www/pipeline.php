@@ -25,6 +25,9 @@ $GLOBALS['smarty']->assign('pipeline_phase', $pipeline['phase']);
 $GLOBALS['smarty']->assign('pipeline_repo', $pipeline['meta']['repo']);
 $GLOBALS['smarty']->assign('pipeline_branch', $pipeline['meta']['branch']);
 
+$crumb_update = crumb_generate('api', 'wof.pipeline.update');
+$GLOBALS['smarty']->assign("crumb_update", $crumb_update);
+
 $rsp = wof_pipeline_log_dump($id);
 if ($rsp['logs']) {
 	$GLOBALS['smarty']->assign('logs', $rsp['logs']);
