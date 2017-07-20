@@ -206,6 +206,19 @@
 			),
 		),
 
+		"wof.pipeline.update" => array(
+			"description" => "Update a pipeline's phase.",
+			"documented" => 1,
+			"enabled" => 1,
+			"request_method" => "POST",
+			"requires_crumb" => 1,
+			"library" => "api_wof_pipeline",
+			"parameters" => array(
+				array("name" => "id", "description" => "The pipeline ID to update", "documented" => 1, "required" => 1),
+				array("name" => "action", "description" => "Possible values: 'retry', 'cancel', 'confirm'", "documented" => 1, "required" => 1),
+			),
+		),
+
 		"api.spec.methods" => array (
 			"description" => "Return the list of available API response methods.",
 			"documented" => 1,
