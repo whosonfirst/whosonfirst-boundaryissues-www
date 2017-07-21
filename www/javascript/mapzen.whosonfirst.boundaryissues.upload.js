@@ -57,6 +57,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			};
 
 			var preview_error = function(msg) {
+				if (msg == 'TypeError: rsp is null') {
+					return;
+				}
 				$('#upload-status').html('<small class="caveat">' + msg + '</small>');
 			};
 
