@@ -1,0 +1,19 @@
+{include file='inc_head.txt' nav_tab='upload'}
+
+<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form" class="geotag">
+	<div class="container">
+		<div class="row">
+			<span class="btn btn-default btn-file">
+				<i class="fa fa-camera" aria-hidden="true"></i>&nbsp;&nbsp;Get photos
+				<input type="file" name="file" multiple="multiple" data-formats="{$upload_formats|escape}">
+			</span>
+			<input type="submit" value="Geotag" id="upload-btn" class="btn" disabled="disabled">
+			<div id="upload-preview-props"></div>
+		</div>
+	</div>
+</form>
+
+<script src="{$cfg.abs_root_url}javascript/exif.js"></script>
+<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.geotagged.js"></script>
+
+{include file='inc_foot.txt'}
