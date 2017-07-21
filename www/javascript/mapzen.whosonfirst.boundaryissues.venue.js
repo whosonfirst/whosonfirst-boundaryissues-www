@@ -391,7 +391,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				self.show_dupe_candidate(rsp.results);
 			};
 			var onerror = function(rsp) {
-				console.error(rsp);
+				$('#venue-response').html('<div class="alert alert-danger">Oops, there was a problem checking for duplicates.</div>');
 			};
 			mapzen.whosonfirst.boundaryissues.api.api_call(method, args, onsuccess, onerror);
 		},
@@ -409,6 +409,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 			if (dupes.length > 0) {
 				var place = dupes[index];
+
+				if (! place['wof:id'] ||
+				    ! place['wof:name']) {
+					$('#venue-response').html('<div class="alert alert-danger">Oops, there was a problem retrieving the duplicate records.</div>');
+					return;
+				}
+
 				var wof_id = htmlspecialchars(place['wof:id']);
 				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + wof_id);
 				var name = htmlspecialchars(place['wof:name']);
