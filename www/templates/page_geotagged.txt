@@ -1,6 +1,6 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
-<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form">
+<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form" class="geotagged">
 	<div class="container">
 		<div class="row">
 			<span class="btn btn-default btn-file">

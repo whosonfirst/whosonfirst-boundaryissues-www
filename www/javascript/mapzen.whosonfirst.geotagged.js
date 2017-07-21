@@ -71,7 +71,7 @@ mapzen.whosonfirst.geotagged = (function() {
 		store_photos: function(photos) {
 
 			_queue = photos;
-			_queue.reverse();
+			//_queue.reverse();
 			_reader.onerror = self.handlers.error;
 
 			self.store_next_photo();
@@ -159,13 +159,11 @@ mapzen.whosonfirst.geotagged = (function() {
 				.then(callback)
 				.catch(self.handlers.error);
 
-			var new_geotagged_ids = [];
-			for (var i = 0; i < self.index.geotagged_ids.length; i++) {
-				if (self.index.geotagged_ids[i] != geotagged_id) {
-					new_geotagged_ids.push(self.index.geotagged_ids[i]);
-				}
+			var index = self.index.geotagged_ids.indexOf(geotagged_id);
+			if (index == -1) {
+				return;
 			}
-			self.index.geotagged_ids = new_geotagged_ids;
+			self.index.geotagged_ids.splice(index, 1);
 			delete self.index.imported_wof_ids[geotagged_id];
 			self.store_index();
 		},

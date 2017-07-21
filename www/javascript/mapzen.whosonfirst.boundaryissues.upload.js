@@ -22,6 +22,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    is_collection,
 	    is_csv,
 	    is_zip,
+	    is_geotagged,
 	    feature_count,
 	    VenueIcon,
 	    poi_icon_base,
@@ -59,10 +60,41 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$('#upload-status').html('<small class="caveat">' + msg + '</small>');
 			};
 
+			mapzen.whosonfirst.geotagged.set_handler('store_photo', self.preview_geotagged);
+			mapzen.whosonfirst.geotagged.set_handler('error', preview_error);
+			mapzen.whosonfirst.geotagged.load_index(function(index) {
+				if (typeof index != 'object' ||
+				    typeof index.geotagged_ids != 'object') {
+					return;
+				}
+				if ($('#upload-form').hasClass('geotagged')) {
+					is_geotagged = true;
+					for (var i = 0; i < index.geotagged_ids.length; i++) {
+						var id = index.geotagged_ids[i];
+						mapzen.whosonfirst.geotagged.load_photo(id, self.preview_geotagged);
+					}
+				}
+			});
+
+			$preview_props.click(function(e) {
+				if ($(e.target).hasClass('geotagged-remove') || $(e.target).closest('.geotagged-remove').length > 0) {
+					var $container = $(e.target).closest('.geotagged-container');
+					var id = $container.data('id');
+					mapzen.whosonfirst.geotagged.remove_photo(id);
+					$container.remove();
+				} else if ($(e.target).hasClass('geotagged-container') || $(e.target).closest('.geotagged-container').length > 0) {
+					var $container = $(e.target).closest('.geotagged-container');
+					var id = $container.data('id');
+					var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/venue/?' + id);
+					window.location = url;
+				}
+			});
+
 			// Preview the GeoJSON when the file input's onchange fires
 			$form.find('input[name=file]').on('change', function(e) {
 				var formats = $(e.target).data('formats');
 				var format_list = formats.match(/\.\w+/g);
+				var photos;
 				if (e.target.files.length == 1) {
 					var ext = e.target.files[0].name.match(/\.\w+$/);
 					if (ext.length < 1 ||
@@ -84,14 +116,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 						zip_file = e.target.files[0];
 						preview_handler(zip_file, self.preview_zip);
 					} else if (ext == '.jpg' || ext == '.jpeg') {
-						mapzen.whosonfirst.geotagged.init(function() {
-							var photos = [e.target.files[0]];
-							var preview_success = self.preview_geotagged;
-							mapzen.whosonfirst.geotagged.save_files(photos, preview_success, preview_error);
-						}, preview_error);
+						photos = [e.target.files[0]];
 					}
 				} else if (e.target.files.length > 0) {
-					var photos = [];
+					photos = [];
 					for (var i = 0; i < e.target.files.length; i++) {
 						if (e.target.files[i].name.match(/\.jpe?g$/i)) {
 							photos.push(e.target.files[i]);
@@ -103,13 +131,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 						preview_error('Please upload only <strong>one file at a time</strong>');
 						return;
 					}
-
-					mapzen.whosonfirst.geotagged.init(function() {
-						var preview_success = self.preview_geotagged;
-						mapzen.whosonfirst.geotagged.save_files(photos, preview_success, preview_error);
-					}, preview_error);
 				} else {
 					$('#upload-status').html('<small>Accepted formats: ' + format_list.join(', ') + '</small>');
+				}
+
+				if (photos) {
+					is_geotagged = true;
+					mapzen.whosonfirst.geotagged.store_photos(photos);
 				}
 			});
 
@@ -120,7 +148,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				    ! properties_are_ready) {
 					return;
 				}
-				if (geotagged) {
+				if (is_geotagged) {
 					self.save_geotagged();
 				} else {
 					self.post_file();
@@ -528,26 +556,19 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
-		preview_geotagged: function(rsp) {
-			if (! rsp.length) {
-				return;
-			}
-			geotagged = rsp;
+		preview_geotagged: function(photo) {
 			var html = '';
-			for (var i = 0; i < geotagged.length; i++) {
-				var g = geotagged[i];
-				if (g.orientation) {
-					var orientation = g.orientation.replace('"', '');
-				} else {
-					var orientation = '';
-				}
-				html += '<div class="geotagged thumbnail square ' + orientation + '"></div>';
-			}
-			$('#upload-preview-props').html(html);
-			$('#upload-preview-props .geotagged').each(function(i, div) {
-				var data_uri = geotagged[i].data_uri.replace('"', '');
-				$(div).css('background-image', 'url("' + data_uri + '")');
-			});
+			var orientation = photo.orientation || '';
+
+			var class_attr = ' class="geotagged thumbnail square ' + htmlspecialchars(orientation) + '"';
+			var style_attr = ' style="background-image: url(' + htmlspecialchars(photo.data_uri) + ')"';
+
+			html += '<div class="geotagged-container" data-id="' + photo.id + '">';
+			html += '<div' + class_attr + style_attr + '></div>';
+			html += '<div class="geotagged-remove"><i class="fa fa-close" aria-hidden="true"></i></div>';
+			html += '</div>';
+
+			$('#upload-preview-props').prepend(html);
 
 			upload_is_ready = true;
 			$('#upload-btn').addClass('btn-primary');
@@ -989,10 +1010,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		save_geotagged: function() {
-			mapzen.whosonfirst.geotagged.save_to_localforage(geotagged, function(id) {
-				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/venue/?geotagged=' + id);
-				window.location = url;
-			});
+			var $container = $preview_props.find('.geotagged-container');
+			var id = $container.first().data('id');
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/venue/?' + id);
+			window.location = url;
 		},
 
 		show_result: function(rsp) {

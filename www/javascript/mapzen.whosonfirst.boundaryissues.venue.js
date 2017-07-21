@@ -755,91 +755,124 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		});
 	}
 
-	var geotagged = null;
-	var geotagged_index = 0;
+	var geotagged_index;
+	var geotagged_num;
+
 	function setup_geotagged() {
-		var geotagged_id = location.search.match(/geotagged=(\d+)/);
+		var geotagged_id = location.search.match(/geotagged_\d+/);
 		if (! geotagged_id) {
 			return;
 		}
-		geotagged_id = geotagged_id[1];
-
-		var load_photo = function(index) {
+		geotagged_id = geotagged_id[0];
+		mapzen.whosonfirst.geotagged.load_index(function(index) {
+			console.log(index);
 			geotagged_index = index;
-			geotagged.item(geotagged_index, function(photo) {
-				var nav = '<span id="venue-geotagged-prev"><small class="glyphicon glyphicon-chevron-left"></small> prev</span>';
-				nav += '<span id="venue-geotagged-index" data-index="0">' + (geotagged_index + 1) + ' of ' + geotagged.count + '</span>';
-				nav += '<span id="venue-geotagged-next">next <small class="glyphicon glyphicon-chevron-right"></small></span>';
-				if (photo.geotags) {
-					var ll = [photo.geotags.latitude, photo.geotags.longitude];
-					self.map.setView(ll, 17);
-					self.update_coordinates();
-					var status = 'Found geotagged coordinates in photo<br>';
-					status += '<small>' + photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6) + '</small>';
-				} else {
-					var status = '<i>No geotags found in photo</i><br>';
+			for (var i = 0; i < index.geotagged_ids.length; i++) {
+				if (index.geotagged_ids[i] == geotagged_id) {
+					geotagged_num = i;
 				}
-				status = '<div id="venue-geotagged-status">' + status + '</div>';
-				var img = '<div id="venue-geotagged-img"><img src="' + photo.data_uri + '" class="geotagged thumbnail ' + photo.orientation + '"></div>';
-				var controls = '<div id="venue-geotagged-controls">' + nav + status + '</div><br class="clear">';
-				$('#venue-geotagged').html(img  + controls);
+			}
+			if (typeof geotagged_num != 'number') {
+				var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/geotagged/');
+				var header = '<a href="' + url + '">Geotagged photo</a><br>';
+				$('#venue-geotagged').html(header + 'Could not find the specified geotagged photo :(');
 				$('#venue-geotagged').removeClass('hidden');
-				var ratio = photo.exif.PixelXDimension / photo.exif.PixelYDimension;
-				var w = $('#venue-geotagged-img').width();
-
-				if (photo.orientation) {
-					if (photo.orientation.indexOf('rotate-90') != -1) {
-						var h = Math.round(w * ratio);
-						$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(90deg) scale(' + ratio + ')');
-					} else if (photo.orientation.indexOf('rotate-180') != -1) {
-						var h = Math.round(w / ratio);
-						$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(180deg)');
-					} else if (photo.orientation.indexOf('rotate-270') != -1) {
-						var h = Math.round(w * ratio);
-						$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(270deg) scale(' + ratio + ')');
-					}
-				} else {
-					var h = Math.round(w / ratio);
-					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0)');
-				}
-
-				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', h);
-				if (geotagged_index > 0) {
-					$('#venue-geotagged-prev').addClass('active');
-				}
-				if (geotagged_index < geotagged.count - 1) {
-					$('#venue-geotagged-next').addClass('active');
-				}
-				$('#venue-geotagged-next').click(function(e) {
-					if (! $('#venue-geotagged-next').hasClass('active')) {
-						return;
-					}
-					load_photo(geotagged_index + 1);
-				});
-				$('#venue-geotagged-prev').click(function(e) {
-					if (! $('#venue-geotagged-prev').hasClass('active')) {
-						return;
-					}
-					load_photo(geotagged_index - 1);
-				});
-			});
-		};
-
-		mapzen.whosonfirst.geotagged.load_from_localforage(geotagged_id, function(rsp) {
-			if (! rsp) {
 				return;
 			}
-			geotagged = rsp;
-			load_photo(0);
+			show_geotagged(geotagged_num);
+		});
+	}
+
+	function show_geotagged(num) {
+		geotagged_num = num;
+		var id = geotagged_index.geotagged_ids[geotagged_num];
+		var geotagged_count = geotagged_index.geotagged_ids.length;
+		mapzen.whosonfirst.geotagged.load_photo(id, function(photo) {
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/geotagged/');
+			var header = '<a href="' + url + '">Geotagged photo</a><br>';
+			var nav = '<span id="venue-geotagged-prev"><small class="glyphicon glyphicon-chevron-left"></small> prev</span>';
+			nav += '<span id="venue-geotagged-index" data-index="0">' + (geotagged_num + 1) + ' of ' + geotagged_count + '</span>';
+			nav += '<span id="venue-geotagged-next">next <small class="glyphicon glyphicon-chevron-right"></small></span>';
+			if (photo.geotags) {
+				var ll = [photo.geotags.latitude, photo.geotags.longitude];
+				self.map.setView(ll, 17);
+				self.update_coordinates();
+				var status = 'Found coordinates<br>';
+				status += '<small>' + photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6) + '</small>';
+			} else {
+				var status = '<i>No geotags found in photo</i><br>';
+			}
+			status = '<div id="venue-geotagged-status">' + status + '</div>';
+
+			var img = '<div id="venue-geotagged-img"><img src="' + photo.data_uri + '" class="geotagged thumbnail ' + photo.orientation + '"></div>';
+			var controls = '<div id="venue-geotagged-controls">' + header + nav + '</div><br class="clear">';
+
+			$('#venue-geotagged').html(img + controls + status);
+			$('#venue-geotagged').removeClass('hidden');
+
+			var ratio;
+			if (photo.exif) {
+				ratio = photo.exif.PixelXDimension / photo.exif.PixelYDimension;
+			}
+			var w = $('#venue-geotagged-img').width();
+
+			if (photo.orientation && ratio) {
+				if (photo.orientation.indexOf('rotate-90') != -1) {
+					var h = Math.round(w * ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(90deg) scale(' + ratio + ')');
+				} else if (photo.orientation.indexOf('rotate-180') != -1) {
+					var h = Math.round(w / ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(180deg)');
+				} else if (photo.orientation.indexOf('rotate-270') != -1) {
+					var h = Math.round(w * ratio);
+					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(270deg) scale(' + ratio + ')');
+				}
+			} else if (ratio) {
+				var h = Math.round(w / ratio);
+				$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0)');
+			}
+
+			if (h) {
+				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', h);
+				$('#venue-geotagged').removeClass('static');
+			} else {
+				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', 'auto');
+				$('#venue-geotagged').addClass('static');
+			}
+			if (geotagged_num > 0) {
+				$('#venue-geotagged-prev').addClass('active');
+			}
+			if (geotagged_num < geotagged_count - 1) {
+				$('#venue-geotagged-next').addClass('active');
+			}
+			$('#venue-geotagged-next').click(function(e) {
+				if (! $('#venue-geotagged-next').hasClass('active')) {
+					return;
+				}
+				show_geotagged(geotagged_num + 1);
+				update_geotagged_url();
+			});
+			$('#venue-geotagged-prev').click(function(e) {
+				if (! $('#venue-geotagged-prev').hasClass('active')) {
+					return;
+				}
+				show_geotagged(geotagged_num - 1);
+				update_geotagged_url();
+			});
 		});
 
+		function update_geotagged_url() {
+			var id = geotagged_index.geotagged_ids[geotagged_num];
+			var state = {
+				geotagged_id: id
+			};
+			var url = '?' + id + location.hash;
+			history.pushState(state, document.title, url);
+		}
+
 		self.on_save = function() {
-			if (geotagged_index < geotagged.count - 1) {
-				load_photo(geotagged_index + 1);
-			} else {
-				window.onbeforeunload = function() {
-					mapzen.whosonfirst.geotagged.reset_localforage(geotagged_id);
-				};
+			if (geotagged_num < geotagged_count - 1) {
+				show_geotagged(geotagged_num + 1);
 			}
 		};
 	}

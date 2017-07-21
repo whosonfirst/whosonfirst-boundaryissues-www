@@ -18,5 +18,5 @@
 	$upload_formats = implode(', ', $upload_formats);
 	$GLOBALS['smarty']->assign('upload_formats', $upload_formats);
 
-	$GLOBALS['smarty']->display('page_geotag.txt');
+	$GLOBALS['smarty']->display('page_geotagged.txt');
 	exit();
