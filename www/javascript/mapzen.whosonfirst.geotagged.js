@@ -10,85 +10,84 @@ mapzen.whosonfirst.geotagged = (function() {
 
 	var self = {
 
-		data: [],
+		index: {
+			geotagged_ids: [],
+			imported_wof_ids: {}
+		},
 
-		init: function(files, onsuccess, onerror) {
-			_queue = files;
-			_queue.reverse();
-			_reader.onload = self.handle_data_uri;
+		// See also: self.set_handler(handler, callback)
+		handlers: {
+			load_index: function(index) {},
+			store_photo: function(photo) {},
+			store_photos_complete: function(index) {},
+			error: function(err) {}
+		},
+
+		// These are for your HTML/CSS, so photos don't look sideways
+		// or upside-down
+		exif_orientation_classes: {
+			case1: '',
+			case2: 'flip-horiz',
+			case3: 'rotate-180',
+			case4: 'flip-horiz rotate-180',
+			case5: 'flip-horiz rotate-90',
+			case6: 'rotate-90',
+			case7: 'flip-horiz rotate-270',
+			case8: 'rotate-270'
+		},
+
+		load_index: function(onsuccess, onerror) {
+
 			if (onsuccess) {
-				self.onsuccess = onsuccess;
+				self.set_handler('load_index', onsuccess);
 			}
+
 			if (onerror) {
-				self.onerror = onerror;
+				self.set_handler('error', onerror);
 			}
-			if (! _queue || _queue.length == 0) {
-				self.onerror('No geotagged photos found');
-			} else {
-				self.process_next_file();
-			}
-		},
 
-		// This is a stub, meant to be overridden
-		onsuccess: function(msg) {
-			console.log(msg);
-		},
+			localforage.getItem('geotagged').then(function(rsp) {
 
-		// This is a stub, meant to be overridden
-		onerror: function(msg) {
-			console.error(msg);
-		},
-
-		save_to_localforage: function(geotagged, cb) {
-			localforage.getItem('geotagged_index').then(function(rsp) {
-				var id = (new Date()).getTime();
-				var count = geotagged.length;
-				if (! rsp) {
-					var index = [];
-				} else {
-					var index = rsp;
+				// Make sure the stored index smells right
+				if (typeof rsp == 'object' &&
+				    typeof rsp.geotagged_ids == 'object' &&
+				    typeof rsp.imported_wof_ids == 'object') {
+					self.index = rsp;
 				}
-				index.push({
-					id: id,
-					count: count
-				});
-				var i = 0;
-				var save_item = function() {
-					localforage.setItem('geotagged_' + id + '_' + i, geotagged[i]).then(function() {
-						if (i < count) {
-							i++;
-							save_item();
-						} else {
-							cb(id);
-						}
-					});
-				};
-				localforage.setItem('geotagged_index', index).then(save_item);
-			});
+
+				self.handlers.load_index(self.index);
+
+			}).catch(self.handlers.error);
 		},
 
-		load_from_localforage: function(id, cb) {
-			localforage.getItem('geotagged_index').then(function(index) {
-				for (var i = 0; i < index.length; i++) {
-					if (index[i].id == id) {
-						geotagged = index[i];
-						geotagged.item = function(index, cb) {
-							localforage.getItem('geotagged_' + this.id + '_' + index).then(cb);
-						};
-						cb(geotagged);
-					}
-				}
-				cb(null);
-			});
+		store_index: function() {
+			localforage.setItem('geotagged', self.index);
 		},
 
-		process_next_file: function() {
+		set_handler: function(handler, callback) {
+			self.handlers[handler] = callback;
+		},
+
+		store_photos: function(photos) {
+
+			_queue = photos;
+			_queue.reverse();
+			_reader.onerror = self.handlers.error;
+
+			self.store_next_photo();
+
+		},
+
+		store_next_photo: function() {
+
 			if (_queue.length == 0) {
-				self.onsuccess(self.data, self.index);
+				self.handlers.store_photos_complete(self.index);
 			} else {
 				_file = _queue.shift();
 				_pending = {
+					id: null,
 					filename: _file.name,
+					exif: null,
 					geotags: null,
 					data_uri: null,
 					orientation: null
@@ -99,37 +98,107 @@ mapzen.whosonfirst.geotagged = (function() {
 		},
 
 		handle_array_buffer: function(e) {
-			var data = EXIF.readFromBinaryFile(e.target.result);
-			if (data.GPSLatitude &&
-			    data.GPSLatitudeRef &&
-			    data.GPSLongitude &&
-			    data.GPSLongitudeRef) {
-				_pending.geotags = self.parse_geotags(data);
+
+			if (! e.target ||
+			    ! e.target.result) {
+				self.handlers.error('Oops, something went wrong parsing EXIF tags.');
+				return;
 			}
-			if (data.Orientation) {
-				_pending.orientation = self.parse_orientation(data);
+
+			var exif = EXIF.readFromBinaryFile(e.target.result);
+			_pending.exif = exif;
+
+			if (exif.GPSLatitude &&
+			    exif.GPSLatitudeRef &&
+			    exif.GPSLongitude &&
+			    exif.GPSLongitudeRef) {
+				_pending.geotags = self.parse_geotags(exif);
 			}
-			_pending.exif = data;
+			if (exif.Orientation) {
+				_pending.orientation = self.parse_orientation(exif);
+			}
+
 			_reader.onload = self.handle_data_uri;
 			_reader.readAsDataURL(_file);
 		},
 
+		handle_data_uri: function(e) {
+
+			if (! e.target ||
+			    ! e.target.result) {
+				self.handlers.error('Oops, something went wrong processing a data URI.');
+				return;
+			}
+
+			_pending.data_uri = e.target.result;
+			_pending.id = 'geotagged_' + (new Date().getTime());
+
+			localforage.setItem(_pending.id, _pending)
+				.then(function() {
+					self.index.geotagged_ids.push(_pending.id);
+					self.store_index();
+
+					// Ok, call the handler with the photo
+					self.handlers.store_photo(_pending);
+
+					_pending = null;
+					_file = null;
+
+					self.store_next_photo(); // do it again!
+				});
+		},
+
+		load_photo: function(geotagged_id, callback) {
+			localforage.getItem(geotagged_id)
+				.then(callback)
+				.catch(self.handlers.error);
+		},
+
+		remove_photo: function(geotagged_id, callback) {
+			localforage.removeItem(geotagged_id)
+				.then(callback)
+				.catch(self.handlers.error);
+
+			var new_geotagged_ids = [];
+			for (var i = 0; i < self.index.geotagged_ids.length; i++) {
+				if (self.index.geotagged_ids[i] != geotagged_id) {
+					new_geotagged_ids.push(self.index.geotagged_ids[i]);
+				}
+			}
+			self.index.geotagged_ids = new_geotagged_ids;
+			delete self.index.imported_wof_ids[geotagged_id];
+			self.store_index();
+		},
+
+		reset_localforage: function() {
+			localforage.getItem('geotagged').then(function(index) {
+				if (! index ||
+				    ! index.geotagged_ids) {
+					return;
+				}
+				for (var i = 0; i < index.geotagged_ids.length; i++) {
+					localforage.removeItem(index.geotagged_ids[i]);
+				}
+				localforage.removeItem('geotagged');
+			});
+		},
+
 		// Adapted from https://stackoverflow.com/a/2572991/937170
-		parse_geotags: function(data) {
-			var lat = self.parse_exif_geotag(data.GPSLatitude, data.GPSLatitudeRef);
-			var lng = self.parse_exif_geotag(data.GPSLongitude, data.GPSLongitudeRef);
+		parse_geotags: function(exif) {
+			var lat = self.parse_exif_geotag(exif.GPSLatitude, exif.GPSLatitudeRef);
+			var lng = self.parse_exif_geotag(exif.GPSLongitude, exif.GPSLongitudeRef);
 			var geotags = {
 				latitude: lat,
 				longitude: lng
 			};
-			if (data.GPSAltitude && data.GPSAltitudeRef) {
+			if (exif.GPSAltitude && exif.GPSAltitudeRef) {
 
 				// altitude is in meters
-				geotags.altitude = parseFloat(data.GPSAltitude);
+				geotags.altitude = parseFloat(exif.GPSAltitude);
 
 				// if ref is 0: altitude is above sea level
 				// if ref is 1: altitude is below sea level
-				if (data.GPSAltitudeRef) {
+				if (exif.GPSAltitudeRef) {
 					geotags.altitude = -geotags.altitude;
 				}
 			}
@@ -161,55 +230,25 @@ mapzen.whosonfirst.geotagged = (function() {
 			return parseFloat(parts[0]) / parseFloat(parts[1]);
 		},
 
-		parse_orientation: function(data) {
-			switch (data.Orientation) {
+		parse_orientation: function(exif) {
+			switch (exif.Orientation) {
 				case 1:
-					return '';
+					return self.exif_orientation_classes.case1;
 				case 2:
-					return 'flip-horiz';
+					return self.exif_orientation_classes.case2;
 				case 3:
-					return 'rotate-180';
+					return self.exif_orientation_classes.case3;
 				case 4:
-					return 'flip-horiz rotate-180';
+					return self.exif_orientation_classes.case4;
 				case 5:
-					return 'flip-horiz rotate-90';
+					return self.exif_orientation_classes.case5;
 				case 6:
-					return 'rotate-90';
+					return self.exif_orientation_classes.case6;
 				case 7:
-					return 'flip-horiz rotate-270';
+					return self.exif_orientation_classes.case7;
 				case 8:
-					return 'rotate-270';
+					return self.exif_orientation_classes.case8;
 			}
-		},
-
-		handle_data_uri(e) {
-			_pending.data_uri = e.target.result;
-			self.data.push(_pending);
-			_pending = null;
-			_file = null;
-			self.process_next_file();
-		},
-
-		reset_localforage: function(target) {
-			localforage.getItem('geotagged_index').then(function(index) {
-				if (! index) {
-					return;
-				}
-				for (var i = 0; i < index.length; i++) {
-					var geotagged = index[i];
-					if (! target || target == geotagged.id) {
-						for (var j = 0; j < geotagged.count; j++) {
-							var item = 'geotagged_' + geotagged.id + '_' + j;
-							console.log('removing ' + item);
-							localforage.removeItem(item);
-						}
-					}
-				}
-				if (! target) {
-					console.log('removing geotagged_index');
-					localforage.removeItem('geotagged_index');
-				}
-			});
 		}
 	}
 

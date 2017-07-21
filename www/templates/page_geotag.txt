@@ -1,6 +1,6 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
-<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form" class="geotag">
+<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form">
 	<div class="container">
 		<div class="row">
 			<span class="btn btn-default btn-file">
@@ -8,6 +8,7 @@
 				<input type="file" name="file" multiple="multiple" data-formats="{$upload_formats|escape}">
 			</span>
 			<input type="submit" value="Geotag" id="upload-btn" class="btn" disabled="disabled">
+			<div id="upload-status"><small>Accepted formats: {$upload_formats|escape}</small></div>
 			<div id="upload-preview-props"></div>
 		</div>
 	</div>

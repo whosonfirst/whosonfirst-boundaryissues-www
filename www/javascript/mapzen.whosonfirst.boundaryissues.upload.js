@@ -84,7 +84,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 						zip_file = e.target.files[0];
 						preview_handler(zip_file, self.preview_zip);
 					} else if (ext == '.jpg' || ext == '.jpeg') {
-						mapzen.whosonfirst.geotagged.init([e.target.files[0]], self.preview_geotagged, preview_error);
+						mapzen.whosonfirst.geotagged.init(function() {
+							var photos = [e.target.files[0]];
+							var preview_success = self.preview_geotagged;
+							mapzen.whosonfirst.geotagged.save_files(photos, preview_success, preview_error);
+						}, preview_error);
 					}
 				} else if (e.target.files.length > 0) {
 					var photos = [];
@@ -100,7 +104,10 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 						return;
 					}
 
-					mapzen.whosonfirst.geotagged.init(photos, self.preview_geotagged, preview_error);
+					mapzen.whosonfirst.geotagged.init(function() {
+						var preview_success = self.preview_geotagged;
+						mapzen.whosonfirst.geotagged.save_files(photos, preview_success, preview_error);
+					}, preview_error);
 				} else {
 					$('#upload-status').html('<small>Accepted formats: ' + format_list.join(', ') + '</small>');
 				}
