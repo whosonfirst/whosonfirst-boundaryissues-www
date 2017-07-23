@@ -1,4 +1,3 @@
-$(eval TIMESTAMP = $(shell date +%Y%m%d%H%M%S))
 JS_GITHUB = https://raw.githubusercontent.com/whosonfirst/js-mapzen-whosonfirst/master
 JSON_SCHEMA_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-json-schema/master
 WOF_PROPERTY_GITHUB = https://raw.githubusercontent.com/whosonfirst/whosonfirst-properties/master
@@ -48,18 +47,18 @@ cover:
 update_js:
 	git rm -f ./www/javascript/lib/*.js
 	mkdir -p ./www/javascript/lib
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.brands-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.brands.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.uri-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.uri.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.geojson-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.geojson.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.handlers-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.handlers.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.styles-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.styles.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.tangram-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.tangram.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.log-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.log.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.net-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.net.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.php-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.php.js
-	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.placetypes-$(TIMESTAMP).js $(JS_GITHUB)/src/mapzen.whosonfirst.placetypes.js
-	curl -s -o ./www/javascript/lib/slippymap.crosshairs-$(TIMESTAMP).js https://raw.githubusercontent.com/whosonfirst/js-slippymap-crosshairs/master/src/slippymap.crosshairs.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.brands.js $(JS_GITHUB)/src/mapzen.whosonfirst.brands.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.uri.js $(JS_GITHUB)/src/mapzen.whosonfirst.uri.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.geojson.js $(JS_GITHUB)/src/mapzen.whosonfirst.geojson.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.handlers.js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.handlers.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.styles.js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.styles.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.leaflet.tangram.js $(JS_GITHUB)/src/mapzen.whosonfirst.leaflet.tangram.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.log.js $(JS_GITHUB)/src/mapzen.whosonfirst.log.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.net.js $(JS_GITHUB)/src/mapzen.whosonfirst.net.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.php.js $(JS_GITHUB)/src/mapzen.whosonfirst.php.js
+	curl -s -o ./www/javascript/lib/mapzen.whosonfirst.placetypes.js $(JS_GITHUB)/src/mapzen.whosonfirst.placetypes.js
+	curl -s -o ./www/javascript/lib/slippymap.crosshairs.js https://raw.githubusercontent.com/whosonfirst/js-slippymap-crosshairs/master/src/slippymap.crosshairs.js
 	git add ./www/javascript/lib/*
 
 update_json_schema:
