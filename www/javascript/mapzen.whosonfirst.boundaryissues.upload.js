@@ -563,12 +563,21 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			var html = '';
 			var orientation = photo.orientation || '';
 
+			if (photo.geotags) {
+				var icon = 'fa-map-marker';
+				var status = photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6);
+			} else {
+				var icon = 'fa-times-circle';
+				var status = 'no geotags found';
+			}
+
 			var class_attr = ' class="geotagged thumbnail square ' + htmlspecialchars(orientation) + '"';
 			var style_attr = ' style="background-image: url(' + htmlspecialchars(photo.data_uri) + ')"';
 
 			html += '<div class="geotagged-container" data-id="' + photo.id + '">';
 			html += '<div' + class_attr + style_attr + '></div>';
 			html += '<div class="geotagged-remove"><i class="fa fa-close" aria-hidden="true"></i></div>';
+			html += '<div class="geotagged-status"><i class="fa ' + icon + '" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;' + status + '</div>';
 			html += '</div>';
 
 			$('#upload-preview-props').prepend(html);
