@@ -1,6 +1,6 @@
 {include file='inc_head.txt' nav_tab='upload'}
 
-<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form" class="geotagged">
+<form action="{$cfg.abs_root_url}geotag/" method="post" enctype="multipart/form-data" id="upload-form" class="geotagged mobile-gutter">
 	<div class="container">
 		<div class="row">
 			<span class="btn btn-default btn-file">
@@ -14,7 +14,7 @@
 	</div>
 </form>
 
-<script src="{$cfg.abs_root_url}javascript/exif.js"></script>
-<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.geotagged.js"></script>
+{script src="exif.js"}
+{script src="mapzen.whosonfirst.geotagged.js"}
 
 {include file='inc_foot.txt'}

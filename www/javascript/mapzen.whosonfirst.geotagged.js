@@ -48,8 +48,7 @@ mapzen.whosonfirst.geotagged = (function() {
 
 			localforage.getItem('geotagged').then(function(rsp) {
 
-				// Make sure the stored index smells right
-				if (typeof rsp == 'object') {
+				if (rsp != null) {
 					self.index = rsp;
 				}
 
