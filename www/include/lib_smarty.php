@@ -51,3 +51,53 @@
 	$GLOBALS['smarty']->register_function('timings', 'smarty_timings');
 
 	#######################################################################################
+
+	function smarty_block_script($params, $content){
+		if (! $params['src']){
+			return '';
+		}
+		$root = $GLOBALS['cfg']['abs_root_url'];
+		$javascript = ($GLOBALS['cfg']['javascript_path']) ? $GLOBALS['cfg']['javascript_path'] : 'javascript/';
+
+		if (substr($params['src'], 0, 1) == '/') {
+			$javascript = '';
+		}
+
+		$url = "{$root}{$javascript}{$params['src']}";
+		$path = dirname(__DIR__) . "/$javascript{$params['src']}";
+
+		if (file_exists($path)){
+			$mtime = filemtime($path);
+			$url .= "?$mtime";
+		}
+		return "<script src=\"$url\"></script>";
+	}
+
+	$GLOBALS['smarty']->register_function('script', 'smarty_block_script');
+
+	#######################################################################################
+
+	function smarty_block_style($params, $content){
+		if (! $params['href']){
+			return '';
+		}
+		$root = $GLOBALS['cfg']['abs_root_url'];
+		$css = ($GLOBALS['cfg']['css_path']) ? $GLOBALS['cfg']['css_path'] : 'css/';
+
+		if (substr($params['href'], 0, 1) == '/') {
+			$css = '';
+		}
+
+		$url = "{$root}{$css}{$params['href']}";
+		$path = dirname(__DIR__) . "/$css{$params['href']}";
+
+		if (file_exists($path)){
+			$mtime = filemtime($path);
+			$url .= "?$mtime";
+		}
+		return "<link rel=\"stylesheet\" href=\"$url\">";
+	}
+
+	$GLOBALS['smarty']->register_function('style', 'smarty_block_style');
+
+	# the end
