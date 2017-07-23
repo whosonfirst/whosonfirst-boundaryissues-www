@@ -804,11 +804,25 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 			status = '<div id="venue-geotagged-status">' + status + '</div>';
 
-			var img = '<div id="venue-geotagged-img"><img src="' + photo.data_uri + '" class="geotagged thumbnail ' + photo.orientation + '"></div>';
+			var img_tag = '<img src="' + photo.data_uri + '" class="geotagged thumbnail ' + photo.orientation + '">';
+			var img = '<div id="venue-geotagged-img">' + img_tag + '</div>';
 			var controls = '<div id="venue-geotagged-controls">' + header + nav + '</div><br class="clear">';
+			var zoom_close = '<div id="venue-geotagged-zoom-close"><i class="fa fa-close" aria-hidden="true"></i></div>';
+			var zoom = '<div id="venue-geotagged-zoom" class="hidden"><div id="venue-geotagged-zoom-relative">' + img_tag + zoom_close + '</div></div>';
 
-			$('#venue-geotagged').html(img + controls + status);
+			$('#venue-geotagged').html(img + controls + status + zoom);
 			$('#venue-geotagged').removeClass('hidden');
+			$('#venue-geotagged-zoom img').removeClass('thumbnail');
+
+			$('#venue-geotagged-img').click(function(e) {
+				$(document.body).addClass('no-scroll');
+				$('#venue-geotagged-zoom').removeClass('hidden');
+			});
+
+			$('#venue-geotagged-zoom-close').click(function() {
+				$('#venue-geotagged-zoom').addClass('hidden');
+				$(document.body).removeClass('no-scroll');
+			});
 
 			var ratio;
 			if (photo.exif) {
