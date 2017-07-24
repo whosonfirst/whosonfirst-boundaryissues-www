@@ -1114,7 +1114,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 
 		self.setup_upload();
-		self.setup_property_aliases();
+		if (! $('#upload-form').hasClass('geotagged')) {
+			self.setup_property_aliases();
+		}
 	});
 
 	return self;

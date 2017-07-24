@@ -971,6 +971,11 @@ body.user-can-edit #edit-disallowed {
 	position: relative;
 }
 
+#venue-geotagged.one-column #venue-geotagged-img,
+#venue-geotagged.one-column #venue-geotagged-controls {
+	width: 100%;
+}
+
 #venue-geotagged-status {
 	position: absolute;
 	bottom: 15px;
@@ -979,8 +984,20 @@ body.user-can-edit #edit-disallowed {
 	padding-left: 15px;
 }
 
+#venue-geotagged.one-column #venue-geotagged-status {
+	position: static;
+	width: 100%;
+	right: auto;
+	bottom: auto;
+}
+
 #venue-geotagged-controls {
 	padding-left: 15px;
+}
+
+#venue-geotagged.one-column #venue-geotagged-status,
+#venue-geotagged.one-column #venue-geotagged-controls {
+	padding-left: 0;
 }
 
 #venue-geotagged-controls a {
@@ -1065,16 +1082,11 @@ body.no-scroll {
 	}
 
 	h2 {
-		padding: 0 15px;
 		font-size: 1.5em;
 	}
 
 	#map {
 		height: 200px;
-	}
-
-	#venue form {
-		padding: 0 15px;
 	}
 
 	footer {

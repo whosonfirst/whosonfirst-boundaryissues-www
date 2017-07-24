@@ -784,27 +784,82 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 	}
 
 	function show_geotagged(num) {
+
+		// Oh hey, let's talk about iOS & EXIF orientation modes!
+		//
+		// Yes, browser sniffing is bad and shameful, but iOS insists on
+		// behaving differently from other OS's when it comes to EXIF
+		// orientation modes. Arguably its behavior is the "correct" one
+		// (it auto-rotates images compensating for the EXIF orientation
+		// mode) but ... NO OTHER OS OR BROWSER DOES THAT. So iOS gets
+		// the sniff treatment. To complicate things a little more, iOS
+		// only rotates <img> tags, not background images. Go figure.
+		//
+		// Based on: https://stackoverflow.com/a/9039885/937170
+		// See also: https://phiffer.org/etc/exif-orientation-test/
+		//
+		// (20170724/dphiffer)
+
+		function is_ios() {
+
+			var iDevices = [
+				'iPad Simulator',
+				'iPhone Simulator',
+				'iPod Simulator',
+				'iPad',
+				'iPhone',
+				'iPod'
+			];
+
+			if (!! navigator.platform) {
+				while (iDevices.length) {
+					if (navigator.platform === iDevices.pop()) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
 		geotagged_num = num;
 		var id = geotagged_index.geotagged_ids[geotagged_num];
 		var geotagged_count = geotagged_index.geotagged_ids.length;
 		mapzen.whosonfirst.geotagged.load_photo(id, function(photo) {
+
+			if ($(window).width() < 480) {
+				$('#venue-geotagged').addClass('one-column');
+			}
+
 			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/geotagged/');
 			var header = '<a href="' + url + '">Geotagged photo</a><br>';
 			var nav = '<span id="venue-geotagged-prev"><small class="glyphicon glyphicon-chevron-left"></small> prev</span>';
 			nav += '<span id="venue-geotagged-index">' + (geotagged_count - geotagged_num) + ' of ' + geotagged_count + '</span>';
 			nav += '<span id="venue-geotagged-next">next <small class="glyphicon glyphicon-chevron-right"></small></span>';
+
+			if (geotagged_count == 1) {
+				nav = '';
+			}
+
 			if (photo.geotags) {
 				var ll = [photo.geotags.latitude, photo.geotags.longitude];
 				self.map.setView(ll, 17);
 				self.update_coordinates();
-				var status = 'Found coordinates<br>';
-				status += '<small>' + photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6) + '</small>';
+				var status = '<small>' + photo.geotags.latitude.toFixed(6) + ', ' + photo.geotags.longitude.toFixed(6) + '</small>';
 			} else {
 				var status = '<i>No geotags found in photo</i><br>';
 			}
 			status = '<div id="venue-geotagged-status">' + status + '</div>';
 
-			var img_tag = '<img src="' + photo.data_uri + '" class="geotagged thumbnail ' + photo.orientation + '">';
+			var orientation = photo.orientation;
+			if (is_ios()) {
+
+				// See comment above about iOS & EXIF orientation modes.
+
+				orientation = '';
+			}
+
+			var img_tag = '<img src="' + photo.data_uri + '" class="geotagged thumbnail ' + orientation + '">';
 			var img = '<div id="venue-geotagged-img">' + img_tag + '</div>';
 			var controls = '<div id="venue-geotagged-controls">' + header + nav + '</div><br class="clear">';
 			var zoom_close = '<div id="venue-geotagged-zoom-close"><i class="fa fa-close" aria-hidden="true"></i></div>';
@@ -817,6 +872,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			$('#venue-geotagged-img').click(function(e) {
 				$(document.body).addClass('no-scroll');
 				$('#venue-geotagged-zoom').removeClass('hidden');
+				var h = $('#venue-geotagged-zoom img').height();
+				var wh = $(window).height();
+				if (h < wh) {
+					$('#venue-geotagged-zoom img').css('margin-top', (wh - h) / 2);
+				}
 			});
 
 			$('#venue-geotagged-zoom-close').click(function() {
@@ -830,7 +890,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 			var w = $('#venue-geotagged-img').width();
 
-			if (photo.orientation && ratio) {
+			if (is_ios()) {
+
+				// See comment above about iOS & EXIF orientation modes.
+
+				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', 'auto');
+				$('#venue-geotagged').addClass('static');
+			} else if (photo.orientation && ratio) {
 				if (photo.orientation.indexOf('rotate-90') != -1) {
 					var h = Math.round(w * ratio);
 					$('#venue-geotagged-img img').css('transform', 'translate3d(-50%, -50%, 0) rotate(90deg) scale(' + ratio + ')');
@@ -847,8 +913,11 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 
 			if (h) {
-				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', h);
+				$('#venue-geotagged-img').css('height', h);
 				$('#venue-geotagged').removeClass('static');
+				if (! $('#venue-geotagged').hasClass('one-column')) {
+					$('#venue-geotagged-controls').css('height', h);
+				}
 			} else {
 				$('#venue-geotagged-img, #venue-geotagged-controls').css('height', 'auto');
 				$('#venue-geotagged').addClass('static');
