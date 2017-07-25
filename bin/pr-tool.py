@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copied from https://github.com/mapzen/whosonfirst-toolbox/blob/master/scripts/import-tools/pr-tool.py
+# - excised postgres PIP stuff
 # (20170725/dphiffer)
 
 # THIS IS WORK IN PROGRESS - NO REFUNDS ACCEPTED (20161109/thisisaaronland)
@@ -25,7 +26,6 @@ import mapzen.whosonfirst.uri
 
 import mapzen.whosonfirst.hierarchy
 import mapzen.whosonfirst.properties
-import mapzen.whosonfirst.spatial.postgres
 
 if __name__ == '__main__':
 
@@ -40,11 +40,6 @@ if __name__ == '__main__':
     opt_parser.add_option('-P', '--pull-request', dest='pull_request', action='store', default=None, help='...')
     opt_parser.add_option('-C', '--pull-commits', dest='pull_commits', action='store_true', default=False, help='...')
     opt_parser.add_option('-A', '--access_token', dest='access_token', action='store', default=None, help='...')
-
-    opt_parser.add_option('--pgis-host', dest='pgis_host', action='store', default='10.0.67.234')
-    opt_parser.add_option('--pgis-username', dest='pgis_username', action='store', default='postgres')
-    opt_parser.add_option('--pgis-password', dest='pgis_password', action='store', default=None)
-    opt_parser.add_option('--pgis-database', dest='pgis_database', action='store', default='whosonfirst')
 
     # this stuff is probably deprecated because it's kind of flakey... (20170602/thisisaaronland)
 
@@ -81,16 +76,6 @@ if __name__ == '__main__':
 
     include = []
     exclude = [ "venue" ]
-
-    pg_args = {
-        "dbname": options.pgis_database,
-        "username": options.pgis_username,
-        "password": options.pgis_password,
-        "host": options.pgis_host,
-    }
-
-    pg_client = mapzen.whosonfirst.spatial.postgres.postgis(**pg_args)
-    ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=pg_client)
 
     abs_repo = os.path.join(options.data_root, options.repo)
     repo_name = os.path.basename(abs_repo)
@@ -426,8 +411,6 @@ if __name__ == '__main__':
 
             # end of code to account for old-bad PRs
             """
-
-            pg_client.index_feature(feature, data_root=options.data_root, debug=options.debug)
 
             rebuild_feature = True
             rebuild_descendants = True
