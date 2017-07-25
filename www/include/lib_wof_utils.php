@@ -1,8 +1,9 @@
 <?php
 
+	loadlib('http');
 	loadlib('users_settings');
 	loadlib('wof_elasticsearch');
-	loadlib('http');
+	loadlib('wof_repo');
 
 	########################################################################
 
@@ -58,6 +59,21 @@
 				return $path;
 			}
 		}
+
+		$rsp = wof_repo_list();
+		if (! $rsp['ok']) {
+			return null;
+		}
+		$repos = $rsp['repos'];
+
+		foreach ($repos as $repo) {
+			$root = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
+			$path = wof_utils_id2abspath($root, $id, $more);
+			if (file_exists($path)) {
+				return $path;
+			}
+		}
+
 		return null; // Not found!
 	}
 

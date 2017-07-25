@@ -1,5 +1,27 @@
 <?php
 
+	########################################################################
+
+	function wof_repo_list() {
+		$rsp = db_fetch("
+			SELECT repo
+			FROM boundaryissues_repo
+			GROUP BY repo
+		");
+		if (! $rsp['ok']) {
+			return $rsp;
+		}
+		$repos = array();
+		foreach ($rsp['rows'] as $row) {
+			$repos[] = $row['repo'];
+		}
+		return array(
+			'ok' => 1,
+			'repos' => $repos
+		);
+	}
+
+
 	function wof_repo_init($repo, $status = 'ready') {
 		$esc_repo = addslashes($repo);
 		$esc_status = addslashes($status);
