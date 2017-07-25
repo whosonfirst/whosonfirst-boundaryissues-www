@@ -721,6 +721,13 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				meta.process_venues = $('#process_venues')[0].checked;
 			} else if (meta.type == 'remove_properties') {
 				meta.property_list = $('#property_list').val();
+			} else if (meta.type == 'fix_property_type') {
+				meta.repo = $('#repo').val();
+				meta.property = $('#property').val();
+				meta.property_type = $('#property_type').val();
+			} else if (meta.type == 'merge_pr') {
+				meta.repo = $('#repo').val();
+				meta.pr_number = parseInt($('#pr_number').val());
 			}
 
 			return JSON.stringify(meta);
@@ -1019,7 +1026,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
 
 			// Show some user feedback
-			$result.html('Uploading...');
+			$result.html('<div class="alert alert-info">Uploading...</div>');
 		},
 
 		save_geotagged: function() {
@@ -1034,25 +1041,25 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var list = '<ul id="saved-wof"></ul>';
 				if (rsp.collection_uuid) {
 					var esc_uuid = esc_str(rsp.collection_uuid);
-					$result.html('<span id="collection-' + esc_uuid + '">Processing features...</span> ' + list);
+					$result.html('<div class="alert alert-info"><span id="collection-' + esc_uuid + '">Processing features...</span> ' + list + '</div>');
 				} else if (rsp.feature) {
-					$result.html('Success! ' + list);
+					$result.html('<div class="alert alert-success">Success! ' + list + '</div>');
 					var wof_id = rsp.feature.properties['wof:id'];
 					var wof_name = rsp.feature.properties['wof:name'];
 					self.show_saved_wof_result(wof_id, wof_name);
 					mapzen.whosonfirst.log.debug(rsp);
 				}
 			} else if (rsp.error && rsp.error.message) {
-				$result.html('Error: ' + rsp.error.message);
+				$result.html('<div class="alert alert-danger">Error: ' + rsp.error.message + '</div>');
 				mapzen.whosonfirst.log.error(rsp.error.message);
 			} else if (rsp.error && typeof rsp.error == 'string') {
-				$result.html('Error: ' + rsp.error);
+				$result.html('<div class="alert alert-danger">Error: ' + rsp.error + '</div>');
 				mapzen.whosonfirst.log.error(rsp.error);
 			} else if (rsp.errors) {
 				$result.html('<div class="alert alert-danger">Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul></div>');
 				mapzen.whosonfirst.log.error(rsp.errors.join(', '));
 			} else {
-				$result.html('Oh noes, an error! Check the JavaScript console?');
+				$result.html('<div class="alert alert-danger">Oh noes, an error! Check the JavaScript console?</div>');
 				mapzen.whosonfirst.log.error(rsp);
 			}
 		},
