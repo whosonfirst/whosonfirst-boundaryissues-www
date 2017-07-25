@@ -119,7 +119,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			};
 
 			var onsuccess = function(rsp) {
-				self.looking_up_hierarchy = false;
 				if (! rsp.ok) {
 					var message = 'Error reverse geocoding';
 					if (rsp.error) {
@@ -164,9 +163,20 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					if ($('#venue-response .alert-country').length > 0) {
 						$('#venue-response').html('');
 					}
+					self.loading_country = true;
 					mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
 						self.set_country(country);
+						self.loading_country = false;
+						if (self.on_set_country) {
+							self.on_set_country();
+						}
 					});
+				}
+
+				self.looking_up_hierarchy = false;
+				if (! self.loading_country &&
+				    self.on_loaded_hierarchy) {
+					self.on_loaded_hierarchy();
 				}
 			}
 
@@ -686,7 +696,14 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			$('#venue-response').html('<div class="alert alert-danger">' + message + '</div>');
 		}
 
+		function save_venue() {
+			$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
+			var geojson = self.generate_geojson();
+			self.save_to_server(geojson, onsuccess, onerror);
+		}
+
 		$('#venue form').submit(function(e) {
+
 			e.preventDefault();
 			if (self.country_id == -1) {
 				$('#venue-response').html('<div class="alert alert-danger alert-country">We could not pick a country for this venue.</div>');
@@ -702,10 +719,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			} else if (! ('wof:parent_id' in self.properties)) {
 				self.update_coordinates();
 				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent WOF ID has not been assigned. Try again in a moment?</div>');
+			} else if (self.loading_country) {
+				self.on_set_country = save_venue;
+			} else if (self.looking_up_hierarchy) {
+				self.on_loaded_hierarchy = save_venue;
 			} else {
-				$('#venue-response').html('<div class="alert alert-info">Saving venue...</div>');
-				var geojson = self.generate_geojson();
-				self.save_to_server(geojson, onsuccess, onerror);
+				save_venue();
 			}
 		});
 
