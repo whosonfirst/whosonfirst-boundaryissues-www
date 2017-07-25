@@ -19,8 +19,4 @@
 	</div>
 </form>
 
-<script src="{$cfg.abs_root_url}javascript/papaparse.js"></script>
-<script src="{$cfg.abs_root_url}javascript/exif.js"></script>
-<script src="{$cfg.abs_root_url}javascript/mapzen.whosonfirst.geotagged.js"></script>
-
 {include file='inc_foot.txt'}

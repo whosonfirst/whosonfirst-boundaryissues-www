@@ -39,6 +39,8 @@
 		{script src="mapzen.whosonfirst.chrome.js"}
 		{script src="mapzen.whosonfirst.chrome.init.js"}
 		{script src="jszip.js"}
+		{script src="papaparse.js"}
+		{script src="exif.js"}
 
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -64,6 +66,7 @@
 
 		{script src="mapzen.whosonfirst.boundaryissues.utils.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.enmapify.js"}
+		{script src="mapzen.whosonfirst.geotagged.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.upload.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.edit.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.results.js"}
