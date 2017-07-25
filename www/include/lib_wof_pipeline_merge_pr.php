@@ -41,6 +41,14 @@
 
 	function wof_pipeline_merge_pr($pipeline, $dry_run = false) {
 
+		$verbose = $GLOBALS['cfg']['wof_pipeline_verbose'];
+		$pipeline_id = $pipeline['id'];
+
+		if ($verbose) {
+			echo "[pipeline $pipeline_id] executing wof_pipeline_merge_pr";
+			echo ($dry_run ? ' (dry run)' : '') . "\n";
+		}
+
 		$repo_data_path = wof_pipeline_repo_path($pipeline);
 		$repo_path = dirname($repo_data_path);
 
@@ -59,6 +67,10 @@
 		$rsp = github_api_call('GET', "repos/$owner/$repo/pulls/$number", $GLOBALS['cfg']['github_token']);
 
 		$branch = $rsp['rsp']['head']['ref'];
+
+		if ($verbose) {
+			echo "[pipeline $pipeline_id] pull request $number branch is $branch\n";
+		}
 
 		return array(
 			'ok' => 1,

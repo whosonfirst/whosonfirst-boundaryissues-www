@@ -10,6 +10,7 @@
 	loadlib('wof_pipeline_neighbourhood');
 	loadlib('wof_pipeline_remove_properties');
 	loadlib('wof_pipeline_fix_property_type');
+	loadlib('wof_pipeline_merge_pr');
 
 	########################################################################
 
@@ -200,7 +201,7 @@
 
 	function wof_pipeline_prepare($pipeline) {
 
-		wof_pipeline_log($pipeline['id'], "Preparing {$pipeline['type']} pipeline", $rsp);
+		wof_pipeline_log($pipeline['id'], "Preparing {$pipeline['type']} pipeline");
 
 		if (! preg_match('/[0-9a-zA-Z_-]+/', $pipeline['repo'])) {
 			// Safety check: make sure the repo looks ok
@@ -598,6 +599,14 @@
 			'details' => $details_esc,
 			'created_at' => $now
 		));
+
+		if ($GLOBALS['cfg']['wof_pipeline_verbose']) {
+			echo "[pipeline $pipeline_id] $summary\n";
+			if ($details) {
+				echo "$details\n";
+			}
+		}
+
 		return $rsp;
 	}
 
@@ -669,7 +678,7 @@
 			}
 		}
 
-		wof_pipeline_log($pipeline_id, "Phase set to $phase", $rsp);
+		wof_pipeline_log($pipeline_id, "Phase set to $phase");
 		slack_bot_msg("$phase: <{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id)$notification");
 
 		return $rsp;

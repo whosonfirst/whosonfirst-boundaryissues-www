@@ -26,6 +26,7 @@
 		echo "wof_pipeline_next:\n";
 		var_export($rsp);
 		echo "\n";
+		$GLOBALS['cfg']['wof_pipeline_verbose'] = true;
 	}
 
 	if (! $rsp['ok'] ||
