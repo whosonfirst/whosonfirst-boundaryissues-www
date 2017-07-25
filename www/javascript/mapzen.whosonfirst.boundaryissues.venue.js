@@ -765,7 +765,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		}
 		geotagged_id = geotagged_id[0];
 		mapzen.whosonfirst.geotagged.load_index(function(index) {
-			console.log(index);
 			geotagged_index = index;
 			for (var i = 0; i < index.geotagged_ids.length; i++) {
 				if (index.geotagged_ids[i] == geotagged_id) {

@@ -36,6 +36,19 @@ mapzen.whosonfirst.geotagged = (function() {
 			case8: 'rotate-270'
 		},
 
+		init: function(user_config) {
+			var defaults = {
+				size: 49807360
+			};
+			var config = defaults;
+			if (user_config) {
+				for (var key in user_config) {
+					config[key] = user_config[key];
+				}
+			}
+			localforage.config(config);
+		},
+
 		load_index: function(onsuccess, onerror) {
 
 			if (onsuccess) {

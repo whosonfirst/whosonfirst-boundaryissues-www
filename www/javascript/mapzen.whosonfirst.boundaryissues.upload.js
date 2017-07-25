@@ -63,6 +63,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				$('#upload-status').html('<small class="caveat">' + msg + '</small>');
 			};
 
+			mapzen.whosonfirst.geotagged.init();
 			mapzen.whosonfirst.geotagged.set_handler('store_photo', self.preview_geotagged);
 			mapzen.whosonfirst.geotagged.set_handler('error', preview_error);
 			mapzen.whosonfirst.geotagged.load_index(function(index) {
