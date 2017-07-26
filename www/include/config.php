@@ -77,16 +77,16 @@
 			'can_upload_pipelines',
 			'can_view_pipelines',
 			'can_view_offline_tasks',
-			'can_view_repos',
-			'can_github_oauth'
+			'can_github_oauth',
 		),
 		'staff' => array(
 			'can_edit_all_repos',
 			'can_upload_pipelines',
-			'can_view_pipelines'
+			'can_view_pipelines',
+			'can_view_repos',
 		),
 		'users' => array(
-			'can_edit_whosonfirst-data-venue-*'
+			'can_edit_whosonfirst-data-venue-*',
 		),
 	);
 
