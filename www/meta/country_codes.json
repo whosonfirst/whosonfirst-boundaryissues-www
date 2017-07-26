@@ -1,0 +1,1376 @@
+{
+    "1": {
+        "wof:id": 1,
+        "wof:name": "Null Island",
+        "iso:country": "XN",
+        "wof:country": "XN"
+    },
+    "421166797": {
+        "wof:id": 421166797,
+        "wof:name": "Georgia",
+        "iso:country": "GE",
+        "wof:country": "GE"
+    },
+    "421180189": {
+        "wof:id": 421180189,
+        "wof:name": "Somalia",
+        "iso:country": "SO",
+        "wof:country": "SO"
+    },
+    "421185849": {
+        "wof:id": 421185849,
+        "wof:name": "Kazakhstan",
+        "iso:country": "KZ",
+        "wof:country": "KZ"
+    },
+    "421188081": {
+        "wof:id": 421188081,
+        "wof:name": "\u0627\u0644\u0633\u0648\u062f\u0627\u0646",
+        "iso:country": "SD",
+        "wof:country": "SD"
+    },
+    "421202109": {
+        "wof:id": 421202109,
+        "wof:name": "San Marino",
+        "iso:country": "SM",
+        "wof:country": "SM"
+    },
+    "1126113567": {
+        "wof:id": 1126113567,
+        "wof:name": "Socialist Federal Republic of Yugoslavia",
+        "iso:country": "XX",
+        "wof:country": "XX"
+    },
+    "1108955783": {
+        "wof:id": 1108955783,
+        "wof:name": "Federal Republic of Yugoslavia",
+        "iso:country": "XX",
+        "wof:country": "XX"
+    },
+    "1108955785": {
+        "wof:id": 1108955785,
+        "wof:name": "Socialist Federal Republic of Yugoslavia",
+        "iso:country": "XX",
+        "wof:country": "XX"
+    },
+    "1108955787": {
+        "wof:id": 1108955787,
+        "wof:name": "Socialist Federal Republic of Yugoslavia",
+        "iso:country": "XX",
+        "wof:country": "XX"
+    },
+    "1108955789": {
+        "wof:id": 1108955789,
+        "wof:name": "Kingdom of Yugoslavia",
+        "iso:country": "XX",
+        "wof:country": "XX"
+    },
+    "85632161": {
+        "wof:id": 85632161,
+        "wof:name": "Macao S.A.R",
+        "iso:country": "MO",
+        "wof:country": "MO"
+    },
+    "85632167": {
+        "wof:id": 85632167,
+        "wof:name": "Bahrain",
+        "iso:country": "BH",
+        "wof:country": "BH"
+    },
+    "85632171": {
+        "wof:id": 85632171,
+        "wof:name": "Bhutan",
+        "iso:country": "BT",
+        "wof:country": "BT"
+    },
+    "85632173": {
+        "wof:id": 85632173,
+        "wof:name": "Lesotho",
+        "iso:country": "LS",
+        "wof:country": "LS"
+    },
+    "85632179": {
+        "wof:id": 85632179,
+        "wof:name": "Panama",
+        "iso:country": "PA",
+        "wof:country": "PA"
+    },
+    "85632303": {
+        "wof:id": 85632303,
+        "wof:name": "Rwanda",
+        "iso:country": "RW",
+        "wof:country": "RW"
+    },
+    "85632305": {
+        "wof:id": 85632305,
+        "wof:name": "Maldives",
+        "iso:country": "MV",
+        "wof:country": "MV"
+    },
+    "85632403": {
+        "wof:id": 85632403,
+        "wof:name": "Taiwan",
+        "iso:country": "TW",
+        "wof:country": "TW"
+    },
+    "85632405": {
+        "wof:id": 85632405,
+        "wof:name": "Albania",
+        "iso:country": "AL",
+        "wof:country": "AL"
+    },
+    "85632181": {
+        "wof:id": 85632181,
+        "wof:name": "Myanmar",
+        "iso:country": "MM",
+        "wof:country": "MM"
+    },
+    "85632185": {
+        "wof:id": 85632185,
+        "wof:name": "Sint Maarten",
+        "iso:country": "SX",
+        "wof:country": "SX"
+    },
+    "85632187": {
+        "wof:id": 85632187,
+        "wof:name": "Vatican",
+        "iso:country": "VA",
+        "wof:country": "VA"
+    },
+    "85632307": {
+        "wof:id": 85632307,
+        "wof:name": "Kazakhstan",
+        "iso:country": "KZ",
+        "wof:country": "KZ"
+    },
+    "85632313": {
+        "wof:id": 85632313,
+        "wof:name": "Sri Lanka",
+        "iso:country": "LK",
+        "wof:country": "LK"
+    },
+    "85632315": {
+        "wof:id": 85632315,
+        "wof:name": "Israel",
+        "iso:country": "IL",
+        "wof:country": "IL"
+    },
+    "85632189": {
+        "wof:id": 85632189,
+        "wof:name": "Ghana",
+        "iso:country": "GH",
+        "wof:country": "GH"
+    },
+    "85632407": {
+        "wof:id": 85632407,
+        "wof:name": "Gabon",
+        "iso:country": "GA",
+        "wof:country": "GA"
+    },
+    "85632191": {
+        "wof:id": 85632191,
+        "wof:name": "Iraq",
+        "iso:country": "IQ",
+        "wof:country": "IQ"
+    },
+    "85632413": {
+        "wof:id": 85632413,
+        "wof:name": "Syria",
+        "iso:country": "SY",
+        "wof:country": "SY"
+    },
+    "85632423": {
+        "wof:id": 85632423,
+        "wof:name": "Guadeloupe",
+        "iso:country": "GP",
+        "wof:country": "FR"
+    },
+    "85632425": {
+        "wof:id": 85632425,
+        "wof:name": "Jordan",
+        "iso:country": "JO",
+        "wof:country": "JO"
+    },
+    "85632317": {
+        "wof:id": 85632317,
+        "wof:name": "Venezuela",
+        "iso:country": "VE",
+        "wof:country": "VE"
+    },
+    "85632319": {
+        "wof:id": 85632319,
+        "wof:name": "Djibouti",
+        "iso:country": "DJ",
+        "wof:country": "DJ"
+    },
+    "85632323": {
+        "wof:id": 85632323,
+        "wof:name": "Honduras",
+        "iso:country": "HN",
+        "wof:country": "HN"
+    },
+    "85632325": {
+        "wof:id": 85632325,
+        "wof:name": "Chad",
+        "iso:country": "TD",
+        "wof:country": "TD"
+    },
+    "85632329": {
+        "wof:id": 85632329,
+        "wof:name": "Kenya",
+        "iso:country": "KE",
+        "wof:country": "KE"
+    },
+    "85632331": {
+        "wof:id": 85632331,
+        "wof:name": "Palau",
+        "iso:country": "PW",
+        "wof:country": "PW"
+    },
+    "85632335": {
+        "wof:id": 85632335,
+        "wof:name": "Grenada",
+        "iso:country": "GD",
+        "wof:country": "GD"
+    },
+    "85632505": {
+        "wof:id": 85632505,
+        "wof:name": "Argentina",
+        "iso:country": "AR",
+        "wof:country": "AR"
+    },
+    "85632203": {
+        "wof:id": 85632203,
+        "wof:name": "Indonesia",
+        "iso:country": "ID",
+        "wof:country": "ID"
+    },
+    "85632429": {
+        "wof:id": 85632429,
+        "wof:name": "Japan",
+        "iso:country": "JP",
+        "wof:country": "JP"
+    },
+    "85632339": {
+        "wof:id": 85632339,
+        "wof:name": "The Bahamas",
+        "iso:country": "BS",
+        "wof:country": "BS"
+    },
+    "85632343": {
+        "wof:id": 85632343,
+        "wof:name": "Andorra",
+        "iso:country": "AD",
+        "wof:country": "AD"
+    },
+    "85632347": {
+        "wof:id": 85632347,
+        "wof:name": "Papua New Guinea",
+        "iso:country": "PG",
+        "wof:country": "PG"
+    },
+    "85632351": {
+        "wof:id": 85632351,
+        "wof:name": "Reunion",
+        "iso:country": "RE",
+        "wof:country": "FR"
+    },
+    "85632431": {
+        "wof:id": 85632431,
+        "wof:name": "Federated States of Micronesia",
+        "iso:country": "FM",
+        "wof:country": "FM"
+    },
+    "85632207": {
+        "wof:id": 85632207,
+        "wof:name": "Oman",
+        "iso:country": "OM",
+        "wof:country": "OM"
+    },
+    "85632355": {
+        "wof:id": 85632355,
+        "wof:name": "Paraguay",
+        "iso:country": "PY",
+        "wof:country": "PY"
+    },
+    "85632357": {
+        "wof:id": 85632357,
+        "wof:name": "Mauritius",
+        "iso:country": "MU",
+        "wof:country": "MU"
+    },
+    "85632433": {
+        "wof:id": 85632433,
+        "wof:name": "Haiti",
+        "iso:country": "HT",
+        "wof:country": "HT"
+    },
+    "85632437": {
+        "wof:id": 85632437,
+        "wof:name": "Cyprus",
+        "iso:country": "CY",
+        "wof:country": "CY"
+    },
+    "85632359": {
+        "wof:id": 85632359,
+        "wof:name": "Cambodia",
+        "iso:country": "KH",
+        "wof:country": "KH"
+    },
+    "85632439": {
+        "wof:id": 85632439,
+        "wof:name": "Mongolia",
+        "iso:country": "MN",
+        "wof:country": "MN"
+    },
+    "85632441": {
+        "wof:id": 85632441,
+        "wof:name": "Curacao",
+        "iso:country": "CW",
+        "wof:country": "CW"
+    },
+    "85632213": {
+        "wof:id": 85632213,
+        "wof:name": "Burkina Faso",
+        "iso:country": "BF",
+        "wof:country": "BF"
+    },
+    "85632215": {
+        "wof:id": 85632215,
+        "wof:name": "Jamaica",
+        "iso:country": "JM",
+        "wof:country": "JM"
+    },
+    "85632217": {
+        "wof:id": 85632217,
+        "wof:name": "Western Sahara",
+        "iso:country": "EH",
+        "wof:country": "EH"
+    },
+    "85632223": {
+        "wof:id": 85632223,
+        "wof:name": "Madagascar",
+        "iso:country": "MG",
+        "wof:country": "MG"
+    },
+    "85632443": {
+        "wof:id": 85632443,
+        "wof:name": "Suriname",
+        "iso:country": "SR",
+        "wof:country": "SR"
+    },
+    "85632449": {
+        "wof:id": 85632449,
+        "wof:name": "Ivory Coast",
+        "iso:country": "CI",
+        "wof:country": "CI"
+    },
+    "85632227": {
+        "wof:id": 85632227,
+        "wof:name": "Tanzania",
+        "iso:country": "TZ",
+        "wof:country": "TZ"
+    },
+    "85632509": {
+        "wof:id": 85632509,
+        "wof:name": "Philippines",
+        "iso:country": "PH",
+        "wof:country": "PH"
+    },
+    "85632511": {
+        "wof:id": 85632511,
+        "wof:name": "Uruguay",
+        "iso:country": "UY",
+        "wof:country": "UY"
+    },
+    "85632361": {
+        "wof:id": 85632361,
+        "wof:name": "Iran",
+        "iso:country": "IR",
+        "wof:country": "IR"
+    },
+    "85632451": {
+        "wof:id": 85632451,
+        "wof:name": "Algeria",
+        "iso:country": "DZ",
+        "wof:country": "DZ"
+    },
+    "85632365": {
+        "wof:id": 85632365,
+        "wof:name": "Senegal",
+        "iso:country": "SN",
+        "wof:country": "SN"
+    },
+    "85632369": {
+        "wof:id": 85632369,
+        "wof:name": "Saint Lucia",
+        "iso:country": "LC",
+        "wof:country": "LC"
+    },
+    "85632371": {
+        "wof:id": 85632371,
+        "wof:name": "Saint Pierre and Miquelon",
+        "iso:country": "PM",
+        "wof:country": "PM"
+    },
+    "85632455": {
+        "wof:id": 85632455,
+        "wof:name": "Tonga",
+        "iso:country": "TO",
+        "wof:country": "TO"
+    },
+    "85632461": {
+        "wof:id": 85632461,
+        "wof:name": "Isle of Man",
+        "iso:country": "IM",
+        "wof:country": "IM"
+    },
+    "85632513": {
+        "wof:id": 85632513,
+        "wof:name": "Tajikistan",
+        "iso:country": "TJ",
+        "wof:country": "TJ"
+    },
+    "85632373": {
+        "wof:id": 85632373,
+        "wof:name": "Macedonia",
+        "iso:country": "MK",
+        "wof:country": "MK"
+    },
+    "85632465": {
+        "wof:id": 85632465,
+        "wof:name": "Nepal",
+        "iso:country": "NP",
+        "wof:country": "NP"
+    },
+    "85632379": {
+        "wof:id": 85632379,
+        "wof:name": "Somalia",
+        "iso:country": "SO",
+        "wof:country": "SO"
+    },
+    "85632229": {
+        "wof:id": 85632229,
+        "wof:name": "Afghanistan",
+        "iso:country": "AF",
+        "wof:country": "AF"
+    },
+    "85632383": {
+        "wof:id": 85632383,
+        "wof:name": "Malawi",
+        "iso:country": "MW",
+        "wof:country": "MW"
+    },
+    "85632467": {
+        "wof:id": 85632467,
+        "wof:name": "Sierra Leone",
+        "iso:country": "SL",
+        "wof:country": "SL"
+    },
+    "85632385": {
+        "wof:id": 85632385,
+        "wof:name": "Guatemala",
+        "iso:country": "GT",
+        "wof:country": "GT"
+    },
+    "85632519": {
+        "wof:id": 85632519,
+        "wof:name": "Colombia",
+        "iso:country": "CO",
+        "wof:country": "CO"
+    },
+    "85632391": {
+        "wof:id": 85632391,
+        "wof:name": "Central African Republic",
+        "iso:country": "CF",
+        "wof:country": "CF"
+    },
+    "85632231": {
+        "wof:id": 85632231,
+        "wof:name": "South Korea",
+        "iso:country": "KR",
+        "wof:country": "KR"
+    },
+    "85632233": {
+        "wof:id": 85632233,
+        "wof:name": "French Guiana",
+        "iso:country": "GF",
+        "wof:country": "FR"
+    },
+    "85632393": {
+        "wof:id": 85632393,
+        "wof:name": "Turkey",
+        "iso:country": "TR",
+        "wof:country": "TR"
+    },
+    "85632521": {
+        "wof:id": 85632521,
+        "wof:name": "Peru",
+        "iso:country": "PE",
+        "wof:country": "PE"
+    },
+    "85632523": {
+        "wof:id": 85632523,
+        "wof:name": "Mayotte",
+        "iso:country": "YT",
+        "wof:country": "FR"
+    },
+    "85632529": {
+        "wof:id": 85632529,
+        "wof:name": "Antigua and Barbuda",
+        "iso:country": "AG",
+        "wof:country": "AG"
+    },
+    "85632235": {
+        "wof:id": 85632235,
+        "wof:name": "Botswana",
+        "iso:country": "BW",
+        "wof:country": "BW"
+    },
+    "85632531": {
+        "wof:id": 85632531,
+        "wof:name": "Martinique",
+        "iso:country": "MQ",
+        "wof:country": "FR"
+    },
+    "85632533": {
+        "wof:id": 85632533,
+        "wof:name": "Lebanon",
+        "iso:country": "LB",
+        "wof:country": "LB"
+    },
+    "85632469": {
+        "wof:id": 85632469,
+        "wof:name": "India",
+        "iso:country": "IN",
+        "wof:country": "IN"
+    },
+    "85632241": {
+        "wof:id": 85632241,
+        "wof:name": "Laos",
+        "iso:country": "LA",
+        "wof:country": "LA"
+    },
+    "85632395": {
+        "wof:id": 85632395,
+        "wof:name": "Belarus",
+        "iso:country": "BY",
+        "wof:country": "BY"
+    },
+    "85632535": {
+        "wof:id": 85632535,
+        "wof:name": "Namibia",
+        "iso:country": "NA",
+        "wof:country": "NA"
+    },
+    "85632243": {
+        "wof:id": 85632243,
+        "wof:name": "Zimbabwe",
+        "iso:country": "ZW",
+        "wof:country": "ZW"
+    },
+    "85632245": {
+        "wof:id": 85632245,
+        "wof:name": "Cameroon",
+        "iso:country": "CM",
+        "wof:country": "CM"
+    },
+    "85632397": {
+        "wof:id": 85632397,
+        "wof:name": "Guyana",
+        "iso:country": "GY",
+        "wof:country": "GY"
+    },
+    "85632603": {
+        "wof:id": 85632603,
+        "wof:name": "Gambia",
+        "iso:country": "GM",
+        "wof:country": "GM"
+    },
+    "85632605": {
+        "wof:id": 85632605,
+        "wof:name": "Singapore",
+        "iso:country": "SG",
+        "wof:country": "SG"
+    },
+    "85632607": {
+        "wof:id": 85632607,
+        "wof:name": "Tuvalu",
+        "iso:country": "TV",
+        "wof:country": "TV"
+    },
+    "85632609": {
+        "wof:id": 85632609,
+        "wof:name": "Bosnia and Herzegovina",
+        "iso:country": "BA",
+        "wof:country": "BA"
+    },
+    "85632247": {
+        "wof:id": 85632247,
+        "wof:name": "Benin",
+        "iso:country": "BJ",
+        "wof:country": "BJ"
+    },
+    "85632475": {
+        "wof:id": 85632475,
+        "wof:name": "Bangladesh",
+        "iso:country": "BD",
+        "wof:country": "BD"
+    },
+    "85632623": {
+        "wof:id": 85632623,
+        "wof:name": "Bolivia",
+        "iso:country": "BO",
+        "wof:country": "BO"
+    },
+    "85632249": {
+        "wof:id": 85632249,
+        "wof:name": "Liberia",
+        "iso:country": "LR",
+        "wof:country": "LR"
+    },
+    "85632541": {
+        "wof:id": 85632541,
+        "wof:name": "Republic of Congo",
+        "iso:country": "CG",
+        "wof:country": "CG"
+    },
+    "85632253": {
+        "wof:id": 85632253,
+        "wof:name": "Saudi Arabia",
+        "iso:country": "SA",
+        "wof:country": "SA"
+    },
+    "85632483": {
+        "wof:id": 85632483,
+        "wof:name": "Hong Kong S.A.R.",
+        "iso:country": "HK",
+        "wof:country": "HK"
+    },
+    "85632545": {
+        "wof:id": 85632545,
+        "wof:name": "El Salvador",
+        "iso:country": "SV",
+        "wof:country": "SV"
+    },
+    "85632547": {
+        "wof:id": 85632547,
+        "wof:name": "Guernsey",
+        "iso:country": "GG",
+        "wof:country": "GG"
+    },
+    "85632625": {
+        "wof:id": 85632625,
+        "wof:name": "Uganda",
+        "iso:country": "UG",
+        "wof:country": "UG"
+    },
+    "85632551": {
+        "wof:id": 85632551,
+        "wof:name": "Saint Kitts and Nevis",
+        "iso:country": "KN",
+        "wof:country": "KN"
+    },
+    "85632487": {
+        "wof:id": 85632487,
+        "wof:name": "Costa Rica",
+        "iso:country": "CR",
+        "wof:country": "CR"
+    },
+    "85632491": {
+        "wof:id": 85632491,
+        "wof:name": "Barbados",
+        "iso:country": "BB",
+        "wof:country": "BB"
+    },
+    "85632495": {
+        "wof:id": 85632495,
+        "wof:name": "Indian Ocean Territories",
+        "iso:country": "CC",
+        "wof:country": "CC"
+    },
+    "85632627": {
+        "wof:id": 85632627,
+        "wof:name": "Libya",
+        "iso:country": "LY",
+        "wof:country": "LY"
+    },
+    "85632499": {
+        "wof:id": 85632499,
+        "wof:name": "Yemen",
+        "iso:country": "YE",
+        "wof:country": "YE"
+    },
+    "85632703": {
+        "wof:id": 85632703,
+        "wof:name": "Tunisia",
+        "iso:country": "TN",
+        "wof:country": "TN"
+    },
+    "85632635": {
+        "wof:id": 85632635,
+        "wof:name": "Swaziland",
+        "iso:country": "SZ",
+        "wof:country": "SZ"
+    },
+    "85632257": {
+        "wof:id": 85632257,
+        "wof:name": "Ethiopia",
+        "iso:country": "ET",
+        "wof:country": "ET"
+    },
+    "85632259": {
+        "wof:id": 85632259,
+        "wof:name": "Comoros",
+        "iso:country": "KM",
+        "wof:country": "KM"
+    },
+    "85632553": {
+        "wof:id": 85632553,
+        "wof:name": "Mali",
+        "iso:country": "ML",
+        "wof:country": "ML"
+    },
+    "85632709": {
+        "wof:id": 85632709,
+        "wof:name": "Kiribati",
+        "iso:country": "KI",
+        "wof:country": "KI"
+    },
+    "85632713": {
+        "wof:id": 85632713,
+        "wof:name": "Dominican Republic",
+        "iso:country": "DO",
+        "wof:country": "DO"
+    },
+    "85632559": {
+        "wof:id": 85632559,
+        "wof:name": "Zambia",
+        "iso:country": "ZM",
+        "wof:country": "ZM"
+    },
+    "85632569": {
+        "wof:id": 85632569,
+        "wof:name": "Saint Vincent and the Grenadines",
+        "iso:country": "VC",
+        "wof:country": "VC"
+    },
+    "85632261": {
+        "wof:id": 85632261,
+        "wof:name": "Ecuador",
+        "iso:country": "EC",
+        "wof:country": "EC"
+    },
+    "85632639": {
+        "wof:id": 85632639,
+        "wof:name": "North Korea",
+        "iso:country": "KP",
+        "wof:country": "KP"
+    },
+    "85632571": {
+        "wof:id": 85632571,
+        "wof:name": "Belize",
+        "iso:country": "BZ",
+        "wof:country": "BZ"
+    },
+    "85632715": {
+        "wof:id": 85632715,
+        "wof:name": "Antarctica",
+        "iso:country": "AQ",
+        "wof:country": "AQ"
+    },
+    "85632263": {
+        "wof:id": 85632263,
+        "wof:name": "Vanuatu",
+        "iso:country": "VU",
+        "wof:country": "VU"
+    },
+    "85632717": {
+        "wof:id": 85632717,
+        "wof:name": "Azerbaijan",
+        "iso:country": "AZ",
+        "wof:country": "AZ"
+    },
+    "85632573": {
+        "wof:id": 85632573,
+        "wof:name": "United Arab Emirates",
+        "iso:country": "AE",
+        "wof:country": "AE"
+    },
+    "85632721": {
+        "wof:id": 85632721,
+        "wof:name": "Cape Verde",
+        "iso:country": "CV",
+        "wof:country": "CV"
+    },
+    "85632727": {
+        "wof:id": 85632727,
+        "wof:name": "Netherlands",
+        "iso:country": "AN",
+        "wof:country": "AN"
+    },
+    "85632269": {
+        "wof:id": 85632269,
+        "wof:name": "Niger",
+        "iso:country": "NE",
+        "wof:country": "NE"
+    },
+    "85632271": {
+        "wof:id": 85632271,
+        "wof:name": "Trinidad and Tobago",
+        "iso:country": "TT",
+        "wof:country": "TT"
+    },
+    "85632581": {
+        "wof:id": 85632581,
+        "wof:name": "Egypt",
+        "iso:country": "EG",
+        "wof:country": "EG"
+    },
+    "85632643": {
+        "wof:id": 85632643,
+        "wof:name": "Democratic Republic of the Congo",
+        "iso:country": "CD",
+        "wof:country": "CD"
+    },
+    "85632583": {
+        "wof:id": 85632583,
+        "wof:name": "East Timor",
+        "iso:country": "TL",
+        "wof:country": "TL"
+    },
+    "85632281": {
+        "wof:id": 85632281,
+        "wof:name": "Angola",
+        "iso:country": "AO",
+        "wof:country": "AO"
+    },
+    "85632729": {
+        "wof:id": 85632729,
+        "wof:name": "Mozambique",
+        "iso:country": "MZ",
+        "wof:country": "MZ"
+    },
+    "85632733": {
+        "wof:id": 85632733,
+        "wof:name": "Somaliland",
+        "iso:country": "XS",
+        "wof:country": "XS"
+    },
+    "85632645": {
+        "wof:id": 85632645,
+        "wof:name": "Uzbekistan",
+        "iso:country": "UZ",
+        "wof:country": "UZ"
+    },
+    "85632285": {
+        "wof:id": 85632285,
+        "wof:name": "Burundi",
+        "iso:country": "BI",
+        "wof:country": "BI"
+    },
+    "85632287": {
+        "wof:id": 85632287,
+        "wof:name": "Equatorial Guinea",
+        "iso:country": "GQ",
+        "wof:country": "GQ"
+    },
+    "85632647": {
+        "wof:id": 85632647,
+        "wof:name": "Togo",
+        "iso:country": "TG",
+        "wof:country": "TG"
+    },
+    "85632591": {
+        "wof:id": 85632591,
+        "wof:name": "Solomon Islands",
+        "iso:country": "SB",
+        "wof:country": "SB"
+    },
+    "85632593": {
+        "wof:id": 85632593,
+        "wof:name": "Jersey",
+        "iso:country": "JE",
+        "wof:country": "JE"
+    },
+    "85632599": {
+        "wof:id": 85632599,
+        "wof:name": "Nicaragua",
+        "iso:country": "NI",
+        "wof:country": "NI"
+    },
+    "85632735": {
+        "wof:id": 85632735,
+        "wof:name": "Nigeria",
+        "iso:country": "NG",
+        "wof:country": "NG"
+    },
+    "85633001": {
+        "wof:id": 85633001,
+        "wof:name": "Bulgaria",
+        "iso:country": "BG",
+        "wof:country": "BG"
+    },
+    "85632657": {
+        "wof:id": 85632657,
+        "wof:name": "South Sudan",
+        "iso:country": "SS",
+        "wof:country": "SS"
+    },
+    "85632659": {
+        "wof:id": 85632659,
+        "wof:name": "Pakistan",
+        "iso:country": "PK",
+        "wof:country": "PK"
+    },
+    "85632293": {
+        "wof:id": 85632293,
+        "wof:name": "Thailand",
+        "iso:country": "TH",
+        "wof:country": "TH"
+    },
+    "85632295": {
+        "wof:id": 85632295,
+        "wof:name": "Aruba",
+        "iso:country": "AW",
+        "wof:country": "AW"
+    },
+    "85632661": {
+        "wof:id": 85632661,
+        "wof:name": "Seychelles",
+        "iso:country": "SC",
+        "wof:country": "SC"
+    },
+    "85632299": {
+        "wof:id": 85632299,
+        "wof:name": "Qatar",
+        "iso:country": "QA",
+        "wof:country": "QA"
+    },
+    "85632739": {
+        "wof:id": 85632739,
+        "wof:name": "Malaysia",
+        "iso:country": "MY",
+        "wof:country": "MY"
+    },
+    "85632747": {
+        "wof:id": 85632747,
+        "wof:name": "Nauru",
+        "iso:country": "NR",
+        "wof:country": "NR"
+    },
+    "85632663": {
+        "wof:id": 85632663,
+        "wof:name": "Marshall Islands",
+        "iso:country": "MH",
+        "wof:country": "MH"
+    },
+    "85632749": {
+        "wof:id": 85632749,
+        "wof:name": "Brunei",
+        "iso:country": "BN",
+        "wof:country": "BN"
+    },
+    "85632667": {
+        "wof:id": 85632667,
+        "wof:name": "Montenegro",
+        "iso:country": "ME",
+        "wof:country": "ME"
+    },
+    "85633111": {
+        "wof:id": 85633111,
+        "wof:name": "Germany",
+        "iso:country": "DE",
+        "wof:country": "DE"
+    },
+    "85633121": {
+        "wof:id": 85633121,
+        "wof:name": "Denmark",
+        "iso:country": "DK",
+        "wof:country": "DK"
+    },
+    "85632671": {
+        "wof:id": 85632671,
+        "wof:name": "Turkmenistan",
+        "iso:country": "TM",
+        "wof:country": "TM"
+    },
+    "85633129": {
+        "wof:id": 85633129,
+        "wof:name": "Spain",
+        "iso:country": "ES",
+        "wof:country": "ES"
+    },
+    "85633135": {
+        "wof:id": 85633135,
+        "wof:name": "Estonia",
+        "iso:country": "EE",
+        "wof:country": "EE"
+    },
+    "85633143": {
+        "wof:id": 85633143,
+        "wof:name": "Finland",
+        "iso:country": "FI",
+        "wof:country": "FI"
+    },
+    "85633147": {
+        "wof:id": 85633147,
+        "wof:name": "France",
+        "iso:country": "FR",
+        "wof:country": "FR"
+    },
+    "85632751": {
+        "wof:id": 85632751,
+        "wof:name": "Sudan",
+        "iso:country": "SD",
+        "wof:country": "SD"
+    },
+    "85633159": {
+        "wof:id": 85633159,
+        "wof:name": "United Kingdom",
+        "iso:country": "GB",
+        "wof:country": "GB"
+    },
+    "85633163": {
+        "wof:id": 85633163,
+        "wof:name": "Georgia",
+        "iso:country": "GE",
+        "wof:country": "GE"
+    },
+    "85633171": {
+        "wof:id": 85633171,
+        "wof:name": "Greece",
+        "iso:country": "GR",
+        "wof:country": "GR"
+    },
+    "85633229": {
+        "wof:id": 85633229,
+        "wof:name": "Croatia",
+        "iso:country": "HR",
+        "wof:country": "HR"
+    },
+    "85633237": {
+        "wof:id": 85633237,
+        "wof:name": "Hungary",
+        "iso:country": "HU",
+        "wof:country": "HU"
+    },
+    "85633241": {
+        "wof:id": 85633241,
+        "wof:name": "Ireland",
+        "iso:country": "IE",
+        "wof:country": "IE"
+    },
+    "85632755": {
+        "wof:id": 85632755,
+        "wof:name": "Fiji",
+        "iso:country": "FJ",
+        "wof:country": "FJ"
+    },
+    "85633249": {
+        "wof:id": 85633249,
+        "wof:name": "Iceland",
+        "iso:country": "IS",
+        "wof:country": "IS"
+    },
+    "85633253": {
+        "wof:id": 85633253,
+        "wof:name": "Italy",
+        "iso:country": "IT",
+        "wof:country": "IT"
+    },
+    "85633259": {
+        "wof:id": 85633259,
+        "wof:name": "Kosovo",
+        "iso:country": "XK",
+        "wof:country": "XK"
+    },
+    "85633267": {
+        "wof:id": 85633267,
+        "wof:name": "Liechtenstein",
+        "iso:country": "LI",
+        "wof:country": "LI"
+    },
+    "85633269": {
+        "wof:id": 85633269,
+        "wof:name": "Lithuania",
+        "iso:country": "LT",
+        "wof:country": "LT"
+    },
+    "85633275": {
+        "wof:id": 85633275,
+        "wof:name": "Luxembourg",
+        "iso:country": "LU",
+        "wof:country": "LU"
+    },
+    "85633279": {
+        "wof:id": 85633279,
+        "wof:name": "Latvia",
+        "iso:country": "LV",
+        "wof:country": "LV"
+    },
+    "85633285": {
+        "wof:id": 85633285,
+        "wof:name": "Monaco",
+        "iso:country": "MC",
+        "wof:country": "MC"
+    },
+    "85633287": {
+        "wof:id": 85633287,
+        "wof:name": "Moldova",
+        "iso:country": "MD",
+        "wof:country": "MD"
+    },
+    "85633009": {
+        "wof:id": 85633009,
+        "wof:name": "Brazil",
+        "iso:country": "BR",
+        "wof:country": "BR"
+    },
+    "85632757": {
+        "wof:id": 85632757,
+        "wof:name": "Guinea Bissau",
+        "iso:country": "GW",
+        "wof:country": "GW"
+    },
+    "85633293": {
+        "wof:id": 85633293,
+        "wof:name": "Mexico",
+        "iso:country": "MX",
+        "wof:country": "MX"
+    },
+    "85632675": {
+        "wof:id": 85632675,
+        "wof:name": "Cuba",
+        "iso:country": "CU",
+        "wof:country": "CU"
+    },
+    "85633337": {
+        "wof:id": 85633337,
+        "wof:name": "Netherlands",
+        "iso:country": "NL",
+        "wof:country": "NL"
+    },
+    "85632679": {
+        "wof:id": 85632679,
+        "wof:name": "Mauritania",
+        "iso:country": "MR",
+        "wof:country": "MR"
+    },
+    "85632681": {
+        "wof:id": 85632681,
+        "wof:name": "Samoa",
+        "iso:country": "WS",
+        "wof:country": "WS"
+    },
+    "85633341": {
+        "wof:id": 85633341,
+        "wof:name": "Norway",
+        "iso:country": "NO",
+        "wof:country": "NO"
+    },
+    "85632761": {
+        "wof:id": 85632761,
+        "wof:name": "Kyrgyzstan",
+        "iso:country": "KG",
+        "wof:country": "KG"
+    },
+    "85633041": {
+        "wof:id": 85633041,
+        "wof:name": "Canada",
+        "iso:country": "CA",
+        "wof:country": "CA"
+    },
+    "85632763": {
+        "wof:id": 85632763,
+        "wof:name": "Vietnam",
+        "iso:country": "VN",
+        "wof:country": "VN"
+    },
+    "85632765": {
+        "wof:id": 85632765,
+        "wof:name": "Sao Tome and Principe",
+        "iso:country": "ST",
+        "wof:country": "ST"
+    },
+    "85633051": {
+        "wof:id": 85633051,
+        "wof:name": "Switzerland",
+        "iso:country": "CH",
+        "wof:country": "CH"
+    },
+    "85632773": {
+        "wof:id": 85632773,
+        "wof:name": "Armenia",
+        "iso:country": "AM",
+        "wof:country": "AM"
+    },
+    "85632781": {
+        "wof:id": 85632781,
+        "wof:name": "Eritrea",
+        "iso:country": "ER",
+        "wof:country": "ER"
+    },
+    "85632785": {
+        "wof:id": 85632785,
+        "wof:name": "Austria",
+        "iso:country": "AT",
+        "wof:country": "AT"
+    },
+    "85632685": {
+        "wof:id": 85632685,
+        "wof:name": "Russia",
+        "iso:country": "RU",
+        "wof:country": "RU"
+    },
+    "85633057": {
+        "wof:id": 85633057,
+        "wof:name": "Chile",
+        "iso:country": "CL",
+        "wof:country": "CL"
+    },
+    "85633735": {
+        "wof:id": 85633735,
+        "wof:name": "Portugal",
+        "iso:country": "PT",
+        "wof:country": "PT"
+    },
+    "85633739": {
+        "wof:id": 85633739,
+        "wof:name": "Palestine",
+        "iso:country": "PS",
+        "wof:country": "PS"
+    },
+    "85632691": {
+        "wof:id": 85632691,
+        "wof:name": "Guinea",
+        "iso:country": "GN",
+        "wof:country": "GN"
+    },
+    "85632693": {
+        "wof:id": 85632693,
+        "wof:name": "Morocco",
+        "iso:country": "MA",
+        "wof:country": "MA"
+    },
+    "85633745": {
+        "wof:id": 85633745,
+        "wof:name": "Romania",
+        "iso:country": "RO",
+        "wof:country": "RO"
+    },
+    "85633755": {
+        "wof:id": 85633755,
+        "wof:name": "Serbia",
+        "iso:country": "RS",
+        "wof:country": "RS"
+    },
+    "85633763": {
+        "wof:id": 85633763,
+        "wof:name": "San Marino",
+        "iso:country": "SM",
+        "wof:country": "SM"
+    },
+    "85633769": {
+        "wof:id": 85633769,
+        "wof:name": "Slovakia",
+        "iso:country": "SK",
+        "wof:country": "SK"
+    },
+    "85633779": {
+        "wof:id": 85633779,
+        "wof:name": "Slovenia",
+        "iso:country": "SI",
+        "wof:country": "SI"
+    },
+    "85633789": {
+        "wof:id": 85633789,
+        "wof:name": "Sweden",
+        "iso:country": "SE",
+        "wof:country": "SE"
+    },
+    "85633793": {
+        "wof:id": 85633793,
+        "wof:name": "United States",
+        "iso:country": "US",
+        "wof:country": "US"
+    },
+    "85633813": {
+        "wof:id": 85633813,
+        "wof:name": "South Africa",
+        "iso:country": "ZA",
+        "wof:country": "ZA"
+    },
+    "85632695": {
+        "wof:id": 85632695,
+        "wof:name": "China",
+        "iso:country": "CN",
+        "wof:country": "CN"
+    },
+    "85632793": {
+        "wof:id": 85632793,
+        "wof:name": "Australia",
+        "iso:country": "AU",
+        "wof:country": "AU"
+    },
+    "85633345": {
+        "wof:id": 85633345,
+        "wof:name": "New Zealand",
+        "iso:country": "NZ",
+        "wof:country": "NZ"
+    },
+    "102312305": {
+        "wof:id": 102312305,
+        "wof:name": "United Nations",
+        "iso:country": "UN",
+        "wof:country": "UN"
+    },
+    "85632503": {
+        "wof:id": 85632503,
+        "wof:name": "Dominica",
+        "iso:country": "DM",
+        "wof:country": "DM"
+    },
+    "85632401": {
+        "wof:id": 85632401,
+        "wof:name": "Kuwait",
+        "iso:country": "KW",
+        "wof:country": "KW"
+    },
+    "85632997": {
+        "wof:id": 85632997,
+        "wof:name": "Belgium",
+        "iso:country": "BE",
+        "wof:country": "BE"
+    },
+    "85633105": {
+        "wof:id": 85633105,
+        "wof:name": "Czech Republic",
+        "iso:country": "CZ",
+        "wof:country": "CZ"
+    },
+    "85633331": {
+        "wof:id": 85633331,
+        "wof:name": "Malta",
+        "iso:country": "MT",
+        "wof:country": "MT"
+    },
+    "85633805": {
+        "wof:id": 85633805,
+        "wof:name": "Ukraine",
+        "iso:country": "UA",
+        "wof:country": "UA"
+    },
+    "85633723": {
+        "wof:id": 85633723,
+        "wof:name": "Poland",
+        "iso:country": "PL",
+        "wof:country": "PL"
+    },
+    "85633217": {
+        "wof:id": 85633217,
+        "wof:name": "Greenland",
+        "iso:country": "GL",
+        "wof:country": "GL"
+    }
+}
