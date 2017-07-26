@@ -298,9 +298,9 @@ END;
 		}
 		$output['lfs_checkout'] = $rsp;
 
-		$debug = "git lfs pull\n{$output['lfs_pull']['output']}\n";
-		$debug .= "git lfs fetch\n{$output['lfs_fetch']['output']}\n";
-		$debug .= "git lfs checkout\n{$output['lfs_checkout']['output']}";
+		$debug = "git lfs pull\n{$output['lfs_pull']['stdout']}\n";
+		$debug .= "git lfs fetch\n{$output['lfs_fetch']['stdout']}\n";
+		$debug .= "git lfs checkout\n{$output['lfs_checkout']['stdout']}";
 
 		wof_repo_set_status($repo, 'setup lfs', $debug);
 

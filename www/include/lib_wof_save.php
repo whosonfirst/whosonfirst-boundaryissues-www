@@ -221,7 +221,7 @@
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$git_hash = $rsp['rsp'];
+		$git_hash = $rsp['stderr'];
 
 		// Save a snapshot to the pending index directory
 		$pending_index_dir = wof_utils_pending_dir('index', $user_id);
@@ -988,8 +988,7 @@
 					'error' => "Could not determine changed files from $commit_hashes_esc."
 				);
 			}
-			$output = "{$rsp['error']}{$rsp['output']}";
-			preg_match_all('/(\d+)\.geojson/', $output, $matches);
+			preg_match_all('/(\d+)\.geojson/', $rsp['stdout'], $matches);
 			$wof_ids = array_map('intval', $matches[1]);
 			foreach ($wof_ids as $wof_id) {
 
