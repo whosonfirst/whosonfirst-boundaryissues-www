@@ -25,6 +25,7 @@
 
 		$fn = "wof_pipeline_{$meta['type']}_defaults";
 		if (function_exists($fn)) {
+			// Merge in pipeline default settings
 			$meta = $fn($meta);
 		}
 
