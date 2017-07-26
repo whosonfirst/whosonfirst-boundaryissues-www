@@ -265,7 +265,7 @@
 
 	########################################################################
 
-	function wof_pipeline_execute($pipeline) {
+	function wof_pipeline_execute(&$pipeline) {
 
 		$handler = "wof_pipeline_{$pipeline['type']}";
 
@@ -295,10 +295,6 @@
 		}
 
 		$pipeline['updated'] = $rsp['updated'];
-		if (count($pipeline['updated']) == 0) {
-			wof_pipeline_finish($pipeline, 'error', "No files modified, bailing out");
-			return false;
-		}
 
 		wof_pipeline_phase($pipeline, 'commit');
 
@@ -315,6 +311,12 @@
 		if (! $rsp['ok']) {
 			wof_pipeline_finish($pipeline, 'error', "Preprocessing error from $repo_path", $rsp);
 			return false;
+		}
+
+		if (empty($pipeline['updated'])) {
+			// Nothing to commit, we can skip this step
+			wof_pipeline_phase($pipeline, 'push');
+			return true;
 		}
 
 		foreach ($pipeline['updated'] as $path) {

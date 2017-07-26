@@ -52,8 +52,6 @@
 		$repo_data_path = wof_pipeline_repo_path($pipeline);
 		$repo_path = dirname($repo_data_path);
 
-		$updated = array();
-
 		if ($GLOBALS['cfg']['github_token'] == 'READ-FROM-SECRETS') {
 			return array(
 				'ok' => 0,
@@ -69,12 +67,18 @@
 		$branch = $rsp['rsp']['head']['ref'];
 
 		if ($verbose) {
-			echo "[pipeline $pipeline_id] pull request $number branch is $branch\n";
+			echo "[pipeline $pipeline_id] merge PR $number branch $branch\n";
+		}
+
+		if (! $dry_run) {
+			$rsp = git_pull($repo_path, 'origin', $branch);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
 		}
 
 		return array(
 			'ok' => 1,
-			'branch' => $branch,
-			'updated' => $updated
+			'updated' => array()
 		);
 	}
