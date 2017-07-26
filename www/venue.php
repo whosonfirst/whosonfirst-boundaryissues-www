@@ -159,7 +159,7 @@
 
 	$crumb_save = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_save);
-	$GLOBALS['smarty']->assign('mapzen_api_key', $GLOBALS['cfg']['mazpen_api_key']);
+	$GLOBALS['smarty']->assign('mapzen_api_key', $GLOBALS['cfg']['mapzen_api_key']);
 
 	$crumb_update_csv = crumb_generate('api', 'wof.update_csv');
 	$GLOBALS['smarty']->assign('crumb_update_csv', $crumb_update_csv);
