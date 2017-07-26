@@ -132,3 +132,6 @@ categories:
 
 sources:
 	curl -s -o www/meta/sources.json https://raw.githubusercontent.com/whosonfirst/whosonfirst-sources/master/data/sources-spec-latest.json
+
+clone-repo:
+	sudo -u www-data php bin/clone_repo.php $(repo)
