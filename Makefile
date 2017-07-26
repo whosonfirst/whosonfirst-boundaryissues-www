@@ -72,9 +72,9 @@ update_property_aliases:
 	rm -rf ./www/meta/property_aliases.json
 	curl -s -o ./www/meta/property_aliases.json $(WOF_PROPERTY_GITHUB)/aliases/property_aliases.json
 
-update_country_codes:
-	rm -rf ./www/meta/country_codes.json
-	php bin/country_codes_json.php > ./www/meta/country_codes.json
+update_countries_json:
+	rm -rf ./www/meta/countries.json
+	php bin/countries_json.php > ./www/meta/countries.json
 
 localforage:
 	curl -s -o www/javascript/localforage.js https://raw.githubusercontent.com/mozilla/localForage/master/dist/localforage.js

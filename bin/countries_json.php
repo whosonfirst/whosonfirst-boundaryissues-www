@@ -11,6 +11,7 @@ $headers = fgetcsv($fh);
 
 $wof_id_index = array_search('country_id', $headers);
 $wof_name_index = array_search('name', $headers);
+$bbox_index = array_search('bbox', $headers);
 $iso_country_index = array_search('iso_country', $headers);
 $wof_country_index = array_search('wof_country', $headers);
 
@@ -21,6 +22,7 @@ while ($row = fgetcsv($fh)) {
 	$countries[$wof_id] = array(
 		'wof:id' => $wof_id,
 		'wof:name' => $row[$wof_name_index],
+		'geom:bbox' => $row[$bbox_index],
 		'iso:country' => $row[$iso_country_index],
 		'wof:country' => $row[$wof_country_index]
 	);
