@@ -50,15 +50,21 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 			};
 
 			var onsuccess = function(rsp) {
-				self.load_country_wof(rsp.country_id, function(rsp) {
-					if (! set_bbox) {
-						self.set_bbox(map, rsp.bbox);
-					}
-					if (cb) {
-						cb({
-							bbox: rsp.bbox,
-							country: rsp
-						});
+				var country_id = "" + rsp.country_id;
+				mapzen.whosonfirst.utils.get_meta_file('countries.json', function(rsp) {
+					if (! rsp[country_id]) {
+						mapzen.whosonfirst.log.error("could not find country_id " + country_id);
+					} else {
+						var country = rsp[country_id];
+						if (! set_bbox) {
+							self.set_bbox(map, country.bbox);
+						}
+						if (cb) {
+							cb({
+								bbox: country.bbox,
+								country: country
+							});
+						}
 					}
 				});
 			};
@@ -128,25 +134,6 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 				name: 'default_bbox',
 				value: bbox
 			}, onsuccess, onerror);
-		},
-
-		'load_country_wof': function(id, cb) {
-
-			var base_url = $('body').data('data-abs-root-url');
-			var relpath = mapzen.whosonfirst.uri.id2relpath(id);
-			var url = base_url + relpath;
-
-			var onsuccess = function(rsp) {
-				if (cb) {
-					cb(rsp);
-				}
-			};
-
-			var onfailure = function(rsp) {
-				mapzen.whosonfirst.log.error('Could not load to country WOF ' + id + '.');
-			};
-
-			mapzen.whosonfirst.net.fetch(url, onsuccess, onfailure);
 		}
 	}
 

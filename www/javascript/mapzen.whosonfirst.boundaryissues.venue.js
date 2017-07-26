@@ -36,21 +36,19 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		set_country: function(country) {
 
-			if (country.properties['wof:id'] == self.country_id) {
+			if (country['wof:id'] == self.country_id) {
 				// No change in the ID, so no need to reload the WOF record
 				return;
 			}
 
-			var props = country.properties;
-
-			if (props['iso:country']) {
-				self.set_property('iso:country', props['iso:country']);
+			if (country['iso:country']) {
+				self.set_property('iso:country', country['iso:country']);
 			}
-			if (props['wof:country']) {
-				self.set_property('wof:country', props['wof:country']);
+			if (country['wof:country']) {
+				self.set_property('wof:country', country['wof:country']);
 			}
 
-			self.country_id = country.properties['wof:id'];
+			self.country_id = country['wof:id'];
 		},
 
 		generate_feature: function() {
@@ -164,11 +162,16 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						$('#venue-response').html('');
 					}
 					self.loading_country = true;
-					mapzen.whosonfirst.boundaryissues.bbox.load_country_wof(country_id, function(country) {
-						self.set_country(country);
-						self.loading_country = false;
-						if (self.on_set_country) {
-							self.on_set_country();
+					mapzen.whosonfirst.utils.get_meta_file('countries.json', function(countries) {
+						country_id = "" + country_id;
+						if (! countries[country_id]) {
+							$('#venue-response').html('<div class="alert alert-danger alert-country">Could not find country_id ' + country_id + '.</div>');
+						} else {
+							self.set_country(countries[country_id]);
+							self.loading_country = false;
+							if (self.on_set_country) {
+								self.on_set_country();
+							}
 						}
 					});
 				}
