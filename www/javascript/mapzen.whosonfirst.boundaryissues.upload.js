@@ -163,18 +163,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
-		get_meta_file: function(filename, cb){
-			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/' + filename);
-			var onsuccess = function(result){
-				cb(result);
-			};
-			var onerror = function(){
-				mapzen.whosonfirst.log.debug("error loading " + filename + ".");
-			};
-			var cache_ttl = 60 * 60 * 1000; // one hour
-			return mapzen.whosonfirst.net.fetch(url, onsuccess, onerror, cache_ttl);
-		},
-
 		preview_geojson: function(data){
 
 			try {
@@ -193,7 +181,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var map = self.setup_map_preview(geojson);
 
-			self.get_meta_file('property_aliases.json', function(property_aliases) {
+			mapzen.boundaryissues.utils.get_meta_file('property_aliases.json', function(property_aliases) {
 				if (geojson.type == "Feature") {
 					is_collection = false;
 					if (map) {
