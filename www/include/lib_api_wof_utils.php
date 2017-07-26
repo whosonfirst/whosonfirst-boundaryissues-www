@@ -70,7 +70,7 @@
 		$url = $GLOBALS['cfg']['wof_api_base_url'];
 		unset($_POST['access_token']);
 		$_POST['method'] = $method;
-		$_POST['api_key'] = $GLOBALS['cfg']['mazpen_api_key'];
+		$_POST['api_key'] = $GLOBALS['cfg']['mapzen_api_key'];
 		$query = http_build_query($_POST);
 		$url = "$url?$query";
 		$headers = array();
