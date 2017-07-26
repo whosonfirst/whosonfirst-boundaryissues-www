@@ -15,7 +15,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		properties: {
 			'wof:placetype': 'venue'
 		},
-		country_id: -1,
 
 		reset_properties: function() {
 			self.properties = {
@@ -32,23 +31,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				value = JSON.stringify(value);
 			}
 			$('td[data-property="' + name + '"]').html(htmlspecialchars(value));
-		},
-
-		set_country: function(country) {
-
-			if (country['wof:id'] == self.country_id) {
-				// No change in the ID, so no need to reload the WOF record
-				return;
-			}
-
-			if (country['iso:country']) {
-				self.set_property('iso:country', country['iso:country']);
-			}
-			if (country['wof:country']) {
-				self.set_property('wof:country', country['wof:country']);
-			}
-
-			self.country_id = country['wof:id'];
 		},
 
 		generate_feature: function() {
@@ -140,45 +122,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					self.set_property('wof:hierarchy', []);
 				}
 
-				var country_id = -1;
-				if (rsp.hierarchy.length > 0) {
-					for (var i = 0; i < rsp.hierarchy.length; i++) {
-						if (rsp.hierarchy[i].country_id &&
-						    country_id == -1) {
-							// Found a country ID, use that
-							country_id = rsp.hierarchy[i].country_id;
-						} else if (rsp.hierarchy[i].country_id &&
-						           rsp.hierarchy[i].country_id != country_id) {
-							// Not all hierarchies match
-							country_id = -1;
-						}
-					}
-				}
-				if (country_id == -1) {
-					mapzen.whosonfirst.log.error('Error choosing a country ID.');
-					$('#venue-response').html('<div class="alert alert-danger alert-country">We could not pick a country for this venue.</div>');
-				} else {
-					if ($('#venue-response .alert-country').length > 0) {
-						$('#venue-response').html('');
-					}
-					self.loading_country = true;
-					mapzen.whosonfirst.utils.get_meta_file('countries.json', function(countries) {
-						country_id = "" + country_id;
-						if (! countries[country_id]) {
-							$('#venue-response').html('<div class="alert alert-danger alert-country">Could not find country_id ' + country_id + '.</div>');
-						} else {
-							self.set_country(countries[country_id]);
-							self.loading_country = false;
-							if (self.on_set_country) {
-								self.on_set_country();
-							}
-						}
-					});
-				}
-
 				self.looking_up_hierarchy = false;
-				if (! self.loading_country &&
-				    self.on_loaded_hierarchy) {
+				if (self.on_loaded_hierarchy) {
 					self.on_loaded_hierarchy();
 				}
 			}
@@ -451,7 +396,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 				var dupe_assignment_callback = function() {
 					$('#venue form').append('<input type="hidden" name="wof_id" id="wof_id" value="' + wof_id + '">');
-					$('#dupe-merged').html('This CSV row will be merged with <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
+					$('#dupe-merged').html('Your edits will be merged into <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
 					$('#submit-btn').attr('value', 'Save venue');
 
 					// TODO: do something more sophisticated here, taking
@@ -487,8 +432,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 								}
 								self.disable_nearby_check = false;
 								self.check_nearby();
-							} else {
-								$('#venue-response').html('<div class="alert alert-danger">Uh oh, something went wrong unmarking this row as a duplicate.</div>');
 							}
 						});
 					});
@@ -591,6 +534,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 		set_wof_id: function(wof_id, success_cb, error_cb) {
 
+			if ($('#csv_id').val() == '') {
+				success_cb();
+			}
+
 			var data = {
 				crumb: $('#venue').data('crumb-update-csv'),
 				csv_id: $('#csv_id').val(),
@@ -655,8 +602,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		L.control.locate().addTo(map);
 
 		if (bbox_init) {
-			mapzen.whosonfirst.boundaryissues.bbox.init(map, function(rsp) {
-				self.set_country(rsp.country);
+			mapzen.whosonfirst.boundaryissues.bbox.init(map, function() {
 				slippymap.crosshairs.init(map);
 			});
 		}
@@ -708,10 +654,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		$('#venue form').submit(function(e) {
 
 			e.preventDefault();
-			if (self.country_id == -1) {
-				$('#venue-response').html('<div class="alert alert-danger alert-country">We could not pick a country for this venue.</div>');
-				return;
-			}
+
 			var parent_id = self.properties['wof:parent_id'];
 			var hierarchy = self.properties['wof:hierarchy'];
 			if ($('input[name="name"]').val() == '') {
@@ -722,8 +665,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			} else if (! ('wof:parent_id' in self.properties)) {
 				self.update_coordinates();
 				$('#venue-response').html('<div class="alert alert-warning">Oops, the parent WOF ID has not been assigned. Try again in a moment?</div>');
-			} else if (self.loading_country) {
-				self.on_set_country = save_venue;
 			} else if (self.looking_up_hierarchy) {
 				self.on_loaded_hierarchy = save_venue;
 			} else {

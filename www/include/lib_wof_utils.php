@@ -192,11 +192,6 @@
 		$props = $feature['properties'];
 		$pt = $props['wof:placetype'];
 
-		// Huh, there is already a wof:repo property. Just use that.
-		if ($props['wof:repo']) {
-			return array('ok' => 1, 'repo' => $props['wof:repo']);
-		}
-
 		// These placetypes are kept separately from whosonfirst-data
 		$separate_pt = array(
 			'venue',
@@ -214,7 +209,10 @@
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
-			$country = $rsp['country'];
+
+			$iso_country = $rsp['iso_country'];
+			$wof_country = $rsp['wof_country'];
+			$country = strtolower($wof_country);
 
 			if (in_array($country, $include_region)) {
 				$rsp = wof_utils_getregion($feature);
@@ -231,7 +229,12 @@
 		}
 
 		if ($repo) {
-			return array('ok' => 1, 'repo' => $repo);
+			return array(
+				'ok' => 1,
+				'repo' => $repo,
+				'iso_country' => $iso_country,
+				'wof_country' => $wof_country
+			);
 		} else {
 			return array('ok' => 0, 'error' => 'No repo found for feature.');
 		}
@@ -242,41 +245,45 @@
 	// Given a feature, what is its country 2-letter abbreviation?
 
 	function wof_utils_getcountry($feature) {
+
 		$props = $feature['properties'];
-		$country = null;
-		if ($props['wof:country']) {
-			$country = strtolower($props['wof:country']);
-		} else if ($props['iso:country']) {
-			$country = strtolower($props['iso:country']);
-		} else if ($props['wof:hierarchy']) {
+
+		$iso_country = null;
+		$wof_country = null;
+
+		if ($props['wof:hierarchy']) {
 			foreach ($props['wof:hierarchy'] as $hier) {
-				$country_id = $hier['country_id'];
-				$country_path = wof_utils_id2relpath($country_id);
-				$country_url = $GLOBALS['cfg']['data_abs_root_url'] . $country_path;
-				$more = array(
-					'http_timeout' => 60
-				);
-				$rsp = http_get($country_url, array(), $more);
-				if (! $rsp['ok']) {
-					return $rsp;
+				$path = wof_utils_find_id($hier['country_id']);
+				if (! $path) {
+					continue;
+				}
+				$geojson = file_get_contents($path);
+				$wof = json_decode($geojson, 'as hash');
+
+				if (! $iso_country) {
+					$iso_country = $wof['properties']['iso:country'];
+				} else if ($iso_country != $wof['properties']['iso:country']) {
+					$iso_country = '';
 				}
 
-				$wof = json_decode($rsp['body'], 'as hash');
-				if ($wof['properties']['wof:country']) {
-					$country = strtolower($wof['properties']['wof:country']);
-				} else if ($wof['properties']['iso:country']) {
-					$country = strtolower($wof['properties']['iso:country']);
-				}
-
-				if ($country) {
-					break;
+				if (! $wof_country) {
+					$wof_country = $wof['properties']['wof:country'];
+				} else if ($wof_country != $wof['properties']['wof:country']) {
+					$wof_country = '';
 				}
 			}
 		}
-		if ($country) {
-			return array('ok' => 1, 'country' => $country);
+		if ($wof_country) {
+			return array(
+				'ok' => 1,
+				'iso_country' => $iso_country,
+				'wof_country' => $wof_country
+			);
 		} else {
-			return array('ok' => 0, 'error' => 'No country found for feature.');
+			return array(
+				'ok' => 0,
+				'error' => 'No definitive country found for feature.'
+			);
 		}
 	}
 

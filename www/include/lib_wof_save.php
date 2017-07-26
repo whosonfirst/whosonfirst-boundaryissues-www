@@ -118,6 +118,8 @@
 			return $rsp;
 		}
 		$repo = $rsp['repo'];
+		$iso_country = $rsp['iso_country'];
+		$wof_country = $rsp['wof_country'];
 
 		if (! users_acl_can_edit($GLOBALS['cfg']['user'], $repo)) {
 			return array(
@@ -146,38 +148,37 @@
 		// If this is a new record, automatically copy wof:name property
 		// into the name:eng_x_preferred. (20160829/dphiffer)
 
-		// Also, assign the wof:repo property. (20161118/dphiffer)
-
 		if (! $feature['properties']['wof:id']) {
 			$feature['properties']['name:eng_x_preferred'] = array(
 				$feature['properties']['wof:name']
 			);
-
-			// This next part is kind of a kludge, but necessary because when
-			// PHP JSON-encodes `array()` it comes out as `[]` instead of
-			// `{}`. So we just make sure to take care of wof:concordances by
-			// explicity turning an empty array into an empty object.
-			// (20161031/dphiffer)
-			if (empty($feature['properties']['wof:concordances'])) {
-				$feature['properties']['wof:concordances'] = new stdClass();
-			}
-
-			if ($GLOBALS['cfg']['enable_feature_multi_repo']) {
-				// Pick the repo based on placetype/country/region
-				$rsp = wof_utils_pickrepo($feature);
-				if (! $rsp['ok']) {
-					return $rsp;
-				}
-				$feature['properties']['wof:repo'] = $rsp['repo'];
-			} else {
-				// Choose wof:repo based on wof_data_dir
-				if (preg_match('#/([^/]+)/data/?$#', $GLOBALS['cfg']['wof_data_dir'], $matches)) {
-					$feature['properties']['wof:repo'] = $matches[1];
-				}
-			}
-
-			$geojson = json_encode($feature);
 		}
+
+		// This next part is kind of a kludge, but necessary because when
+		// PHP JSON-encodes `array()` it comes out as `[]` instead of
+		// `{}`. So we just make sure to take care of wof:concordances by
+		// explicity turning an empty array into an empty object.
+		// (20161031/dphiffer)
+		if (empty($feature['properties']['wof:concordances'])) {
+			$feature['properties']['wof:concordances'] = new stdClass();
+		}
+		if (empty($feature['properties']['mz:hours'])) {
+			$feature['properties']['mz:hours'] = new stdClass();
+		}
+
+		// Make sure the record has repo & country properties.
+		// (20170726/dphiffer)
+		if (! $feature['properties']['wof:repo']) {
+			$feature['properties']['wof:repo'] = $repo;
+		}
+		if (! $feature['properties']['iso:country']) {
+			$feature['properties']['iso:country'] = $iso_country;
+		}
+		if (! $feature['properties']['wof:country']) {
+			$feature['properties']['wof:country'] = $wof_country;
+		}
+
+		$geojson = json_encode($feature);
 
 		$user = users_get_by_id($user_id);
 		$branch = users_settings_get_single($user, 'branch');

@@ -51,7 +51,7 @@ mapzen.whosonfirst.boundaryissues.bbox = (function() {
 
 			var onsuccess = function(rsp) {
 				var country_id = "" + rsp.country_id;
-				mapzen.whosonfirst.utils.get_meta_file('countries.json', function(rsp) {
+				mapzen.whosonfirst.boundaryissues.utils.get_meta_file('countries.json', function(rsp) {
 					if (! rsp[country_id]) {
 						mapzen.whosonfirst.log.error("could not find country_id " + country_id);
 					} else {
