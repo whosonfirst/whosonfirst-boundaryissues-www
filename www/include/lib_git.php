@@ -36,18 +36,13 @@
 
 		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git clone: {$rsp['error']}"
-			);
+			return $rsp;
 		}
 
-		// Should this handle GitHub redirects?
+		// Should (does) this handle GitHub redirects?
 
-		return array(
-			'ok' => 1,
-			'cloned' => $url
-		);
+		$rsp['cloned'] = $url;
+		return $rsp;
 	}
 
 	########################################################################
@@ -58,16 +53,11 @@
 
 		$rsp = git_execute($cwd, $args);
 		if (! $rsp['ok']) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git add: {$rsp['error']}"
-			);
+			$rsp;
 		}
 
-		return array(
-			'ok' => 1,
-			'added' => $path
-		);
+		$rsp['added'] = $path;
+		return $rsp;
 	}
 
 	########################################################################
@@ -77,15 +67,7 @@
 		$esc_message = escapeshellarg($message);
 		$args = "commit --message=$esc_message $args";
 
-		$rsp = git_execute($cwd, $args);
-		if (! $rsp['ok']) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git commit: {$rsp['error']}"
-			);
-		}
-
-		return $rsp;
+		return git_execute($cwd, $args);
 	}
 
 	########################################################################
@@ -104,30 +86,13 @@
 
 		$args = "pull $opts $remote $branch";
 		$rsp = git_execute($cwd, $args);
-		$git_pull_output = "{$rsp['output']}\n{$rsp['error']}";
-
 		if (! $rsp['ok']) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git pull: $git_pull_output"
-			);
+			return $rsp;
 		}
 
-		$success_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
-		$no_changes_regex = "/Current branch $curr_branch is up to date./m";
-		$no_changes_regex_alt = "/up-to-date/m";
-
-		if (! preg_match($success_regex, $git_pull_output, $success_match) &&
-		    ! preg_match($no_changes_regex, $git_pull_output) &&
-		    ! preg_match($no_changes_regex_alt, $git_pull_output)) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git pull: $git_pull_output"
-			);
-		}
-
-		if ($success_match) {
-			$rsp['commit_hashes'] = $success_match[0];
+		$hashes_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
+		if (preg_match($hashes_regex, $rsp['stdout'], $hashes_match)) {
+			$rsp['commit_hashes'] = $hashes_match[0];
 		}
 
 		return $rsp;
@@ -149,29 +114,13 @@
 
 		$args = "push $opts $remote $branch";
 		$rsp = git_execute($cwd, $args);
-		$git_push_output = "{$rsp['error']}{$rsp['output']}";
-
 		if (! $rsp['ok']) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git push: $git_push_output"
-			);
+			return $rsp;
 		}
 
-		$update_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
-		$new_repo_regex = "/\[new branch\]\s+$curr_branch -> $branch/m";
-		$no_changes_regex = '/up-to-date/m';
-		if (! preg_match($update_regex, $git_push_output, $update_match) &&
-		    ! preg_match($new_repo_regex, $git_push_output) &&
-		    ! preg_match($no_changes_regex, $git_push_output)) {
-			return array(
-				'ok' => 0,
-				'error' => "Error from git push: $git_push_output"
-			);
-		}
-
-		if ($update_match) {
-			$rsp['commit_hashes'] = $update_match[0];
+		$hashes_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
+		if (preg_match($hashes_regex, $rsp['stdout'], $hashes_match)) {
+			$rsp['commit_hashes'] = $hashes_match[0];
 		}
 
 		return $rsp;
@@ -185,7 +134,7 @@
 			return $rsp;
 		}
 
-		if (preg_match('/^\* (.+)$/m', $rsp['rsp'], $matches)) {
+		if (preg_match('/^\* (.+)$/m', $rsp['stderr'], $matches)) {
 			return array(
 				'ok' => 1,
 				'branch' => $matches[1]
@@ -207,8 +156,10 @@
 			return $rsp;
 		}
 
+		print_r($rsp);
+
 		$branches = array();
-		preg_match_all('/^(\*)?\s*([a-zA-Z0-9_-]+)$/m', $rsp['rsp'], $matches);
+		preg_match_all('/^(\*)?\s*([a-zA-Z0-9_-]+)$/m', $rsp['stderr'], $matches);
 
 		$rsp = array(
 			'ok' => 1,
@@ -244,19 +195,18 @@
 			);
 		}
 
-		$error = stream_get_contents($pipes[1]);
-		$output = stream_get_contents($pipes[2]);
+		$stderr = stream_get_contents($pipes[1]);
+		$stdout = stream_get_contents($pipes[2]);
 		fclose($pipes[1]);
 		fclose($pipes[2]);
-		proc_close($proc);
+		$exit_status = proc_close($proc);
 
 		$rsp = array(
-			'ok' => 1,
+			'ok' => ($exit_status == 0) ? 1 : 0,
 			'cwd' => $cwd,
 			'cmd' => $cmd,
-			'output' => trim($output),
-			'error' => trim($error),
-			'rsp' => trim($error) . trim($output)
+			'stdout' => trim($stdout),
+			'stderr' => trim($stderr)
 		);
 		if (function_exists('audit_trail')) {
 			// Audit all the git commands!
@@ -265,13 +215,6 @@
 				'cmd' => "git $args"
 			));
 		}
-
-		// Originally this would return 'ok' => 0 if it got back a non-
-		// empty STDERR value. Then I noticed that `git hash-object` was
-		// using STDERR to return the hash value. Plus, it seems that
-		// STDOUT is used to convey info about a failed `git push` or
-		// `git pull`, so now I pass both values back and expect the
-		// caller to take the right action. (20160502/dphiffer)
 
 		return $rsp;
 	}
