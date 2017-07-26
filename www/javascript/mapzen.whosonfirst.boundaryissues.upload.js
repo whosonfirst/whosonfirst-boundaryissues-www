@@ -18,7 +18,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    csv_preview_row = 1,
 	    zip_file,
 	    upload_is_ready = false,
-	    properties_are_ready = false,
 	    is_collection,
 	    is_csv,
 	    is_zip,
@@ -148,8 +147,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Intercept the form submit event and upload the file via API
 			$form.submit(function(e){
 				e.preventDefault();
-				if (! upload_is_ready ||
-				    ! properties_are_ready) {
+				if (! upload_is_ready) {
 					return;
 				}
 				if (is_geotagged) {
@@ -165,17 +163,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
-		setup_property_aliases: function(){
-			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/property_aliases.json');
-			var onsuccess = function(aliases){
-				self.property_aliases = aliases;
-				properties_are_ready = true;
+		get_meta_file: function(filename, cb){
+			var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/meta/' + filename);
+			var onsuccess = function(result){
+				cb(result);
 			};
 			var onerror = function(){
-				mapzen.whosonfirst.log.debug("error loading property aliases.");
+				mapzen.whosonfirst.log.debug("error loading " + filename + ".");
 			};
 			var cache_ttl = 60 * 60 * 1000; // one hour
-			mapzen.whosonfirst.net.fetch(url, onsuccess, onerror, cache_ttl);
+			return mapzen.whosonfirst.net.fetch(url, onsuccess, onerror, cache_ttl);
 		},
 
 		preview_geojson: function(data){
@@ -196,20 +193,22 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var map = self.setup_map_preview(geojson);
 
-			if (geojson.type == "Feature") {
-				is_collection = false;
-				if (map) {
-					mapzen.whosonfirst.leaflet.fit_map(map, geojson);
-					self.show_feature_preview(map, geojson);
+			self.get_meta_file('property_aliases.json', function(property_aliases) {
+				if (geojson.type == "Feature") {
+					is_collection = false;
+					if (map) {
+						mapzen.whosonfirst.leaflet.fit_map(map, geojson);
+						self.show_feature_preview(map, geojson);
+					}
+					self.show_props_preview(geojson, property_aliases);
+				} else if (geojson.type == "FeatureCollection") {
+					is_collection = true;
+					if (map) {
+						self.show_collection_preview(map, geojson);
+					}
+					self.show_props_preview(geojson, property_aliases);
 				}
-				self.show_props_preview(geojson);
-			} else if (geojson.type == "FeatureCollection") {
-				is_collection = true;
-				if (map) {
-					self.show_collection_preview(map, geojson);
-				}
-				self.show_props_preview(geojson);
-			}
+			});
 		},
 
 		preview_csv: function(data) {
@@ -707,7 +706,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			$('#upload-btn').attr('disabled', false);
 		},
 
-		get_meta_json: function() {
+		get_pipeline_meta_json: function() {
 			var meta = self.meta || {
 				slack_handle: '',
 				generate_meta_files: false
@@ -793,15 +792,16 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 		},
 
-		show_props_preview: function(geojson) {
+		show_props_preview: function(geojson, show_props_preview) {
 			var props = self.get_geojson_props(geojson);
 			if (! props) {
 				return;
 			}
 			var groups = [];
 			var group_props = {};
+
 			$.each(props, function(i, orig_prop) {
-				var prop = self.get_translated_property(orig_prop);
+				var prop = self.get_translated_property(property_aliases, orig_prop);
 				var group = '_no_group_';
 				var group_match = prop.match(/^([a-z0-9_]+)\:/i);
 				if (group_match) {
@@ -880,9 +880,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			return null;
 		},
 
-		get_translated_property: function(prop) {
-			if (self.property_aliases[prop]) {
-				return self.property_aliases[prop];
+		get_translated_property: function(property_aliases, prop) {
+			if (property_aliases[prop]) {
+				return property_aliases[prop];
 			} else {
 				return prop;
 			}
@@ -906,8 +906,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 		post_file: function() {
 
-			if (! upload_is_ready ||
-			    ! properties_are_ready) {
+			if (! upload_is_ready) {
 				return;
 			}
 
@@ -994,7 +993,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			} else if (is_zip) {
 
-				data.append('meta_json', self.get_meta_json());
+				data.append('meta_json', self.get_pipeline_meta_json());
 
 			} else {
 
@@ -1122,9 +1121,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 
 		self.setup_upload();
-		if (! $('#upload-form').hasClass('geotagged')) {
-			self.setup_property_aliases();
-		}
 	});
 
 	return self;
