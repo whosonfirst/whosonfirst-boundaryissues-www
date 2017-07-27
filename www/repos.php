@@ -26,6 +26,13 @@
 		$pagination = $rsp['pagination'];
 		$rows = $rsp['rows'];
 
+		foreach ($rows as $index => $row) {
+			if (preg_match('/pipeline (\d+)/', $row['status'], $matches)) {
+				$pipeline_id = $matches[1];
+				$rows[$index]['url'] = $url = "{$GLOBALS['cfg']['abs_root_url']}pipeline/$pipeline_id/";;
+			}
+		}
+
 		$GLOBALS['smarty']->assign_by_ref("pagination", $pagination);
 		$GLOBALS['smarty']->assign_by_ref("rows", $rows);
 

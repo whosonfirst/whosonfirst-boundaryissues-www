@@ -27,7 +27,7 @@
 {foreach from=$rows item="row"}
 <tr>
 	<td><a href="{$cfg.abs_root_url}repos/?repo={$row.repo|@escape}">{$row.repo|escape}</a></td>
-	<td>{$row.status|escape}</td>
+	<td>{if $row.url}<a href="{$row.url|escape}">{/if}{$row.status|escape}{if $row.url}</a>{/if}</td>
 	<td>{if $row.debug}<a href="#" class="debug" data-id="{$row.id|escape}">show debug</a>{/if}</td>
 	<td>{$row.updated|escape}</td>
 </tr>
