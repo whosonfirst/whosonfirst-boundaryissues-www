@@ -23,7 +23,7 @@ $GLOBALS['smarty']->assign('pipeline_filename', $pipeline['filename']);
 $GLOBALS['smarty']->assign('pipeline_phase', $pipeline['phase']);
 
 $GLOBALS['smarty']->assign('pipeline_repo', $pipeline['meta']['repo']);
-$GLOBALS['smarty']->assign('pipeline_branch', $pipeline['meta']['branch']);
+$GLOBALS['smarty']->assign('pipeline_branch', "pipeline-{$pipeline['id']}");
 
 $crumb_update = crumb_generate('api', 'wof.pipeline.update');
 $GLOBALS['smarty']->assign("crumb_update", $crumb_update);
