@@ -675,7 +675,8 @@
 			} else {
 				$notification = ' <!here>';
 			}
-		} else if ($phase == 'success') {
+		} else if ($phase == 'success' ||
+		           $phase == 'confirm') {
 			if ($pipeline['meta']['slack_handle']) {
 				$notification = " @{$pipeline['meta']['slack_handle']}";
 			}
