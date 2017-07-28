@@ -11,6 +11,7 @@
 	loadlib('wof_pipeline_remove_properties');
 	loadlib('wof_pipeline_fix_property_type');
 	loadlib('wof_pipeline_merge_pr');
+	loadlib('wof_pipeline_update_repo');
 
 	########################################################################
 
@@ -47,14 +48,15 @@
 			$meta = $rsp['meta'];
 
 			$filename = $upload['name'];
-			$filename_esc = addslashes($filename);
 		} else if ($meta['name']) {
 			$filename = $meta['name'];
-			$filename_esc = addslashes($filename);
+		} else if ($meta['repo']) {
+			$filename = $meta['repo'];
 		} else {
 			$filename = null;
-			$filename_esc = null;
 		}
+
+		$filename_esc = addslashes($filename);
 
 		$rsp = db_insert('boundaryissues_pipeline', array(
 			'filename' => $filename_esc,
@@ -230,7 +232,11 @@
 			return false;
 		}
 
-		if ($pipeline['meta']['branch_merge']) {
+		if ($pipeline['type'] == 'update_repo') {
+			wof_pipeline_log($pipeline['id'], "Updated {$pipeline['meta']['repo']}", $rsp['stdout'], $rsp);
+			wof_pipeline_finish($pipeline, 'success');
+			return false;
+		} else if ($pipeline['meta']['branch_merge']) {
 			wof_pipeline_phase($pipeline, 'branch');
 		} else {
 			wof_pipeline_phase($pipeline, 'execute');
@@ -702,24 +708,21 @@
 		$files = array();
 
 		$rsp = wof_pipeline_cleanup_file($pipeline, $zip_file);
-		if (! $rsp['ok']) {
-			return $rsp;
+		if ($rsp['ok']) {
+			$files[] = $zip_file;
 		}
-		$files[] = $zip_file;
 
 		$rsp = wof_pipeline_cleanup_file($pipeline, 'meta.json');
-		if (! $rsp['ok']) {
-			return $rsp;
+		if ($rsp['ok']) {
+			$files[] = 'meta.json';
 		}
-		$files[] = 'meta.json';
 
 		if ($meta['files']) {
 			foreach ($meta['files'] as $filename) {
 				$rsp = wof_pipeline_cleanup_file($pipeline, $filename);
 				if (! $rsp['ok']) {
-					return $rsp;
+					$files[] = $filename;
 				}
-				$files[] = $filename;
 			}
 		}
 
