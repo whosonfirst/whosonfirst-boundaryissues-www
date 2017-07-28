@@ -593,6 +593,10 @@
 					'branch' => $branch
 				));
 				if (! $rsp['ok']) {
+					if ($options['verbose']) {
+						echo "Error from wof_save_pending_pull:\n";
+						print_r($rsp);
+					}
 					return wof_save_pending_error($repo_name, $rsp);
 				}
 			}
@@ -965,12 +969,9 @@
 			'args' => '--rebase'
 		));
 		if (! $rsp['ok'] &&
-		    strpos($rsp['rsp'], "Couldn\\'t find remote ref $branch") === false) {
+		    strpos($rsp['stdout'], "Couldn\\'t find remote ref $branch") === false) {
 			// We are okay with the "branch doesn't exist yet on GitHub" error
-			return array(
-				'ok' => 0,
-				'error' => "Problem with git pull: {$rsp['error']}{$rsp['output']}"
-			);
+			return $rsp;
 		}
 
 		// Index updated records in Elasticsearch

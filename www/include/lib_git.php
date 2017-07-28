@@ -208,6 +208,10 @@
 			'stdout' => trim($stdout),
 			'stderr' => trim($stderr)
 		);
+		if (! $rsp['ok']) {
+			$sep = ($rsp['stdout'] && $rsp['stderr']) ? "\n" : '';
+			$rsp['error'] = "{$rsp['stdout']}{$sep}{$rsp['stderr']}";
+		}
 		if (function_exists('audit_trail')) {
 			// Audit all the git commands!
 			audit_trail('git_execute', $rsp, array(
