@@ -199,10 +199,10 @@
 		$stdout = stream_get_contents($pipes[2]);
 		fclose($pipes[1]);
 		fclose($pipes[2]);
-		$exit_status = proc_close($proc);
+		$exit_code = proc_close($proc);
 
 		$rsp = array(
-			'ok' => ($exit_status == 0) ? 1 : 0,
+			'ok' => ($exit_code == 0) ? 1 : 0,
 			'cwd' => $cwd,
 			'cmd' => $cmd,
 			'stdout' => trim($stdout),
