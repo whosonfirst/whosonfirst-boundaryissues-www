@@ -883,7 +883,7 @@
 		} else {
 			$error = 'Something went wrong, but I don’t know what';
 		}
-		$debug = "save_pending.php: $error";
+		$debug = "save_pending.php ($repo_name): $error";
 		slack_bot_msg(":warning: $debug");
 		wof_repo_set_status($repo_name, 'save pending error', $debug, $rsp);
 		return $rsp;
