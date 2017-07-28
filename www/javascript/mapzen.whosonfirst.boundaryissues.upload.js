@@ -702,7 +702,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			meta.type = $('#pipeline-type').val();
 			meta.slack_handle = $('#slack_handle').val();
-			//meta.generate_meta_files = $('#generate_meta_files')[0].checked;
 
 			if (meta.type == 'neighbourhood') {
 				meta.process_venues = $('#process_venues')[0].checked;

@@ -668,17 +668,22 @@
 			'updated' => $now
 		), "id = $pipeline_id");
 
+		$slack_handle = trim($pipeline['meta']['slack_handle']);
+		if (substr($slack_handle, 0, 1) != '@') {
+			$slack_handle = "@$slack_handle";
+		}
+
 		$notification = '';
 		if ($phase == 'error') {
 			if ($pipeline['meta']['slack_handle']) {
-				$notification = " @{$pipeline['meta']['slack_handle']}";
+				$notification = " $slack_handle";
 			} else {
 				$notification = ' <!here>';
 			}
 		} else if ($phase == 'success' ||
 		           $phase == 'confirm') {
 			if ($pipeline['meta']['slack_handle']) {
-				$notification = " @{$pipeline['meta']['slack_handle']}";
+				$notification = " $slack_handle";
 			}
 		}
 
