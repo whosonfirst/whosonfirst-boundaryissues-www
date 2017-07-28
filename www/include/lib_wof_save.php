@@ -723,6 +723,7 @@
 				if ($options['verbose']) {
 					echo "No pending updates for $repo_path (skipping)\n";
 				}
+				$repos[] = basename(dirname($repo_path));
 				continue;
 			}
 
@@ -791,6 +792,9 @@
 		$updated = array();
 
 		foreach ($saved as $wof_id => $updates) {
+			if ($options['verbose']) {
+				echo "Cleaning up $wof_id (" . count($updates) . " updates)\n";
+			}
 			foreach ($updates as $update) {
 				if ($options['verbose']) {
 					$date = date('Ymd');
@@ -883,7 +887,7 @@
 		} else {
 			$error = 'Something went wrong, but I don’t know what';
 		}
-		$debug = "save_pending.php: $error";
+		$debug = "save_pending.php ($repo_name): $error";
 		slack_bot_msg(":warning: $debug");
 		wof_repo_set_status($repo_name, 'save pending error', $debug, $rsp);
 		return $rsp;
