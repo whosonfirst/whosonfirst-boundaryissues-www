@@ -1,1 +1,5 @@
 Options -Indexes
+
+<Files "slack_bot_users_list.json">
+	require all denied
+</Files>

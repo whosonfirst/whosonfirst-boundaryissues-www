@@ -17,3 +17,4 @@ certified
 /supervisor/whosonfirst-www-boundaryissues.conf
 /bin/test.php
 .remote-sync.json
+/www/meta/slack_bot_users_list.json
