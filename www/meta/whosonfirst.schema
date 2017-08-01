@@ -106,6 +106,9 @@
 						},
 						"sg:postcode": {
 							"type": "string"
+						},
+						"wk:population": {
+							"type": "integer"
 						}
 					},
 					"required": [

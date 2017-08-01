@@ -1697,8 +1697,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var type = $(input).data('type');
 				}
 				if (type == 'number') {
+					if (typeof value == 'string') {
+						value = value.replace(/[^0-9.-]/g, '');
+					}
 					value = parseFloat(value);
 				} else if (type == 'integer') {
+					if (typeof value == 'string') {
+						value = value.replace(/[^0-9-]/g, '');
+					}
 					value = parseInt(value);
 				} else if (type == 'json') {
 					value = JSON.parse(value);
