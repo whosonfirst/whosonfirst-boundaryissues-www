@@ -802,15 +802,23 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				'.json-schema-array[data-context="' + name + '"] > ul > li > input,' +
 				'.json-schema-array[data-context="' + name + '"]'
 			).parents('tr, li');
+
 			var wof_value = self.generate_feature();
 			var property = name.replace(/^properties\./, '');
 			var array_input = property.match(/^(.+)\[(\d+)\]$/);
+			var object_input = property.match(/^([^.]+)\.([^.]+)$/);
 			if (array_input) {
 				property = array_input[1];
 				name = 'properties.' + property;
 				var index = parseInt(array_input[2]);
 				var curr_value = wof_value.properties[property][index];
 				var init_value = self.initial_wof_value.properties[property][index];
+			} else if (object_input) {
+				property = object_input[1];
+				var subproperty = object_input[2];
+				name = 'properties.' + property;
+				var curr_value = wof_value.properties[property][subproperty];
+				var init_value = self.initial_wof_value.properties[property][subproperty];
 			} else {
 				var curr_value = wof_value.properties[property];
 				var init_value = self.initial_wof_value.properties[property];
