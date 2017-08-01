@@ -1733,8 +1733,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		generate_name_geojson: function(feature){
 			var names = {};
-			$('.names-language input.property').each(function(i, input){
-				var match = $(input).attr('name').match(/names\.([^.]+)\.(.+?)\[/);
+			var selector = '.names-language input.property, .names-language input.add-item';
+			$(selector).each(function(i, input){
+				var $parent = $(input).closest('.json-schema-array');
+				var context = $parent.data('context');
+				var match = context.match(/^names\.([^.]+)\.(.+)$/);
 				if (match){
 					var lang = match[1];
 					var type = match[2];
@@ -1742,7 +1745,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					if (! names[prop]) {
 						names[prop] = [];
 					}
-					names[prop].push($(input).val());
+					var value = $(input).val();
+					if (value) {
+						names[prop].push(value);
+					}
 				}
 			});
 			$.each(names, function(prop, value){
