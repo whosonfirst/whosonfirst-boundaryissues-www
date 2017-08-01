@@ -797,31 +797,45 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if (! name) {
 				return;
 			}
+
+			var orig_name = name;
+			var names_input = name.match(/^names\.([^.]+)\.(.+)$/);
+			if (names_input) {
+				var lang = names_input[1];
+				var kind = names_input[2];
+				name = 'properties.name:' + lang + '_x_' + kind;
+			}
+
 			var target = $(
-				'input[name="' + name + '"],' +
-				'.json-schema-array[data-context="' + name + '"] > ul > li > input,' +
-				'.json-schema-array[data-context="' + name + '"]'
+				'input[name="' + orig_name + '"],' +
+				'.json-schema-array[data-context="' + orig_name + '"] > ul > li > input,' +
+				'.json-schema-array[data-context="' + orig_name + '"]'
 			).parents('tr, li');
 
 			var wof_value = self.generate_feature();
 			var property = name.replace(/^properties\./, '');
 			var array_input = property.match(/^(.+)\[(\d+)\]$/);
 			var object_input = property.match(/^([^.]+)\.([^.]+)$/);
+			var init_value = null;
 			if (array_input) {
 				property = array_input[1];
 				name = 'properties.' + property;
 				var index = parseInt(array_input[2]);
 				var curr_value = wof_value.properties[property][index];
-				var init_value = self.initial_wof_value.properties[property][index];
+				if (self.initial_wof_value.properties[property]) {
+					init_value = self.initial_wof_value.properties[property][index];
+				}
 			} else if (object_input) {
 				property = object_input[1];
 				var subproperty = object_input[2];
 				name = 'properties.' + property;
 				var curr_value = wof_value.properties[property][subproperty];
-				var init_value = self.initial_wof_value.properties[property][subproperty];
+				if (self.initial_wof_value.properties[property]) {
+					init_value = self.initial_wof_value.properties[property][subproperty];
+				}
 			} else {
 				var curr_value = wof_value.properties[property];
-				var init_value = self.initial_wof_value.properties[property];
+				init_value = self.initial_wof_value.properties[property];
 			}
 			var $edit_list = $('#edit-status > ul');
 			if (! $edit_list.length) {
