@@ -167,9 +167,9 @@
 				$schema['properties'][$key]['_value'] = $value;
 				if (! $schema['properties'][$key]['type']) {
 					$type = 'string';
-					if (preg_match('/^[0-9]+$/', $value)) {
+					if (is_int($value)) {
 						$type = 'integer';
-					} else if (is_numeric($value)) {
+					} else if (is_float($value)) {
 						$type = 'number';
 					}
 					$schema['properties'][$key]['type'] = $type;
