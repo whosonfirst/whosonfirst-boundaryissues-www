@@ -99,72 +99,78 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				ux_language: 'en'
 			});
 
-			var placetype = $('input[name="properties.wof:placetype"]').val();
-			if (placetype == 'venue') {
-				self.setup_map_marker();
-			} else {
-				self.setup_map_geometry();
-			}
+			mapzen.whosonfirst.leaflet.tangram.map_with_prefs('map', 'map_prefs', function(_map, prefs) {
 
-			// sudo move me to stack.json
-			// (20170616/dphiffer)
-			var geocoder = L.control.geocoder('mapzen-LhT76h5', {
-				markers: {
-					icon: new VenueIcon()
+				map = _map;
+				self.map = _map;
+
+				var placetype = $('input[name="properties.wof:placetype"]').val();
+				if (placetype == 'venue') {
+					self.setup_map_marker();
+				} else {
+					self.setup_map_geometry();
 				}
-			}).addTo(map);
 
-			if ($('input[name="wof_id"]').length == 0) {
-				// On the "add" page, pick a good default bbox
-				mapzen.whosonfirst.boundaryissues.bbox.init(map);
-			}
+				// sudo move me to stack.json
+				// (20170616/dphiffer)
+				var geocoder = L.control.geocoder('mapzen-LhT76h5', {
+					markers: {
+						icon: new VenueIcon()
+					}
+				}).addTo(map);
 
-			var hash = new L.Hash(map);
+				if ($('input[name="wof_id"]').length == 0) {
+					// On the "add" page, pick a good default bbox
+					mapzen.whosonfirst.boundaryissues.bbox.init(map);
+				}
 
-			self.show_nearby_results();
-			map.on('dragend', function() {
+				var hash = new L.Hash(map);
+
 				self.show_nearby_results();
-			});
-
-			slippymap.crosshairs.init(map);
-			mapzen.whosonfirst.nearby.init(map);
-			mapzen.whosonfirst.nearby.inflate_nearby();
-
-			self.map = map;
-
-			geocoder.on('select', function(e) {
-				var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
-				var popup = geocoder.marker.bindPopup(html).openPopup();
-				var props = e.feature.properties;
-				$('#geocoder-marker-select').click(function(e) {
-					e.preventDefault();
-					popup.closePopup();
-					geocoder.collapse();
-					var ll = geocoder.marker.getLatLng();
-					self.lookup_hierarchy(ll.lat, ll.lng);
-					self.update_coordinates(ll, true);
-					self.set_marker(geocoder.marker);
-					if (props.label) {
-						self.set_property('addr:full', props.label);
-					}
-					if (props.housenumber) {
-						self.set_property('addr:housenumber', props.housenumber);
-					}
-					if (props.street) {
-						self.set_property('addr:street', props.street);
-					}
-					if (props.postalcode) { // Seeing postAL code coming from Pelias, but we prefer 'postcode'
-						self.set_property('addr:postcode', props.postalcode);
-					}
-					if (props.postcode) {
-						self.set_property('addr:postcode', props.postcode);
-					}
+				map.on('dragend', function() {
+					self.show_nearby_results();
 				});
-				$('#geocoder-marker-cancel').click(function(e) {
-					e.preventDefault();
-					popup.closePopup();
-					map.removeLayer(geocoder.marker);
+
+				slippymap.crosshairs.init(map);
+				mapzen.whosonfirst.nearby.init(map);
+				mapzen.whosonfirst.nearby.inflate_nearby();
+
+				geocoder.on('select', function(e) {
+					var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
+					var popup = geocoder.marker.bindPopup(html).openPopup();
+					var props = e.feature.properties;
+					$('#geocoder-marker-select').click(function(e) {
+						e.preventDefault();
+						popup.closePopup();
+						geocoder.collapse();
+						var ll = geocoder.marker.getLatLng();
+						self.lookup_hierarchy(ll.lat, ll.lng);
+						self.update_coordinates(ll, true);
+						self.set_marker(geocoder.marker);
+						if (props.label) {
+							self.set_property('addr:full', props.label);
+						}
+						if (props.housenumber) {
+							self.set_property('addr:housenumber', props.housenumber);
+						}
+						if (props.street) {
+							self.set_property('addr:street', props.street);
+						}
+						if (props.postalcode) { // Seeing postAL code coming from Pelias, but we prefer 'postcode'
+							self.set_property('addr:postcode', props.postalcode);
+						}
+						if (props.postcode) {
+							self.set_property('addr:postcode', props.postcode);
+						}
+					});
+					$('#geocoder-marker-cancel').click(function(e) {
+						e.preventDefault();
+						popup.closePopup();
+						map.removeLayer(geocoder.marker);
+					});
 				});
+
+				self.setup_drawing();
 			});
 		},
 
@@ -174,10 +180,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var lat = centroid.lat;
 				var lng = centroid.lng;
 				var zoom = 16;
-				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-					'map',
-					lat, lng, zoom
-				);
+
+				map.setView([lat, lng], zoom);
 				marker = new L.Marker([lat, lng], {
 					icon: new VenueIcon(),
 					draggable: true
@@ -187,15 +191,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.update_coordinates(ll, true);
 				});
 				self.update_where(lat, lng);
+
 			} else {
 				// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
 				var lat = 40.73581157695217;
-				var lon = -73.9815902709961;
+				var lng = -73.9815902709961;
 				var zoom = 12;
-				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-					'map',
-					lat, lon, zoom
-				);
+				map.setView([lat, lng], zoom);
 				var initial_position = L.Hash.parseHash(location.hash);
 				if (initial_position) {
 					// We've just deep-linked to a particular lat/lng, add a marker!
@@ -216,10 +218,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var lat = 40.73581157695217;
 			var lon = -73.9815902709961;
 			var zoom = 12;
-			map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-				'map',
-				lat, lon, zoom
-			);
+			map.setView([lat, lng], zoom);
 			var geojson_url = $('#geojson-link').attr('href');
 			$.get(geojson_url, function(feature) {
 				var bbox_style = mapzen.whosonfirst.leaflet.styles.bbox();
@@ -1952,7 +1951,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		self.setup_properties();
 		self.setup_map();
-		self.setup_drawing();
 		self.setup_form();
 		self.setup_buttons();
 
