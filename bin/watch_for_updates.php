@@ -15,7 +15,7 @@
 	$cmd = "$bin/pubssed-client -endpoint $endpoint";
 
 	$descriptor = array(
-		1 => array('pipe', 'w'), // stdout
+		2 => array('pipe', 'w'), // stderr
 	);
 	$pipes = array();
 	$proc = proc_open($cmd, $descriptor, $pipes, $cwd);
@@ -25,24 +25,29 @@
 		exit(1);
 	}
 
-	while ($line = fgets($pipes[1])) {
-		if (preg_match('/(\d+)\.geojson)/', $line, $matches)) {
+	while ($line = fgets($pipes[2])) {
+		if (preg_match('/(\d+)\.geojson/', $line, $matches)) {
+			$wof_id = $matches[1];
 			$path = wof_utils_find_id($wof_id);
 			if ($path) {
+				echo "found $path\n";
 				$geojson = file_get_contents($path);
 			} else {
+				echo "loading $url ...";
 				$url = wof_utils_id2abspath($data_root, $wof_id);
 				$rsp = http_get($url);
 				if (! $rsp['ok']) {
-					echo "Error loading $url: {$rsp['error']}\n";
+					echo "error: {$rsp['error']}\n";
 					continue;
 				}
+				echo "ok\n";
 				$geojson = $rsp['body'];
 			}
 
 			$feature = json_decode($geojson, 'as hash');
 			if ($feature['properties']['wof:repo']) {
 				$repo = $feature['properties']['wof:repo'];
+				echo "update_repo $repo\n";
 				wof_pipeline_create(array(
 					'type' => 'update_repo',
 					'repo' => $repo
@@ -50,5 +55,5 @@
 			}
 		}
 	}
-	fclose($pipes[1]);
+	fclose($pipes[2]);
 	$exit_status = proc_close($proc);

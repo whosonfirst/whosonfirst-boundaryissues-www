@@ -56,7 +56,10 @@
 							}
 						},
 						"wof:superseded_by": {
-							"type": "array"
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
 						},
 						"wof:breaches": {
 							"type": "array"
@@ -103,6 +106,9 @@
 						},
 						"sg:postcode": {
 							"type": "string"
+						},
+						"wk:population": {
+							"type": "integer"
 						}
 					},
 					"required": [

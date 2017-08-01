@@ -26,16 +26,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	// Return null (okay) or a string (error)
 	var validations = [
-		function() {
-			var lat = $('input[name="properties.geom:latitude"]').val();
-			var lng = $('input[name="properties.geom:longitude"]').val();
+		function(feature) {
+			if (! feature.geometry) {
+				return 'This record has no geometry.';
+			}
+			return null;
+		},
+		function(feature) {
+			if (! feature.properties['wof:parent_id']) {
+				return 'This record has no wof:parent_id.';
+			}
+			return null;
+		},
+		function(feature) {
+			var lat = feature.properties['geom:latitude'];
+			var lng = feature.properties['geom:longitude'];
 			if (! lat || ! lng) {
 				return 'Please set <span class=\"hey-look\">geom:latitude</span> and <span class=\"hey-look\">geom:longitude</span>.';
 			}
 			return null;
 		},
-		function() {
-			var wof_name = $('input[name="properties.wof:name"]').val();
+		function(feature) {
+			var wof_name = feature.properties['wof:name'];
 			if (! wof_name) {
 				return 'Please set <span class=\"hey-look\">wof:name</span>.';
 			}
@@ -99,72 +111,78 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				ux_language: 'en'
 			});
 
-			var placetype = $('input[name="properties.wof:placetype"]').val();
-			if (placetype == 'venue') {
-				self.setup_map_marker();
-			} else {
-				self.setup_map_geometry();
-			}
+			mapzen.whosonfirst.leaflet.tangram.map_with_prefs('map', 'map_prefs', function(_map, prefs) {
 
-			// sudo move me to stack.json
-			// (20170616/dphiffer)
-			var geocoder = L.control.geocoder('mapzen-LhT76h5', {
-				markers: {
-					icon: new VenueIcon()
+				map = _map;
+				self.map = _map;
+
+				var placetype = $('input[name="properties.wof:placetype"]').val();
+				if (placetype == 'venue') {
+					self.setup_map_marker();
+				} else {
+					self.setup_map_geometry();
 				}
-			}).addTo(map);
 
-			if ($('input[name="wof_id"]').length == 0) {
-				// On the "add" page, pick a good default bbox
-				mapzen.whosonfirst.boundaryissues.bbox.init(map);
-			}
+				// sudo move me to stack.json
+				// (20170616/dphiffer)
+				var geocoder = L.control.geocoder('mapzen-LhT76h5', {
+					markers: {
+						icon: new VenueIcon()
+					}
+				}).addTo(map);
 
-			var hash = new L.Hash(map);
+				if ($('input[name="wof_id"]').length == 0) {
+					// On the "add" page, pick a good default bbox
+					mapzen.whosonfirst.boundaryissues.bbox.init(map);
+				}
 
-			self.show_nearby_results();
-			map.on('dragend', function() {
+				var hash = new L.Hash(map);
+
 				self.show_nearby_results();
-			});
-
-			slippymap.crosshairs.init(map);
-			mapzen.whosonfirst.nearby.init(map);
-			mapzen.whosonfirst.nearby.inflate_nearby();
-
-			self.map = map;
-
-			geocoder.on('select', function(e) {
-				var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
-				var popup = geocoder.marker.bindPopup(html).openPopup();
-				var props = e.feature.properties;
-				$('#geocoder-marker-select').click(function(e) {
-					e.preventDefault();
-					popup.closePopup();
-					geocoder.collapse();
-					var ll = geocoder.marker.getLatLng();
-					self.lookup_hierarchy(ll.lat, ll.lng);
-					self.update_coordinates(ll, true);
-					self.set_marker(geocoder.marker);
-					if (props.label) {
-						self.set_property('addr:full', props.label);
-					}
-					if (props.housenumber) {
-						self.set_property('addr:housenumber', props.housenumber);
-					}
-					if (props.street) {
-						self.set_property('addr:street', props.street);
-					}
-					if (props.postalcode) { // Seeing postAL code coming from Pelias, but we prefer 'postcode'
-						self.set_property('addr:postcode', props.postalcode);
-					}
-					if (props.postcode) {
-						self.set_property('addr:postcode', props.postcode);
-					}
+				map.on('dragend', function() {
+					self.show_nearby_results();
 				});
-				$('#geocoder-marker-cancel').click(function(e) {
-					e.preventDefault();
-					popup.closePopup();
-					map.removeLayer(geocoder.marker);
+
+				slippymap.crosshairs.init(map);
+				mapzen.whosonfirst.nearby.init(map);
+				mapzen.whosonfirst.nearby.inflate_nearby();
+
+				geocoder.on('select', function(e) {
+					var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
+					var popup = geocoder.marker.bindPopup(html).openPopup();
+					var props = e.feature.properties;
+					$('#geocoder-marker-select').click(function(e) {
+						e.preventDefault();
+						popup.closePopup();
+						geocoder.collapse();
+						var ll = geocoder.marker.getLatLng();
+						self.lookup_hierarchy(ll.lat, ll.lng);
+						self.update_coordinates(ll, true);
+						self.set_marker(geocoder.marker);
+						if (props.label) {
+							self.set_property('addr:full', props.label);
+						}
+						if (props.housenumber) {
+							self.set_property('addr:housenumber', props.housenumber);
+						}
+						if (props.street) {
+							self.set_property('addr:street', props.street);
+						}
+						if (props.postalcode) { // Seeing postAL code coming from Pelias, but we prefer 'postcode'
+							self.set_property('addr:postcode', props.postalcode);
+						}
+						if (props.postcode) {
+							self.set_property('addr:postcode', props.postcode);
+						}
+					});
+					$('#geocoder-marker-cancel').click(function(e) {
+						e.preventDefault();
+						popup.closePopup();
+						map.removeLayer(geocoder.marker);
+					});
 				});
+
+				self.setup_drawing();
 			});
 		},
 
@@ -174,10 +192,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				var lat = centroid.lat;
 				var lng = centroid.lng;
 				var zoom = 16;
-				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-					'map',
-					lat, lng, zoom
-				);
+
+				map.setView([lat, lng], zoom);
 				marker = new L.Marker([lat, lng], {
 					icon: new VenueIcon(),
 					draggable: true
@@ -187,15 +203,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.update_coordinates(ll, true);
 				});
 				self.update_where(lat, lng);
+
 			} else {
 				// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
 				var lat = 40.73581157695217;
-				var lon = -73.9815902709961;
+				var lng = -73.9815902709961;
 				var zoom = 12;
-				map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-					'map',
-					lat, lon, zoom
-				);
+				map.setView([lat, lng], zoom);
 				var initial_position = L.Hash.parseHash(location.hash);
 				if (initial_position) {
 					// We've just deep-linked to a particular lat/lng, add a marker!
@@ -216,10 +230,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var lat = 40.73581157695217;
 			var lon = -73.9815902709961;
 			var zoom = 12;
-			map = mapzen.whosonfirst.leaflet.tangram.map_with_latlon(
-				'map',
-				lat, lon, zoom
-			);
+			map.setView([lat, lng], zoom);
 			var geojson_url = $('#geojson-link').attr('href');
 			$.get(geojson_url, function(feature) {
 				var bbox_style = mapzen.whosonfirst.leaflet.styles.bbox();
@@ -289,7 +300,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
+					var name = $(row).closest('.json-schema-object').data('context');
 					$(row).remove();
+					self.mark_changed_property(name);
 				});
 			});
 
@@ -301,9 +314,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
-					var name = $(row).closest('.json-schema-array').data('context');
+					var $parent = $(row).closest('.json-schema-array');
 					$(row).remove();
+					var name = $parent.data('context');
 					self.mark_changed_property(name);
+
+					// Re-number the property inputs
+					$parent.find('input.property').each(function(j, input) {
+						$(input).attr('name', name + '[' + j + ']');
+					});
 				});
 			});
 
@@ -442,9 +461,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 
+				var feature = self.generate_feature();
 				var errors = [];
 				$.each(validations, function(i, validate) {
-					var result = validate();
+					var result = validate(feature);
 					if (result) {
 						errors.push(result);
 					}
@@ -798,23 +818,45 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			if (! name) {
 				return;
 			}
+
+			var orig_name = name;
+			var names_input = name.match(/^names\.([^.]+)\.(.+)$/);
+			if (names_input) {
+				var lang = names_input[1];
+				var kind = names_input[2];
+				name = 'properties.name:' + lang + '_x_' + kind;
+			}
+
 			var target = $(
-				'input[name="' + name + '"],' +
-				'.json-schema-array[data-context="' + name + '"] > ul > li > input,' +
-				'.json-schema-array[data-context="' + name + '"]'
+				'input[name="' + orig_name + '"],' +
+				'.json-schema-array[data-context="' + orig_name + '"] > ul > li > input,' +
+				'.json-schema-array[data-context="' + orig_name + '"]'
 			).parents('tr, li');
+
 			var wof_value = self.generate_feature();
 			var property = name.replace(/^properties\./, '');
 			var array_input = property.match(/^(.+)\[(\d+)\]$/);
+			var object_input = property.match(/^([^.]+)\.([^.]+)$/);
+			var init_value = null;
 			if (array_input) {
 				property = array_input[1];
 				name = 'properties.' + property;
 				var index = parseInt(array_input[2]);
 				var curr_value = wof_value.properties[property][index];
-				var init_value = self.initial_wof_value.properties[property][index];
+				if (self.initial_wof_value.properties[property]) {
+					init_value = self.initial_wof_value.properties[property][index];
+				}
+			} else if (object_input) {
+				property = object_input[1];
+				var subproperty = object_input[2];
+				name = 'properties.' + property;
+				var curr_value = wof_value.properties[property][subproperty];
+				if (self.initial_wof_value.properties[property]) {
+					init_value = self.initial_wof_value.properties[property][subproperty];
+				}
 			} else {
 				var curr_value = wof_value.properties[property];
-				var init_value = self.initial_wof_value.properties[property];
+				init_value = self.initial_wof_value.properties[property];
 			}
 			var $edit_list = $('#edit-status > ul');
 			if (! $edit_list.length) {
@@ -1624,6 +1666,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 
+				var parent_selectors = '.json-schema-array, .json-schema-object';
+				var $parent = $(input).closest(parent_selectors);
+
 				// This next conditional block exists to grab properties
 				// that have *not yet been added* which I know sounds weird
 				// but trust me here. This is for arrays and objects. When
@@ -1635,32 +1680,46 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					if ($(input).val() == '') {
 						return;
 					}
-					var $obj = $(input).closest('.json-schema-object');
-					var key = $obj.find('.add-key').val();
+
+					var key = $parent.find('.add-key').val();
 					if (key == '') {
 						// Ok, forget it, we don't have a key to work with
 						return;
 					}
-					var context = $obj.data('context');
+					var context = $parent.data('context');
 					var name = context + '.' + key;
 				} else if ($(input).hasClass('add-item')) {
 					is_new_item = true;
 					if ($(input).val() == '') {
 						return;
 					}
-					var $arr = $(input).closest('.json-schema-array');
-					var key = '[' + $arr.find('.property').length + ']';
-					var context = $arr.data('context');
+					var key = '[' + $parent.find('.property').length + ']';
+					var context = $parent.data('context');
 					var name = context + key;
 				} else {
 					var name = $(input).attr('name');
 				}
 				var value = $(input).val();
-				if ($(input).data('type') == 'number') {
+
+				var type = null;
+				if ($parent.data('items-type')) {
+					type = $parent.data('items-type');
+				}
+
+				if (! type) {
+					var type = $(input).data('type');
+				}
+				if (type == 'number') {
+					if (typeof value == 'string') {
+						value = value.replace(/[^0-9.-]/g, '');
+					}
 					value = parseFloat(value);
-				} else if ($(input).data('type') == 'integer') {
+				} else if (type == 'integer') {
+					if (typeof value == 'string') {
+						value = value.replace(/[^0-9-]/g, '');
+					}
 					value = parseInt(value);
-				} else if ($(input).data('type') == 'json') {
+				} else if (type == 'json') {
 					value = JSON.parse(value);
 				}
 				self.assign_property(feature, name, value);
@@ -1712,8 +1771,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		generate_name_geojson: function(feature){
 			var names = {};
-			$('.names-language input.property').each(function(i, input){
-				var match = $(input).attr('name').match(/names\.([^.]+)\.(.+?)\[/);
+			var selector = '.names-language input.property, .names-language input.add-item';
+			$(selector).each(function(i, input){
+				var $parent = $(input).closest('.json-schema-array');
+				var context = $parent.data('context');
+				var match = context.match(/^names\.([^.]+)\.(.+)$/);
 				if (match){
 					var lang = match[1];
 					var type = match[2];
@@ -1721,7 +1783,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					if (! names[prop]) {
 						names[prop] = [];
 					}
-					names[prop].push($(input).val());
+					var value = $(input).val();
+					if (value) {
+						names[prop].push(value);
+					}
 				}
 			});
 			$.each(names, function(prop, value){
@@ -1952,7 +2017,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		self.setup_properties();
 		self.setup_map();
-		self.setup_drawing();
 		self.setup_form();
 		self.setup_buttons();
 

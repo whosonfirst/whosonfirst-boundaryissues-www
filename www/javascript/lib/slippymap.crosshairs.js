@@ -2,133 +2,144 @@ var slippymap = slippymap || {};
 
 slippymap.crosshairs = (function(){
 
-    var latlon = true;
+	var latlon = true;
 
-    var self = {
+	var self = {
 
-	'init': function(map){
+		'init': function(map, options){
 
-	    var container = map.getContainer();
-	    var id = container.id;
+			// http://www.sveinbjorn.org/dataurls_css
 
-	    var draw = function(){
-		self.draw_crosshairs(id);
-	    };
+			var data_url = '"data:image/gif;base64,R0lGODlhEwATAKEBAAAAAP///////////' +
+			               'yH5BAEKAAIALAAAAAATABMAAAIwlI+pGhALRXuRuWopPnOj7hngEpRm6Z' +
+			               'ymAbTuC7eiitJlNHr5tmN99cNdQpIhsVIAADs="';
 
-	    window.onresize = draw;
+			var css = {
+				'position': 'absolute',
+				'height': '19px',
+				'width': '19px',
+				'margin-left': '-8px;',
+				'display': 'block',
+				'background-position': 'center center',
+				'background-repeat': 'no-repeat',
+				'background': 'url(' + data_url + ')',
+				'z-index': '10000'
+			};
 
-	    var coords = function(){
-		self.draw_coords(map);
-	    };
+			if (options && options.css){
+				for (var key in options.css){
+					css[key] = options.css[key];
+				}
+			}
 
-	    map.on('move', coords);
-	    map.on('dragend', coords);
-	    map.on('zoomend', coords);
-	
-	    // because for SOME REASON these don't both work reliably in map.on('load')
-	    // because... COMPUTERS? (20160809/thisisaaronland)
+			var container = map.getContainer();
+			var id = container.id;
 
-	    draw();
-	    coords();
-	},
+			var draw = function(){
+				self.draw_crosshairs(id, css);
+			};
 
-	'draw_coords': function(map){
+			window.onresize = draw;
 
-	    var coords = document.getElementById("slippymap-coords");
+			var coords = function(){
+				self.draw_coords(map);
+			};
 
-	    if (! coords){
+			map.on('move', coords);
+			map.on('dragend', coords);
+			map.on('zoomend', coords);
 
-		var coords = document.createElement("div");
-		coords.setAttribute("id", "slippymap-coords");
+			// because for SOME REASON these don't both work reliably in map.on('load')
+			// because... COMPUTERS? (20160809/thisisaaronland)
 
-		coords.onclick = function(){
-		    latlon = (latlon) ? false : true;
-		    self.draw_coords(map);
-		    return;
-		};
+			draw();
+			coords();
+		},
 
-		var container = map.getContainer();
-		var container_el = document.getElementById(container.id);
+		'draw_coords': function(map){
 
-		container_el.parentNode.insertBefore(coords, container_el.nextSibling); 
-	    }
+			var coords = document.getElementById("slippymap-coords");
 
-	    var pos = map.getCenter();
-	    var lat = pos['lat'];
-	    var lon = pos['lng'];	  
-	    
-	    var zoom = map.getZoom();
+			if (! coords){
 
-	    var ll = undefined;
-	    var title = undefined;
+				var coords = document.createElement("div");
+				coords.setAttribute("id", "slippymap-coords");
 
-	    if (latlon){
+				coords.onclick = function(){
+					latlon = (latlon) ? false : true;
+					self.draw_coords(map);
+					return;
+				};
 
-		    ll = lat.toFixed(6) + ", " + lon.toFixed(6) + " #" + zoom.toFixed(2);
-		title = "coordinates are displayed as latitude,longitude – click to toggle";
-	    }
-	    
-	    else {
+				var container = map.getContainer();
+				var container_el = document.getElementById(container.id);
 
-		ll = lon.toFixed(6) + ", " + lat.toFixed(6) + " #" + zoom;
-		title = "coordinates are displayed as longitude,latitude – click to toggle";
-	    }
+				container_el.parentNode.insertBefore(coords, container_el.nextSibling);
+			}
 
-	    coords.setAttribute("title", title);
-	    coords.innerText = ll;	    
-	},
-	
-	'draw_crosshairs': function(id){
+			var pos = map.getCenter();
+			var lat = pos['lat'];
+			var lon = pos['lng'];
 
-	    var m = document.getElementById(id);
+			var zoom = map.getZoom();
 
-	    if (! m){
-		return false;
-	    }
+			var ll = undefined;
+			var title = undefined;
 
-	    var container = m.getBoundingClientRect();
-	    
-	    var height = container.height;
-	    var width = container.width;
-	    
-	    var crosshair_y = (height / 2) - 8;
-	    var crosshair_x = (width / 2);
-	    
-	    // http://www.sveinbjorn.org/dataurls_css
-	    
-	    var data_url = '"data:image/gif;base64,R0lGODlhEwATAKEBAAAAAP///////////' + 
-		'yH5BAEKAAIALAAAAAATABMAAAIwlI+pGhALRXuRuWopPnOj7hngEpRm6Z' + 
-		'ymAbTuC7eiitJlNHr5tmN99cNdQpIhsVIAADs="';
-	    
-	    var style = [];
-	    style.push("position:absolute");
-	    style.push("top:" + crosshair_y + "px");
-	    style.push("height:19px");
-	    style.push("width:19px");
-	    style.push("left:" + crosshair_x + "px");
-	    style.push("margin-left:-8px;");
-	    style.push("display:block");
-	    style.push("background-position: center center");
-	    style.push("background-repeat: no-repeat");
-	    style.push("background: url(" + data_url + ")");
-	    style.push("z-index:10000");
-	    
-	    style = style.join(";");
+			if (latlon){
 
-	    var crosshairs = document.getElementById("slippymap-crosshairs");
+				ll = lat.toFixed(6) + ", " + lon.toFixed(6) + " #" + zoom.toFixed(2);
+				title = "coordinates are displayed as latitude,longitude – click to toggle";
+			}
 
-	    if (! crosshairs){
+			else {
 
-		crosshairs = document.createElement("div");
-		crosshairs.setAttribute("id", "slippymap-crosshairs");
-		m.appendChild(crosshairs);
-	    }
+				ll = lon.toFixed(6) + ", " + lat.toFixed(6) + " #" + zoom;
+				title = "coordinates are displayed as longitude,latitude – click to toggle";
+			}
 
-	    crosshairs.style.cssText = style;
-	    return true;
-	},
-    };
+			coords.setAttribute("title", title);
+			coords.innerText = ll;
+		},
 
-    return self;
+		'draw_crosshairs': function(id, css){
+
+			var m = document.getElementById(id);
+
+			if (! m){
+				return false;
+			}
+
+			var container = m.getBoundingClientRect();
+
+			var height = container.height;
+			var width = container.width;
+
+			var crosshair_y = (height / 2) - 8;
+			var crosshair_x = (width / 2);
+
+			var style = [];
+			for (var property in css) {
+				style.push(property + ':' + css[property]);
+			}
+			style.push("left:" + crosshair_x + "px");
+			style.push("top:" + crosshair_y + "px");
+			style = style.join(";");
+
+			var crosshairs = document.getElementById("slippymap-crosshairs");
+
+			if (! crosshairs){
+
+				crosshairs = document.createElement("div");
+				crosshairs.setAttribute("id", "slippymap-crosshairs");
+				m.appendChild(crosshairs);
+			}
+
+			crosshairs.style.cssText = style;
+			return true;
+		},
+	};
+
+	return self;
 
 })();
