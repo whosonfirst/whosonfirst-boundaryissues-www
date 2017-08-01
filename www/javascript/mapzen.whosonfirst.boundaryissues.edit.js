@@ -1653,6 +1653,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 
+				var parent_selectors = '.json-schema-array, .json-schema-object';
+				var $parent = $(input).closest(parent_selectors);
+
 				// This next conditional block exists to grab properties
 				// that have *not yet been added* which I know sounds weird
 				// but trust me here. This is for arrays and objects. When
@@ -1664,32 +1667,40 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					if ($(input).val() == '') {
 						return;
 					}
-					var $obj = $(input).closest('.json-schema-object');
-					var key = $obj.find('.add-key').val();
+
+					var key = $parent.find('.add-key').val();
 					if (key == '') {
 						// Ok, forget it, we don't have a key to work with
 						return;
 					}
-					var context = $obj.data('context');
+					var context = $parent.data('context');
 					var name = context + '.' + key;
 				} else if ($(input).hasClass('add-item')) {
 					is_new_item = true;
 					if ($(input).val() == '') {
 						return;
 					}
-					var $arr = $(input).closest('.json-schema-array');
-					var key = '[' + $arr.find('.property').length + ']';
-					var context = $arr.data('context');
+					var key = '[' + $parent.find('.property').length + ']';
+					var context = $parent.data('context');
 					var name = context + key;
 				} else {
 					var name = $(input).attr('name');
 				}
 				var value = $(input).val();
-				if ($(input).data('type') == 'number') {
+
+				var type = null;
+				if ($parent.data('items-type')) {
+					type = $parent.data('items-type');
+				}
+
+				if (! type) {
+					var type = $(input).data('type');
+				}
+				if (type == 'number') {
 					value = parseFloat(value);
-				} else if ($(input).data('type') == 'integer') {
+				} else if (type == 'integer') {
 					value = parseInt(value);
-				} else if ($(input).data('type') == 'json') {
+				} else if (type == 'json') {
 					value = JSON.parse(value);
 				}
 				self.assign_property(feature, name, value);

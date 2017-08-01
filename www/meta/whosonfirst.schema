@@ -56,7 +56,10 @@
 							}
 						},
 						"wof:superseded_by": {
-							"type": "array"
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
 						},
 						"wof:breaches": {
 							"type": "array"

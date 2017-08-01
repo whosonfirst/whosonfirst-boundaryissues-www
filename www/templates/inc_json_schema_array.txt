@@ -1,4 +1,4 @@
-<div id="{$context|@wof_render_array_id|@escape}" class="json-schema-array" data-context="{$context}">
+<div id="{$context|@wof_render_array_id|@escape}" class="json-schema-array" data-context="{$context}"{if $schema.items.type} data-items-type="{$schema.items.type|escape}"{/if}>
 	<ul>
 		{foreach from=$schema.properties key=index item=item}
 			{assign var="name" value="`$context`[`$index`]"}
