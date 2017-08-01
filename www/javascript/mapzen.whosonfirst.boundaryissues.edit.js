@@ -26,16 +26,28 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 	// Return null (okay) or a string (error)
 	var validations = [
-		function() {
-			var lat = $('input[name="properties.geom:latitude"]').val();
-			var lng = $('input[name="properties.geom:longitude"]').val();
+		function(feature) {
+			if (! feature.geometry) {
+				return 'This record has no geometry.';
+			}
+			return null;
+		},
+		function(feature) {
+			if (! feature.properties['wof:parent_id']) {
+				return 'This record has no wof:parent_id.';
+			}
+			return null;
+		},
+		function(feature) {
+			var lat = feature.properties['geom:latitude'];
+			var lng = feature.properties['geom:longitude'];
 			if (! lat || ! lng) {
 				return 'Please set <span class=\"hey-look\">geom:latitude</span> and <span class=\"hey-look\">geom:longitude</span>.';
 			}
 			return null;
 		},
-		function() {
-			var wof_name = $('input[name="properties.wof:name"]').val();
+		function(feature) {
+			var wof_name = feature.properties['wof:name'];
 			if (! wof_name) {
 				return 'Please set <span class=\"hey-look\">wof:name</span>.';
 			}
@@ -449,9 +461,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 
+				var feature = self.generate_feature();
 				var errors = [];
 				$.each(validations, function(i, validate) {
-					var result = validate();
+					var result = validate(feature);
 					if (result) {
 						errors.push(result);
 					}
