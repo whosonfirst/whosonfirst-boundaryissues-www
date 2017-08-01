@@ -6,6 +6,7 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 
 	var _scenefile = '/static/tangram/scene.yaml'
 	var _scene_options = {};
+	var _sources = {};
 	var _cache = {};
 
 	var self = {
@@ -45,7 +46,7 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 			return _cache[id];
 		},
 
-		'tangram': function(scenefile, options){
+		'tangram': function(scenefile, options, sources){
 
 			if (! scenefile) {
 				scenefile = self.scenefile();
@@ -67,6 +68,15 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 				updateWhenIdle: false
 			});
 
+			tangram.scene.subscribe({
+				load: function(){
+					for (var source in _sources){
+						tangram.scene.setDataSource(source, _sources[source]);
+					}
+					tangram.scene.updateConfig();
+				}
+			});
+
 			return tangram;
 		},
 
@@ -86,6 +96,15 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 			}
 
 			return _scene_options;
+		},
+
+		'sources': function(sources){
+
+			if (sources){
+				_sources = L.extend(_sources, sources);
+			}
+
+			return _sources;
 		}
 	};
 
