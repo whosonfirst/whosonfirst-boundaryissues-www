@@ -576,10 +576,33 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			ux_language: 'en'
 		});
 
-		var map = mapzen.whosonfirst.leaflet.tangram.map('map');
-		map.on('moveend', self.update_coordinates);
-		self.map = map;
-		var hash = new L.Hash(map);
+		var map = mapzen.whosonfirst.leaflet.tangram.map_with_prefs('map', 'map_prefs', function(map, prefs) {
+
+			self.map = map;
+			map.on('moveend', self.update_coordinates);
+
+			var hash = new L.Hash(map);
+
+			// sudo move me to stack.json
+			// (20170617/dphiffer)
+			var geocoder = L.control.geocoder('mapzen-LhT76h5', {
+				markers: {
+					icon: new VenueIcon()
+				}
+			}).addTo(map);
+			L.control.locate().addTo(map);
+
+			if (bbox_init) {
+				mapzen.whosonfirst.boundaryissues.bbox.init(map, function() {
+					slippymap.crosshairs.init(map);
+				});
+			}
+
+			geocoder.on('select', function(e) {
+				geocoder.collapse();
+				self.show_feature_pin(map, geocoder, e.feature);
+			});
+		});
 
 		VenueIcon = L.Icon.extend({
 			options: {
@@ -590,26 +613,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				iconSize: new L.Point(25, 42),
 				popupAnchor: new L.Point(0, -42)
 			}
-		});
-
-		// sudo move me to stack.json
-		// (20170617/dphiffer)
-		var geocoder = L.control.geocoder('mapzen-LhT76h5', {
-			markers: {
-				icon: new VenueIcon()
-			}
-		}).addTo(map);
-		L.control.locate().addTo(map);
-
-		if (bbox_init) {
-			mapzen.whosonfirst.boundaryissues.bbox.init(map, function() {
-				slippymap.crosshairs.init(map);
-			});
-		}
-
-		geocoder.on('select', function(e) {
-			geocoder.collapse();
-			self.show_feature_pin(map, geocoder, e.feature);
 		});
 	}
 
