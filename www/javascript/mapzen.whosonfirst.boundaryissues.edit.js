@@ -288,7 +288,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
+					var name = $(row).closest('.json-schema-object').data('context');
 					$(row).remove();
+					self.mark_changed_property(name);
 				});
 			});
 
@@ -300,9 +302,15 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				}
 				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
 				$(row).find('.btn-remove-item').click(function(e) {
-					var name = $(row).closest('.json-schema-array').data('context');
+					var $parent = $(row).closest('.json-schema-array');
 					$(row).remove();
+					var name = $parent.data('context');
 					self.mark_changed_property(name);
+
+					// Re-number the property inputs
+					$parent.find('input.property').each(function(j, input) {
+						$(input).attr('name', name + '[' + j + ']');
+					});
 				});
 			});
 
