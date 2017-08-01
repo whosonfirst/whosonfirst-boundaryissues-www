@@ -6,13 +6,37 @@ slippymap.crosshairs = (function(){
 
 	var self = {
 
-		'init': function(map){
+		'init': function(map, options){
+
+			// http://www.sveinbjorn.org/dataurls_css
+
+			var data_url = '"data:image/gif;base64,R0lGODlhEwATAKEBAAAAAP///////////' +
+			               'yH5BAEKAAIALAAAAAATABMAAAIwlI+pGhALRXuRuWopPnOj7hngEpRm6Z' +
+			               'ymAbTuC7eiitJlNHr5tmN99cNdQpIhsVIAADs="';
+
+			var css = {
+				'position': 'absolute',
+				'height': '19px',
+				'width': '19px',
+				'margin-left': '-8px;',
+				'display': 'block',
+				'background-position': 'center center',
+				'background-repeat': 'no-repeat',
+				'background': 'url(' + data_url + ')',
+				'z-index': '10000'
+			};
+
+			if (options && options.css){
+				for (var key in options.css){
+					css[key] = options.css[key];
+				}
+			}
 
 			var container = map.getContainer();
 			var id = container.id;
 
 			var draw = function(){
-				self.draw_crosshairs(id);
+				self.draw_crosshairs(id, css);
 			};
 
 			window.onresize = draw;
@@ -78,7 +102,7 @@ slippymap.crosshairs = (function(){
 			coords.innerText = ll;
 		},
 
-		'draw_crosshairs': function(id){
+		'draw_crosshairs': function(id, css){
 
 			var m = document.getElementById(id);
 
@@ -94,25 +118,12 @@ slippymap.crosshairs = (function(){
 			var crosshair_y = (height / 2) - 8;
 			var crosshair_x = (width / 2);
 
-			// http://www.sveinbjorn.org/dataurls_css
-
-			var data_url = '"data:image/gif;base64,R0lGODlhEwATAKEBAAAAAP///////////' +
-			'yH5BAEKAAIALAAAAAATABMAAAIwlI+pGhALRXuRuWopPnOj7hngEpRm6Z' +
-			'ymAbTuC7eiitJlNHr5tmN99cNdQpIhsVIAADs="';
-
 			var style = [];
-			style.push("position:absolute");
-			style.push("top:" + crosshair_y + "px");
-			style.push("height:19px");
-			style.push("width:19px");
+			for (var property in css) {
+				style.push(property + ':' + css[property]);
+			}
 			style.push("left:" + crosshair_x + "px");
-			style.push("margin-left:-8px;");
-			style.push("display:block");
-			style.push("background-position: center center");
-			style.push("background-repeat: no-repeat");
-			style.push("background: url(" + data_url + ")");
-			style.push("z-index:10000");
-
+			style.push("top:" + crosshair_y + "px");
 			style = style.join(";");
 
 			var crosshairs = document.getElementById("slippymap-crosshairs");
