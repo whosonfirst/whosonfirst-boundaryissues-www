@@ -603,11 +603,12 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 				mapzen.whosonfirst.boundaryissues.bbox.init(map);
 			}
 
+			var icon_url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/marker-icon-2x.png');
 			slippymap.crosshairs.init(map, {
 				css: {
 					'width': '25px',
 					'height': '41px',
-					'background': 'url("/images/marker-icon-2x.png")',
+					'background': 'url("' + icon_url + '")',
 					'background-size': '25px 41px',
 					'margin-left': '-12px',
 					'margin-top': '-41px'
