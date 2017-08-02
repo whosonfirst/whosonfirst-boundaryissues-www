@@ -397,11 +397,12 @@
 
 	function wof_pipeline_merge(&$pipeline) {
 
-		$repo_path = wof_pipeline_repo_path($pipeline);
-
 		if (! $pipeline['meta']['branch_merge']) {
 			return true;
 		}
+
+		$repo_path = wof_pipeline_repo_path($pipeline);
+		$branch = "pipeline-{$pipeline['id']}";
 
 		$rsp = git_execute($repo_path, "checkout staging-work");
 		wof_pipeline_log($pipeline['id'], "Checkout staging-work branch", $rsp);
@@ -492,7 +493,7 @@
 			$debug .= "\nDetails:\n";
 			$debug .= var_export($pipeline, 'return values');
 
-			wof_repo_set_status($pipeline['repo'], 'pipeline error', $debug);
+			wof_repo_set_status($pipeline['repo'], "pipeline {$pipeline['id']} error", $debug);
 		}
 	}
 
