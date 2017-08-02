@@ -611,7 +611,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					'background': 'url("' + icon_url + '")',
 					'background-size': '25px 41px',
 					'margin-left': '-12px',
-					'margin-top': '-41px'
+					'margin-top': '-41px',
+					'z-index': 800
 				}
 			});
 		});
