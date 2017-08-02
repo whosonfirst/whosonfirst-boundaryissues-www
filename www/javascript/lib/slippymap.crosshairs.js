@@ -138,6 +138,20 @@ slippymap.crosshairs = (function(){
 			crosshairs.style.cssText = style;
 			return true;
 		},
+
+		hide: function() {
+			var crosshairs = document.getElementById("slippymap-crosshairs");
+			if (crosshairs) {
+				crosshairs.style.display = 'none';
+			}
+		},
+
+		show: function() {
+			var crosshairs = document.getElementById("slippymap-crosshairs");
+			if (crosshairs) {
+				crosshairs.style.display = 'block';
+			}
+		}
 	};
 
 	return self;
