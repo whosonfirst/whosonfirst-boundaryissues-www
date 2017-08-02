@@ -144,6 +144,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		show_feature_pin: function(map, geocoder, feature) {
+			slippymap.crosshairs.hide();
 			var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
 			var popup = geocoder.marker.bindPopup(html).openPopup();
 			var props = feature.properties;
@@ -155,6 +156,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			}
 			$('#geocoder-marker-select').click(function(e) {
 				e.preventDefault();
+				slippymap.crosshairs.show();
 				popup.closePopup();
 				geocoder.collapse();
 				map.removeLayer(geocoder.marker);
@@ -590,6 +592,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					icon: new VenueIcon()
 				}
 			}).addTo(map);
+			geocoder.on('select', function(e) {
+				geocoder.collapse();
+				self.show_feature_pin(map, geocoder, e.feature);
+			});
 
 			L.control.locate().addTo(map);
 
