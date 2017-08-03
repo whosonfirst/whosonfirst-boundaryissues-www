@@ -39,6 +39,11 @@
 			return $rsp;
 		}
 
+		$rsp['fetch'] = git_execute($cwd, "fetch");
+		if (! $rsp['fetch']['ok']) {
+			return $rsp['fetch'];
+		}
+
 		// Should (does) this handle GitHub redirects?
 
 		$rsp['cloned'] = $url;
