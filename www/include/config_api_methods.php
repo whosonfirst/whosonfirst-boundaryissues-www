@@ -206,6 +206,19 @@
 			),
 		),
 
+		"wof.pipeline.create" => array (
+			"description" => "Create a new pipeline.",
+			"documented" => 1,
+			"enabled" => 1,
+			"library" => "api_wof_pipeline",
+			"requires_crumb" => 1,
+			"request_method" => "POST",
+			"parameters" => array(
+				array("name" => "meta_json", "description" => "Metadata about the pipeline.", "documented" => 1, "required" => 1),
+			)
+		),
+
+
 		"wof.pipeline.update" => array(
 			"description" => "Update a pipeline's phase.",
 			"documented" => 1,

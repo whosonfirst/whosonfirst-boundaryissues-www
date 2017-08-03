@@ -6,6 +6,31 @@
 
 	########################################################################
 
+	function api_wof_pipeline_create() {
+
+		if (! users_acl_check_access($GLOBALS['cfg']['user'], 'can_upload_pipelines')) {
+			api_output_error(403, "You don't have permission to update pipelines.");
+		}
+
+		$meta_json = post_str('meta_json');
+
+		if (! $meta_json) {
+			api_output_error(400, "Please include 'meta_json' arguments.");
+		}
+
+		$meta = json_decode($meta_json, 'as hash');
+		$repo = $meta['repo'];
+
+		if (! $repo) {
+			api_output_error(400, "Please include a 'repo' value in your 'meta_json'.");
+		}
+
+		$rsp = wof_pipeline_create($meta);
+		api_output_ok($rsp);
+	}
+
+	########################################################################
+
 	function api_wof_pipeline_update() {
 
 		if (! users_acl_check_access($GLOBALS['cfg']['user'], 'can_upload_pipelines')) {
