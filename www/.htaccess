@@ -81,6 +81,7 @@ RewriteRule ^id/(\d+)/?$         id.php?id=$1       [L,QSA]
 RewriteRule ^id/(\d+)\.geojson$  geojson.php?id=$1  [L,QSA]
 RewriteRule ^id/(\d+)/photos$    photos.php?id=$1   [L,QSA]
 RewriteRule ^pipeline/(\d+)/?$   pipeline.php?id=$1 [L,QSA]
+RewriteRule ^pipeline/?$         pipeline.php       [L,QSA]
 RewriteRule ^geotagged/?$        geotagged.php      [L,QSA]
 RewriteRule ^search/?$           search.php         [L,QSA]
 
