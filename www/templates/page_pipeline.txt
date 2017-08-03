@@ -33,8 +33,8 @@
 		</div>
 	</div>
 	<div class="pipeline-log">
-		{foreach from=$logs item=log}
-			<div class="pipeline-log-row">
+		{foreach from=$logs key=index item=log}
+			<div class="pipeline-log-row" id="row-{$index|escape}">
 				<div class="row">
 					<div class="col-md-9 pipeline-log-summary">{$log.summary|@escape}</div>
 					<div class="col-md-3 pipeline-log-date">{$log.created_at|@escape}</div>
@@ -49,8 +49,20 @@
 
 {literal}
 <script>
+$(document).ready(function() {
+	var update = location.hash.match(/#update(\d+)/);
+	if (update) {
+		var selector = '#row-' + update[1];
+		$(selector).addClass('show-details');
+		$('html, body').animate({
+			scrollTop: $(selector).offset().top
+		}, 500);
+	}
+});
 $('.pipeline-log-summary').click(function(e) {
-	$(e.target).closest('.pipeline-log-row').toggleClass('show-details');
+	var $row = $(e.target).closest('.pipeline-log-row');
+	$row.toggleClass('show-details');
+	location.href = '#update' + $row.attr('id').substr(4);
 });
 $('#pipeline-update').submit(function(e) {
 	e.preventDefault();
