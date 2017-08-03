@@ -1,0 +1,13 @@
+{include file='inc_head.txt' nav_tab='upload'}
+
+<form action="{$cfg.abs_root_url}pipeline/" method="post" enctype="multipart/form-data" id="pipeline-form" data-crumb="{$crumb|@escape}" data-slack-handle="{$slack_handle|@escape}">
+	<div class="container">
+		<div class="row">
+			<h3>Create a pipeline</h3>
+			<div id="upload-preview-props"></div>
+			<input type="submit" value="Create" id="btn-create" class="hidden btn btn-mapzen">
+		</div>
+	</div>
+</form>
+
+{include file='inc_foot.txt'}

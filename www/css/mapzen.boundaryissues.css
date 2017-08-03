@@ -1066,6 +1066,18 @@ body.no-scroll {
 	overflow: hidden;
 }
 
+#pipeline-form {
+	padding-bottom: 3em;
+}
+
+#pipeline-form #pipeline-options {
+	padding: 0;
+}
+
+#pipeline-form #btn-create {
+	margin-top: 1.5em;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

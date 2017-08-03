@@ -163,6 +163,45 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			});
 		},
 
+		setup_pipeline: function() {
+			var html = self.pipeline_controls();
+			$('#pipeline-form #upload-preview-props').html(html);
+			$('#pipeline-type').change(function() {
+				var type = $('#pipeline-type').val();
+				self.pipeline_options(type);
+				$('#btn-create').removeClass('hidden');
+			});
+
+			$('#pipeline-form').submit(function(e) {
+				e.preventDefault();
+
+				var api_method = 'wof.pipeline.create';
+
+				var data = new FormData();
+				data.append('crumb', $('#pipeline-form').data('crumb'));
+				data.append('type', $('#pipeline-type').val());
+				data.append('meta_json', self.get_pipeline_meta_json());
+
+				var onsuccess = function(rsp) {
+					if (rsp.pipeline_id) {
+						window.location = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/pipeline/' + rsp.pipeline_id + '/');
+					} else {
+						self.show_result(rsp);
+						mapzen.whosonfirst.log.debug(rsp);
+					}
+				};
+				var onerror = function(rsp) {
+					self.show_result(rsp);
+					mapzen.whosonfirst.log.error(rsp);
+				};
+
+				mapzen.whosonfirst.boundaryissues.api.api_call(api_method, data, onsuccess, onerror);
+
+				// Show some user feedback
+				$result.html('<div class="alert alert-info">Uploading...</div>');
+			});
+		},
+
 		preview_geojson: function(data){
 
 			try {
@@ -579,9 +618,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			var types = [
 				'meta_files',
-				'neighbourhood',
-				'remove_properties',
-				'fix_property_type',
+				//'neighbourhood',
+				//'remove_properties',
+				//'fix_property_type',
 				'merge_pr'
 			];
 
@@ -641,7 +680,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				html += '</div>';
 			} else if (type == 'fix_property_type') {
 
-				var repo = meta.repo || '';
+				var repo = meta.repo || 'whosonfirst-data';
 				var property = meta.property || '';
 				var property_type = meta.property_type || '';
 
@@ -661,7 +700,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				html += '</div>';
 			} else if (type == 'merge_pr') {
 
-				var repo = meta.repo || '';
+				var repo = meta.repo || 'whosonfirst-data';
 				var pr_number = meta.pr_number || '';
 
 				html += '<div class="input-group">';
@@ -678,7 +717,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return false;
 			}
 
-			var default_slack_handle = $('#upload-form').data('slack-handle');
+			var default_slack_handle = $('#upload-form, #pipeline-form').data('slack-handle');
 			var slack_handle = meta.slack_handle || default_slack_handle || '';
 			var meta_files_checked = meta.generate_meta_files ? ' checked="checked"' : '';
 
@@ -696,14 +735,15 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 		get_pipeline_meta_json: function() {
 			var meta = self.meta || {
-				slack_handle: '',
-				generate_meta_files: false
+				slack_handle: ''
 			};
 
 			meta.type = $('#pipeline-type').val();
 			meta.slack_handle = $('#slack_handle').val();
 
-			if (meta.type == 'neighbourhood') {
+			if (meta.type == 'meta_files') {
+				meta.repo = $('#repo').val();
+			} else if (meta.type == 'neighbourhood') {
 				meta.process_venues = $('#process_venues')[0].checked;
 			} else if (meta.type == 'remove_properties') {
 				meta.property_list = $('#property_list').val();
@@ -1108,6 +1148,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
 
 		self.setup_upload();
+		self.setup_pipeline();
 	});
 
 	return self;
