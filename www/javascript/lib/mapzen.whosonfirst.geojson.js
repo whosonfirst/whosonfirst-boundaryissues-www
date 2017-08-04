@@ -56,6 +56,11 @@ mapzen.whosonfirst.geojson = (function(){
 				var geom = geojson['geometry'];
 				var coords = geom.coordinates;
 
+				if (geom.type == 'Point') {
+					return [ coords[0], coords[1],
+					         coords[0], coords[1] ];
+				}
+
 				var lats = [],
 				    lngs = [];
 
