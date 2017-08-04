@@ -212,15 +212,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				return;
 			}
 
-			$result.html('This is just a preview. You still have to hit the upload button.');
-
-			upload_is_ready = true;
-			$('#upload-btn').addClass('btn-primary');
-			$('#upload-btn').attr('disabled', false);
-
 			var map = self.setup_map_preview(geojson);
 
-			mapzen.boundaryissues.utils.get_meta_file('property_aliases.json', function(property_aliases) {
+			mapzen.whosonfirst.boundaryissues.utils.get_meta_file('property_aliases.json', function(property_aliases) {
 				if (geojson.type == "Feature") {
 					is_collection = false;
 					if (map) {
@@ -235,7 +229,36 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					}
 					self.show_props_preview(geojson, property_aliases);
 				}
+
+				var issues = self.validate_geojson(geojson);
+				if (! issues) {
+					$result.html('This is just a preview. You still have to hit the upload button.');
+
+					upload_is_ready = true;
+					$('#upload-btn').addClass('btn-primary');
+					$('#upload-btn').attr('disabled', false);
+				} else {
+					$result.html('<div class="alert alert-danger">' + issues + '</div>');
+				}
 			});
+		},
+
+		validate_geojson: function(geojson) {
+			if (geojson.type == 'Feature') {
+				if (! geojson.properties['wof:id'] &&
+				    ! geojson.properties['id']) {
+					return "Sorry, you need to specify a 'wof:id' property.";
+				}
+				return null;
+			} else if (geojson.type == 'FeatureCollection') {
+				for (var i = 0; i < geojson.features.length; i++) {
+					var issue = self.validate_geojson(geojson.features[i]);
+					if (issue) {
+						return 'Problem with feature ' + i + ': ' + issue;
+					}
+				}
+				return null;
+			}
 		},
 
 		preview_csv: function(data) {
@@ -807,9 +830,9 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		},
 
 		show_feature_preview: function(map, feature) {
-			if (feature.properties['wof:placetype'] == 'venue') {
-				var lat = parseFloat(feature.properties['geom:latitude']);
-				var lng = parseFloat(feature.properties['geom:longitude']);
+			if (feature.geometry.type == 'Point') {
+				var lat = parseFloat(feature.geometry.coordinates[1]);
+				var lng = parseFloat(feature.geometry.coordinates[0]);
 				marker = new L.Marker([lat, lng], {
 					icon: new VenueIcon()
 				}).addTo(map);
@@ -819,7 +842,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			}
 		},
 
-		show_props_preview: function(geojson, show_props_preview) {
+		show_props_preview: function(geojson, property_aliases) {
 			var props = self.get_geojson_props(geojson);
 			if (! props) {
 				return;
