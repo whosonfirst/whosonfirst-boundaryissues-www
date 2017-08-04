@@ -53,7 +53,11 @@
 		if ($action == 'cancel') {
 			wof_pipeline_phase($pipeline, 'cancelled');
 			wof_pipeline_cleanup($pipeline);
-			wof_repo_set_status($pipeline['repo'], 'ready');
+			$rsp = wof_repo_get_status($pipeline['repo']);
+			if ($rsp['status'] &&
+			    strpos($rsp['status'], "pipeline $id") !== false) {
+				wof_repo_set_status($pipeline['repo'], 'ready');
+			}
 		} else if ($pipeline['phase'] == 'error' && $action == 'retry') {
 			if (! $pipeline['meta']['last_phase']) {
 				api_output_error(400, "Could not determine the pipeline's last_phase.");
