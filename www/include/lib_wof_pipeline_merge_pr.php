@@ -9,7 +9,8 @@
 	function wof_pipeline_merge_pr_defaults($meta) {
 		$defaults = array(
 			'branch_merge' => true,
-			'user_confirmation' => true
+			'user_confirmation' => true,
+			'generate_meta_files' => true
 		);
 		return array_merge($defaults, $meta);
 	}

@@ -480,6 +480,13 @@
 		if ($phase == 'success') {
 			wof_pipeline_cleanup($pipeline);
 			wof_repo_set_status($pipeline['repo'], 'ready');
+
+			if ($pipeline['meta']['generate_meta_files']) {
+				wof_pipeline_create(array(
+					'type' => 'meta_files',
+					'repo' => $pipeline['repo']
+				));
+			}
 		} else {
 			if (! $debug) {
 				$debug = "Something went wrong, but I don’t know what";
