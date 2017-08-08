@@ -8,6 +8,7 @@
 
 	function wof_pipeline_merge_pr_defaults($meta) {
 		$defaults = array(
+			'name' => "Merge {$meta['repo']} PR {$meta['pr_number']}",
 			'branch_merge' => true,
 			'user_confirmation' => true,
 			'generate_meta_files' => true
