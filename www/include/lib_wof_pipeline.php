@@ -349,7 +349,7 @@
 		}
 
 		$pipeline_id = intval($pipeline['id']);
-		$emoji = ':horse:';
+		$emoji = ':tractor:';
 
 		if ($pipeline['commit_emoji']) {
 			$emoji = $pipeline['commit_emoji'];
@@ -720,23 +720,25 @@
 		if ($phase == 'confirm' &&
 		    $GLOBALS['cfg']['slack_bot_verification_token']) {
 			$extras['attachments'] = array(
-				'fallback' => 'You are unable to see the approval buttons.',
-				'callback_id' => 'pipeline_' . $pipeline_id,
-				'color' => '#FF0081',
-				'attachment_type' => 'default',
-				'actions' => array(
-					array(
-						'name' => 'confirmation',
-						'text' => 'Confirm',
-						'type' => 'button',
-						'value' => 'confirm',
-						'style' => 'primary'
-					),
-					array(
-						'name' => 'confirmation',
-						'text' => 'Cancel',
-						'type' => 'button',
-						'value' => 'cancel'
+				array(
+					'fallback' => 'You are unable to see the approval buttons.',
+					'callback_id' => 'pipeline_' . $pipeline_id,
+					'color' => '#FF0081',
+					'attachment_type' => 'default',
+					'actions' => array(
+						array(
+							'name' => 'confirmation',
+							'text' => 'Confirm',
+							'type' => 'button',
+							'value' => 'confirm',
+							'style' => 'primary'
+						),
+						array(
+							'name' => 'confirmation',
+							'text' => 'Cancel',
+							'type' => 'button',
+							'value' => 'cancel'
+						)
 					)
 				)
 			);
