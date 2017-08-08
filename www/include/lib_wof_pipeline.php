@@ -4,7 +4,6 @@
 	// requisite S3 permissions. (20170530/dphiffer)
 	$GLOBALS['cfg']['wof_pipeline_base_path'] = 'photos/pipeline/';
 
-	loadlib('wof_s3');
 	loadlib('slack_bot');
 	loadlib('wof_pipeline_utils');
 	loadlib('wof_pipeline_neighbourhood');
@@ -12,6 +11,8 @@
 	loadlib('wof_pipeline_fix_property_type');
 	loadlib('wof_pipeline_merge_pr');
 	loadlib('wof_pipeline_update_repo');
+	loadlib('wof_repo');
+	loadlib('wof_s3');
 
 	########################################################################
 
@@ -198,6 +199,18 @@
 		wof_pipeline_log($pipeline_id, "Downloaded files from S3", $result);
 
 		return $result;
+	}
+
+	########################################################################
+
+	function wof_pipeline_cancel($pipeline) {
+		wof_pipeline_phase($pipeline, 'cancelled');
+		wof_pipeline_cleanup($pipeline);
+		$rsp = wof_repo_get_status($pipeline['repo']);
+		if ($rsp['status'] &&
+		    strpos($rsp['status'], "pipeline $id") !== false) {
+			wof_repo_set_status($pipeline['repo'], 'ready');
+		}
 	}
 
 	########################################################################
@@ -702,7 +715,34 @@
 		}
 
 		wof_pipeline_log($pipeline_id, "Phase set to $phase");
-		slack_bot_msg("$phase: <{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id)$notification");
+
+		$extras = array();
+		if ($phase == 'confirm' &&
+		    $GLOBALS['cfg']['slack_bot_verification_token']) {
+			$extras['attachments'] = array(
+				'fallback' => 'You are unable to see the approval buttons.',
+				'callback_id' => 'pipeline_' . $pipeline_id,
+				'color' => '#FF0081',
+				'attachment_type' => 'default',
+				'actions' => array(
+					array(
+						'name' => 'confirmation',
+						'text' => 'Confirm',
+						'type' => 'button',
+						'value' => 'confirm',
+						'style' => 'primary'
+					),
+					array(
+						'name' => 'confirmation',
+						'text' => 'Cancel',
+						'type' => 'button',
+						'value' => 'cancel'
+					)
+				)
+			);
+		}
+
+		slack_bot_msg("$phase: <{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id)$notification", $extras);
 
 		return $rsp;
 	}

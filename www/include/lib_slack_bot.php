@@ -6,9 +6,13 @@
 
 	########################################################################
 
-	function slack_bot_msg($msg){
+	function slack_bot_msg($msg, $extras = array()){
 
-		$webhook_url = $GLOBALS['cfg']['slack_bot_webhook_url'];
+		if ($extras['url']) {
+			$url = $extras['url'];
+		} else {
+			$url = $GLOBALS['cfg']['slack_bot_webhook_url'];
+		}
 
 		if (! $GLOBALS['cfg']['enable_feature_slack_bot']){
 			return array(
@@ -32,13 +36,18 @@
 			}
 		}, $msg);
 
-		$postfields = json_encode(array(
+		$message = array(
 			'text' => $msg
-		));
+		);
+		if ($extras['attachments']) {
+			$message['attachments'] = $extras['attachments'];
+		}
+
+		$postfields = json_encode($message);
 		$headers = array(
 			'Content-Type: application/json'
 		);
-		$rsp = http_post($webhook_url, $postfields, $headers);
+		$rsp = http_post($url, $postfields, $headers);
 
 		return $rsp;
 	}
