@@ -159,11 +159,16 @@
 		// `{}`. So we just make sure to take care of wof:concordances by
 		// explicity turning an empty array into an empty object.
 		// (20161031/dphiffer)
-		if (empty($feature['properties']['wof:concordances'])) {
-			$feature['properties']['wof:concordances'] = new stdClass();
-		}
-		if (empty($feature['properties']['mz:hours'])) {
-			$feature['properties']['mz:hours'] = new stdClass();
+		$object_props = array(
+			'wof:concordances',
+			'mz:hours'
+		);
+
+		foreach ($object_props as $prop) {
+			if (isset($feature['properties'][$prop]) &&
+			    empty($feature['properties'][$prop])) {
+				$feature['properties'][$prop] = new stdClass();
+			}
 		}
 
 		// Make sure the record has repo & country properties.
