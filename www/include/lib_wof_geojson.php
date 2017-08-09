@@ -33,11 +33,16 @@
 
 	function wof_geojson_save($geojson, $branch = 'master') {
 
+		$headers = array();
+		$more = array(
+			'http_timeout' => 60
+		);
+
 		// Save a GeoJSON file to disk
 		$rsp = http_post("{$GLOBALS['cfg']['geojson_base_url']}/save", array(
 			'geojson' => $geojson,
 			'branch' => $branch
-		));
+		), $headers, $more);
 
 		// Check for connection errors
 		if (! $rsp['ok']) {
