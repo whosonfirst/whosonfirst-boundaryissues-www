@@ -1755,12 +1755,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			feature.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
 			feature.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
-			feature.properties['mz:categories'] = self.get_categories();
-			self.generate_name_geojson(feature);
 
-			if ($('#hours').length > 0){
-				feature.properties['mz:hours'] = self.get_hours();
+			if (feature.properties['wof:placetype'] == 'venue') {
+				feature.properties['mz:categories'] = self.get_categories();
+				if ($('#hours').length > 0) {
+					feature.properties['mz:hours'] = self.get_hours();
+				}
 			}
+			self.generate_name_geojson(feature);
 
 			return feature;
 		},
