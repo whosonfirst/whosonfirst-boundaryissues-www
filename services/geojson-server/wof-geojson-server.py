@@ -19,6 +19,7 @@ import mapzen.whosonfirst.placetypes
 import mapzen.whosonfirst.pip.utils
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 116 * 1024 * 1024
 
 @app.before_request
 def init():

@@ -53,20 +53,42 @@ mapzen.whosonfirst.geojson = (function(){
 			else if (geojson['type'] == 'Feature'){
 
 				// Adapted from http://gis.stackexchange.com/a/172561
+				// See also: https://tools.ietf.org/html/rfc7946#section-3.1
+
 				var geom = geojson['geometry'];
 				var coords = geom.coordinates;
-
-				if (geom.type == 'Point') {
-					return [ coords[0], coords[1],
-					         coords[0], coords[1] ];
-				}
 
 				var lats = [],
 				    lngs = [];
 
-				for (var i = 0; i < coords[0].length; i++) {
-					lats.push(coords[0][i][1]);
-					lngs.push(coords[0][i][0]);
+				if (geom.type == 'Point') {
+					return [ coords[0], coords[1],
+					         coords[0], coords[1] ];
+				} else if (geom.type == 'MultiPoint' ||
+				           geom.type == 'LineString') {
+					for (var i = 0; i < coords.length; i++) {
+						lats.push(coords[i][1]);
+						lngs.push(coords[i][0]);
+					}
+				} else if (geom.type == 'MultiLineString') {
+					for (var i = 0; i < coords.length; i++) {
+						for (var j = 0; j < coords[i].length; j++) {
+							lats.push(coords[i][j][1]);
+							lngs.push(coords[i][j][0]);
+						}
+					}
+				} else if (geom.type == 'Polygon') {
+					for (var i = 0; i < coords[0].length; i++) {
+						lats.push(coords[0][i][1]);
+						lngs.push(coords[0][i][0]);
+					}
+				} else if (geom.type == 'MultiPolygon') {
+					for (var i = 0; i < coords.length; i++) {
+						for (var j = 0; j < coords[i][0].length; j++) {
+							lats.push(coords[i][0][j][1]);
+							lngs.push(coords[i][0][j][0]);
+						}
+					}
 				}
 
 				var minlat = Math.min.apply(null, lats),
@@ -74,8 +96,8 @@ mapzen.whosonfirst.geojson = (function(){
 				var minlng = Math.min.apply(null, lngs),
 				    maxlng = Math.max.apply(null, lngs);
 
-				return [ minlat, minlng,
-					 maxlat, maxlng ];
+				return [ minlng, minlat,
+					 maxlng, maxlat ];
 			}
 
 			else {}
