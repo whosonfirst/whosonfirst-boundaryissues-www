@@ -228,7 +228,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		setup_map_geometry: function() {
 			// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
 			var lat = 40.73581157695217;
-			var lon = -73.9815902709961;
+			var lng = -73.9815902709961;
 			var zoom = 12;
 			map.setView([lat, lng], zoom);
 			var geojson_url = $('#geojson-link').attr('href');
@@ -1755,12 +1755,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			feature.properties['wof:parent_id'] = parseInt($('input[name="properties.wof:parent_id"]').val());
 			feature.properties['wof:hierarchy'] = JSON.parse($('input[name="properties.wof:hierarchy"]').val());
-			feature.properties['mz:categories'] = self.get_categories();
-			self.generate_name_geojson(feature);
 
-			if ($('#hours').length > 0){
-				feature.properties['mz:hours'] = self.get_hours();
+			if (feature.properties['wof:placetype'] == 'venue') {
+				feature.properties['mz:categories'] = self.get_categories();
+				if ($('#hours').length > 0) {
+					feature.properties['mz:hours'] = self.get_hours();
+				}
 			}
+			self.generate_name_geojson(feature);
 
 			return feature;
 		},
@@ -1780,11 +1782,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var lang = match[1];
 					var type = match[2];
 					var prop = "name:" + lang + '_x_' + type;
-					if (! names[prop]) {
-						names[prop] = [];
-					}
 					var value = $(input).val();
 					if (value) {
+						if (! names[prop]) {
+							names[prop] = [];
+						}
 						names[prop].push(value);
 					}
 				}
