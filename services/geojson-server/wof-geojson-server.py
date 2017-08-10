@@ -151,6 +151,9 @@ def geojson_hierarchy():
 		return jsonify(ok=0, error=error)
 
 	hierarchy = feature["properties"]["wof:hierarchy"]
+	for h in hierarchy:
+		if h["venue_id"] == -1:
+			del h["venue_id"]
 
 	pt = mapzen.whosonfirst.placetypes.placetype(placetype)
 	parents = []
