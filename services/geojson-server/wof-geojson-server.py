@@ -16,7 +16,8 @@ import mapzen.whosonfirst.export
 import mapzen.whosonfirst.search
 import mapzen.whosonfirst.utils
 import mapzen.whosonfirst.placetypes
-import mapzen.whosonfirst.pip.utils
+import mapzen.whosonfirst.hierarchy
+import mapzen.whosonfirst.spatial.whosonfirst
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 116 * 1024 * 1024
@@ -109,39 +110,82 @@ def geojson_save():
 
 @app.route('/pip', methods=['GET'])
 def geojson_hierarchy():
-	data_endpoint = 'https://whosonfirst.mapzen.com/data/'
 	lat = float(request.args.get('latitude'))
 	lng = float(request.args.get('longitude'))
 	wof_id = request.args.get('wof_id')
 	placetype = request.args.get('placetype')
-	pip_server = mapzen.whosonfirst.pip.server(hostname='pip.mapzen.com', scheme='https', port=443)
+	feature = False
 
 	if (mapzen.whosonfirst.placetypes.is_valid_placetype(placetype) == False):
 		return jsonify(ok=0, error="What is that placetype?")
 
-	try:
-		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, placetype, pip_server=pip_server)
-	except Exception, e:
-		error = "failed to determine parents, because %s" % e
-		logging.error(error)
-		return jsonify(ok=0, error=error)
+	if not wof_id:
+		wof_id = -1
+	else:
+		data_dir = "%s%s/data" % (flask.g.wof_pending_dir, "master")
+		feature = mapzen.whosonfirst.utils.load(data_dir, wof_id)
+		if not feature:
+			feature = mapzen.whosonfirst.utils.load("/usr/local/data/whosonfirst-data/data", wof_id)
 
-	# Ok, here is a weird situation. Let's say you've got a venue out in the
-	# desert. Its usual parents like neighbourhood or microhood don't exist out
-	# here. But we still want to build a hierarchy if our first attempt comes
-	# up empty. We're just gonna retry, with locality as the new placetype.
-	# Eventually this will probably get handled in a Python library, but for now
-	# we'll just do it the HULKSMASH way. (20170504/dphiffer)
-	if placetype == 'venue' and len(parents) == 0:
-		shim_placetype = 'locality'
-		parents = mapzen.whosonfirst.pip.utils.get_reverse_geocoded(lat, lng, shim_placetype, pip_server=pip_server)
+	if not feature:
+		feature = {
+			"properties": {
+				"wof:id": wof_id,
+				"wof:parent_id": -1,
+				"wof:placetype": placetype
+			},
+			"geometry": {
+				"type": "Point",
+				"coordinates": [lng, lat]
+			}
+		}
+
+	pip_client = mapzen.whosonfirst.spatial.whosonfirst.pip()
 
 	try:
-		hierarchy = mapzen.whosonfirst.pip.utils.get_hierarchy(parents, wof_id, placetype)
+		ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=pip_client)
+		ancs.rebuild_feature(feature)
 	except Exception, e:
 		error = "failed to determine hierarchy, because %s" % e
 		logging.error(error)
 		return jsonify(ok=0, error=error)
+
+	hierarchy = feature["properties"]["wof:hierarchy"]
+
+	pt = mapzen.whosonfirst.placetypes.placetype(placetype)
+	parents = []
+
+	for p in pt.parents():
+
+		# These won't pip correctly, so just skip em
+		if str(p) in ("building", "address"):
+			continue
+
+		filters = {
+			"wof:placetype_id": p.id()
+		}
+
+		kwargs = {
+			"filters": filters
+		}
+
+		for r in pip_client.point_in_polygon(lat, lng, **kwargs):
+
+			# see this - it's not a feature... it should be a thing you
+			# specify in filters and have the spatial client take care
+			# of for you but it's currently blocked on this:
+			# https://github.com/whosonfirst/go-whosonfirst-pip/issues/32
+
+			if r["Deprecated"] == True:
+				continue
+
+			if r["Superseded"] == True:
+				continue
+
+			parents.append(r)
+
+		if len(parents):
+			break
 
 	return jsonify(ok=1, hierarchy=hierarchy, parents=parents)
 
