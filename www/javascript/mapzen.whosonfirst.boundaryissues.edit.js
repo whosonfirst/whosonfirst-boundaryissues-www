@@ -138,14 +138,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 				var hash = new L.Hash(map);
 
-				self.show_nearby_results();
+				//self.show_nearby_results();
 				map.on('dragend', function() {
-					self.show_nearby_results();
+					//self.show_nearby_results();
 				});
 
 				slippymap.crosshairs.init(map);
-				mapzen.whosonfirst.nearby.init(map);
-				mapzen.whosonfirst.nearby.inflate_nearby();
+				//mapzen.whosonfirst.nearby.init(map);
+				//mapzen.whosonfirst.nearby.inflate_nearby();
 
 				geocoder.on('select', function(e) {
 					var html = '<a href="#" class="btn btn-primary" id="geocoder-marker-select">Use this result</a> <a href="#" class="btn" id="geocoder-marker-cancel">Cancel</a>';
@@ -554,15 +554,20 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('#btn-rebuild-hierarchy').click(function(e) {
 				e.preventDefault();
-				self.set_property('wof:parent_id', -1);
 				var centroid = self.get_property_centroid();
 				if (centroid) {
-					self.lookup_hierarchy(centroid.lat, centroid.lng);
+					var lat = centroid.lat;
+					var lng = centroid.lng;
 				} else if (marker) {
 					var lat = marker.getLatLng().lat;
 					var lng = marker.getLatLng().lng;
-					self.lookup_hierarchy(lat, lng);
 				}
+				var feature = self.generate_feature();
+				feature.geometry = {
+					type: 'Point',
+					coordinates: [lng, lat]
+				};
+				self.rebuild_hierarchy(feature);
 			});
 		},
 
@@ -1580,6 +1585,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		show_nearby_results: function() {
+
+			// Disable this until we figure out why it's not working
+			// (20170810/dphiffer)
+			return;
+
 			var bounds = map.getBounds();
 			var data = {
 				lat_min: bounds._southWest.lat,
@@ -1920,17 +1930,19 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		reverse_geocode: function(lat, lng, callback) {
-			var placetype = $('input[name="properties.wof:placetype"]').val();
-			var data = {
-				latitude: lat,
-				longitude: lng,
-				placetype: placetype
-			};
 
-			var wof_id = $('input[name="properties.wof:id"').val();
-			if (wof_id) {
-				data.wof_id = wof_id;
+			lat = parseFloat(lat);
+			lng = parseFloat(lng);
+
+			var feature = self.generate_feature();
+			feature.geometry = {
+				type: "Point",
+				coordinates: [lng, lat]
 			}
+			var geojson = JSON.stringify(feature);
+			var data = {
+				geojson: geojson
+			};
 
 			var onsuccess = function(rsp) {
 				callback(rsp);
