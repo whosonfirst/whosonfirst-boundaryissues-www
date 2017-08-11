@@ -6,59 +6,54 @@
 
 	function wof_geojson_encode($geojson) {
 
-		// Use the GeoJSON pony to pretty-print the string
-		$rsp = http_post("{$GLOBALS['cfg']['geojson_base_url']}/encode", array(
+		$data = array(
 			'geojson' => $geojson
-		));
-
-		if (! $rsp['ok']) {
-			if ($rsp['body']) {
-				$rsp['error'] = "Error from GeoJSON service: {$rsp['body']}";
-			}
-			return $rsp;
-		}
-
-		$rsp = json_decode($rsp['body'], true);
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-
-		return array(
-			'ok' => 1,
-			'encoded' => $rsp['encoded']
 		);
+		return wof_geojson_request("/encode", $data);
+	}
+
+	########################################################################
+
+	function wof_geojson_pip($geojson) {
+
+		$data = array(
+			'geojson' => $geojson
+		);
+		return wof_geojson_request("/pip", $data);
 	}
 
 	########################################################################
 
 	function wof_geojson_save($geojson, $branch = 'master') {
 
-		$headers = array();
-		$more = array(
-			'http_timeout' => 60
-		);
-
-		// Save a GeoJSON file to disk
-		$rsp = http_post("{$GLOBALS['cfg']['geojson_base_url']}/save", array(
+		$data = array(
 			'geojson' => $geojson,
 			'branch' => $branch
-		), $headers, $more);
-
-		// Check for connection errors
-		if (! $rsp['ok']) {
-			$rsp['error'] = "Error connecting to GeoJSON service: {$rsp['body']}";
-			return $rsp;
-		}
-
-		$rsp = json_decode($rsp['body'], true);
-		if (! $rsp['ok']) {
-			return $rsp;
-		}
-
-		return array(
-			'ok' => 1,
-			'geojson' => $rsp['geojson']
 		);
+		return wof_geojson_request("/save", $data);
+	}
+
+	########################################################################
+
+	function wof_geojson_request($path, $data, $headers=array(), $more=array()) {
+
+		$url = "{$GLOBALS['cfg']['geojson_base_url']}{$path}";
+		$defaults = array(
+			'http_timeout' => 60
+		);
+		$more = array_merge($defaults, $more);
+
+		$rsp = http_post($url, $data, $headers, $more);
+
+		if (! $rsp['body']) {
+			return array(
+				'ok' => 0,
+				'error' => 'No response from GeoJSON service',
+				'rsp' => $rsp
+			);
+		}
+
+		return json_decode($rsp['body'], 'as hash');
 	}
 
 	########################################################################

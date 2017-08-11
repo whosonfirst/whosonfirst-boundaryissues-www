@@ -108,37 +108,26 @@ def geojson_save():
 
 	return jsonify(ok=1, geojson=exported)
 
-@app.route('/pip', methods=['GET'])
-def geojson_hierarchy():
-	lat = float(request.args.get('latitude'))
-	lng = float(request.args.get('longitude'))
-	wof_id = request.args.get('wof_id')
-	placetype = request.args.get('placetype')
-	feature = False
+@app.route('/pip', methods=['POST'])
+def geojson_pip():
+	try:
+		g = request.form['geojson']
+		feature = geojson.loads(g)
+	except Exception, e:
+		err = "failed to load geojson, because %s" % e
+		return jsonify(ok=0, error=err)
+
+	props = feature["properties"]
+	geom = feature["geometry"]
+	placetype = props["wof:placetype"]
+	lat = geom["coordinates"][1]
+	lng = geom["coordinates"][0]
 
 	if (mapzen.whosonfirst.placetypes.is_valid_placetype(placetype) == False):
 		return jsonify(ok=0, error="What is that placetype?")
 
-	if not wof_id:
-		wof_id = -1
-	else:
-		data_dir = "%s%s/data" % (flask.g.wof_pending_dir, "master")
-		feature = mapzen.whosonfirst.utils.load(data_dir, wof_id)
-		if not feature:
-			feature = mapzen.whosonfirst.utils.load("/usr/local/data/whosonfirst-data/data", wof_id)
-
-	if not feature:
-		feature = {
-			"properties": {
-				"wof:id": wof_id,
-				"wof:parent_id": -1,
-				"wof:placetype": placetype
-			},
-			"geometry": {
-				"type": "Point",
-				"coordinates": [lng, lat]
-			}
-		}
+	if not props["wof:id"]:
+		props["wof:id"] = -1
 
 	pip_client = mapzen.whosonfirst.spatial.whosonfirst.pip()
 
@@ -151,6 +140,8 @@ def geojson_hierarchy():
 		return jsonify(ok=0, error=error)
 
 	hierarchy = feature["properties"]["wof:hierarchy"]
+	parent_id = feature["properties"]["wof:parent_id"]
+
 	for h in hierarchy:
 		if h["venue_id"] == -1:
 			del h["venue_id"]
@@ -190,10 +181,10 @@ def geojson_hierarchy():
 		if len(parents):
 			break
 
-	return jsonify(ok=1, hierarchy=hierarchy, parents=parents)
+	return jsonify(ok=1, hierarchy=hierarchy, parents=parents, parent_id=parent_id)
 
 @app.route('/nearby', methods=['GET'])
-def nearby():
+def geojson_nearby():
 
 	# Please put me in a config file
 	api_key = "mapzen-Gvj9yGE"

@@ -6,6 +6,7 @@
 	loadlib('wof_save');
 	loadlib('wof_s3');
 	loadlib('wof_pipeline');
+	loadlib('wof_geojson');
 	loadlib('users_settings');
 	loadlib('uuid');
 
@@ -277,42 +278,13 @@
 
 	function api_wof_pip() {
 
-		if (! isset($_POST['latitude']) ||
-		    ! isset($_POST['longitude']) ||
-		    ! isset($_POST['placetype'])) {
-			api_output_error(400, "Please include: 'latitude', 'longitude', and 'placetype'.");
+		$geojson = post_str('geojson');
+		if (! $geojson) {
+			api_output_error(400, "Please include 'geojson' param.");
 		}
 
-		$vars = array(
-			'latitude' => post_float('latitude'),
-			'longitude' => post_float('longitude'),
-			'placetype' => post_str('placetype')
-		);
-		if (isset($_POST['wof_id'])) {
-			$vars['wof_id'] = post_int32('wof_id');
-		}
-		$query = http_build_query($vars);
-
-		# Note the absence of the trailing slash - this is relevant because Python
-		# (20160429/thisisaaronland)
-
-		$url = "http://{$GLOBALS['cfg']['wof_geojson_server_host']}:{$GLOBALS['cfg']['wof_geojson_server_port']}/pip";
-		# error_log("{$url}?{$query}");
-
-		$headers = array();
-		$more = array(
-			'http_timeout' => 10 // let this run for up to 10s
-		);
-		dbug("{$url}?$query");
-		$rsp = http_get("{$url}?$query", $headers, $more);
-
-		if (! $rsp['ok']) {
-			$error = $rsp['error'] ? $rsp['error'] : 'Error talking to the PIP service.';
-			api_output_error(400, $error);
-		}
-
-		$results = json_decode($rsp['body'], true);
-		api_output_ok($results);
+		$rsp = wof_geojson_pip($geojson);
+		api_output_ok($rsp);
 	}
 
 	########################################################################
