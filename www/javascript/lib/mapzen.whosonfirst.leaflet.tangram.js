@@ -171,6 +171,11 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 					localforage.setItem(prefs_key, prefs);
 				});
 			}
+		},
+
+		'prefs_reset': function(){
+			var prefs_key = self.prefs_key();
+			localforage.removeItem(prefs_key);
 		}
 	};
 
