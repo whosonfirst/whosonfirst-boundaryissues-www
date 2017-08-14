@@ -94,6 +94,9 @@
 						"wof:population_rank": {
 							"type": "integer"
 						},
+						"wof:controlled": {
+							"type": "array"
+						},
 						"mz:is_current": {
 							"type": "integer",
 							"default": 1
