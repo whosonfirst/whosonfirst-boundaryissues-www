@@ -18,8 +18,11 @@
 	// Sort the properties alphabetically
 	ksort($schema_fields['properties']['properties']['properties']);
 
-	// Remove the properties that aren't required
-	wof_render_remove_empty($schema_fields['properties']['properties']);
+	// Remove the properties that aren't:
+	// - required
+	// - have a value
+	// - are on the list of "default" properties
+	wof_render_prune($schema_fields['properties']['properties']);
 
 	$crumb_venue = crumb_generate('api', 'wof.save');
 	$GLOBALS['smarty']->assign('crumb_save', $crumb_venue);
