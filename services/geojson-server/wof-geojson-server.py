@@ -143,7 +143,7 @@ def geojson_pip():
 	parent_id = feature["properties"]["wof:parent_id"]
 
 	for h in hierarchy:
-		if h["venue_id"] == -1:
+		if "venue_id" in h and h["venue_id"] == -1:
 			del h["venue_id"]
 
 	pt = mapzen.whosonfirst.placetypes.placetype(placetype)
