@@ -201,6 +201,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				marker.on('dragend', function(e) {
 					var ll = marker.getLatLng();
 					self.update_coordinates(ll, true);
+					self.disable_controlled('wof:parent_id');
+					self.disable_controlled('wof:hierarchy');
 				});
 				self.update_where(lat, lng);
 
@@ -273,6 +275,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					marker = null;
 				}
 				self.reset_coordinates();
+				self.disable_controlled('wof:parent_id');
+				self.disable_controlled('wof:hierarchy');
 			});
 
 			map.on('draw:created', function(e){
@@ -289,41 +293,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.setup_add_property();
 
 			$('.json-schema-object > table > tbody > tr').each(function(i, row) {
-				if ($(row).hasClass('add-row')) {
-					// Don't need to remove the placeholder input rows
-					return;
-				}
-				if (! $(row).hasClass('property-deletable') ||
-				    ! $(row).hasClass('property-editable') ||
-				    ! self.user_can_edit()) {
-					return;
-				}
-				$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
-				$(row).find('.btn-remove-item').click(function(e) {
-					var name = $(row).closest('.json-schema-object').data('context');
-					$(row).remove();
-					self.mark_changed_property(name);
-				});
+				self.setup_object_row(row);
 			});
 
 			$('.json-schema-array > ul > li').each(function(i, row) {
-				if (  $(row).hasClass('add-row') ||
-				    ! $(row).closest('.object-property').hasClass('property-editable') ||
-				    ! self.user_can_edit()) {
-					return;
-				}
-				$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
-				$(row).find('.btn-remove-item').click(function(e) {
-					var $parent = $(row).closest('.json-schema-array');
-					$(row).remove();
-					var name = $parent.data('context');
-					self.mark_changed_property(name);
-
-					// Re-number the property inputs
-					$parent.find('input.property').each(function(j, input) {
-						$(input).attr('name', name + '[' + j + ']');
-					});
-				});
+				self.setup_array_row(row);
 			});
 
 			$('#edit-properties input').change(function(e) {
@@ -429,6 +403,48 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 		},
 
+		setup_array_row: function(row) {
+			if (  $(row).hasClass('add-row') ||
+			    ! $(row).closest('.object-property').hasClass('property-editable') ||
+			    ! self.user_can_edit()) {
+				return;
+			}
+			$(row).find('> .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
+			$(row).find('.btn-remove-item').click(function(e) {
+				var $parent = $(row).closest('.json-schema-array');
+				$(row).remove();
+				var name = $parent.data('context');
+				self.mark_changed_property(name);
+
+				// Re-number the property inputs
+				$parent.find('input.property').each(function(i, input) {
+					var property = name + '[' + i + ']';
+					var value = $(input).val();
+					$(input).attr('name', property);
+					$('#edit-form').trigger('propertychanged', [property, value]);
+				});
+			});
+		},
+
+		setup_object_row: function(row) {
+			if ($(row).hasClass('add-row')) {
+				// Don't need to remove the placeholder input rows
+				return;
+			}
+			if (! $(row).hasClass('property-deletable') ||
+			    ! $(row).hasClass('property-editable') ||
+			    ! self.user_can_edit()) {
+				return;
+			}
+			$(row).find('> td > .json-schema-field').append('<button class="btn btn-remove-item">-</button>');
+			$(row).find('.btn-remove-item').click(function(e) {
+				var name = $(row).closest('.json-schema-object').data('context');
+				$(row).remove();
+				self.mark_changed_property(name);
+				//$('#edit-form').trigger('propertychanged', [name, null]);
+			});
+		},
+
 		setup_property_schema: function() {
 
 			var onsuccess = function(rsp) {
@@ -481,6 +497,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$('#edit-form').on('propertychanged', function(e, property, value) {
+				console.log('propertychanged', property, value);
 				if (property == 'properties.wof:name') {
 					var id = $('input[name="wof_id"]').val();
 					if (id){
@@ -500,6 +517,13 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 							$(input).val(value);
 						}
 					});
+				}
+				if (property.substr(0, 25) == 'properties.wof:controlled') {
+					if (self.is_controlled('wof:hierarchy')) {
+						$('#hierarchy').addClass('controlled');
+					} else {
+						$('#hierarchy').removeClass('controlled');
+					}
 				}
 				self.mark_changed_property(property);
 			});
@@ -554,6 +578,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$('#btn-rebuild-hierarchy').click(function(e) {
 				e.preventDefault();
+				if ($('#btn-rebuild-hierarchy').hasClass('disabled') ||
+				    self.is_controlled('wof:hierarchy')) {
+					return;
+				}
 				var centroid = self.get_property_centroid();
 				if (centroid) {
 					var lat = centroid.lat;
@@ -562,12 +590,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var lat = marker.getLatLng().lat;
 					var lng = marker.getLatLng().lng;
 				}
-				var feature = self.generate_feature();
-				feature.geometry = {
-					type: 'Point',
-					coordinates: [lng, lat]
-				};
-				self.rebuild_hierarchy(feature);
+				self.lookup_hierarchy(lat, lng);
 			});
 		},
 
@@ -843,24 +866,29 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var array_input = property.match(/^(.+)\[(\d+)\]$/);
 			var object_input = property.match(/^([^.]+)\.([^.]+)$/);
 			var init_value = null;
+			var curr_value = null;
 			if (array_input) {
 				property = array_input[1];
 				name = 'properties.' + property;
-				var index = parseInt(array_input[2]);
-				var curr_value = wof_value.properties[property][index];
+				if (wof_value.properties[property]) {
+					var index = parseInt(array_input[2]);
+					curr_value = wof_value.properties[property][index];
+				}
 				if (self.initial_wof_value.properties[property]) {
 					init_value = self.initial_wof_value.properties[property][index];
 				}
 			} else if (object_input) {
 				property = object_input[1];
-				var subproperty = object_input[2];
 				name = 'properties.' + property;
-				var curr_value = wof_value.properties[property][subproperty];
+				if (wof_value.properties[property]) {
+					var subproperty = object_input[2];
+					curr_value = wof_value.properties[property][subproperty];
+				}
 				if (self.initial_wof_value.properties[property]) {
 					init_value = self.initial_wof_value.properties[property][subproperty];
 				}
 			} else {
-				var curr_value = wof_value.properties[property];
+				curr_value = wof_value.properties[property];
 				init_value = self.initial_wof_value.properties[property];
 			}
 			var $edit_list = $('#edit-status > ul');
@@ -1122,7 +1150,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$rel.find('> table > tbody').append($newRow);
 			}
 			$newRow.find('.btn-remove-item').click(function(e) {
+				e.preventDefault();
 				$newRow.remove();
+				$('#edit-form').trigger('propertychanged', [context + '.' + key, value]);
 			});
 
 			var $input = $rel.find('input[name="' + context + '.' + key + '"]');
@@ -1154,9 +1184,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var $new_item = $rel.find('> ul > li').last();
 			$new_item.find('.btn-remove-item').click(function(e) {
 				e.preventDefault();
-				var name = $new_item.closest('.json-schema-array').data('context');
 				$new_item.remove();
-				self.mark_changed_property(name);
+				$('#edit-form').trigger('propertychanged', [context + '[' + index + ']', value]);
 			});
 			if (typeof value == 'object') {
 				$new_item.find('.property').val(JSON.stringify(value));
@@ -1213,6 +1242,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$('#where-parent').removeClass('is-breach');
 					map.removeLayer(parent_hover);
 					parent_hover = null;
+					self.set_controlled('wof:parent_id');
+					self.set_controlled('wof:hierarchy');
 				}
 			});
 
@@ -1224,7 +1255,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					parent = parseInt(parent);
 					if (hierarchy && parent) {
 						self.show_hierarchy(hierarchy);
-						if (parent != -1) {
+						if (parent > 0) {
 							self.get_wof(parent, function(wof) {
 								self.set_parent({
 									Id: wof.properties['wof:id'],
@@ -1348,10 +1379,17 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.reverse_geocode(lat, lng, function(rsp) {
 				var parents = rsp.parents;
 				var hierarchy = rsp.hierarchy;
+				var parent_id = rsp.parent_id;
 				var curr_parent_id = $('input[name="properties.wof:parent_id"]').val();
 				curr_parent_id = parseInt(curr_parent_id);
-				var chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
-				var chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
+
+				var chosen_parent = null;
+				var chosen_hierarchy = null;
+				if (self.is_controlled('wof:parent_id')) {
+					chosen_parent = self.get_parent_by_id(parents, curr_parent_id);
+					chosen_hierarchy = self.get_hierarchy_by_id(hierarchy, curr_parent_id);
+				}
+
 
 				if (parents.length == 0) {
 					// No options to choose from!
@@ -1383,11 +1421,11 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					$('#where-parent').addClass('is-breach');
 
 					$('#hierarchy').html('');
-					$('#parent').html('Parent: <code><small>-1</small></code>');
+					$('#parent').html('Parent: <code><small>' + parent_id + '</small></code>');
 					$.each(hierarchy, function(i, h) {
 						self.show_hierarchy(h);
 					});
-					self.set_property('wof:parent_id', -1);
+					self.set_property('wof:parent_id', parent_id);
 
 					$('#where-parent').mouseover(function(e) {
 						var id = $(e.target).data('id');
@@ -1417,7 +1455,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 				if (hierarchy.length == 0) {
 					self.set_hierarchy([]);
-					if ($('input[name="properties.wof:parent_id"]').val() != "-1") {
+					var input_parent_id = $('input[name="properties.wof:parent_id"]').val();
+					input_parent_id = parseInt(input_parent_id);
+					if (input_parent_id < 0) {
 						$('#parent').append('<p class="caveat">This parent has no hierarchy</p>');
 					}
 				} else if (chosen_hierarchy) {
@@ -1987,6 +2027,38 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		user_can_edit: function() {
 			return $(document.body).hasClass('user-can-edit');
+		},
+
+		set_controlled: function(property) {
+			var feature = self.generate_feature();
+			var controlled = feature.properties['wof:controlled'];
+			if (controlled) {
+				controlled.push(property);
+			} else {
+				controlled = [property];
+			}
+			self.set_property('wof:controlled', controlled);
+		},
+
+		is_controlled: function(property) {
+			var feature = self.generate_feature();
+			var controlled = feature.properties['wof:controlled'];
+			if (! controlled) {
+				return false;
+			}
+			return (controlled.indexOf(property) != -1);
+		},
+
+		disable_controlled: function(property) {
+			var feature = self.generate_feature();
+			var controlled = feature.properties['wof:controlled'];
+			if (controlled) {
+				var index = controlled.indexOf(property);
+				if (index != -1) {
+					controlled.splice(index, 1);
+					self.set_property('wof:controlled', controlled);
+				}
+			}
 		}
 	};
 

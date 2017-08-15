@@ -232,6 +232,13 @@ label[for="select-all"] {
 	border-top: 1px dotted #dedede;
 }
 
+#hierarchy.controlled::after {
+	content: "Cannot rebuild hierarchy, see wof:controlled property";
+	color: #D4645C;
+	font-size: small;
+	font-style: italic;
+}
+
 #edit-options {
 	margin-top: 0.5em;
 }
