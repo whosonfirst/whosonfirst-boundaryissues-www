@@ -521,8 +521,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (property.substr(0, 25) == 'properties.wof:controlled') {
 					if (self.is_controlled('wof:hierarchy')) {
 						$('#hierarchy').addClass('controlled');
+						$('#btn-rebuild-hierarchy').addClass('disabled');
 					} else {
 						$('#hierarchy').removeClass('controlled');
+						$('#btn-rebuild-hierarchy').removeClass('disabled');
 					}
 				}
 				self.mark_changed_property(property);
@@ -582,6 +584,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				    self.is_controlled('wof:hierarchy')) {
 					return;
 				}
+				$('#hierarchy').html('<div class="headroom">Rebuilding hierarchy...</div>');
 				var centroid = self.get_property_centroid();
 				if (centroid) {
 					var lat = centroid.lat;
@@ -1149,11 +1152,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			} else {
 				$rel.find('> table > tbody').append($newRow);
 			}
-			$newRow.find('.btn-remove-item').click(function(e) {
-				e.preventDefault();
-				$newRow.remove();
-				$('#edit-form').trigger('propertychanged', [context + '.' + key, value]);
-			});
+
+			self.setup_object_row($newRow);
 
 			var $input = $rel.find('input[name="' + context + '.' + key + '"]');
 			if (typeof value == 'object') {
@@ -1182,11 +1182,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				'</li>'
 			);
 			var $new_item = $rel.find('> ul > li').last();
-			$new_item.find('.btn-remove-item').click(function(e) {
-				e.preventDefault();
-				$new_item.remove();
-				$('#edit-form').trigger('propertychanged', [context + '[' + index + ']', value]);
-			});
+
+			self.setup_array_row($new_item);
+
 			if (typeof value == 'object') {
 				$new_item.find('.property').val(JSON.stringify(value));
 			} else {
