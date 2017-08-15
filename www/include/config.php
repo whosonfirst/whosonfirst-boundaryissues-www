@@ -179,6 +179,12 @@
 	// CSV upload feature
 	$GLOBALS['cfg']['enable_feature_csv_upload'] = true;
 
+	// Which properties should appear on the page (even if they aren't
+	// "required")
+	$GLOBALS['cfg']['wof_default_properties'] = array(
+		'wof:controlled'
+	);
+
 	// This search query filtering business is here because we've moved
 	// all our Elasticsearch business onto a single common index, but each
 	// application is only set up to edit a subset of the documents. The

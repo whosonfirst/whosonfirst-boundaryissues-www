@@ -107,6 +107,9 @@
 		'wof:created' => array(
 			'editable' => false
 		),
+		'wof:controlled' => array(
+			'deletable' => false
+		),
 		'wof:lastmodified' => array(
 			'editable' => false
 		),
@@ -191,9 +194,10 @@
 
 	########################################################################
 
-	function wof_render_remove_empty(&$schema) {
+	function wof_render_prune(&$schema) {
 		foreach ($schema['properties'] as $key => $value) {
-			if (! $value['_required'] &&
+			if (! in_array($key, $GLOBALS['cfg']['wof_default_properties']) &&
+			    ! $value['_required'] &&
 			    ! (isset($value['_value']) ||
 			       ! empty($value['properties']))) {
 				// If a property hasn't been set in the existing record, and

@@ -32,8 +32,11 @@
 	// Next, the values from a particular record are merged into the schema.
 	wof_render_insert_values($schema_fields, $values);
 
-	// Remove the properties without values, that aren't required
-	wof_render_remove_empty($schema_fields['properties']['properties']);
+	// Remove the properties that aren't:
+	// - required
+	// - have a value
+	// - are on the list of "default" properties
+	wof_render_prune($schema_fields['properties']['properties']);
 
 	// Sort the properties alphabetically
 	ksort($schema_fields['properties']['properties']['properties']);
