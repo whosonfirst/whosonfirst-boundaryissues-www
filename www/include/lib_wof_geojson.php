@@ -51,7 +51,8 @@
 				'error' => 'No response from GeoJSON service',
 				'rsp' => $rsp
 			);
-		} else if ($rsp['code'] < 200 || $rsp['code'] > 299) {
+		} else if ($rsp['code'] &&
+		           ($rsp['code'] < 200 || $rsp['code'] > 299)) {
 			$esc_code = intval($rsp['code']);
 			return array(
 				'ok' => 0,
