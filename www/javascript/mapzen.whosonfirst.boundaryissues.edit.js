@@ -123,9 +123,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.setup_map_geometry();
 				}
 
-				// sudo move me to stack.json
-				// (20170616/dphiffer)
-				var geocoder = L.control.geocoder('mapzen-LhT76h5', {
+				var api_key = document.body.getAttribute("data-mapzen-api-key");
+				var geocoder = L.control.geocoder(api_key, {
 					markers: {
 						icon: new VenueIcon()
 					}
