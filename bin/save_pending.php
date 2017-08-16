@@ -21,7 +21,7 @@
 	}
 
 	if (! $options['dry_run']) {
-		$lockfile = "{$GLOBALS['cfg']['wof_pending_dir']}SAVE_LOCKFILE";
+		$lockfile = "/tmp/boundaryissues.save.lock";
 		if (file_exists($lockfile)) {
 			die("Looks like save_pending.php might already be running.\n");
 		}
