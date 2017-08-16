@@ -8,7 +8,7 @@
 
 	$verbose = (array_search('--verbose', $argv) != false);
 
-	$lockfile = "{$GLOBALS['cfg']['wof_pending_dir']}PIPELINE_LOCKFILE";
+	$lockfile = "/tmp/boundaryissues.pipeline.lock";
 	if (file_exists($lockfile)) {
 		die("Looks like process_pipeline.php might already be running.\n");
 	}

@@ -111,8 +111,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					var message = 'Error reverse geocoding';
 					var response = message;
 					if (rsp.error) {
-						message += ': ' + rsp.error;
 						response = '<span title="' + htmlspecialchars(rsp.error) + '">' + message + '</span>';
+						message += ': ' + rsp.error;
 					}
 					$('#venue #parent').html(response);
 					mapzen.whosonfirst.log.error(message);
@@ -205,10 +205,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 		},
 
 		geocode_address: function(address, cb) {
-			//var api_key = $('#venue-lookup-address').data('api-key');
-			// Hardcoding this until we work out the spatial stuff on prod
-			var api_key = 'mapzen-LhT76h5';
-
+			var api_key = document.body.getAttribute("data-mapzen-api-key");
 			var esc_address = encodeURIComponent(address);
 			var url = 'https://search.mapzen.com/v1/search?text=' + esc_address + '&api_key=' + api_key;
 			var onsuccess = function(rsp) {
@@ -596,9 +593,8 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 
 			var hash = new L.Hash(map);
 
-			// sudo move me to stack.json
-			// (20170617/dphiffer)
-			var geocoder = L.control.geocoder('mapzen-LhT76h5', {
+			var api_key = document.body.getAttribute("data-mapzen-api-key");
+			var geocoder = L.control.geocoder(api_key, {
 				markers: {
 					icon: new VenueIcon()
 				}

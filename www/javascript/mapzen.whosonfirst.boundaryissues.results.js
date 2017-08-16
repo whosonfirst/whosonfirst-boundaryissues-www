@@ -34,9 +34,8 @@ mapzen.whosonfirst.boundaryissues.results = (function() {
 				lat, lon, zoom
 			);
 
-			// sudo move me to stack.json
-			// (20170616/dphiffer)
-			L.control.geocoder('mapzen-LhT76h5', {
+			var api_key = document.body.getAttribute("data-mapzen-api-key");
+			L.control.geocoder(api_key, {
 				markers: {
 					icon: new VenueIcon()
 				}

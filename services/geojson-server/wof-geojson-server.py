@@ -25,6 +25,11 @@ app.config['MAX_CONTENT_LENGTH'] = 116 * 1024 * 1024
 @app.before_request
 def init():
 	flask.g.wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/data/whosonfirst-pending/')
+	flask.g.geojson_encoder = mapzen.whosonfirst.geojson.encoder(precision=None)
+
+	mapzen_api_key = os.environ.get('MAPZEN_API_KEY', '')
+	flask.g.api_client = mapzen.whosonfirst.spatial.whosonfirst.api(api_key=mapzen_api_key)
+	flask.g.hierarchy_ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=flask.g.api_client)
 
 @app.route('/encode', methods=['POST'])
 def geojson_encode():
@@ -42,7 +47,7 @@ def geojson_encode():
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
-	e = mapzen.whosonfirst.geojson.encoder(precision=None)
+	e = flask.g.geojson_encoder
 
 	try:
 		fh = StringIO.StringIO()
@@ -123,11 +128,8 @@ def geojson_pip():
 	if not "wof:id" in props:
 		props["wof:id"] = -1
 
-	pip_client = mapzen.whosonfirst.spatial.whosonfirst.pip()
-
 	try:
-		ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=pip_client)
-		ancs.rebuild_feature(feature)
+		flask.g.hierarchy_ancs.rebuild_feature(feature)
 	except Exception, e:
 		error = "failed to determine hierarchy, because %s" % e
 		logging.error(error)
@@ -157,7 +159,7 @@ def geojson_pip():
 			"filters": filters
 		}
 
-		for r in pip_client.point_in_polygon(lat, lng, **kwargs):
+		for r in flask.g.api_client.point_in_polygon(lat, lng, **kwargs):
 
 			# see this - it's not a feature... it should be a thing you
 			# specify in filters and have the spatial client take care
@@ -236,6 +238,7 @@ if __name__ == "__main__":
 
 	opt_parser.add_option('-p', '--port', dest='port', action='store', default=8181, help='')
 	opt_parser.add_option('-d', '--dir', dest='dir', action='store', default='/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/', help='wof_pending_dir')
+	opt_parser.add_option('-k', '--api_key', dest='api_key', action='store', default='', help='mapzen_api_key')
 	opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
 
 	options, args = opt_parser.parse_args()
@@ -246,6 +249,7 @@ if __name__ == "__main__":
 		logging.basicConfig(level=logging.INFO)
 
 	os.environ['WOF_PENDING_DIR'] = options.dir
+	os.environ['MAPZEN_API_KEY'] = options.api_key
 	port = int(options.port)
 
 	app.run(port=port)
