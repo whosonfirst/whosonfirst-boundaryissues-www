@@ -37,11 +37,8 @@ def geojson_encode():
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
-	# Does the input pass the smell check?
-	validation = geojson.is_valid(f)
-
-	if (validation['valid'] == 'no'):
-		error = "GeoJSON doesn't smell right: %s" % validation['message']
+	if (f.is_valid == False):
+		error = "GeoJSON doesn't validate: %s" % f.errors()
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
