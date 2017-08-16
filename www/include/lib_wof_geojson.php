@@ -51,6 +51,13 @@
 				'error' => 'No response from GeoJSON service',
 				'rsp' => $rsp
 			);
+		} else if ($rsp['code'] != 200) {
+			$esc_code = addslashes($rsp['code']);
+			return array(
+				'ok' => 0,
+				'error' => "HTTP $esc_code response from GeoJSON service",
+				'rsp' => $rsp
+			);
 		}
 
 		return json_decode($rsp['body'], 'as hash');
