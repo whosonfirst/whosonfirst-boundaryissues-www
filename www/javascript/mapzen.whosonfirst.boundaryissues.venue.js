@@ -92,18 +92,29 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			$('#venue #parent').html('Loading...');
 			self.looking_up_hierarchy = true;
 
+			var lat = ll.lat;
+			var lng = ll.lng;
+
+			var feature = self.generate_feature();
+			feature.geometry = {
+				type: "Point",
+				coordinates: [lng, lat]
+			};
+			feature.bbox = [lng, lat, lng, lat];
+			var geojson = JSON.stringify(feature);
 			var data = {
-				latitude: ll.lat,
-				longitude: ll.lng,
-				placetype: 'venue'
+				geojson: geojson
 			};
 
 			var onsuccess = function(rsp) {
 				if (! rsp.ok) {
 					var message = 'Error reverse geocoding';
+					var response = message;
 					if (rsp.error) {
 						message += ': ' + rsp.error;
+						response = '<span title="' + htmlspecialchars(rsp.error) + '">' + message + '</span>';
 					}
+					$('#venue #parent').html(response);
 					mapzen.whosonfirst.log.error(message);
 					return;
 				}

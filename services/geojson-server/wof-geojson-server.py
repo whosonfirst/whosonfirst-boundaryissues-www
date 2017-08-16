@@ -126,7 +126,7 @@ def geojson_pip():
 	if (mapzen.whosonfirst.placetypes.is_valid_placetype(placetype) == False):
 		return jsonify(ok=0, error="What is that placetype?")
 
-	if not props["wof:id"]:
+	if not "wof:id" in props:
 		props["wof:id"] = -1
 
 	pip_client = mapzen.whosonfirst.spatial.whosonfirst.pip()
