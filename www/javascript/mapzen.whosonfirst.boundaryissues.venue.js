@@ -92,11 +92,15 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			$('#venue #parent').html('Loading...');
 			self.looking_up_hierarchy = true;
 
+			var lat = ll.lat;
+			var lng = ll.lng;
+
 			var feature = self.generate_feature();
 			feature.geometry = {
 				type: "Point",
-				coordinates: [ll.lng, ll.lat]
-			}
+				coordinates: [lng, lat]
+			};
+			feature.bbox = [lng, lat, lng, lat];
 			var geojson = JSON.stringify(feature);
 			var data = {
 				geojson: geojson

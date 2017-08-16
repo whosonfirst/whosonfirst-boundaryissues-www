@@ -1976,7 +1976,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			feature.geometry = {
 				type: "Point",
 				coordinates: [lng, lat]
-			}
+			};
+			feature.bbox = [lng, lat, lng, lat];
 			var geojson = JSON.stringify(feature);
 			var data = {
 				geojson: geojson
