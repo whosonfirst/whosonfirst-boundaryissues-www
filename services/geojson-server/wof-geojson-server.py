@@ -27,8 +27,8 @@ def init():
 	flask.g.wof_pending_dir = os.environ.get('WOF_PENDING_DIR', '/usr/local/data/whosonfirst-pending/')
 	flask.g.geojson_encoder = mapzen.whosonfirst.geojson.encoder(precision=None)
 
-	mapzen_api_key = os.environ.get('MAPZEN_API_KEY', '')
-	flask.g.api_client = mapzen.whosonfirst.spatial.whosonfirst.api(api_key=mapzen_api_key)
+	flask.g.mapzen_api_key = os.environ.get('MAPZEN_API_KEY', '')
+	flask.g.api_client = mapzen.whosonfirst.spatial.whosonfirst.api(api_key=flask.g.mapzen_api_key)
 	flask.g.hierarchy_ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=flask.g.api_client)
 
 @app.route('/encode', methods=['POST'])
@@ -182,8 +182,7 @@ def geojson_pip():
 @app.route('/nearby', methods=['GET'])
 def geojson_nearby():
 
-	# Please put me in a config file
-	api_key = "mapzen-Gvj9yGE"
+	api_key = flask.g.mapzen_api_key
 
 	lat = float(request.args.get('latitude'))
 	lng = float(request.args.get('longitude'))
@@ -238,7 +237,7 @@ if __name__ == "__main__":
 
 	opt_parser.add_option('-p', '--port', dest='port', action='store', default=8181, help='')
 	opt_parser.add_option('-d', '--dir', dest='dir', action='store', default='/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/', help='wof_pending_dir')
-	opt_parser.add_option('-k', '--api_key', dest='api_key', action='store', default='', help='mapzen_api_key')
+	opt_parser.add_option('-k', '--api-key', dest='api_key', action='store', default='', help='mapzen_api_key')
 	opt_parser.add_option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='Be chatty (default is false)')
 
 	options, args = opt_parser.parse_args()
