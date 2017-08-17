@@ -878,9 +878,15 @@
 				}
 			} else {
 				$pipeline['meta']['host'] = $host;
-				db_update('boundaryissues_pipeline', array(
-					'meta' => json_encode($pipeline['meta'])
+				$meta = json_encode($pipeline['meta']);
+				$esc_meta = addslashes($meta);
+				$pipeline_id = intval($pipeline['id']);
+				$rsp = db_update('boundaryissues_pipeline', array(
+					'meta' => $esc_meta
 				), "id = $pipeline_id");
+				if (! $rsp['ok']) {
+					return $rsp;
+				}
 			}
 
 			wof_repo_set_status($pipeline['repo'], "pipeline {$pipeline['id']}");
