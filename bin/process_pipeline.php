@@ -20,12 +20,21 @@
 	loadlib('wof_pipeline_neighbourhood');
 	loadlib('wof_pipeline_remove_properties');
 
+	// Since we are running parallel to other pipeline scripts, each
+	// synchronized to some degree, wait for a random amount of time so
+	// everyone isn't jumping in all at once. This probably could be done
+	// in a more elegant way, but this is dumb and simple.
+	// (20170817/dphiffer)
+	$random = rand(0, 5000000); // 0-5 seconds
+	if ($verbose) {
+		$seconds = number_format($random / 1000000, 1);
+		echo "Waiting $seconds seconds for the sake of desynchronization\n";
+	}
+	usleep($random);
+
 	$rsp = wof_pipeline_next($verbose);
 
 	if ($verbose) {
-		echo "wof_pipeline_next:\n";
-		var_export($rsp);
-		echo "\n";
 		$GLOBALS['cfg']['wof_pipeline_verbose'] = true;
 	}
 
