@@ -879,7 +879,7 @@
 			} else {
 				$pipeline['meta']['host'] = $host;
 				db_update('boundaryissues_pipeline', array(
-					'meta' => json_encode($pipeline['meta']['host'])
+					'meta' => json_encode($pipeline['meta'])
 				), "id = $pipeline_id");
 			}
 
