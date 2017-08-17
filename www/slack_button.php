@@ -20,7 +20,7 @@
 
 	if (preg_match('/^pipeline_(\d+)$/', $callback_id, $matches)) {
 		$pipeline_id = $matches[1];
-		$pipeline = pipeline_get($pipeline_id);
+		$pipeline = wof_pipeline_get($pipeline_id);
 	}
 
 	if ($payload['token'] != $GLOBALS['cfg']['slack_bot_verification_token']) {
