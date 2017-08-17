@@ -66,41 +66,51 @@ $('.pipeline-log-summary').click(function(e) {
 });
 $('#pipeline-update').submit(function(e) {
 	e.preventDefault();
+});
 
-	var crumb = $(e.target).data('crumb');
-	var id = $(e.target).data('id');
+$('#pipeline-update input[type="submit"]').click(function(e) {
 
-	if (e.originalEvent && e.originalEvent.explicitOriginalTarget) {
-		var action = e.originalEvent.explicitOriginalTarget.value.toLowerCase();
-		$('#pipeline-update').removeClass('alert-danger');
-		$('#pipeline-update').addClass('alert-info');
-		$('#pipeline-update').html('Loading...');
+	var valid_actions = ['confirm', 'retry', 'cancel'];
 
-		var onsuccess = function(rsp) {
-			if (rsp.pipeline) {
-				var phase = rsp.pipeline.phase;
-				$('#pipeline-phase').html(phase);
-				$('#pipeline-update').addClass('hidden');
-			} else {
-				$('#pipeline-update').removeClass('alert-info');
-				$('#pipeline-update').addClass('alert-danger');
-				$('#pipeline-update').html('Error: unexpected response from server.');
-			}
-		};
+	var $form = $(e.target).closest('form');
+	var value = $(e.target).attr('value');
+	var crumb = $form.data('crumb');
+	var id = $form.data('id');
 
-		var onerror = function(rsp) {
+	var action = value.toLowerCase();
+	if (valid_actions.indexOf(action) == -1) {
+		console.error('Invalid action: ' + action);
+	}
+
+	$('#pipeline-update').removeClass('alert-danger');
+	$('#pipeline-update').addClass('alert-info');
+	$('#pipeline-update').html('Loading...');
+
+	var onsuccess = function(rsp) {
+		if (rsp.pipeline) {
+			var phase = rsp.pipeline.phase;
+			$('#pipeline-phase').html(phase);
+			$('#pipeline-update').addClass('hidden');
+		} else {
 			$('#pipeline-update').removeClass('alert-info');
 			$('#pipeline-update').addClass('alert-danger');
-			$('#pipeline-update').html('Error: ' + rsp.error.message);
-		};
+			$('#pipeline-update').html('Error: unexpected response from server.');
+		}
+	};
 
-		var data = {
-			crumb: crumb,
-			id: id,
-			action: action
-		};
-		mapzen.whosonfirst.boundaryissues.api.api_call('wof.pipeline.update', data, onsuccess, onerror);
-	}
+	var onerror = function(rsp) {
+		$('#pipeline-update').removeClass('alert-info');
+		$('#pipeline-update').addClass('alert-danger');
+		$('#pipeline-update').html('Error: ' + rsp.error.message);
+	};
+
+	var data = {
+		crumb: crumb,
+		id: id,
+		action: action
+	};
+	mapzen.whosonfirst.boundaryissues.api.api_call('wof.pipeline.update', data, onsuccess, onerror);
 });
+
 </script>
 {/literal}
