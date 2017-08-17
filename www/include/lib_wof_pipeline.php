@@ -86,7 +86,7 @@
 
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
 		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
-		slack_bot_msg("pending: <$url|$filename> ({$meta['type']} pipeline $pipeline_id)");
+		slack_bot_msg("pending: <$url|$filename> ({$meta['type']} $pipeline_id)");
 
 		// Ok, here is where we encode the URL into the DB record, since
 		// we are going to need it later from the cron-run
@@ -744,7 +744,11 @@
 			);
 		}
 
-		slack_bot_msg("$phase: <{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} pipeline $pipeline_id)$notification", $extras);
+		$host = gethostname();
+		$host = explode(".", $host);
+		$host = $host[0];
+
+		slack_bot_msg("$phase: <{$pipeline['url']}|{$pipeline['filename']}> ({$pipeline['type']} $pipeline_id on $host)$notification", $extras);
 
 		return $rsp;
 	}
@@ -846,6 +850,8 @@
 		$next = array();
 		foreach ($rsp['rows'] as $pipeline) {
 
+			$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
+
 			if ($verbose) {
 				echo "wof_pipeline_next: checking pipeline {$pipeline['id']}\n";
 			}
@@ -858,8 +864,26 @@
 				continue;
 			}
 
+			$host = gethostname();
+			$host = explode(".", $host);
+			$host = $host[0];
+
+			// Make sure pipelines run each phase on the same host
+			if ($pipeline['meta']['host']) {
+				if ($pipeline['meta']['host'] != $host) {
+					if ($verbose) {
+						echo "wof_pipeline_next: this should run on host {$pipeline['meta']['repo']} not $host\n";
+					}
+					continue;
+				}
+			} else {
+				$pipeline['meta']['host'] = $host;
+				db_update('boundaryissues_pipeline', array(
+					'meta' => json_encode($pipeline['meta']['host'])
+				), "id = $pipeline_id");
+			}
+
 			wof_repo_set_status($pipeline['repo'], "pipeline {$pipeline['id']}");
-			$pipeline['meta'] = json_decode($pipeline['meta'], 'as hash');
 
 			$next[] = $pipeline;
 		}
