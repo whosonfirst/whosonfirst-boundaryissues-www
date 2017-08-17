@@ -86,7 +86,7 @@
 
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
 		$url = $GLOBALS['cfg']['abs_root_url'] . "pipeline/$pipeline_id/";
-		slack_bot_msg("pending: <$url|$filename> ({$meta['type']} pipeline $pipeline_id)");
+		slack_bot_msg("pending: <$url|$filename> ({$meta['type']} $pipeline_id)");
 
 		// Ok, here is where we encode the URL into the DB record, since
 		// we are going to need it later from the cron-run
