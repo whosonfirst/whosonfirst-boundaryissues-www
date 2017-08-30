@@ -156,7 +156,8 @@ def geojson_pip():
 		}
 
 		kwargs = {
-			"filters": filters
+			"filters": filters,
+			"extras": "wof:superseded_by,edtf:deprecated"
 		}
 
 		for r in flask.g.api_client.point_in_polygon(lat, lng, **kwargs):
@@ -166,10 +167,10 @@ def geojson_pip():
 			# of for you but it's currently blocked on this:
 			# https://github.com/whosonfirst/go-whosonfirst-pip/issues/32
 
-			if r["Deprecated"] == True:
+			if r['edtf:deprecated'] != "" and r['edtf:deprecated'] != 'uuuu':
 				continue
 
-			if r["Superseded"] == True:
+			if len(r['wof:superseded_by']) > 0:
 				continue
 
 			parents.append(r)
