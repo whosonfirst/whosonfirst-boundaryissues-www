@@ -1402,9 +1402,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					var parent_html = [];
 					var parent_wof = {};
 					$.each(parents, function(i, parent) {
-						var id = esc_int(parent.Id);
-						var name = esc_str(parent.Name);
-						var placetype = esc_str(parent.Placetype);
+						var id = esc_int(parent['wof:id']);
+						var name = esc_str(parent['wof:name']);
+						var placetype = esc_str(parent['wof:placetype']);
 						parent_html.push('<strong class="parent-candidate" data-id="' + id + '" data-placetype="' + placetype + '" title="Choose ' + name + ': ' + id + '">' + name + '</strong> (' + placetype + ')');
 						self.get_wof(id, function(wof) {
 							parent_wof[id] = wof;
@@ -1484,9 +1484,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('#where-parent').html(' in (unknown)');
 				$('#parent').html('Parent: <code><small>-1</small></code>');
 			} else {
-				var id = esc_int(parent.Id);
-				var name = esc_str(parent.Name);
-				var placetype = esc_str(parent.Placetype);
+				var id = esc_int(parent['wof:id']);
+				var name = esc_str(parent['wof:name']);
+				var placetype = esc_str(parent['wof:placetype']);
 				$('#where-parent').html(' in <strong>' + name + '</strong> (' + placetype + ')');
 
 				var url = '/id/' + id + '/';
@@ -1547,7 +1547,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		get_parent_by_id: function(parents, parent_id) {
 			var found_parent = null;
 			$.each(parents, function(i, parent) {
-				if (parent.Id == parent_id) {
+				if (parent['wof:id'] == parent_id) {
 					found_parent = parent;
 				}
 			});

@@ -30,7 +30,10 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 			if (typeof value == 'object') {
 				value = JSON.stringify(value);
 			}
-			$('td[data-property="' + name + '"]').html(htmlspecialchars(value));
+			if (typeof value == 'string') {
+				value = htmlspecialchars(value);
+			}
+			$('td[data-property="' + name + '"]').html(value);
 		},
 
 		generate_feature: function() {
@@ -119,12 +122,13 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					return;
 				}
 				if (rsp.parents && rsp.parents.length == 1) {
-					self.set_property('wof:parent_id', rsp.parents[0].Id);
-					var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + rsp.parents[0].Id);
-					var link = '<a href="' + url + '">' + rsp.parents[0].Name + '</a> (' + rsp.parents[0].Placetype + ')';
+					var parent = rsp.parents[0];
+					self.set_property('wof:parent_id', parent['wof:id']);
+					var url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/id/' + parent['wof:id']);
+					var link = '<a href="' + url + '">' + parent['wof:name'] + '</a> (' + parent['wof:placetype'] + ')';
 					$('#venue #parent').html(link);
 				} else {
-					self.set_property('wof:parent_id', -1);
+					self.set_property('wof:parent_id', rsp.parent_id);
 					$('#venue #parent').html('<i>Unknown parent</i>');
 				}
 				if (rsp.hierarchy) {
