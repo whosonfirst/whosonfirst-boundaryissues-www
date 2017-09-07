@@ -170,31 +170,42 @@
 	$host = $host[0];
 
 	$config_files = array();
-
-	# See the order of predence? It's important. Global is global.
-	# Local is by hostname. Dev is local to a specific machine or
-	# instance where you may not know or have a hostname...
-	# (20160404/thisisaaronland)
-
+	# See the order of predence? It's important:
+	#
+	# 'config.php' is global for all instances of the application.
+	#
+	# 'config_local.php' is for your instance of an application, for non-secret
+	# things that are specific to your requirements - hostnames for example.
+	#
+	# 'config_local_{HOST}.php' is local to a specific machine or instance based
+	# on it's short hostname (hostname -s rather than )
+	#
+	# The same rules apply to 'secrets_local.php' and 'secrets_local_{HOST}.php' files.
+	#
+	# Importantly of the six possible files listed below only 'config.php' is
+	# allowed to be checked in to git - all the others are explicitly denied so
+	# it's up to you to ensure they get deployed to your application and its various
+	# hosts as needed.
+	#
+	# It is also important to remember that you don't necessarily _need_ all those
+	# different config files, in particular 'config_local_{HOST}.php' which is
+	# probably only necessary for debugging... well, a particular host.
+	#
+	# It's just that sometimes you actually need this level of hair-splitting...
 	$global_config = FLAMEWORK_INCLUDE_DIR . "config.php";
 	$global_secrets = FLAMEWORK_INCLUDE_DIR . "secrets.php";
 
-	$local_config = FLAMEWORK_INCLUDE_DIR . "config_local_{$host}.php";
-	$local_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_local_{$host}.php";
-
-	$dev_config = FLAMEWORK_INCLUDE_DIR . "config_dev.php";
-	$dev_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_dev.php";
-
+	$local_config = FLAMEWORK_INCLUDE_DIR . "config_local.php";
+	$local_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_local.php";
+	$host_config = FLAMEWORK_INCLUDE_DIR . "config_local_{$host}.php";
+	$host_secrets = FLAMEWORK_INCLUDE_DIR . "secrets_local_{$host}.php";
 	$config_files[] = $global_config;
-
-	$to_check = array($global_secrets, $local_config, $local_secrets, $dev_config, $dev_secrets);
-
-	foreach ($to_check as $path){
-
-		if (file_exists($path)){
-			$config_files[] = $path;
-		}
-	}
+	$to_check = array(
+		# $global_config is explicitly added above
+		$local_config, $server_config, $host_config,
+		$global_secrets,
+		$local_secrets, $server_secrets, $host_secrets
+	);
 
 	foreach ($config_files as $path){
 
