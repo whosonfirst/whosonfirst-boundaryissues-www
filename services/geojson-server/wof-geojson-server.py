@@ -194,6 +194,7 @@ def geojson_nearby():
 
 	method = 'whosonfirst.places.getByLatLon'
 	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
+	extras = 'addr:full,wof:tags'
 
 	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
 	data = json.loads(rsp.content)
@@ -203,7 +204,7 @@ def geojson_nearby():
 
 			wofid = neighbourhood['wof:id']
 			method = 'whosonfirst.places.search'
-			params = { 'api_key': api_key, 'method': method, 'neighbourhood_id': wofid, 'names': name, 'extras': 'addr:', 'placetype': 'venue' }
+			params = { 'api_key': api_key, 'method': method, 'neighbourhood_id': wofid, 'names': name, 'extras': extras, 'placetype': 'venue' }
 
 			rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
 			data = json.loads(rsp.content)
@@ -215,7 +216,7 @@ def geojson_nearby():
 						results.append(pl)
 
 	method = "whosonfirst.places.getNearby"
-	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': 'addr:full' }
+	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': extras }
 
 	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
 	print rsp.content
