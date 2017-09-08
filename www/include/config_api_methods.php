@@ -216,7 +216,6 @@
 			)
 		),
 
-
 		"wof.pipeline.update" => array(
 			"description" => "Update a pipeline's phase.",
 			"documented" => 1,
@@ -227,6 +226,31 @@
 			"parameters" => array(
 				array("name" => "id", "description" => "The pipeline ID to update", "documented" => 1, "required" => 1),
 				array("name" => "action", "description" => "Possible values: 'retry', 'cancel', 'confirm'", "documented" => 1, "required" => 1),
+			),
+		),
+
+		"wof.repo.get_status" => array(
+			"description" => "Get a repo's current status.",
+			"documented" => 1,
+			"enabled" => 1,
+			"request_method" => "GET",
+			"requires_crumb" => 0,
+			"library" => "api_wof_repo",
+			"parameters" => array(
+				array("name" => "repo", "description" => "The repo to check", "documented" => 1, "required" => 1)
+			),
+		),
+
+		"wof.repo.set_status" => array(
+			"description" => "Set a repo's status.",
+			"documented" => 1,
+			"enabled" => 1,
+			"request_method" => "POST",
+			"requires_crumb" => 0,
+			"library" => "api_wof_repo",
+			"parameters" => array(
+				array("name" => "repo", "description" => "The repo to update", "documented" => 1, "required" => 1),
+				array("name" => "status", "description" => "The new repo status", "documented" => 1, "required" => 1)
 			),
 		),
 
