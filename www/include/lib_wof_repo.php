@@ -68,7 +68,7 @@
 
 	########################################################################
 
-	function wof_repo_set_status($repo, $status, $debug = null) {
+	function wof_repo_set_status($repo, $status, $notes = null) {
 
 		$esc_repo = addslashes($repo);
 		$esc_status = addslashes($status);
@@ -80,8 +80,8 @@
 			'updated' => $now
 		);
 
-		if ($debug) {
-			$values['debug'] = addslashes($debug);
+		if ($notes) {
+			$values['notes'] = addslashes($notes);
 		}
 
 		return db_insert('boundaryissues_repo', $values);

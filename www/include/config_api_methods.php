@@ -251,7 +251,7 @@
 			"parameters" => array(
 				array("name" => "repo", "description" => "The repo to update", "documented" => 1, "required" => 1),
 				array("name" => "status", "description" => "The new repo status", "documented" => 1, "required" => 1),
-				array("name" => "debug", "description" => "Optional debug clues to include", "documented" => 1, "required" => 0),
+				array("name" => "notes", "description" => "Optional commentary to include", "documented" => 1, "required" => 0),
 			),
 		),
 
