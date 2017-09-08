@@ -237,7 +237,7 @@
 			"requires_crumb" => 0,
 			"library" => "api_wof_repo",
 			"parameters" => array(
-				array("name" => "repo", "description" => "The repo to check", "documented" => 1, "required" => 1)
+				array("name" => "repo", "description" => "The repo to check", "documented" => 1, "required" => 1),
 			),
 		),
 
@@ -250,7 +250,8 @@
 			"library" => "api_wof_repo",
 			"parameters" => array(
 				array("name" => "repo", "description" => "The repo to update", "documented" => 1, "required" => 1),
-				array("name" => "status", "description" => "The new repo status", "documented" => 1, "required" => 1)
+				array("name" => "status", "description" => "The new repo status", "documented" => 1, "required" => 1),
+				array("name" => "debug", "description" => "Optional debug clues to include", "documented" => 1, "required" => 0),
 			),
 		),
 
