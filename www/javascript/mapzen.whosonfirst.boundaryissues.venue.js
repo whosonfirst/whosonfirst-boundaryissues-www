@@ -263,10 +263,6 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 						$('#venue-lookup-address').removeClass('choose-address');
 					});
 
-					var first_link = $('#venue-lookup-geocoded a.geocoded').get(0);
-					var lat = parseFloat($(first_link).data('lat'));
-					var lng = parseFloat($(first_link).data('lng'));
-					self.select_geocoded(lat, lng);
 					$('#venue-lookup-address').addClass('choose-address');
 				} else {
 					$('#venue-lookup-geocoded').html('<i>No results</i>');
@@ -413,18 +409,23 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					$('#dupe-merged').html('Your edits will be merged into <a href="' + url + '">the existing record</a>. [<a href="#" id="dupe-undo">undo</a>]');
 					$('#submit-btn').attr('value', 'Save venue');
 
-					// TODO: do something more sophisticated here, taking
-					// the selected property selection into account. Right
-					// now we just clobber the existing value with the one
-					// from the merge target.
-					// (20170430/dphiffer)
 					$('input[name="name"]').val(name);
+
 					if ('addr:full' in place) {
 						$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
 					}
 
 					if ('wof:tags' in place) {
-						$('input[name="tags"]').val(htmlspecialchars(place['wof:tags']));
+						var tags = htmlspecialchars(place['wof:tags']);
+						tags = tags.replace(/,(\S)/g, ', $1');
+						var new_tags = $('input[name="tags"]').val();
+						if (new_tags) {
+							if (tags) {
+								tags += ', ';
+							}
+							tags += new_tags;
+						}
+						$('input[name="tags"]').val(tags);
 					}
 
 					check_for_wof_id();
