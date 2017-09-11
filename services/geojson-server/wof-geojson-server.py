@@ -216,7 +216,7 @@ def geojson_nearby():
 						results.append(pl)
 
 	method = "whosonfirst.places.getNearby"
-	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 30, 'extras': extras }
+	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 100, 'extras': extras }
 
 	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
 	print rsp.content
