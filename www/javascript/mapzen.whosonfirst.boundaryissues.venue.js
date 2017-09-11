@@ -412,7 +412,7 @@ mapzen.whosonfirst.boundaryissues.venue = (function() {
 					$('input[name="name"]').val(name);
 
 					if ('addr:full' in place) {
-						$('input[name="address"]').val(htmlspecialchars(place['addr:full']));
+						$('textarea[name="address"]').val(htmlspecialchars(place['addr:full']));
 					}
 
 					if ('wof:tags' in place) {
