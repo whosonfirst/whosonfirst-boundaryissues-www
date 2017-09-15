@@ -89,7 +89,11 @@
 
 	########################################################################
 
-	function wof_repo_search($args) {
+	function wof_repo_search($args = null) {
+
+		if (! $args) {
+			$args = array();
+		}
 
 		if ($args['repo']) {
 			$esc_repo = addslashes($args['repo']);
