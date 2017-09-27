@@ -13,6 +13,8 @@ sudo apt-get install -y make gunicorn python-gevent python-flask python-pip
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-service.html
 
 sudo add-apt-repository ppa:webupd8team/java
+
+sudo apt-get update
 sudo apt-get install -y oracle-java8-installer
 
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html
