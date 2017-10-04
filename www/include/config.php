@@ -178,7 +178,7 @@
 
 	// Used for the add-a-venue geocoder and WOF API Calls
 	$GLOBALS['cfg']['mapzen_api_key'] = 'READ-FROM-SECRETS';
-	$GLOBALS['cfg']['wof_api_base_url'] = 'https://whosonfirst-api.mapzen.com/';
+	$GLOBALS['cfg']['wof_api_base_url'] = 'https://places.mapzen.com/v1';
 
 	// CSV upload feature
 	$GLOBALS['cfg']['enable_feature_csv_upload'] = true;

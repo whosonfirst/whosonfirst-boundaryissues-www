@@ -28,6 +28,7 @@ def init():
 	flask.g.geojson_encoder = mapzen.whosonfirst.geojson.encoder(precision=None)
 
 	flask.g.mapzen_api_key = os.environ.get('MAPZEN_API_KEY', '')
+	flask.g.places_api_endpoint = 'https://places.mapzen.com/v1'
 	flask.g.api_client = mapzen.whosonfirst.spatial.whosonfirst.api(api_key=flask.g.mapzen_api_key)
 	flask.g.hierarchy_ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=flask.g.api_client)
 
@@ -196,7 +197,7 @@ def geojson_nearby():
 	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'neighbourhood' }
 	extras = 'addr:full,wof:tags'
 
-	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
+	rsp = requests.get(flask.g.places_api_endpoint, params=params)
 	data = json.loads(rsp.content)
 
 	if (data['places'] and len(data['places']) > 0):
@@ -206,7 +207,7 @@ def geojson_nearby():
 			method = 'whosonfirst.places.search'
 			params = { 'api_key': api_key, 'method': method, 'neighbourhood_id': wofid, 'names': name, 'extras': extras, 'placetype': 'venue' }
 
-			rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
+			rsp = requests.get(flask.g.places_api_endpoint, params=params)
 			data = json.loads(rsp.content)
 
 			if data['places']:
@@ -218,7 +219,7 @@ def geojson_nearby():
 	method = "whosonfirst.places.getNearby"
 	params = { 'api_key': api_key, 'method': method, 'latitude': lat, 'longitude': lng, 'placetype': 'venue', 'radius': 100, 'extras': extras }
 
-	rsp = requests.get('https://whosonfirst-api.mapzen.com/', params=params)
+	rsp = requests.get(flask.g.places_api_endpoint, params=params)
 	print rsp.content
 	data = json.loads(rsp.content)
 
