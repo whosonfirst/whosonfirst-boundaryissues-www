@@ -214,7 +214,7 @@
 
 	*/
 
-	$GLOBALS['cfg']['enable_feature_filter_search'] = 1;
+	$GLOBALS['cfg']['enable_feature_filter_search'] = 0;
 	$GLOBALS['cfg']['search_query_filter'] = array(); # specify this in local_config_*.php
 
 	# hard coding this URL will ensure it works in cron mode too
