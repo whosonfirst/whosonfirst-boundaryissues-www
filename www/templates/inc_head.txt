@@ -68,6 +68,7 @@
 		{script src="mapzen.whosonfirst.boundaryissues.enmapify.js"}
 		{script src="mapzen.whosonfirst.geotagged.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.upload.js"}
+		{script src="mapzen.whosonfirst.boundaryissues.pipeline.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.edit.js"}
 		{script src="mapzen.whosonfirst.boundaryissues.results.js"}
 		<!--{script src="mapzen.whosonfirst.boundaryissues.notifications.js"}-->
