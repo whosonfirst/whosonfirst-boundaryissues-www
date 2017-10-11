@@ -8,6 +8,8 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 
+	var $result = $('#upload-result');
+
 	var self = {
 
 		setup_pipeline: function() {
@@ -93,7 +95,7 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 
 			var types = [
 				'meta_files',
-				//'neighbourhood',
+				'neighbourhood',
 				//'remove_properties',
 				//'fix_property_type',
 				'merge_pr'
@@ -203,7 +205,7 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 
 			$('#pipeline-options').html(html);
 
-			upload_is_ready = true;
+			mapzen.whosonfirst.boundaryissues.upload.upload_is_ready = true;
 			$('#upload-btn').addClass('btn-primary');
 			$('#upload-btn').attr('disabled', false);
 		},
@@ -233,6 +235,22 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 
 			return JSON.stringify(meta);
 		},
+
+		show_result: function(rsp) {
+			if (rsp.error && rsp.error.message) {
+				$result.html('<div class="alert alert-danger">Error: ' + rsp.error.message + '</div>');
+				mapzen.whosonfirst.log.error(rsp.error.message);
+			} else if (rsp.error && typeof rsp.error == 'string') {
+				$result.html('<div class="alert alert-danger">Error: ' + rsp.error + '</div>');
+				mapzen.whosonfirst.log.error(rsp.error);
+			} else if (rsp.errors) {
+				$result.html('<div class="alert alert-danger">Errors:<ul><li>' + rsp.errors.join('</li><li>') + '</li></ul></div>');
+				mapzen.whosonfirst.log.error(rsp.errors.join(', '));
+			} else {
+				$result.html('<div class="alert alert-danger">Oh noes, an error! Check the JavaScript console?</div>');
+				mapzen.whosonfirst.log.error(rsp);
+			}
+		}
 	};
 
 	$(document).ready(function(){

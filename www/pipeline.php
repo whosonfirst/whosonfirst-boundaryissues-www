@@ -3,6 +3,10 @@
 include('include/init.php');
 loadlib('wof_pipeline');
 
+if (! features_is_enabled('pipeline')) {
+	error_404();
+}
+
 $id = get_int64('id');
 if (! $id && users_acl_check_access($GLOBALS['cfg']['user'], 'can_upload_pipelines')) {
 	$upload_formats = '.zip';

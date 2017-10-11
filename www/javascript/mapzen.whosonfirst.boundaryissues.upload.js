@@ -17,7 +17,6 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	    csv_row_count,
 	    csv_preview_row = 1,
 	    zip_file,
-	    upload_is_ready = false,
 	    is_collection,
 	    is_csv,
 	    is_zip,
@@ -30,6 +29,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 
 	var self = {
+
+		upload_is_ready: false,
 
 		setup_upload: function(){
 
@@ -117,7 +118,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					} else if (ext == '.zip') {
 						is_zip = true;
 						zip_file = e.target.files[0];
-						preview_handler(zip_file, self.preview_zip);
+						preview_handler(zip_file, mapzen.whosonfirst.boundaryissues.pipeline.preview_zip);
 					} else if (ext == '.jpg' || ext == '.jpeg') {
 						photos = [e.target.files[0]];
 					}
@@ -147,7 +148,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Intercept the form submit event and upload the file via API
 			$form.submit(function(e){
 				e.preventDefault();
-				if (! upload_is_ready) {
+				if (self.upload_is_ready) {
 					return;
 				}
 				if (is_geotagged) {
@@ -169,7 +170,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var geojson = JSON.parse(data);
 			} catch(e) {
 				$result.html(e);
-				upload_is_ready = false;
+				self.upload_is_ready = false;
 				return;
 			}
 
@@ -195,7 +196,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				if (! issues) {
 					$result.html('This is just a preview. You still have to hit the upload button.');
 
-					upload_is_ready = true;
+					self.upload_is_ready = true;
 					$('#upload-btn').addClass('btn-primary');
 					$('#upload-btn').attr('disabled', false);
 				} else {
@@ -228,7 +229,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 				var csv = Papa.parse(data);
 			} catch(e) {
 				$result.html(e);
-				upload_is_ready = false;
+				self.upload_is_ready = false;
 				return;
 			}
 
@@ -353,11 +354,11 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					}
 				});
 				if (has_id || has_name) {
-					upload_is_ready = true;
+					self.upload_is_ready = true;
 					$('#upload-btn').addClass('btn-primary');
 					$('#upload-btn').attr('disabled', false);
 				} else {
-					upload_is_ready = false;
+					self.upload_is_ready = false;
 					$('#upload-btn').removeClass('btn-primary');
 					$('#upload-btn').attr('disabled', 'disabled');
 				}
@@ -553,7 +554,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			$('#upload-preview-props').prepend(html);
 
-			upload_is_ready = true;
+			self.upload_is_ready = true;
 			$('#upload-btn').addClass('btn-primary');
 			$('#upload-btn').attr('disabled', false);
 		},
@@ -732,7 +733,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 		post_file: function() {
 
-			if (! upload_is_ready) {
+			if (! self.upload_is_ready) {
 				return;
 			}
 
