@@ -4,7 +4,8 @@
 
 	function wof_pipeline_neighbourhood_defaults($meta) {
 		$defaults = array(
-			'branch_merge' => true
+			'branch_merge' => true,
+			'repo' => 'whosonfirst-data'
 		);
 		return array_merge($defaults, $meta);
 	}
@@ -12,10 +13,21 @@
 	########################################################################
 
 	function wof_pipeline_neighbourhood_validate($pipeline) {
-		// Disabled for now.
+
+		// For now we will just make sure each of the filenames is .geojson.
+		// Not a terribly high standard. (20171012/dphiffer)
+		foreach ($pipeline['files'] as $file) {
+			if (! preg_match('/\.geojson$/', $file)) {
+				$esc_file = htmlspecialchars($file);
+				return array(
+					'ok' => 0,
+					'error' => "$esc_file does not look like a GeoJSON file"
+				);
+			}
+		}
+
 		return array(
-			'ok' => 0,
-			'error' => "This pipeline isn't working yet."
+			'ok' => 1
 		);
 	}
 
