@@ -118,7 +118,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 					} else if (ext == '.zip') {
 						is_zip = true;
 						zip_file = e.target.files[0];
-						preview_handler(zip_file, mapzen.whosonfirst.boundaryissues.pipeline.preview_zip);
+						preview_handler(zip_file, self.pipeline.preview_zip);
 					} else if (ext == '.jpg' || ext == '.jpeg') {
 						photos = [e.target.files[0]];
 					}
@@ -148,7 +148,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 			// Intercept the form submit event and upload the file via API
 			$form.submit(function(e){
 				e.preventDefault();
-				if (self.upload_is_ready) {
+				if (! self.upload_is_ready) {
 					return;
 				}
 				if (is_geotagged) {
@@ -820,7 +820,7 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 
 			} else if (is_zip) {
 
-				data.append('meta_json', self.get_pipeline_meta_json());
+				data.append('meta_json', self.pipeline.get_pipeline_meta_json());
 
 			} else {
 
@@ -946,6 +946,8 @@ mapzen.whosonfirst.boundaryissues.upload = (function(){
 		});
 
 		poi_icon_base = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify('/images/categories/');
+
+		self.pipeline = mapzen.whosonfirst.boundaryissues.pipeline;
 
 		self.setup_upload();
 	});
