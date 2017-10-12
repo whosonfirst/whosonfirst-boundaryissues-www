@@ -10,7 +10,7 @@
 
 	$lockfile = "/tmp/boundaryissues.pipeline.lock";
 	if (file_exists($lockfile)) {
-		die("Looks like process_pipeline.php might already be running.\n");
+		die("Looks like process_pipeline.php might already be running.\nRemove $lockfile to retry.\n");
 	}
 
 	loadlib('git');

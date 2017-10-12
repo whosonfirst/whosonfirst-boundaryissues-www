@@ -1,5 +1,7 @@
 <?php
 
+	$GLOBALS['pipeline_neighbourhood_tool_path'] = '/usr/local/mapzen/whosonfirst-pipeline-tasks/tasks/neighbourhood-tool.py';
+
 	########################################################################
 
 	function wof_pipeline_neighbourhood_defaults($meta) {
@@ -35,16 +37,47 @@
 
 	function wof_pipeline_neighbourhood($pipeline, $dry_run = false) {
 
-		$coin_toss = rand(0, 1); // Sometimes succeed sometimes failure
-		$sleep_time = rand(10, 120); // Wait some amount of time between 10s and 2m
+		$pipeline_id = intval($pipeline['id']);
+		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
+		$args = "--updates=$dir --verbose";
 
-		sleep($sleep_time);
-
-		if ($coin_toss) {
-			wof_pipeline_log($pipeline['id'], "This is a mock pipeline; simulating failure");
-			return array('ok' => 0);
-		} else {
-			wof_pipeline_log($pipeline['id'], "This is a mock pipeline; simulating success");
-			return array('ok' => 1);
+		if ($dry_run) {
+			$args .= ' --debug';
 		}
+
+		$cmd = "{$GLOBALS['pipeline_neighbourhood_tool_path']} $args";
+
+		$descriptor = array(
+			1 => array('pipe', 'w'), // stdout
+			2 => array('pipe', 'w')  // stderr
+		);
+		$pipes = array();
+		$proc = proc_open($cmd, $descriptor, $pipes, $dir);
+
+		if (! is_resource($proc)) {
+			return array(
+				'ok' => 0,
+				'error' => "Couldn't talk to neighbourhood-tool.py. Sad face."
+			);
+		}
+
+		$stderr = stream_get_contents($pipes[1]);
+		$stdout = stream_get_contents($pipes[2]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+		$exit_code = proc_close($proc);
+
+		$rsp = array(
+			'ok' => ($exit_code == 0) ? 1 : 0,
+			'cwd' => $dir,
+			'cmd' => $cmd,
+			'stdout' => trim($stdout),
+			'stderr' => trim($stderr)
+		);
+		if (! $rsp['ok']) {
+			$sep = ($rsp['stdout'] && $rsp['stderr']) ? "\n" : '';
+			$rsp['error'] = "{$rsp['stdout']}{$sep}{$rsp['stderr']}";
+		}
+
+		return $rsp;
 	}

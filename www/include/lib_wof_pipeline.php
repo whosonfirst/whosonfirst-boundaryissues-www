@@ -82,6 +82,9 @@
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
+			$meta['files'] = $rsp['files'];
+			$meta_json = json_encode($meta);
+			$meta_json_esc = addslashes($meta_json);
 		}
 
 		wof_pipeline_log($pipeline_id, "Created pipeline $pipeline_id", $meta);
@@ -92,9 +95,12 @@
 		// we are going to need it later from the cron-run
 		// process_pipeline.php (which doesn't know how to figure out
 		// the proper abs_root_url. (20170601/dphiffer)
+
+		// Also, add the list of files that were uploaded. (20171012/dphiffer)
 		db_update('boundaryissues_pipeline', array(
 			'filename' => $filename_esc,
-			'url' => $url
+			'url' => $url,
+			'meta' => $meta_json_esc
 		), "id = $pipeline_id");
 
 		return array(
@@ -781,7 +787,7 @@
 		}
 
 		$pipeline_id = intval($pipeline['id']);
-		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
+		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
 		if (file_exists($local_dir)) {
 			rmdir($local_dir);
 		}
