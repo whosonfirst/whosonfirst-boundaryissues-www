@@ -363,8 +363,6 @@
 		'dbug',
 		'wof_smarty',
 		'wof_render',
-		'logstash',
-		'redis',
 		'users_settings',
 		'audit_trail',
 	);

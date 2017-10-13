@@ -4,7 +4,7 @@
 	# It is a thin wrapper on top of https://github.com/nrk/predis to make
 	# doing things in Redis a little more Flamework-like (20160408/thisisaaronland)
 
-	@include 'Predis/Autoloader.php';
+	include 'Predis/Autoloader.php';
 	if (class_exists('Predis\Autoloader')) {
 		Predis\Autoloader::register();
 	}

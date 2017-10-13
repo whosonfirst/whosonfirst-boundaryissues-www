@@ -1,5 +1,6 @@
 <?php
 
+	loadlib("logstash");
 	loadlib("offline_tasks_do");
 	loadlib("uuid");
 
