@@ -1,5 +1,6 @@
 <?php
 
+	loadlib('audit_trail');
 	loadlib('github_users');
 	loadlib('github_api');
 

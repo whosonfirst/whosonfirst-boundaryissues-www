@@ -90,6 +90,7 @@
 	loadlib("wof_events");
 	loadlib("users_settings");
 	loadlib("wof_repo");
+	loadlib("audit_trail");
 
 	########################################################################
 

@@ -364,7 +364,6 @@
 		'wof_smarty',
 		'wof_render',
 		'users_settings',
-		'audit_trail',
 	);
 
 	# THINGS YOU SHOULD DEFINE IN YOUR secrets.php FILE WHICH IS NOT
