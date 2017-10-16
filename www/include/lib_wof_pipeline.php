@@ -181,7 +181,7 @@
 	function wof_pipeline_download_files($pipeline) {
 
 		$pipeline_id = intval($pipeline['id']);
-		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
+		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
 		if (! file_exists($dir)) {
 			mkdir($dir, 0755, true);
 		}
@@ -607,7 +607,11 @@
 			$path = zip_entry_name($entry);
 			$name = preg_replace("/^$basename\//", '', $path);
 			if (in_array($name, $files) || $name == 'meta.json') {
-				$data[$name] = zip_entry_read($entry);
+				$file_contents = '';
+				while ($bytes = zip_entry_read($entry)) {
+					$file_contents .= $bytes;
+				}
+				$data[$name] = $file_contents;
 			}
 		}
 
@@ -817,7 +821,7 @@
 		$remote_path = "$remote_dir$filename";
 		$rsp = wof_s3_delete($remote_path);
 
-		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}/pipeline/$pipeline_id/";
+		$local_dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
 		$local_path = "$local_dir$filename";
 		if (file_exists($local_path)) {
 			unlink($local_path);
