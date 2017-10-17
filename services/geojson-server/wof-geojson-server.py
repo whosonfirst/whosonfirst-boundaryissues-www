@@ -29,7 +29,7 @@ def init():
 
 	flask.g.mapzen_api_key = os.environ.get('MAPZEN_API_KEY', '')
 	flask.g.places_api_endpoint = 'https://places.mapzen.com/v1'
-	flask.g.api_client = mapzen.whosonfirst.spatial.whosonfirst.api(api_key=flask.g.mapzen_api_key)
+	flask.g.api_client = mapzen.whosonfirst.spatial.whosonfirst.api(api_key=flask.g.mapzen_api_key, endpoint=flask.g.places_api_endpoint)
 	flask.g.hierarchy_ancs = mapzen.whosonfirst.hierarchy.ancestors(spatial_client=flask.g.api_client)
 
 @app.route('/encode', methods=['POST'])
