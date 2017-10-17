@@ -61,7 +61,6 @@
 			'minimum_viable' => true
 		),
 		'wof:parent_id' => array(
-			'editable' => false,
 			'minimum_viable' => true
 		),
 		'wof:hierarchy' => array(
