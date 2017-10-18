@@ -551,7 +551,7 @@
 				}
 				continue;
 			}
-			wof_repo_set_status($repo_name, 'saving pending');
+			wof_repo_set_status($repo_name, 'saving pending', 'status updated to save pending records');
 
 			if ($options['verbose']) {
 				echo "cd $repo_path\n";
@@ -871,7 +871,7 @@
 		}
 
 		foreach ($repos as $repo) {
-			wof_repo_set_status($repo, 'ready');
+			wof_repo_set_status($repo, 'ready', 'status updated after saving pending');
 		}
 
 		if ($options['verbose']) {

@@ -223,7 +223,7 @@
 		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
 		$cwd = preg_replace('/data\/?$/', '', $data_dir);
 
-		wof_repo_set_status($repo, 'cloning');
+		wof_repo_set_status($repo, 'cloning', 'status updated from clone_repo offline task');
 
 		$org = $GLOBALS['cfg']['wof_github_owner'];
 		$url = "git@github.com:$org/$repo.git";
@@ -232,7 +232,7 @@
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		wof_repo_set_status($repo, 'cloned repo', $rsp['output']);
+		wof_repo_set_status($repo, 'cloned repo', 'status updated from clone_repo offline task');
 
 		offline_tasks_schedule_task('setup_repo_lfs', array(
 			'repo' => $repo
@@ -262,7 +262,7 @@
 			);
 		}
 
-		wof_repo_set_status($repo, 'setting up lfs');
+		wof_repo_set_status($repo, 'setup lfs', 'status updated from setup_repo_lfs offline task');
 
 		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
 		$cwd = preg_replace('/data\/?$/', '', $data_dir);
@@ -302,8 +302,6 @@ END;
 		$debug .= "git lfs fetch\n{$output['lfs_fetch']['stdout']}\n";
 		$debug .= "git lfs checkout\n{$output['lfs_checkout']['stdout']}";
 
-		wof_repo_set_status($repo, 'setup lfs', $debug);
-
 		offline_tasks_schedule_task('index_repo', array(
 			'repo' => $repo
 		));
@@ -336,7 +334,7 @@ END;
 		$data_dir = str_replace('__REPO__', $repo, $GLOBALS['cfg']['wof_data_dir']);
 		$cwd = preg_replace('/data\/?$/', '', $data_dir);
 
-		wof_repo_set_status($repo, 'indexing');
+		wof_repo_set_status($repo, 'indexing', 'status updated from index_repo offline task');
 
 		$output = array();
 		$wof_es_index = '/usr/local/bin/wof-es-index';
@@ -349,8 +347,7 @@ END;
 
 		$output = implode("\n", $output);
 		$debug = "$cmd\n$output";
-		wof_repo_set_status($repo, 'indexed', $debug);
-		wof_repo_set_status($repo, 'ready');
+		wof_repo_set_status($repo, 'ready', 'status updated from index_repo offline task');
 
 		return array(
 			'ok' => 1,

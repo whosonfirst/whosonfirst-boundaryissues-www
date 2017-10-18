@@ -215,7 +215,7 @@
 		$rsp = wof_repo_get_status($pipeline['repo']);
 		if ($rsp['status'] &&
 		    strpos($rsp['status'], "pipeline $id") !== false) {
-			wof_repo_set_status($pipeline['repo'], 'ready');
+			wof_repo_set_status($pipeline['repo'], 'ready', 'status updated after cancelling pipeline');
 		}
 	}
 
@@ -498,7 +498,7 @@
 
 		if ($phase == 'success') {
 			wof_pipeline_cleanup($pipeline);
-			wof_repo_set_status($pipeline['repo'], 'ready');
+			wof_repo_set_status($pipeline['repo'], 'ready', 'status updated after finishing pipeline');
 
 			if ($pipeline['meta']['generate_meta_files']) {
 				wof_pipeline_create(array(
@@ -899,7 +899,7 @@
 				}
 			}
 
-			wof_repo_set_status($pipeline['repo'], "pipeline {$pipeline['id']}");
+			wof_repo_set_status($pipeline['repo'], "pipeline {$pipeline['id']}", 'status updated after choosing next pipeline');
 
 			$next[] = $pipeline;
 		}

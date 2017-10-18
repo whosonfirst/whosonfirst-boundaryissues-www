@@ -9,7 +9,7 @@ if (count($argv) < 3) {
 
 $repo = $argv[1];
 $status = $argv[2];
-$rsp = wof_repo_set_status($repo, $status);
+$rsp = wof_repo_set_status($repo, $status, 'status updated from command line');
 if ($rsp['ok']) {
 	echo "$repo: $status\n";
 } else {

@@ -21,6 +21,7 @@
 		);
 	}
 
+	########################################################################
 
 	function wof_repo_init($repo, $status = 'ready') {
 		$esc_repo = addslashes($repo);
