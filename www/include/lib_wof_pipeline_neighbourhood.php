@@ -48,6 +48,7 @@
 		$cmd = "{$GLOBALS['pipeline_neighbourhood_tool_path']} $args";
 
 		$descriptor = array(
+			0 => array('pipe', 'r'), // stdin
 			1 => array('pipe', 'w'), // stdout
 			2 => array('pipe', 'w')  // stderr
 		);
@@ -61,10 +62,14 @@
 			);
 		}
 
-		$stderr = stream_get_contents($pipes[1]);
-		$stdout = stream_get_contents($pipes[2]);
+		fclose($pipes[0]);
+
+		$stdout = stream_get_contents($pipes[1]);
 		fclose($pipes[1]);
+
+		$stderr = stream_get_contents($pipes[2]);
 		fclose($pipes[2]);
+
 		$exit_code = proc_close($proc);
 
 		$rsp = array(
