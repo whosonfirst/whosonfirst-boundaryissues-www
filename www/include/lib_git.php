@@ -200,8 +200,8 @@
 			);
 		}
 
-		$stderr = stream_get_contents($pipes[1]);
-		$stdout = stream_get_contents($pipes[2]);
+		$stdout = stream_get_contents($pipes[1]);
+		$stderr = stream_get_contents($pipes[2]);
 		fclose($pipes[1]);
 		fclose($pipes[2]);
 		$exit_code = proc_close($proc);
