@@ -7,6 +7,8 @@
 	function wof_pipeline_neighbourhood_defaults($meta) {
 		$defaults = array(
 			'branch_merge' => true,
+			'user_confirmation' => true,
+			'generate_meta_files' => true,
 			'repo' => 'whosonfirst-data'
 		);
 		return array_merge($defaults, $meta);
