@@ -96,7 +96,7 @@
 		}
 
 		$hashes_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
-		if (preg_match($hashes_regex, $rsp['stdout'], $hashes_match)) {
+		if (preg_match($hashes_regex, $rsp['stderr'], $hashes_match)) {
 			$rsp['commit_hashes'] = $hashes_match[0];
 		}
 
@@ -124,7 +124,7 @@
 		}
 
 		$hashes_regex = "/[0-9a-f]+\.\.[0-9a-f]+/m";
-		if (preg_match($hashes_regex, $rsp['stdout'], $hashes_match)) {
+		if (preg_match($hashes_regex, $rsp['stderr'], $hashes_match)) {
 			$rsp['commit_hashes'] = $hashes_match[0];
 		}
 
@@ -139,7 +139,7 @@
 			return $rsp;
 		}
 
-		if (preg_match('/^\* (.+)$/m', $rsp['stderr'], $matches)) {
+		if (preg_match('/^\* (.+)$/m', $rsp['stdout'], $matches)) {
 			return array(
 				'ok' => 1,
 				'branch' => $matches[1]
@@ -164,7 +164,7 @@
 		print_r($rsp);
 
 		$branches = array();
-		preg_match_all('/^(\*)?\s*([a-zA-Z0-9_-]+)$/m', $rsp['stderr'], $matches);
+		preg_match_all('/^(\*)?\s*([a-zA-Z0-9_-]+)$/m', $rsp['stdout'], $matches);
 
 		$rsp = array(
 			'ok' => 1,
