@@ -152,7 +152,7 @@
 				die("remote_addr() error: X-Forwarded-For does not have an index $ip_index.");
 			}
 
-			return $ip_list[$ip_index];
+			return trim($ip_list[$ip_index]);
 		}
 
 		return $_SERVER['REMOTE_ADDR'];
