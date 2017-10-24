@@ -114,8 +114,45 @@
 
 	function remote_addr(){
 
-		if (isset($_SERVER['HTTP_X_REAL_IP'])){
-			return $_SERVER['HTTP_X_REAL_IP'];
+		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
+
+			// X-Forwarded-For is a list of forwarded IP addresses, representing
+			// each hop of a proxy chain. It comes in as a comma-separated list.
+			//
+			// At which position in the list the client's public IP appears
+			// depends on the specific proxy setup. We default to "first in the
+			// list," but it needs to be configured according to the network
+			// stack.
+			//
+			// Note that IPs get prepended to the _front_ of the list, so the
+			// index config is really counting from the end. If X-Fowarded-For
+			// comes in as 1.1.1.1, 2.2.2.2, 3.3.3.3, and the
+			// $GLOBALS['cfg']['remote_addr_index'] value is set to 0, then
+			// that means 3.3.3.3 is chosen as the remote_addr() return value.
+			//
+			// This is important because getting it wrong means an attacker
+			// could spoof somebody's IP, simply by making a request like this:
+			// curl -H "X-Forwarded-For 1.2.3.4" ... and that value would get
+			// prepended to the list of IPs added by our own proxies,
+			// potentially tricking us into accepting a forged crumb.
+			//
+			// See also: See: http://nginx.org/en/docs/http/ngx_http_proxy_module.html
+			// (20171024/dphiffer)
+
+			$ip_list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+			$ip_list = array_reverse($ip_list); // remember that IPs are prepended, not appended
+			$ip_index = 0;
+			if ($GLOBALS['cfg']['remote_addr_index']){
+				$ip_index = intval($GLOBALS['cfg']['remote_addr_index']);
+			}
+
+			if (! $ip_list[$ip_index]){
+				// We cannot trust crumbs at this point, so just bail out
+				// with an error message.
+				die("remote_addr() error: X-Forwarded-For does not have an index $ip_index.");
+			}
+
+			return $ip_list[$ip_index];
 		}
 
 		return $_SERVER['REMOTE_ADDR'];

@@ -95,6 +95,8 @@
 		),
 	);
 
+	// See also: remote_addr() in init.php
+	$GLOBALS['cfg']['remote_addr_index'] = 0;
 
 	# This is a kludge-y way to constrain search results on a per-user
 	# basis. That's right, it's just hardcoded here by user ID. At some
