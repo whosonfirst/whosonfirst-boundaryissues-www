@@ -122,21 +122,22 @@
 			// At which position in the list the client's public IP appears
 			// depends on the specific proxy setup. We default to "first in the
 			// list," but it needs to be configured according to the network
-			// stack.
+			// stack. This is controlled by a 'remote_addr_index' config, which
+			// defaults to 0.
 			//
 			// Note that IPs get prepended to the _front_ of the list, so the
 			// index config is really counting from the end. If X-Fowarded-For
-			// comes in as 1.1.1.1, 2.2.2.2, 3.3.3.3, and the
-			// $GLOBALS['cfg']['remote_addr_index'] value is set to 0, then
+			// comes in as 1.1.1.1, 2.2.2.2, 3.3.3.3, and
+			// $GLOBALS['cfg']['remote_addr_index'] is set to 0, then
 			// that means 3.3.3.3 is chosen as the remote_addr() return value.
 			//
 			// This is important because getting it wrong means an attacker
 			// could spoof somebody's IP, simply by making a request like this:
-			// curl -H "X-Forwarded-For 1.2.3.4" ... and that value would get
-			// prepended to the list of IPs added by our own proxies,
-			// potentially tricking us into accepting a forged crumb.
+			// curl -H "X-Forwarded-For: 1.2.3.4" ... and that value would get
+			// prepended to the list of IPs of our proxies, potentially tricking
+			// us into accepting a forged crumb.
 			//
-			// See also: See: http://nginx.org/en/docs/http/ngx_http_proxy_module.html
+			// See also: http://nginx.org/en/docs/http/ngx_http_proxy_module.html
 			// (20171024/dphiffer)
 
 			$ip_list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
@@ -148,7 +149,8 @@
 
 			if (! $ip_list[$ip_index]){
 				// We cannot trust crumbs at this point, so just bail out
-				// with an error message.
+				// with an error message. This is may be overly-conservative,
+				// but we'll stick with that for now.
 				die("remote_addr() error: X-Forwarded-For does not have an index $ip_index.");
 			}
 
