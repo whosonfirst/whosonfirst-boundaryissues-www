@@ -90,12 +90,13 @@
 		}
 
 		# basic browser stuff
+		$client_ip = crumb_get_client_ip();
 
 		$data = array(
 			$key,
 			$GLOBALS['_SERVER']['HTTP_USER_AGENT'],
 			$target,
-			$GLOBALS['_SERVER']['REMOTE_ADDR'],	# check if mobile?
+			$client_ip,	# check if mobile?
 		);
 
 		# if they're signed in, use their account
@@ -113,6 +114,17 @@
 
 		$base = implode(':', $data);
 		return $base;
+	}
+
+	#################################################################
+
+	function crumb_get_client_ip(){
+		$client_ip = $GLOBALS['_SERVER']['REMOTE_ADDR'];
+		if ($GLOBALS['_SERVER']['HTTP_X_FORWARDED_FOR']){
+			$ip_forwards = explode(',', $GLOBALS['_SERVER']['HTTP_X_FORWARDED_FOR']);
+			$client_ip = trim($ip_forwards[0]);
+		}
+		return $client_ip;
 	}
 
 	#################################################################
