@@ -41,38 +41,30 @@
 
 		$pipeline_id = intval($pipeline['id']);
 		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
-		$args = "--updates=$dir --verbose";
 
+		$script = $GLOBALS['pipeline_neighbourhood_tool_path'];
+
+		$args = "--updates=$dir --verbose";
 		if ($dry_run) {
 			$args .= ' --debug';
 		}
 
-		$cmd = "{$GLOBALS['pipeline_neighbourhood_tool_path']} $args";
+		$stdout_path = "{$dir}stdout.log";
+		$stderr_path = "{$dir}stderr.log";
 
-		$descriptor = array(
-			0 => array('pipe', 'r'), // stdin
-			1 => array('pipe', 'w'), // stdout
-			2 => array('pipe', 'w')  // stderr
-		);
-		$pipes = array();
-		$proc = proc_open($cmd, $descriptor, $pipes, $dir);
+		$pipes = ">$stdout_path 2>$stderr_path";
 
-		if (! is_resource($proc)) {
-			return array(
-				'ok' => 0,
-				'error' => "Couldn't talk to neighbourhood-tool.py. Sad face."
-			);
-		}
+		$cmd = "$script $args $pipes";
 
-		fclose($pipes[0]);
+		$output = array();
+		$exit_code = -1;
+		exec($cmd, $output, $exit_code);
 
-		$stdout = stream_get_contents($pipes[1]);
-		fclose($pipes[1]);
+		$stdout = file_get_contents($stdout_path);
+		$stderr = file_get_contents($stderr_path);
 
-		$stderr = stream_get_contents($pipes[2]);
-		fclose($pipes[2]);
-
-		$exit_code = proc_close($proc);
+		unlink($stdout_path);
+		unlink($stderr_path);
 
 		$rsp = array(
 			'ok' => ($exit_code == 0) ? 1 : 0,
