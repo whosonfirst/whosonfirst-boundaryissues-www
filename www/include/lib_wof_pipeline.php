@@ -320,7 +320,11 @@
 			return false;
 		}
 
-		$pipeline['updated'] = $rsp['updated'];
+		if ($rsp['commit_all']) {
+			$pipeline['updated'] = array('*');
+		} else if ($rsp['updated']) {
+			$pipeline['updated'] = $rsp['updated'];
+		}
 
 		wof_pipeline_phase($pipeline, 'commit');
 

@@ -49,7 +49,10 @@
 			$args .= ' --debug';
 		}
 
-		return wof_pipeline_run_script($pipeline, $script, $args);
+		$ret = wof_pipeline_run_script($pipeline, $script, $args);
+		$ret['commit_all'] = true;
+
+		return $ret;
 	}
 
 	# the end
