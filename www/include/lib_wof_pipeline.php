@@ -527,6 +527,69 @@
 
 	########################################################################
 
+	function wof_pipeline_run_script($pipeline, $script, $args = '') {
+
+		$pipeline_id = intval($pipeline['id']);
+		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
+
+		$stdout_path = "{$dir}stdout.log";
+		$stderr_path = "{$dir}stderr.log";
+
+		$pipes = ">$stdout_path 2>$stderr_path";
+
+		$cmd = "$script $args $pipes";
+
+		$output = array();
+		$exit_code = -1;
+		exec($cmd, $output, $exit_code);
+
+		$stdout = file_get_contents($stdout_path);
+		$stderr = file_get_contents($stderr_path);
+		$ok = ($exit_code == 0) ? 1 : 0;
+
+		$stdout_ret = $stdout;
+		$stderr_ret = $stderr;
+		if (strlen($stdout) > 1024) {
+			$stdout_ret = substr($stdout, -1024, 1024);
+		}
+		if (strlen($stderr) > 1024) {
+			$stderr_ret = substr($stderr, -1024, 1024);
+		}
+
+		$ret = array(
+			'ok' => $ok,
+			'cwd' => $dir,
+			'cmd' => $cmd,
+			'stdout' => trim($stdout_ret),
+			'stderr' => trim($stderr_ret)
+		);
+
+		if (! $ok) {
+			$sep = ($ret['stdout'] && $ret['stderr']) ? "\n" : '';
+			$ret['error'] = "{$ret['stdout']}{$sep}{$ret['stderr']}";
+
+			$s3_dir = "{$GLOBALS['cfg']['wof_pipeline_base_path']}$pipeline_id/";
+			$stdout_s3_path = "{$s3_dir}stdout.log";
+			$stderr_s3_path = "{$s3_dir}stderr.log";
+			$args = array('acl' => rawurlencode('public-read'));
+			$rsp = wof_s3_put($stdout, $stdout_s3_path, $args);
+			if (! $rsp['ok']) {
+				error_log('PIPELINE FAILED AND I COULD NOT UPLOAD OUTPUT TO S3 EVERYTHING IS TERRIBLE');
+			}
+			$rsp = wof_s3_put($stderr, $stderr_s3_path, $args);
+			if (! $rsp['ok']) {
+				error_log('PIPELINE FAILED AND I COULD NOT UPLOAD STDERR TO S3 EVERYTHING IS TERRIBLE');
+			}
+		}
+
+		unlink($stdout_path);
+		unlink($stderr_path);
+
+		return $ret;
+	}
+
+	########################################################################
+
 	function wof_pipeline_validate_zip($upload, $meta = null) {
 
 		$names = array();
@@ -628,6 +691,16 @@
 	########################################################################
 
 	function wof_pipeline_log($pipeline_id, $summary, $details = '') {
+
+		if (! db_ping('main')){
+			// Because pipelines take so long to complete, we may need to
+			// turn MySQL off and then on again.
+			$cluster = 'main';
+			$shard = null;
+			_db_disconnect($cluster, $shard);
+			_db_connect($cluster, $shard);
+		}
+
 		if (! is_scalar($details)) {
 			$details = var_export($details, true);
 		}

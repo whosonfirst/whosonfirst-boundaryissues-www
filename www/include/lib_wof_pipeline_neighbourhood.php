@@ -49,34 +49,7 @@
 			$args .= ' --debug';
 		}
 
-		$stdout_path = "{$dir}stdout.log";
-		$stderr_path = "{$dir}stderr.log";
-
-		$pipes = ">$stdout_path 2>$stderr_path";
-
-		$cmd = "$script $args $pipes";
-
-		$output = array();
-		$exit_code = -1;
-		exec($cmd, $output, $exit_code);
-
-		$stdout = file_get_contents($stdout_path);
-		$stderr = file_get_contents($stderr_path);
-
-		unlink($stdout_path);
-		unlink($stderr_path);
-
-		$rsp = array(
-			'ok' => ($exit_code == 0) ? 1 : 0,
-			'cwd' => $dir,
-			'cmd' => $cmd,
-			'stdout' => trim($stdout),
-			'stderr' => trim($stderr)
-		);
-		if (! $rsp['ok']) {
-			$sep = ($rsp['stdout'] && $rsp['stderr']) ? "\n" : '';
-			$rsp['error'] = "{$rsp['stdout']}{$sep}{$rsp['stderr']}";
-		}
-
-		return $rsp;
+		return wof_pipeline_run_script($pipeline, $script, $args);
 	}
+
+	# the end
