@@ -428,6 +428,12 @@
 		$repo_path = wof_pipeline_repo_path($pipeline);
 		$branch = "pipeline-{$pipeline['id']}";
 
+		$rsp = git_pull($repo_path, 'origin', $branch);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error', "Could not pull from origin $branch", $rsp);
+			return false;
+		}
+
 		$rsp = git_execute($repo_path, "checkout staging-work");
 		wof_pipeline_log($pipeline['id'], "Checkout staging-work branch", $rsp);
 		if (! $rsp['ok']) {
