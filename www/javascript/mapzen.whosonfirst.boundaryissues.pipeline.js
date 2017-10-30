@@ -140,12 +140,19 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 			} else if (type == 'neighbourhood') {
 
 				var process_venues_checked = meta.process_venues ? ' checked="checked"' : '';
+				var venues_parent = meta.venues_parent || '';
 
 				html = '<p>Your zip file should include a selection of GeoJSON FeatureCollection files.</p>';
 				html += '<div class="input-group">';
 				html += '<input type="checkbox" id="process_venues"' + process_venues_checked + '>';
 				html += '<label for="process_venues">Process descendant venues</label>';
 				html += '</div>';
+
+				html += '<div id="venues-parent-group" class="input-group hidden">';
+				html += '<label for="venues-parent">Venues parent WOF ID</label>';
+				html += '<input type="text" id="venues-parent" value="' + htmlspecialchars(venues_parent) + '">';
+				html += '</div>';
+
 			} else if (type == 'remove_properties') {
 
 				var property_list = meta.property_list || '';
@@ -204,6 +211,14 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 			html += '</div>';
 
 			$('#pipeline-options').html(html);
+
+			$('#process_venues').change(function(e) {
+				if (e.target.checked) {
+					$('#venues-parent-group').removeClass('hidden');
+				} else {
+					$('#venues-parent-group').addClass('hidden');
+				}
+			});
 
 			mapzen.whosonfirst.boundaryissues.upload.upload_is_ready = true;
 			$('#upload-btn').addClass('btn-primary');
