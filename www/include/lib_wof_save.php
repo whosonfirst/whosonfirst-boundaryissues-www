@@ -227,7 +227,7 @@
 		if (! $rsp['ok']) {
 			return $rsp;
 		}
-		$git_hash = $rsp['stderr'];
+		$git_hash = $rsp['stdout'];
 
 		// Save a snapshot to the pending index directory
 		$pending_index_dir = wof_utils_pending_dir('index', $user_id);
