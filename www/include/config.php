@@ -550,3 +550,14 @@
 	$GLOBALS['cfg']['whosonfirst_spatial_tile38_collection'] = 'whosonfirst-nearby';
 
 	# END of wof spatial stuff
+
+	# START OF chatterbox stuff / https://github.com/whosonfirst/go-whosonfirst-chatterbox
+
+	$GLOBALS['cfg']['enable_feature_chatterbox'] = 0;
+
+	$GLOBALS['cfg']['chatterbox_host'] = '127.0.0.1';
+	$GLOBALS['cfg']['chatterbox_port'] = '6379';
+	$GLOBALS['cfg']['chatterbox_channel'] = 'chatterbox';
+	$GLOBALS['cfg']['chatterbox_destination'] = '';
+
+	# END OF chatterbox stuff
