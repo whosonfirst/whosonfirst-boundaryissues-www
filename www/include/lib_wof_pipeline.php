@@ -13,6 +13,7 @@
 	loadlib('wof_pipeline_update_repo');
 	loadlib('wof_repo');
 	loadlib('wof_s3');
+	loadlib('chatterbox');
 
 	########################################################################
 
@@ -702,15 +703,6 @@
 
 	function wof_pipeline_log($pipeline_id, $summary, $details = '') {
 
-		if (! db_ping('main')){
-			// Because pipelines take so long to complete, we may need to
-			// turn MySQL off and then on again.
-			$cluster = 'main';
-			$shard = null;
-			_db_disconnect($cluster, $shard);
-			_db_connect($cluster, $shard);
-		}
-
 		if (! is_scalar($details)) {
 			$details = var_export($details, true);
 		}
@@ -731,6 +723,12 @@
 				echo "$details\n";
 			}
 		}
+
+		chatterbox_dispatch(array(
+			'pipeline' => $pipeline_id,
+			'summary' => $summary,
+			'details' => $details
+		));
 
 		return $rsp;
 	}
