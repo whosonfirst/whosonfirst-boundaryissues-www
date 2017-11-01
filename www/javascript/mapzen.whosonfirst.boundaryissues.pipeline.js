@@ -8,7 +8,7 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 
-	var $result = $('#upload-result');
+	var $result;
 
 	var self = {
 
@@ -40,6 +40,7 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 					}
 				};
 				var onerror = function(rsp) {
+					console.log('onerror, yo', rsp);
 					self.show_result(rsp);
 					mapzen.whosonfirst.log.error(rsp);
 				};
@@ -95,10 +96,11 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 
 			var types = [
 				'meta_files',
+				'merge_pr',
 				'neighbourhood',
+				'venues'
 				//'remove_properties',
 				//'fix_property_type',
-				'merge_pr'
 			];
 
 			var html = '<div class="input-group">';
@@ -283,6 +285,7 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 	};
 
 	$(document).ready(function(){
+		$result = $('#upload-result');
 		self.setup_pipeline();
 	});
 

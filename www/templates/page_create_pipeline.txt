@@ -7,6 +7,9 @@
 			<div id="upload-preview-props"></div>
 			<input type="submit" value="Create" id="btn-create" class="hidden btn btn-mapzen">
 		</div>
+		<div class="row">
+			<div id="upload-result"></div>
+		</div>
 	</div>
 </form>
 
