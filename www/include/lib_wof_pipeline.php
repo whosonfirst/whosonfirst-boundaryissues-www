@@ -32,30 +32,28 @@
 			$meta = $fn($meta);
 		}
 
-		$meta_json = json_encode($meta);
-		$meta_json_esc = addslashes($meta_json);
-		$now = date('Y-m-d H:i:s');
-
-		if ($meta['slack_handle']) {
-			users_settings_set($GLOBALS['cfg']['user'], 'slack_handle', $meta['slack_handle']);
+		$rsp = wof_pipeline_validate($meta);
+		if (! $rsp['ok']) {
+			return $rsp;
 		}
 
 		if ($meta['upload']) {
-			$upload = $meta['upload'];
+			$filename = $meta['upload']['name'];
 			unset($meta['upload']);
-			$rsp = wof_pipeline_validate_zip($upload, $meta);
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-			$meta = $rsp['meta'];
-
-			$filename = $upload['name'];
 		} else if ($meta['name']) {
 			$filename = $meta['name'];
 		} else if ($meta['repo']) {
 			$filename = $meta['repo'];
 		} else {
 			$filename = null;
+		}
+
+		$meta_json = json_encode($meta);
+		$meta_json_esc = addslashes($meta_json);
+		$now = date('Y-m-d H:i:s');
+
+		if ($meta['slack_handle']) {
+			users_settings_set($GLOBALS['cfg']['user'], 'slack_handle', $meta['slack_handle']);
 		}
 
 		$filename_esc = addslashes($filename);
@@ -601,49 +599,47 @@
 
 	########################################################################
 
-	function wof_pipeline_validate_zip($upload, $meta = null) {
+	function wof_pipeline_validate(&$meta) {
 
-		$names = array();
-		$basename = basename($upload['name'], '.zip');
+		if ($meta['upload']) {
 
-		if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $upload['name'])) {
-			return array(
-				'ok' => 0,
-				'error' => 'Invalid filename. Please use only alphanumerics, _ (underbar), or - (hyphen).'
-			);
-		}
+			$upload = $meta['upload'];
+			$names = array();
+			$basename = basename($upload['name'], '.zip');
 
-		$fh = zip_open($upload['tmp_name']);
-
-		while ($entry = zip_read($fh)) {
-			$name = zip_entry_name($entry);
-			if (! $meta && $name == "$basename/meta.json") {
-				$json = zip_entry_read($entry);
-				$meta = json_decode($json, 'as hash');
-			} else if (preg_match("/^$basename\/([^\/]+\.(geojson|csv))\$/", $name, $matches)) {
-				$names[] = $matches[1];
+			if (! preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $upload['name'])) {
+				return array(
+					'ok' => 0,
+					'error' => 'Invalid filename. Please use only alphanumerics, _ (underbar), or - (hyphen).'
+				);
 			}
-		}
 
-		$meta['files'] = $names;
+			$fh = zip_open($upload['tmp_name']);
+			while ($entry = zip_read($fh)) {
+				$name = zip_entry_name($entry);
+				if (! $meta && $name == "$basename/meta.json") {
+					$json = zip_entry_read($entry);
+					$uploaded_meta = json_decode($json, 'as hash');
+					$meta = array_merge($meta, $uploaded_meta);
+				} else if (preg_match("/^$basename\/([^\/]+\.(geojson|csv))\$/", $name, $matches)) {
+					$names[] = $matches[1];
+				}
+			}
+			zip_close($fh);
 
-		if (! $meta) {
-			return array(
-				'ok' => 0,
-				'error' => 'No meta.json file found'
-			);
+			$meta['files'] = $names;
 		}
 
 		if (! $meta['type']) {
 			return array(
 				'ok' => 0,
-				'error' => "meta.json has no 'type' property"
+				'error' => "Pipeline has no 'type'"
 			);
 		}
 
 		$fn = "wof_pipeline_{$meta['type']}_validate";
 		if (function_exists($fn)) {
-			$rsp = $fn($meta, $names);
+			$rsp = $fn($meta);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -651,7 +647,7 @@
 
 		$fn = "wof_pipeline_{$meta['type']}_repo";
 		if (function_exists($fn)) {
-			$rsp = $fn($upload, $names);
+			$rsp = $fn($meta);
 			if (! $rsp['ok']) {
 				return $rsp;
 			}
@@ -663,11 +659,8 @@
 			);
 		}
 
-		zip_close($fh);
-
 		return array(
-			'ok' => 1,
-			'meta' => $meta
+			'ok' => 1
 		);
 	}
 
