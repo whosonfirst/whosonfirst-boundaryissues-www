@@ -14,7 +14,7 @@
 			'generate_meta_files' => true
 		);
 		return array_merge($defaults, $meta);
-
+	}
 
 	########################################################################
 
