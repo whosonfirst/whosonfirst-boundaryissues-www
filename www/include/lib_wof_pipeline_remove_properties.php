@@ -13,7 +13,7 @@
 
 	########################################################################
 
-	function wof_pipeline_remove_properties_validate($meta, $names) {
+	function wof_pipeline_remove_properties_validate($meta) {
 
 		$errors = array();
 
@@ -21,7 +21,7 @@
 			$errors[] = "No 'property_list' declared in meta.json.";
 		}
 
-		if (! in_array('remove_properties.csv', $names)) {
+		if (! in_array('remove_properties.csv', $meta['files'])) {
 			$errors[] = "remove_properties.csv not found in zip file.";
 		}
 
@@ -39,7 +39,7 @@
 
 	########################################################################
 
-	function wof_pipeline_remove_properties_repo($upload, $files) {
+	function wof_pipeline_remove_properties_repo($meta) {
 
 		$files = array('remove_properties.csv');
 		$rsp = wof_pipeline_read_zip_contents($upload, $files);
@@ -75,18 +75,18 @@
 		}
 
 		$wof_id = intval($wof_id);
-		$repo_path = wof_utils_id2repopath($wof_id);
+		$repo = wof_utils_id2repo($wof_id);
 
-		if (! $repo_path) {
+		if (! $repo) {
 			return array(
 				'ok' => 0,
-				'error' => 'Could not find a repo path for WOF ID ' . $wof_id
+				'error' => 'Could not find a repo for WOF ID ' . $wof_id
 			);
 		}
 
 		return array(
 			'ok' => 1,
-			'repo' => basename(dirname($repo_path))
+			'repo' => $repo
 		);
 	}
 

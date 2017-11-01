@@ -156,12 +156,7 @@
 
 	########################################################################
 
-	function wof_utils_id2repopath($wof_id) {
-
-		if (! $GLOBALS['cfg']['enable_feature_multi_repo']) {
-			return $GLOBALS['cfg']['wof_data_dir'];
-		}
-
+	function wof_utils_id2repo($wof_id) {
 		$rsp = wof_elasticsearch_search(array(
 			'query' => array(
 				'term' => array(
@@ -179,6 +174,23 @@
 		if (! $wof_repo) {
 			return null;
 		}
+
+		return $wof_repo;
+	}
+
+	########################################################################
+
+	function wof_utils_id2repopath($wof_id) {
+
+		if (! $GLOBALS['cfg']['enable_feature_multi_repo']) {
+			return $GLOBALS['cfg']['wof_data_dir'];
+		}
+
+		$wof_repo = wof_utils_id2repo($wof_id);
+		if (! $wof_repo) {
+			return null;
+		}
+
 		$path_template = $GLOBALS['cfg']['wof_data_dir'];
 		$repo_path = str_replace('__REPO__', $wof_repo, $path_template);
 		return $repo_path;

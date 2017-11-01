@@ -14,11 +14,11 @@
 			'generate_meta_files' => true
 		);
 		return array_merge($defaults, $meta);
-	}
+
 
 	########################################################################
 
-	function wof_pipeline_merge_pr_validate($meta, $names) {
+	function wof_pipeline_merge_pr_validate($meta) {
 
 		if (! $meta['repo']) {
 			return array(

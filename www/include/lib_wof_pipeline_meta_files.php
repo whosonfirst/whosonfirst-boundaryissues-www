@@ -11,7 +11,8 @@
 
 	########################################################################
 
-	function wof_pipeline_meta_files_validate($meta, $names) {
+	function wof_pipeline_meta_files_validate($meta) {
+
 		if (! $meta['repo']) {
 			return array(
 				'ok' => 0,

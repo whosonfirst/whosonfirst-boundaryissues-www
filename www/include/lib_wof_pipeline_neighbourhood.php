@@ -16,11 +16,11 @@
 
 	########################################################################
 
-	function wof_pipeline_neighbourhood_validate($pipeline) {
+	function wof_pipeline_neighbourhood_validate($meta) {
 
 		// For now we will just make sure each of the filenames is .geojson.
 		// Not a terribly high standard. (20171012/dphiffer)
-		foreach ($pipeline['files'] as $file) {
+		foreach ($meta['files'] as $file) {
 			if (! preg_match('/\.geojson$/', $file)) {
 				$esc_file = htmlspecialchars($file);
 				return array(

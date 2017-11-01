@@ -9,7 +9,8 @@
 
 	########################################################################
 
-	function wof_pipeline_update_repo_validate($meta, $names) {
+	function wof_pipeline_update_repo_validate($meta) {
+
 		if (! $meta['repo']) {
 			return array(
 				'ok' => 0,
