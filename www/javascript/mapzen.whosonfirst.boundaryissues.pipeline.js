@@ -40,7 +40,6 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 					}
 				};
 				var onerror = function(rsp) {
-					console.log('onerror, yo', rsp);
 					self.show_result(rsp);
 					mapzen.whosonfirst.log.error(rsp);
 				};

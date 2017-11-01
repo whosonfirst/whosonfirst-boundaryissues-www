@@ -16,8 +16,28 @@
 
 	########################################################################
 
-	wof_pipeline_venues_repo($meta) {
-		return wof_utils_id2repo($meta['venues_parent']);
+	function wof_pipeline_venues_repo($meta) {
+
+		$root = wof_utils_id2repopath($meta['venues_parent']);
+		$path = wof_utils_id2abspath($root, $meta['venues_parent']);
+		$parent_json = file_get_contents($path);
+		$parent = json_decode($parent_json, 'as hash');
+
+		if (! $parent['properties']['wof:hierarchy']) {
+			return array(
+				'ok' => 0,
+				'error' => 'Could not find parent hierarchy.'
+			);
+		}
+
+		$feature = array(
+			'properties' => array(
+				'wof:placetype' => 'venue',
+				'wof:hierarchy' => $parent['properties']['wof:hierarchy']
+			)
+		);
+
+		return wof_utils_pickrepo($feature);
 	}
 
 	########################################################################
@@ -27,7 +47,7 @@
 		if (! $meta['venues_parent']) {
 			return array(
 				'ok' => 0,
-				'error' => 'Please include a venues_parent.';
+				'error' => 'Please include a venues_parent.'
 			);
 		}
 
