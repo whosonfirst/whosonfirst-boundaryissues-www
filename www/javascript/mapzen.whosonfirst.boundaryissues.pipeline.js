@@ -153,6 +153,15 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 				html += '<input type="text" id="venues-parent" value="' + htmlspecialchars(venues_parent) + '">';
 				html += '</div>';
 
+			} else if (type == 'venues') {
+
+				var venues_parent = meta.venues_parent || '';
+
+				html += '<div id="venues-parent-group" class="input-group">';
+				html += '<label for="venues-parent">Venues parent WOF ID</label>';
+				html += '<input type="text" id="venues-parent" value="' + htmlspecialchars(venues_parent) + '">';
+				html += '</div>';
+
 			} else if (type == 'remove_properties') {
 
 				var property_list = meta.property_list || '';
@@ -237,6 +246,11 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 				meta.repo = $('#repo').val();
 			} else if (meta.type == 'neighbourhood') {
 				meta.process_venues = $('#process_venues')[0].checked;
+				if (meta.process_venues) {
+					meta.venues_parent = $('#venues-parent').val();
+				}
+			} else if (meta.type == 'venues') {
+				meta.venues_parent = $('#venues-parent').val();
 			} else if (meta.type == 'remove_properties') {
 				meta.property_list = $('#property_list').val();
 			} else if (meta.type == 'fix_property_type') {
