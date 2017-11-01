@@ -19,12 +19,6 @@
 		}
 
 		$meta = json_decode($meta_json, 'as hash');
-		$repo = $meta['repo'];
-
-		if (! $repo) {
-			api_output_error(400, "Please include a 'repo' value in your 'meta_json'.");
-		}
-
 		$rsp = wof_pipeline_create($meta);
 		api_output_ok($rsp);
 	}
