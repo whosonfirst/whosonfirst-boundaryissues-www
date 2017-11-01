@@ -11,6 +11,7 @@
 	loadlib('wof_pipeline_fix_property_type');
 	loadlib('wof_pipeline_merge_pr');
 	loadlib('wof_pipeline_update_repo');
+	loadlib('wof_pipeline_venues');
 	loadlib('wof_repo');
 	loadlib('wof_s3');
 	loadlib('chatterbox');
@@ -637,14 +638,6 @@
 			);
 		}
 
-		$fn = "wof_pipeline_{$meta['type']}_validate";
-		if (function_exists($fn)) {
-			$rsp = $fn($meta);
-			if (! $rsp['ok']) {
-				return $rsp;
-			}
-		}
-
 		$fn = "wof_pipeline_{$meta['type']}_repo";
 		if (function_exists($fn)) {
 			$rsp = $fn($meta);
@@ -657,6 +650,14 @@
 				'ok' => 0,
 				'error' => 'Could not determine repo for pipeline.'
 			);
+		}
+
+		$fn = "wof_pipeline_{$meta['type']}_validate";
+		if (function_exists($fn)) {
+			$rsp = $fn($meta);
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
 		}
 
 		return array(
