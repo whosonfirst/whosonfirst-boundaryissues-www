@@ -169,6 +169,7 @@
 	$GLOBALS['cfg']['enable_feature_slack_bot'] = false;
 	$GLOBALS['cfg']['slack_bot_access_token'] = 'READ-FROM-SECRETS';
 	$GLOBALS['cfg']['slack_bot_webhook_url'] = 'READ-FROM-SECRETS';
+	$GLOBALS['cfg']['slack_bot_users_list'] = 'schema/slack_users.json';
 
 	// Limit editable placetypes (array or false for no limit)
 	$GLOBALS['cfg']['require_wof_placetypes'] = false;

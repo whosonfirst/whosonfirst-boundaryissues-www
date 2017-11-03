@@ -2,8 +2,6 @@
 
 	loadlib('http');
 
-	$GLOBALS['cfg']['slack_bot_users_list'] = dirname(dirname(__DIR__)) . "/www/meta/slack_bot_users_list.json";
-
 	########################################################################
 
 	function slack_bot_msg($msg, $extras = array()){
@@ -78,7 +76,8 @@
 
 	function slack_bot_users_list(){
 
-		$cache_file = $GLOBALS['cfg']['slack_bot_users_list'];
+		$dir = dirname(dirname(__DIR__));
+		$cache_file = "$dir/{$GLOBALS['cfg']['slack_bot_users_list']}";
 		if (file_exists($cache_file)){
 			$json = file_get_contents($cache_file);
 			$users = json_decode($json, 'as hash');
@@ -87,7 +86,6 @@
 				'users_list' => $users
 			);
 		}
-
 		return slack_bot_load_users_list();
 	}
 
