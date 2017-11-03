@@ -84,3 +84,20 @@
 			'updated' => array()
 		);
 	}
+
+	########################################################################
+
+	function wof_pipeline_merge_pr_finish($pipeline) {
+
+		$owner = $GLOBALS['cfg']['wof_github_owner'];
+		$repo = $pipeline['meta']['repo'];
+		$number = $pipeline['meta']['pr_number'];
+		$path = "repos/$owner/$repo/pulls/$number";
+		$token = $GLOBALS['cfg']['github_token'];
+		$args = array(
+			'state' => 'closed'
+		);
+		return github_api_call('PATCH', $path, $token, $args);
+	}
+
+	# the end

@@ -518,6 +518,12 @@
 					'repo' => $pipeline['repo']
 				));
 			}
+
+			$fn = "wof_pipeline_{$pipeline['type']}_finish";
+			if (function_exists($fn)) {
+				$fn($pipeline);
+			}
+
 		} else {
 			if (! $debug) {
 				$debug = "Something went wrong, but I don’t know what";
