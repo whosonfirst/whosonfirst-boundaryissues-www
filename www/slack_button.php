@@ -13,14 +13,14 @@
 	$who = $payload['user']['name'];
 	$callback_id = $payload['callback_id'];
 
-	$slack_handle = $pipeline['meta']['slack_handle'];
-	if (substr($slack_handle, 0, 1) == '@') {
-		$slack_handle = substr($slack_handle, 1);
-	}
-
 	if (preg_match('/^pipeline_(\d+)$/', $callback_id, $matches)) {
 		$pipeline_id = $matches[1];
 		$pipeline = wof_pipeline_get($pipeline_id);
+	}
+
+	$slack_handle = $pipeline['meta']['slack_handle'];
+	if (substr($slack_handle, 0, 1) == '@') {
+		$slack_handle = substr($slack_handle, 1);
 	}
 
 	if ($payload['token'] != $GLOBALS['cfg']['slack_bot_verification_token']) {
