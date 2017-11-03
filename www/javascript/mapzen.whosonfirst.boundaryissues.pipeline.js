@@ -252,6 +252,7 @@ mapzen.whosonfirst.boundaryissues.pipeline = (function(){
 				}
 			} else if (meta.type == 'venues') {
 				meta.venues_parent = $('#venues-parent').val();
+				meta.name = meta.venues_parent + ' venues';
 			} else if (meta.type == 'remove_properties') {
 				meta.property_list = $('#property_list').val();
 			} else if (meta.type == 'fix_property_type') {

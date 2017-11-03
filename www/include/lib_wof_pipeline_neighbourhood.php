@@ -52,6 +52,17 @@
 		$ret = wof_pipeline_run_script($pipeline, $script, $args);
 		$ret['commit_all'] = true;
 
+		if (! $dry_run && $pipeline['meta']['process_venues']) {
+			$rsp = pipeline_create(array(
+				'type' => 'venues',
+				'name' => $pipeline['meta']['venues_parent'] . ' venues',
+				'venues_parent' => $pipeline['meta']['venues_parent']
+			));
+			if (! $rsp['ok']) {
+				return $rsp;
+			}
+		}
+
 		return $ret;
 	}
 
