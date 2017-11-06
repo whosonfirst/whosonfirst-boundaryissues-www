@@ -547,6 +547,9 @@
 
 		$pipeline_id = intval($pipeline['id']);
 		$dir = "{$GLOBALS['cfg']['wof_pending_dir']}pipeline/$pipeline_id/";
+		if (! file_exists($dir)) {
+			mkdir($dir, 0755, true);
+		}
 
 		$stdout_path = "{$dir}stdout.log";
 		$stderr_path = "{$dir}stderr.log";
