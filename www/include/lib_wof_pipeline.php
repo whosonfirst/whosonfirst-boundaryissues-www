@@ -324,6 +324,8 @@
 			$pipeline['updated'] = array('*');
 		} else if ($rsp['updated']) {
 			$pipeline['updated'] = $rsp['updated'];
+		} else {
+			$pipeline['updated'] = array();
 		}
 
 		wof_pipeline_phase($pipeline, 'commit');
@@ -343,7 +345,7 @@
 			return false;
 		}
 
-		if (empty($pipeline['updated'])) {
+		if (! $pipeline['updated']) {
 			// Nothing to commit, we can skip this step
 			wof_pipeline_phase($pipeline, 'push');
 			return true;
@@ -374,7 +376,11 @@
 		}
 
 		$how_many = count($pipeline['updated']);
-		if ($how_many == 1) {
+		if ($how_many == 0) {
+			// Nothing to commit, we can skip this step
+			wof_pipeline_phase($pipeline, 'push');
+			return true;
+		} else if ($how_many == 1) {
 			$how_many .= ' file';
 		} else {
 			$how_many .= ' files';
@@ -426,39 +432,37 @@
 		}
 
 		$repo_path = wof_pipeline_repo_path($pipeline);
+		$repo = $pipeline['repo'];
 		$branch = "pipeline-{$pipeline['id']}";
 
-		$rsp = git_pull($repo_path, 'origin', $branch);
-		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "Could not pull from origin $branch", $rsp);
-			return false;
-		}
+		if ($repo == 'whosonfirst-data') {
 
-		$rsp = git_execute($repo_path, "checkout staging-work");
-		wof_pipeline_log($pipeline['id'], "Checkout staging-work branch", $rsp);
-		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "$repo_path error checking out staging-work branch", $rsp);
-			return false;
-		}
+			$rsp = git_execute($repo_path, "checkout staging-work");
+			wof_pipeline_log($pipeline['id'], "Checkout staging-work branch", $rsp);
+			if (! $rsp['ok']) {
+				wof_pipeline_finish($pipeline, 'error', "$repo_path error checking out staging-work branch", $rsp);
+				return false;
+			}
 
-		$rsp = git_pull($repo_path, 'origin', 'staging-work');
-		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "$repo_path error pulling from origin staging-work", $rsp);
-			return false;
-		}
+			$rsp = git_pull($repo_path, 'origin', 'staging-work');
+			if (! $rsp['ok']) {
+				wof_pipeline_finish($pipeline, 'error', "$repo_path error pulling from origin staging-work", $rsp);
+				return false;
+			}
 
-		$rsp = git_pull($repo_path, 'origin', $branch);
-		wof_pipeline_log($pipeline['id'], "Merge into staging-work branch", $rsp);
-		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "$repo_path error merging into staging-work", $rsp);
-			return false;
-		}
+			$rsp = git_pull($repo_path, 'origin', $branch);
+			wof_pipeline_log($pipeline['id'], "Merge into staging-work branch", $rsp);
+			if (! $rsp['ok']) {
+				wof_pipeline_finish($pipeline, 'error', "$repo_path error merging into staging-work", $rsp);
+				return false;
+			}
 
-		$rsp = git_push($repo_path);
-		wof_pipeline_log($pipeline['id'], "Push commit to origin staging-work", $rsp);
-		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "$repo_path error pushing to origin staging-work", $rsp);
-			return false;
+			$rsp = git_push($repo_path);
+			wof_pipeline_log($pipeline['id'], "Push commit to origin staging-work", $rsp);
+			if (! $rsp['ok']) {
+				wof_pipeline_finish($pipeline, 'error', "$repo_path error pushing to origin staging-work", $rsp);
+				return false;
+			}
 		}
 
 		$rsp = git_execute($repo_path, "checkout master");
@@ -468,11 +472,24 @@
 			return false;
 		}
 
+		$rsp = git_pull($repo_path, 'origin', 'master');
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error', "$repo_path error pulling from origin master", $rsp);
+			return false;
+		}
+
 		$rsp = git_pull($repo_path, 'origin', $branch);
 		wof_pipeline_log($pipeline['id'], "Merge into master branch", $rsp);
 		if (! $rsp['ok']) {
 			wof_pipeline_finish($pipeline, 'error', "$repo_path error merging $branch into master", $rsp);
 			return false;
+		}
+
+		$rsp = git_push($repo_path);
+		wof_pipeline_log($pipeline['id'], "Push commit to origin master", $rsp);
+		if (! $rsp['ok']) {
+			wof_pipeline_finish($pipeline, 'error', "$repo_path pushing to origin master", $rsp);
+			continue;
 		}
 
 		$rsp = git_execute($repo_path, "branch -d $branch");
@@ -487,13 +504,6 @@
 		if (! $rsp['ok']) {
 			wof_pipeline_finish($pipeline, 'error', "$repo_path error deleting remote $branch branch", $rsp);
 			return false;
-		}
-
-		$rsp = git_push($repo_path);
-		wof_pipeline_log($pipeline['id'], "Push commit to origin master", $rsp);
-		if (! $rsp['ok']) {
-			wof_pipeline_finish($pipeline, 'error', "$repo_path pushing to origin master", $rsp);
-			continue;
 		}
 
 		wof_pipeline_finish($pipeline, 'success');
