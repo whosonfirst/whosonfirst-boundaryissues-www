@@ -927,6 +927,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		get_property_centroid: function(){
+			var $reversegeo_lat = $('input[name="properties.reversegeo:latitude"]');
+			var $reversegeo_lng = $('input[name="properties.reversegeo:longitude"]');
 			var $lbl_lat = $('input[name="properties.lbl:latitude"]');
 			var $lbl_lng = $('input[name="properties.lbl:longitude"]');
 			var $geom_lat = $('input[name="properties.geom:latitude"]');
@@ -948,6 +950,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				centroid.lbl_lng = parseFloat($lbl_lng.val());
 				centroid.lat = centroid.lbl_lat;
 				centroid.lng = centroid.lbl_lng;
+			}
+
+			if ($reversegeo_lat.val() &&
+				$reversegeo_lng.val()){
+				centroid.reversegeo_lat = parseFloat($reversegeo_lat.val());
+				centroid.reversegeo_lng = parseFloat($reversegeo_lng.val());
+				centroid.lat = centroid.reversegeo_lat;
+				centroid.lng = centroid.reversegeo_lng;
 			}
 
 			if (centroid.lat && centroid.lng){
