@@ -48,10 +48,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		update_where: function(centroid) {
 			var lat = centroid.lat;
 			var lng = centroid.lng;
-			var name = centroid.prefix + ' centroid';
-			if (spec[centroid.prefix]) {
-				name = spec[centroid.prefix].name;
-			}
+			var name = self.prefix_name(centroid.prefix);
 			var html = name + ': <strong>' + lat + ', ' + lng + '</strong>' +
 			           '<span id="where-parent"></span>';
 
@@ -74,14 +71,15 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			var html = '<div id="centroids-editor">' +
 			           '<select id="centroids-select">' + options + '</select> ' +
 			           '<strong id="centroids-coords"></strong>' +
+			           '<div id="centroids-about"></div>' +
 			           '</div>';
 
 			$('#where').html(html);
-			$('#centroids-select').change(self.update_coords);
-			self.update_coords();
+			$('#centroids-select').change(self.update_prefix);
+			self.update_prefix();
 		},
 
-		update_coords: function() {
+		update_prefix: function() {
 			var prefix = $('#centroids-select').val();
 			var lat = $('input[name="properties.' + prefix + ':latitude"]').val();
 			var lng = $('input[name="properties.' + prefix + ':longitude"]').val();
@@ -92,6 +90,21 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			} else {
 				$('#centroids-coords').html('<a href="#">add new centroid</a>');
 			}
+
+			var name = self.prefix_name(prefix);
+			var about = '<strong>' + name + '</strong>';
+			if (spec[prefix].description) {
+				about += '<br>' + htmlspecialchars(spec[prefix].description);
+			}
+			$('#centroids-about').html(about);
+		},
+
+		prefix_name: function(prefix) {
+			var name = prefix + ' centroid';
+			if (spec[prefix].name) {
+				name = spec[prefix].name;
+			}
+			return name;
 		}
 
 	};

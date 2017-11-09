@@ -1090,6 +1090,10 @@ body.no-scroll {
 	margin-left: 5px;
 }
 
+#centroids-about {
+	margin-top: 10px;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {
