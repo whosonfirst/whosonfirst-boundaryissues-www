@@ -203,7 +203,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.disable_controlled('wof:parent_id');
 					self.disable_controlled('wof:hierarchy');
 				});
-				self.update_where(lat, lng);
+				self.update_where({
+					lat: lat,
+					lng: lng
+				});
 
 			} else {
 				// TODO: pick different lat/lng, perhaps using https://github.com/whosonfirst/whosonfirst-www-iplookup
@@ -243,7 +246,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 			var centroid = self.get_property_centroid();
 			if (centroid){
-				self.update_where(centroid.lat, centroid.lng);
+				self.update_where(centroid);
 			}
 		},
 
@@ -938,6 +941,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			if ($geom_lat.val() &&
 			    $geom_lng.val()){
+				centroid.prefix = 'geom';
 				centroid.geom_lat = parseFloat($geom_lat.val());
 				centroid.geom_lng = parseFloat($geom_lng.val());
 				centroid.lat = centroid.geom_lat;
@@ -946,6 +950,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			if ($lbl_lat.val() &&
 			    $lbl_lng.val()){
+				centroid.prefix = 'lbl';
 				centroid.lbl_lat = parseFloat($lbl_lat.val());
 				centroid.lbl_lng = parseFloat($lbl_lng.val());
 				centroid.lat = centroid.lbl_lat;
@@ -954,6 +959,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			if ($reversegeo_lat.val() &&
 				$reversegeo_lng.val()){
+				centroid.prefix = 'reversegeo';
 				centroid.reversegeo_lat = parseFloat($reversegeo_lat.val());
 				centroid.reversegeo_lng = parseFloat($reversegeo_lng.val());
 				centroid.lat = centroid.reversegeo_lat;
@@ -1227,10 +1233,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('input[name="properties.geom:bbox"]').val(bbox);
 			}
 
-			self.update_where(lat, lng, reverse_geocode);
+			self.update_where({
+				lat: lat,
+				lng: lng
+			}, reverse_geocode);
 		},
 
-		update_where: function(lat, lng, reverse_geocode) {
+		update_where: function(centroid, reverse_geocode) {
+
+			var geometry = JSON.parse($('input[name="geometry"]').val());
+			if (geometry.type != 'Point'){
+				mapzen.whosonfirst.boundaryissues.centroids.update_where(centroid);
+				return;
+			}
+			var lat = centroid.lat;
+			var lng = centroid.lng;
 			var html = 'Coordinates: <strong>' + lat + ', ' + lng + '</strong>' +
 			           '<span id="where-parent"></span>';
 			$('#where').html(html);
