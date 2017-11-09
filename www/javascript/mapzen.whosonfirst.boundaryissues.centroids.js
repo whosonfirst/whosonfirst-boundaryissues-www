@@ -70,13 +70,20 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			}
 			var html = '<div id="centroids-editor">' +
 			           '<select id="centroids-select">' + options + '</select> ' +
-			           '<strong id="centroids-coords"></strong>' +
+			           '<strong id="centroids-coords"></strong> <a href="#" id="centroids-done">done</a>' +
 			           '<div id="centroids-about"></div>' +
 			           '</div>';
 
 			$('#where').html(html);
 			$('#centroids-select').change(self.update_prefix);
+			$('#centroids-done').click(function(e) {
+				e.preventDefault();
+				var centroids = mapzen.whosonfirst.boundaryissues.edit.get_property_centroids();
+				self.update_where(centroids);
+			});
+
 			self.update_prefix();
+			mapzen.whosonfirst.boundaryissues.edit.hide_centroids();
 		},
 
 		update_prefix: function() {

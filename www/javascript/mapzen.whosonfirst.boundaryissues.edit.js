@@ -186,10 +186,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_map_marker: function() {
-			var centroid = self.get_property_centroid();
-			if (centroid) {
-				var lat = centroid.lat;
-				var lng = centroid.lng;
+			var centroids = self.get_property_centroids();
+			if (centroids) {
+				var lat = centroids.lat;
+				var lng = centroids.lng;
 				var zoom = 16;
 
 				map.setView([lat, lng], zoom);
@@ -244,7 +244,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				geometry_layer = mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
 				centroid_layers = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 			});
-			var centroid = self.get_property_centroid();
+			var centroid = self.get_property_centroids();
 			if (centroid){
 				self.update_where(centroid);
 			}
@@ -587,7 +587,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 				$('#hierarchy').html('<div class="headroom">Rebuilding hierarchy...</div>');
-				var centroid = self.get_property_centroid();
+				var centroid = self.get_property_centroids();
 				if (centroid) {
 					var lat = centroid.lat;
 					var lng = centroid.lng;
@@ -929,7 +929,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			return $rel;
 		},
 
-		get_property_centroid: function(){
+		get_property_centroids: function(){
 			var $lbl_lat = $('input[name="properties.lbl:latitude"]');
 			var $lbl_lng = $('input[name="properties.lbl:longitude"]');
 			var $reversegeo_lat = $('input[name="properties.reversegeo:latitude"]');
@@ -2084,6 +2084,16 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					self.set_property('wof:controlled', controlled);
 				}
 			}
+		},
+
+		hide_centroids: function() {
+			map.removeLayer(centroid_layers.math_centroid);
+			map.removeLayer(centroid_layers.label_centroid);
+		},
+
+		show_centroids: function() {
+			var feature = self.generate_feature();
+			centroid_layers = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 		}
 	};
 

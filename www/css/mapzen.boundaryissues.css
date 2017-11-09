@@ -1086,7 +1086,8 @@ body.no-scroll {
 }
 
 #centroids-edit,
-#centroids-coords {
+#centroids-coords,
+#centroids-done {
 	margin-left: 5px;
 }
 
