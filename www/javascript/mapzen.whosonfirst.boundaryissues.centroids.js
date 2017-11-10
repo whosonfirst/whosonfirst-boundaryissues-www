@@ -66,7 +66,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		},
 
 		editor_init: function() {
-			var options = '';
+			var options = '<option value="">Custom...</option>';
 			for (var prefix in spec) {
 				options += '<option>' + prefix + '</option>';
 			}
@@ -106,6 +106,26 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		update_prefix: function(prefix) {
 			if (typeof prefix != 'string') {
 				prefix = $('#centroids-select').val();
+				if (prefix == '') {
+					prefix = prompt('Please enter the centroid prefix.');
+					if (! prefix) {
+						// Cancel button
+						var centroids = self.get_properties();
+						$('#centroids-select').val(centroids.prefix);
+						return false;
+					}
+					if (! prefix.match(/^[a-z]+$/)) {
+						alert('Sorry, that prefix is invalid.');
+						var centroids = self.get_properties();
+						$('#centroids-select').val(centroids.prefix);
+						return false;
+					}
+					var options = $('#centroids-select')[0].options;
+					var index = options.length;
+					options[index] = new Option(prefix);
+					self.create_centroid(prefix);
+					$('#centroids-select')[0].selectedIndex = index;
+				}
 			} else {
 				if ($('#centroids-select').val() == prefix) {
 					return;
@@ -148,6 +168,10 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mapzen');
 			var centroids = self.get_properties();
 			centroids.prefix = prefix;
+			centroids[prefix] = {
+				lat: lat,
+				lng: lng
+			};
 			self.show_centroid(centroids, prefix);
 			$('#centroids-coords').html(lat + ', ' + lng);
 		},
@@ -160,7 +184,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				icon_class += ' centroid-selected';
 				z_offset = 1000;
 			}
-			if (spec[prefix].readonly) {
+			if (spec[prefix] && spec[prefix].readonly) {
 				icon_class += ' centroid-readonly';
 				draggable = false;
 			}
