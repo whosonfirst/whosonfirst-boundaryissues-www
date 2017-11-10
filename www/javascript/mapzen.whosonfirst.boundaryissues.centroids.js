@@ -164,7 +164,6 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			});
 			m.on('drag', function() {
 				var ll = m.getLatLng();
-				console.log(ll);
 				var lat = ll.lat.toFixed(6);
 				var lng = ll.lng.toFixed(6);
 				mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':latitude', lat);
