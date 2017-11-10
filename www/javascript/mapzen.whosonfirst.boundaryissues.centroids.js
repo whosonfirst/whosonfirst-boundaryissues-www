@@ -155,6 +155,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			m.on('dragstart', function() {
 				$('.centroid-selected').removeClass('centroid-selected');
 				$('.' + prefix + '-centroid').addClass('centroid-selected');
+				mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mapzen');
 				self.update_prefix(prefix);
 			});
 			m.on('click', function() {
