@@ -152,15 +152,27 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				icon: icon,
 				draggable: draggable
 			}).addTo(map);
-			m.on('dragStart', function() {
-				if (prefix != centroids.prefix) {
-					$('.centroid-selected').removeClass('centroid-selected');
-					$('.' + prefix + '-centroid').addClass('centroid-selected');
-					self.update_prefix(prefix);
-				}
+			m.on('dragstart', function() {
+				$('.centroid-selected').removeClass('centroid-selected');
+				$('.' + prefix + '-centroid').addClass('centroid-selected');
+				self.update_prefix(prefix);
+			});
+			m.on('click', function() {
+				$('.centroid-selected').removeClass('centroid-selected');
+				$('.' + prefix + '-centroid').addClass('centroid-selected');
+				self.update_prefix(prefix);
+			});
+			m.on('drag', function() {
+				var ll = m.getLatLng();
+				console.log(ll);
+				var lat = ll.lat.toFixed(6);
+				var lng = ll.lng.toFixed(6);
+				mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':latitude', lat);
+				mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':longitude', lng);
+				$('#centroids-coords').html(lat + ', ' + lng);
 			});
 			markers.push(m);
-			m.bindTooltip(prefix + ' centroid (drag to move)');
+			m.bindTooltip(self.prefix_name(prefix) + ' (' + prefix + ')');
 		},
 
 		prefix_name: function(prefix) {
