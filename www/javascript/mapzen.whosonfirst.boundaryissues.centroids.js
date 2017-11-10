@@ -122,6 +122,11 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				$('#centroids-coords').html('<a href="#" id="centroids-create">create</a>');
 			}
 
+			$('#centroids-create').click(function(e) {
+				e.preventDefault();
+				self.create_centroid(prefix);
+			});
+
 			var name = self.prefix_name(prefix);
 			var about = '<strong>' + name + '</strong>';
 			if (spec[prefix] && spec[prefix].description) {
@@ -131,6 +136,20 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 
 			$('.centroid-selected').removeClass('centroid-selected');
 			$('.' + prefix + '-centroid').addClass('centroid-selected');
+		},
+
+		create_centroid: function(prefix) {
+			var map = mapzen.whosonfirst.boundaryissues.edit.get_map();
+			var ll = map.getCenter();
+			var lat = ll.lat.toFixed(6);
+			var lng = ll.lng.toFixed(6);
+			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':latitude', lat);
+			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':longitude', lng);
+			mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mapzen');
+			var centroids = self.get_properties();
+			centroids.prefix = prefix;
+			self.show_centroid(centroids, prefix);
+			$('#centroids-coords').html(lat + ', ' + lng);
 		},
 
 		show_centroid: function(centroids, prefix) {
