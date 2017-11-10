@@ -160,7 +160,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				}
 			});
 			markers.push(m);
-			//m.bindTooltip(prefix + ' centroid (drag to move)');
+			m.bindTooltip(prefix + ' centroid (drag to move)');
 		},
 
 		prefix_name: function(prefix) {
