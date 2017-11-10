@@ -78,8 +78,9 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			$('#centroids-select').change(self.update_prefix);
 			$('#centroids-done').click(function(e) {
 				e.preventDefault();
-				var centroids = mapzen.whosonfirst.boundaryissues.edit.get_property_centroids();
+				var centroids = self.get_properties();
 				self.update_where(centroids);
+				mapzen.whosonfirst.boundaryissues.edit.show_centroids();
 			});
 
 			self.update_prefix();
@@ -95,7 +96,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				lng = parseFloat(lng).toFixed(6);
 				$('#centroids-coords').html(lat + ', ' + lng);
 			} else {
-				$('#centroids-coords').html('<a href="#">add new centroid</a>');
+				$('#centroids-coords').html('<a href="#" id="centroids-create">create</a>');
 			}
 
 			var name = self.prefix_name(prefix);
@@ -112,6 +113,58 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				name = spec[prefix].name;
 			}
 			return name;
+		},
+
+		get_properties: function() {
+
+			var centroids = {
+				prefix: null,
+				prefixes: []
+			};
+
+			function add_prefix_centroid(prefix) {
+				var $lat = $('input[name="properties.' + prefix + ':latitude"]');
+				var $lng = $('input[name="properties.' + prefix + ':longitude"]');
+				if (! $lat.val() ||
+				    ! $lng.val()) {
+					return;
+				}
+				centroids.prefixes.push(prefix);
+				centroids[prefix] = {
+					lat: parseFloat($lat.val()),
+					lng: parseFloat($lng.val())
+				};
+			}
+
+			// Check for known centroids
+			for (var prefix in spec) {
+				add_prefix_centroid(prefix);
+			}
+
+			// Check for additional centroids, based on src:[prefix]:centroid
+			// properties
+			var feature = mapzen.whosonfirst.boundaryissues.edit.generate_feature();
+			for (var prop in feature.properties) {
+				var src_centroid = prop.match(/src:([^:]+):centroid/);
+				if (src_centroid &&
+				    centroids.prefixes.indexOf(src_centroid[1]) == -1) {
+					add_prefix_centroid(prefix);
+				}
+			}
+
+			// Pick the best centroid for general use
+			var precedence = ['lbl', 'reversegeo', 'geom'];
+			for (var i = 0; i < precedence.length; i++) {
+				var prefix = precedence[i];
+				if (centroids[prefix]) {
+					centroids.prefix = prefix;
+					centroids.lat = centroids[prefix].lat;
+					centroids.lng = centroids[prefix].lng;
+					break;
+				}
+			}
+
+			return centroids;
 		}
 
 	};

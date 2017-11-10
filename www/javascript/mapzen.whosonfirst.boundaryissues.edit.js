@@ -186,7 +186,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		},
 
 		setup_map_marker: function() {
-			var centroids = self.get_property_centroids();
+			var centroids = mapzen.whosonfirst.boundaryissues.centroids.get_properties();;
 			if (centroids) {
 				var lat = centroids.lat;
 				var lng = centroids.lng;
@@ -244,7 +244,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				geometry_layer = mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
 				centroid_layers = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 			});
-			var centroids = self.get_property_centroids();
+			var centroids = mapzen.whosonfirst.boundaryissues.centroids.get_properties();;
 			if (centroids){
 				self.update_where(centroids);
 			}
@@ -587,7 +587,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 				$('#hierarchy').html('<div class="headroom">Rebuilding hierarchy...</div>');
-				var centroids = self.get_property_centroids();
+				var centroids = mapzen.whosonfirst.boundaryissues.centroids.get_properties();;
 				if (centroids) {
 					var lat = centroids.lat;
 					var lng = centroids.lng;
@@ -927,50 +927,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				$('#property-group-heading-' + prefix).click(self.toggle_property_group);
 			}
 			return $rel;
-		},
-
-		get_property_centroids: function(){
-			var $lbl_lat = $('input[name="properties.lbl:latitude"]');
-			var $lbl_lng = $('input[name="properties.lbl:longitude"]');
-			var $reversegeo_lat = $('input[name="properties.reversegeo:latitude"]');
-			var $reversegeo_lng = $('input[name="properties.reversegeo:longitude"]');
-			var $geom_lat = $('input[name="properties.geom:latitude"]');
-			var $geom_lng = $('input[name="properties.geom:longitude"]');
-
-			var centroids = {};
-
-			if ($geom_lat.val() &&
-			    $geom_lng.val()){
-				centroids.prefix = 'geom';
-				centroids.geom_lat = parseFloat($geom_lat.val());
-				centroids.geom_lng = parseFloat($geom_lng.val());
-				centroids.lat = centroids.geom_lat;
-				centroids.lng = centroids.geom_lng;
-			}
-
-			if ($reversegeo_lat.val() &&
-				$reversegeo_lng.val()){
-				centroids.prefix = 'reversegeo';
-				centroids.reversegeo_lat = parseFloat($reversegeo_lat.val());
-				centroids.reversegeo_lng = parseFloat($reversegeo_lng.val());
-				centroids.lat = centroids.reversegeo_lat;
-				centroids.lng = centroids.reversegeo_lng;
-			}
-
-			if ($lbl_lat.val() &&
-				$lbl_lng.val()){
-				centroids.prefix = 'lbl';
-				centroids.lbl_lat = parseFloat($lbl_lat.val());
-				centroids.lbl_lng = parseFloat($lbl_lng.val());
-				centroids.lat = centroids.lbl_lat;
-				centroids.lng = centroids.lbl_lng;
-			}
-
-			if (centroids.lat && centroids.lng){
-				return centroids;
-			} else {
-				return null;
-			}
 		},
 
 		group_properties: function(){
