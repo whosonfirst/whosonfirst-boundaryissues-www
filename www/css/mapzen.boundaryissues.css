@@ -1095,6 +1095,29 @@ body.no-scroll {
 	margin-top: 10px;
 }
 
+.centroid {
+	border: 2px solid #fff;
+	width: 16px;
+	height: 16px;
+	border-radius: 16px;
+	background-color: rgba(168, 168, 168, 0.7);
+	cursor: grab;
+}
+
+.centroid-selected {
+	width: 24px;
+	height: 24px;
+	border-radius: 24px;
+	background-color: rgba(255, 0, 143, 0.7);
+}
+
+.centroid-readonly {
+	width: 16px;
+	height: 16px;
+	border-radius: 16px;
+	cursor: pointer;
+}
+
 @media screen and (max-width: 480px) {
 
 	body {

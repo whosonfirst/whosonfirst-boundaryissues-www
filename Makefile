@@ -104,6 +104,12 @@ refill:
 	perl -p -i -e "s!-(\s+)\&label_visible_poi_landuse_e(\s+)true!-\1&label_visible_poi_landuse_e\2false!" www/tangram/refill.yaml
 	perl -p -i -e "s!-(\s+)\&icon_visible_poi_landuse_e(\s+)true!-\1&icon_visible_poi_landuse_e\2false!" www/tangram/refill.yaml
 
+leaflet:
+	if test -e www/css/leaflet.css; then cp www/css/leaflet.css www/css/leaflet.css.bak; fi
+	curl -s -o www/css/leaflet.css https://unpkg.com/leaflet@1.2.0/dist/leaflet.css
+	if test -e www/javascript/leaflet.min.js; then cp www/javascript/leaflet.min.js www/javascript/leaflet.min.js.bak; fi
+	curl -s -o www/javascript/leaflet.min.js https://unpkg.com/leaflet@1.2.0/dist/leaflet.js
+
 leaflet-geocoder:
 	if test -e www/css/leaflet-geocoder-mapzen.css; then cp www/css/leaflet-geocoder-mapzen.css www/css/leaflet-geocoder-mapzen.css.bak; fi
 	curl -s -o www/css/leaflet-geocoder-mapzen.css https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.css

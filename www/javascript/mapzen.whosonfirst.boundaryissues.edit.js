@@ -2050,6 +2050,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 		show_centroids: function() {
 			var feature = self.generate_feature();
 			centroid_layers = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
+		},
+
+		get_map() {
+			return map;
 		}
 	};
 

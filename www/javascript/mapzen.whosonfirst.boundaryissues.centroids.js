@@ -43,6 +43,8 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		}
 	};
 
+	var markers = [];
+
 	var self = {
 
 		update_where: function(centroid) {
@@ -78,17 +80,38 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			$('#centroids-select').change(self.update_prefix);
 			$('#centroids-done').click(function(e) {
 				e.preventDefault();
-				var centroids = self.get_properties();
-				self.update_where(centroids);
-				mapzen.whosonfirst.boundaryissues.edit.show_centroids();
+				self.editor_done();
 			});
 
-			self.update_prefix();
+			var centroids = self.get_properties();
+			self.update_prefix(centroids.prefix);
 			mapzen.whosonfirst.boundaryissues.edit.hide_centroids();
+
+			var centroids = self.get_properties();
+			for (var i = 0; i < centroids.prefixes.length; i++) {
+				self.show_centroid(centroids, centroids.prefixes[i]);
+			}
 		},
 
-		update_prefix: function() {
-			var prefix = $('#centroids-select').val();
+		editor_done: function() {
+			var centroids = self.get_properties();
+			self.update_where(centroids);
+			mapzen.whosonfirst.boundaryissues.edit.show_centroids();
+			var map = mapzen.whosonfirst.boundaryissues.edit.get_map();
+			for (var i = 0; i < markers.length; i++) {
+				map.removeLayer(markers[i]);
+			}
+		},
+
+		update_prefix: function(prefix) {
+			if (typeof prefix != 'string') {
+				prefix = $('#centroids-select').val();
+			} else {
+				if ($('#centroids-select').val() == prefix) {
+					return;
+				}
+				$('#centroids-select').val(prefix);
+			}
 			var lat = $('input[name="properties.' + prefix + ':latitude"]').val();
 			var lng = $('input[name="properties.' + prefix + ':longitude"]').val();
 			if (lat && lng) {
@@ -101,15 +124,48 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 
 			var name = self.prefix_name(prefix);
 			var about = '<strong>' + name + '</strong>';
-			if (spec[prefix].description) {
+			if (spec[prefix] && spec[prefix].description) {
 				about += '<br>' + htmlspecialchars(spec[prefix].description);
 			}
 			$('#centroids-about').html(about);
+
+			$('.centroid-selected').removeClass('centroid-selected');
+			$('.' + prefix + '-centroid').addClass('centroid-selected');
+		},
+
+		show_centroid: function(centroids, prefix) {
+			var icon_class = 'centroid ' + prefix + '-centroid';
+			var draggable = true;
+			if (centroids.prefix == prefix) {
+				icon_class += ' centroid-selected';
+			}
+			if (spec[prefix].readonly) {
+				icon_class += ' centroid-readonly';
+				draggable = false;
+			}
+			var icon = L.divIcon({
+				className: icon_class
+			});
+			var map = mapzen.whosonfirst.boundaryissues.edit.get_map();
+			var ll = [centroids[prefix].lat, centroids[prefix].lng];
+			var m = L.marker(ll, {
+				icon: icon,
+				draggable: draggable
+			}).addTo(map);
+			m.on('dragStart', function() {
+				if (prefix != centroids.prefix) {
+					$('.centroid-selected').removeClass('centroid-selected');
+					$('.' + prefix + '-centroid').addClass('centroid-selected');
+					self.update_prefix(prefix);
+				}
+			});
+			markers.push(m);
+			//m.bindTooltip(prefix + ' centroid (drag to move)');
 		},
 
 		prefix_name: function(prefix) {
 			var name = prefix + ' centroid';
-			if (spec[prefix].name) {
+			if (spec[prefix] && spec[prefix].name) {
 				name = spec[prefix].name;
 			}
 			return name;
