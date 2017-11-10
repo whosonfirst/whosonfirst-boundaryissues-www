@@ -136,8 +136,10 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		show_centroid: function(centroids, prefix) {
 			var icon_class = 'centroid ' + prefix + '-centroid';
 			var draggable = true;
+			var z_offset = 0;
 			if (centroids.prefix == prefix) {
 				icon_class += ' centroid-selected';
+				z_offset = 1000;
 			}
 			if (spec[prefix].readonly) {
 				icon_class += ' centroid-readonly';
@@ -150,7 +152,8 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			var ll = [centroids[prefix].lat, centroids[prefix].lng];
 			var m = L.marker(ll, {
 				icon: icon,
-				draggable: draggable
+				draggable: draggable,
+				zIndexOffset: z_offset
 			}).addTo(map);
 			m.on('dragstart', function() {
 				$('.centroid-selected').removeClass('centroid-selected');
