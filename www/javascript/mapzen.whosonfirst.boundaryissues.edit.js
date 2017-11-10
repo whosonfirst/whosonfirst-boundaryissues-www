@@ -244,9 +244,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				geometry_layer = mapzen.whosonfirst.leaflet.draw_poly(map, feature, poly_style);
 				centroid_layers = mapzen.whosonfirst.leaflet.draw_centroids(map, feature);
 			});
-			var centroid = self.get_property_centroids();
-			if (centroid){
-				self.update_where(centroid);
+			var centroids = self.get_property_centroids();
+			if (centroids){
+				self.update_where(centroids);
 			}
 		},
 
@@ -587,10 +587,10 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 					return;
 				}
 				$('#hierarchy').html('<div class="headroom">Rebuilding hierarchy...</div>');
-				var centroid = self.get_property_centroids();
-				if (centroid) {
-					var lat = centroid.lat;
-					var lng = centroid.lng;
+				var centroids = self.get_property_centroids();
+				if (centroids) {
+					var lat = centroids.lat;
+					var lng = centroids.lng;
 				} else if (marker) {
 					var lat = marker.getLatLng().lat;
 					var lng = marker.getLatLng().lng;
@@ -937,37 +937,37 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var $geom_lat = $('input[name="properties.geom:latitude"]');
 			var $geom_lng = $('input[name="properties.geom:longitude"]');
 
-			var centroid = {};
+			var centroids = {};
 
 			if ($geom_lat.val() &&
 			    $geom_lng.val()){
-				centroid.prefix = 'geom';
-				centroid.geom_lat = parseFloat($geom_lat.val());
-				centroid.geom_lng = parseFloat($geom_lng.val());
-				centroid.lat = centroid.geom_lat;
-				centroid.lng = centroid.geom_lng;
+				centroids.prefix = 'geom';
+				centroids.geom_lat = parseFloat($geom_lat.val());
+				centroids.geom_lng = parseFloat($geom_lng.val());
+				centroids.lat = centroids.geom_lat;
+				centroids.lng = centroids.geom_lng;
 			}
 
 			if ($reversegeo_lat.val() &&
 				$reversegeo_lng.val()){
-				centroid.prefix = 'reversegeo';
-				centroid.reversegeo_lat = parseFloat($reversegeo_lat.val());
-				centroid.reversegeo_lng = parseFloat($reversegeo_lng.val());
-				centroid.lat = centroid.reversegeo_lat;
-				centroid.lng = centroid.reversegeo_lng;
+				centroids.prefix = 'reversegeo';
+				centroids.reversegeo_lat = parseFloat($reversegeo_lat.val());
+				centroids.reversegeo_lng = parseFloat($reversegeo_lng.val());
+				centroids.lat = centroids.reversegeo_lat;
+				centroids.lng = centroids.reversegeo_lng;
 			}
 
 			if ($lbl_lat.val() &&
 				$lbl_lng.val()){
-				centroid.prefix = 'lbl';
-				centroid.lbl_lat = parseFloat($lbl_lat.val());
-				centroid.lbl_lng = parseFloat($lbl_lng.val());
-				centroid.lat = centroid.lbl_lat;
-				centroid.lng = centroid.lbl_lng;
+				centroids.prefix = 'lbl';
+				centroids.lbl_lat = parseFloat($lbl_lat.val());
+				centroids.lbl_lng = parseFloat($lbl_lng.val());
+				centroids.lat = centroids.lbl_lat;
+				centroids.lng = centroids.lbl_lng;
 			}
 
-			if (centroid.lat && centroid.lng){
-				return centroid;
+			if (centroids.lat && centroids.lng){
+				return centroids;
 			} else {
 				return null;
 			}
