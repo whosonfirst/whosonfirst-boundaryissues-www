@@ -111,10 +111,10 @@ leaflet:
 	curl -s -o www/javascript/leaflet.min.js https://unpkg.com/leaflet@1.2.0/dist/leaflet.js
 
 leaflet-geocoder:
-	if test -e www/css/leaflet-geocoder-mapzen.css; then cp www/css/leaflet-geocoder-mapzen.css www/css/leaflet-geocoder-mapzen.css.bak; fi
-	curl -s -o www/css/leaflet-geocoder-mapzen.css https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.css
-	if test -e www/javascript/leaflet-geocoder-mapzen.js; then cp www/javascript/leaflet-geocoder-mapzen.js www/javascript/leaflet-geocoder-mapzen.js.bak; fi
-	curl -s -o www/javascript/leaflet-geocoder-mapzen.js https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.js
+	if test -e www/leaflet-geocoder/leaflet-geocoder-mapzen.css; then cp www/leaflet-geocoder/leaflet-geocoder-mapzen.css www/leaflet-geocoder/leaflet-geocoder-mapzen.css.bak; fi
+	curl -s -o www/leaflet-geocoder/leaflet-geocoder-mapzen.css https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.css
+	if test -e www/leaflet-geocoder/leaflet-geocoder-mapzen.js; then cp www/leaflet-geocoder/leaflet-geocoder-mapzen.js www/leaflet-geocoder/leaflet-geocoder-mapzen.js.bak; fi
+	curl -s -o www/leaflet-geocoder/leaflet-geocoder-mapzen.js https://cdnjs.cloudflare.com/ajax/libs/leaflet-geocoder-mapzen/1.4.1/leaflet-geocoder-mapzen.js
 
 pip-server:
 	ubuntu/setup-golang.sh

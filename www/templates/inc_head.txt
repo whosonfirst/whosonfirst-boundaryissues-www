@@ -12,7 +12,7 @@
 		{style href="leaflet.css"}
 		{style href="leaflet.draw.css"}
 		{style href="leaflet.label.css"}
-		{style href="/leaflet-geocoder/leaflet-geocoder-mapzen.css"}
+		{style href="leaflet-geocoder/leaflet-geocoder-mapzen.css"}
 		{style href="L.Control.Locate.css"}
 
 		{style href="mapzen.styleguide.css"}
@@ -31,7 +31,7 @@
 		{script src="L.Control.Locate.min.js"}
 		{script src="tangram.min.js"}
 		{script src="localforage.min.js"}
-		{script src="/leaflet-geocoder/leaflet-geocoder-mapzen.js"}
+		{script src="leaflet-geocoder/leaflet-geocoder-mapzen.js"}
 		{script src="reconnecting-websocket.min.js"}
 		{script src="moment.min.js"}
 		{script src="bootstrap3-typeahead.min.js"}

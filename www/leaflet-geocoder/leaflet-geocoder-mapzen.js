@@ -50,8 +50,7 @@
       fullWidth: 650,
       markers: true,
       expanded: false,
-      autocomplete: true,
-      place: false
+      autocomplete: true
     },
 
     initialize: function (apiKey, options) {
@@ -188,22 +187,6 @@
       this.callPelias(url, params, 'autocomplete');
     }, API_RATE_LIMIT),
 
-    place: function (id) {
-      // Prevent lack of input from sending a malformed query to Pelias
-      if (!id) return;
-
-      var url = this.options.url + '/place';
-      var params = {
-        ids: id
-      };
-
-      this.callPelias(url, params, 'place');
-    },
-
-    handlePlaceResponse: function (response) {
-      // Placeholder for handling place response
-    },
-
     // Timestamp of the last response which was successfully rendered to the UI.
     // The time represents when the request was *sent*, not when it was recieved.
     maxReqTimestampRendered: new Date().getTime(),
@@ -265,118 +248,22 @@
           });
         }
 
-        // There might be an error message from the geocoding service itself
-        if (results && results.geocoding && results.geocoding.errors) {
-          errorMessage = results.geocoding.errors[0];
-          this.showMessage(errorMessage);
-          this.fire('error', {
-            results: results,
-            endpoint: endpoint,
-            requestType: type,
-            params: params,
-            errorCode: err.code,
-            errorMessage: errorMessage
-          });
-          return;
-        }
-
-        // Autocomplete and search responses
         if (results && results.features) {
-          // Check if request is stale:
-          // Only for autocomplete or search endpoints
-          // Ignore requests if input is currently blank
           // Ignore requests that started before a request which has already
           // been successfully rendered on to the UI.
-          if (type === 'autocomplete' || type === 'search') {
-            if (this._input.value === '' || this.maxReqTimestampRendered >= reqStartedAt) {
-              return;
-            } else {
-              // Record the timestamp of the request.
-              this.maxReqTimestampRendered = reqStartedAt;
-            }
+          if (this.maxReqTimestampRendered < reqStartedAt) {
+            this.maxReqTimestampRendered = reqStartedAt;
+            this.showResults(results.features);
+            this.fire('results', {
+              results: results,
+              endpoint: endpoint,
+              requestType: type,
+              params: params
+            });
           }
-
-          // Filter the unfiltered requests from the autocompletor
-          // This modifies the original response
-          if (type === 'autocomplete' && params.layers) {
-            results.features = this.filterFeaturesByLayers(results.features, params.layers);
-          }
-
-          // Placeholder: handle place response
-          if (type === 'place') {
-            this.handlePlaceResponse(results);
-          }
-
-          // Show results
-          if (type === 'autocomplete' || type === 'search') {
-            this.showResults(results.features, params.text);
-          }
-
-          // Fire event
-          this.fire('results', {
-            results: results,
-            endpoint: endpoint,
-            requestType: type,
-            params: params
-          });
+          // Else ignore the request, it is stale.
         }
       }, this);
-    },
-
-    /**
-     * Filters a Pelias response (likely from autocomplete)
-     * with the layer parameter given to it
-     * @param features - a FeatureCollection
-     * @param layers - string or array of layers queried
-     */
-    filterFeaturesByLayers: function (features, layers) {
-      var newFeatures = [];
-      // The 'coarse' alias is defined as these layers by the Pelias service.
-      // See documentation: https://mapzen.com/documentation/search/search/#filter-by-data-type
-      var coarseLayers = ['country', 'region', 'county', 'locality', 'localadmin', 'neighbourhood'];
-
-      // If layers parameter is an array, make a copy of it so that
-      // it does not modify the original options object.
-      if (L.Util.isArray(layers)) {
-        layers = layers.slice();
-      }
-
-      // The 'coarse' alias will be expanded to its defined layers.
-      // Handle if layers parameter is a string
-      if (layers === 'coarse') {
-        layers = coarseLayers;
-      } else if (L.Util.isArray(layers)) {
-        // And, handle if 'coarse' is in an array of layers
-        for (var i = 0; i < layers.length; i++) {
-          if (layers[i] === 'coarse') {
-            // Uses Array.splice() in an exotic way to splice one array into another array.
-            var args = [i, 1].concat(coarseLayers);
-            Array.prototype.splice.apply(layers, args);
-            // We will only do this once. If the layers provided is an array
-            // containing more than one instance of 'coarse', do not handle it.
-            // The filtering process below will ignore extra 'coarse' values, since
-            // no results will ever contain 'coarse' as a layer value.
-            break;
-          }
-        }
-      }
-
-      // Filtering the original features is done here.
-      for (var j = 0; j < features.length; j++) {
-        var feature = features[j];
-        if (feature.properties.layer === layers) {
-          newFeatures.push(feature);
-        } else if (L.Util.isArray(layers)) {
-          for (var k = 0; k < layers.length; k++) {
-            if (feature.properties.layer === layers[k]) {
-              newFeatures.push(feature);
-              break;
-            }
-          }
-        }
-      }
-
-      return newFeatures;
     },
 
     highlight: function (text, focus) {
@@ -420,7 +307,7 @@
       }
     },
 
-    showResults: function (features, input) {
+    showResults: function (features) {
       // Exit function if there are no features
       if (features.length === 0) {
         this.showMessage('No results were found.');
@@ -466,7 +353,9 @@
           layerIcon.title = 'layer: ' + feature.properties.layer;
         }
 
-        resultItem.innerHTML += this.highlight(feature.properties.label, input);
+        if (this._input.value.length > 0) {
+          resultItem.innerHTML += this.highlight(feature.properties.label, this._input.value);
+        }
       }
     },
 
@@ -478,11 +367,7 @@
       resultsContainer.style.display = 'block';
 
       var messageEl = L.DomUtil.create('div', 'leaflet-pelias-message', resultsContainer);
-
-      // Set text. This is the most cross-browser compatible method
-      // and avoids the issues we have detecting either innerText vs textContent
-      // (e.g. Firefox cannot detect textContent property on elements, but it's there)
-      messageEl.appendChild(document.createTextNode(text));
+      messageEl.textContent = text;
     },
 
     removeMarkers: function () {
@@ -518,49 +403,33 @@
         feature: selected.feature
       });
       this.blur();
-
-      if (this.options.place) {
-        this.place(selected.feature.properties.gid);
-      }
     },
 
     resetInput: function () {
       this._input.value = '';
-      L.DomUtil.addClass(this._reset, 'leaflet-pelias-hidden');
+      L.DomUtil.addClass(this._close, 'leaflet-pelias-hidden');
       this.removeMarkers();
       this._input.focus();
       this.fire('reset');
     },
 
-    // Convenience function for focusing on the input
-    // This is meant for external use.
-    focus: function () {
-      // If not expanded, expand this first
-      if (!L.DomUtil.hasClass(this._container, 'leaflet-pelias-expanded')) {
-        this.expand();
-      }
-      this._input.focus();
-    },
-
     // Removes focus from geocoder control
     blur: function () {
-      this._input.blur();
       this.clearResults();
       if (this._input.value === '' && this._results.style.display !== 'none') {
-        L.DomUtil.addClass(this._reset, 'leaflet-pelias-hidden');
+        L.DomUtil.addClass(this._close, 'leaflet-pelias-hidden');
         if (!this.options.expanded) {
           this.collapse();
         }
       }
     },
 
-    clearResults: function (force) {
+    clearResults: function () {
       // Hide results from view
       this._results.style.display = 'none';
 
       // Destroy contents if input has also cleared
-      // OR if force is true
-      if (this._input.value === '' || force === true) {
+      if (this._input.value === '') {
         this._results.innerHTML = '';
       }
     },
@@ -627,9 +496,9 @@
       }
 
       this._search = L.DomUtil.create('a', 'leaflet-pelias-search-icon', this._container);
-      this._reset = L.DomUtil.create('div', 'leaflet-pelias-close leaflet-pelias-hidden', this._container);
-      this._reset.innerHTML = '×';
-      this._reset.title = 'Reset';
+      this._close = L.DomUtil.create('div', 'leaflet-pelias-close leaflet-pelias-hidden', this._container);
+      this._close.innerHTML = '×';
+      this._close.title = 'Close';
 
       this._results = L.DomUtil.create('div', 'leaflet-pelias-results leaflet-bar', this._container);
 
@@ -639,13 +508,12 @@
 
       L.DomEvent
         .on(this._container, 'click', function (e) {
-          // Child elements with 'click' listeners should call
-          // stopPropagation() to prevent that event from bubbling to
-          // the container & causing it to fire too greedily
+          // Other listeners should call stopProgation() to
+          // prevent this from firing too greedily
           this._input.focus();
         }, this)
         .on(this._input, 'focus', function (e) {
-          if (this._input.value && this._results.children.length) {
+          if (this._input.value) {
             this._results.style.display = 'block';
           }
         }, this)
@@ -666,19 +534,19 @@
               return;
             } else {
               // Otherwise, toggle to hidden state
-              L.DomUtil.addClass(this._reset, 'leaflet-pelias-hidden');
+              L.DomUtil.addClass(this._close, 'leaflet-pelias-hidden');
               this.collapse();
             }
           } else {
             // If not currently expanded, clicking here always expands it
             if (this._input.value.length > 0) {
-              L.DomUtil.removeClass(this._reset, 'leaflet-pelias-hidden');
+              L.DomUtil.removeClass(this._close, 'leaflet-pelias-hidden');
             }
             this.expand();
             this._input.focus();
           }
         }, this)
-        .on(this._reset, 'click', function (e) {
+        .on(this._close, 'click', function (e) {
           this.resetInput();
           this.clearResults();
           L.DomEvent.stopPropagation(e);
@@ -786,10 +654,10 @@
           var key = e.which || e.keyCode;
           var text = (e.target || e.srcElement).value;
 
-          if (text.length > 0) {
-            L.DomUtil.removeClass(this._reset, 'leaflet-pelias-hidden');
+          if (this._input.value.length > 0) {
+            L.DomUtil.removeClass(this._close, 'leaflet-pelias-hidden');
           } else {
-            L.DomUtil.addClass(this._reset, 'leaflet-pelias-hidden');
+            L.DomUtil.addClass(this._close, 'leaflet-pelias-hidden');
           }
 
           // Ignore all further action if the keycode matches an arrow
@@ -806,24 +674,27 @@
             if (text.length === 0 || this._results.style.display === 'none') {
               this._input.blur();
 
-              if (!this.options.expanded && L.DomUtil.hasClass(this._container, 'leaflet-pelias-expanded')) {
-                this.collapse();
+              if (L.DomUtil.hasClass(this._container, 'leaflet-pelias-expanded')) {
+                if (!this.options.expanded) {
+                  this.collapse();
+                }
+                this.clearResults();
               }
             }
-
             // Clears results
-            this.clearResults(true);
+            this._results.innerHTML = '';
+            this._results.style.display = 'none';
             L.DomUtil.removeClass(this._search, 'leaflet-pelias-loading');
             return;
           }
 
-          if (text !== this._lastValue) {
-            this._lastValue = text;
+          if (this._input.value !== this._lastValue) {
+            this._lastValue = this._input.value;
 
             if (text.length >= MINIMUM_INPUT_LENGTH_FOR_AUTOCOMPLETE && this.options.autocomplete === true) {
               this.autocomplete(text);
             } else {
-              this.clearResults(true);
+              this.clearResults();
             }
           }
         }, this)
@@ -883,8 +754,12 @@
         }, this);
       }
 
-      L.DomEvent.on(this._map, 'mousedown', this._onMapInteraction, this);
-      L.DomEvent.on(this._map, 'touchstart', this._onMapInteraction, this);
+      // Collapse an empty input bar when user interacts with the map
+      // Disabled if expanded is set to true
+      if (!this.options.expanded) {
+        L.DomEvent.on(this._map, 'mousedown', this._onMapInteraction, this);
+        L.DomEvent.on(this._map, 'touchstart', this._onMapInteraction, this);
+      }
 
       L.DomEvent.disableClickPropagation(this._container);
       if (map.attributionControl) {
@@ -894,14 +769,9 @@
     },
 
     _onMapInteraction: function (event) {
-      this.blur();
-
       // Only collapse if the input is clear, and is currently expanded.
-      // Disabled if expanded is set to true
-      if (!this.options.expanded) {
-        if (!this._input.value && L.DomUtil.hasClass(this._container, 'leaflet-pelias-expanded')) {
-          this.collapse();
-        }
+      if (!this._input.value && L.DomUtil.hasClass(this._container, 'leaflet-pelias-expanded')) {
+        this.collapse();
       }
     },
 
@@ -976,16 +846,6 @@
         var response;
         var error;
 
-        try {
-          response = JSON.parse(xhr.responseText);
-        } catch (e) {
-          response = null;
-          error = {
-            code: 500,
-            message: 'Parse Error'
-          };
-        }
-
         if (xhr.readyState === 4) {
           // Handle all non-200 responses first
           if (xhr.status !== 200) {
@@ -993,10 +853,21 @@
               code: xhr.status,
               message: xhr.statusText
             };
-            callback.call(context, error, response);
+            callback.call(context, error, null);
           } else {
+            try {
+              response = JSON.parse(xhr.responseText);
+            } catch (e) {
+              response = null;
+              error = {
+                code: 500,
+                message: 'Parse Error'
+              };
+            }
+
             if (!error && response.error) {
               error = response.error;
+              response = null;
             }
 
             xhr.onerror = L.Util.falseFn;
