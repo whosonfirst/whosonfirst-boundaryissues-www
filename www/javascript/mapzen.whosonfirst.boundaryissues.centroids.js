@@ -8,6 +8,10 @@ mapzen.whosonfirst.boundaryissues = mapzen.whosonfirst.boundaryissues || {};
 
 mapzen.whosonfirst.boundaryissues.centroids = (function() {
 
+	// This specification is hardcoded here temporarily. Eventually it will
+	// make its way to some other repo, maybe whosonfirst-properties?
+	// See also: lib_wof_save() where a list of known centroid prefixes lives.
+	// (20171113/dphiffer)
 	var spec = {
 		'geom': {
 			name: 'math centroid',

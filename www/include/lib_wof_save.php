@@ -184,6 +184,31 @@
 			$feature['properties']['wof:country'] = $wof_country;
 		}
 
+		// Ping Slack when someone enters a custom centroid, so that we can
+		// document it properly. Note that the list of centroids is also stored
+		// as a JSON spec, so this will need to be kept in sync with that.
+		// (20171113/dphiffer)
+		$known_centroid_prefixes = array(
+			'geom',
+			'intersection',
+			'lbl',
+			'local',
+			'nav',
+			'reversegeo',
+			'tourist'
+		);
+		foreach ($feature['properties'] as $prop => $value) {
+			if (preg_match('/^src:([^:]+):centroid$/', $prop, $matches)) {
+				$prefix = $matches[1];
+				if (! in_array($prefix, $known_centroid_prefixes)) {
+					$id = $feature['properties']['wof:id'];
+					$name = $feature['properties']['wof:name'];
+					$url = $GLOBALS['cfg']['abs_root_url'] . "id/$id";
+					slack_bot_msg(":warning: custom centroid `$prefix` used while editing <$url|$name>");
+				}
+			}
+		}
+
 		$geojson = json_encode($feature);
 
 		$user = users_get_by_id($user_id);
