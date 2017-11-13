@@ -56,15 +56,17 @@
 		if (! $params['src']){
 			return '';
 		}
+		$src = $params['src'];
 		$root = $GLOBALS['cfg']['abs_root_url'];
 		$javascript = ($GLOBALS['cfg']['javascript_path']) ? $GLOBALS['cfg']['javascript_path'] : 'javascript/';
 
-		if (substr($params['src'], 0, 1) == '/') {
+		if (substr($src, 0, 1) == '/') {
 			$javascript = '';
+			$src = substr($params['src'], 1);
 		}
 
-		$url = "{$root}{$javascript}{$params['src']}";
-		$path = dirname(__DIR__) . "/$javascript{$params['src']}";
+		$url = "{$root}{$javascript}{$src}";
+		$path = dirname(__DIR__) . "/$javascript{$src}";
 
 		if (file_exists($path)){
 			$mtime = filemtime($path);
@@ -81,15 +83,17 @@
 		if (! $params['href']){
 			return '';
 		}
+		$href = $params['href'];
 		$root = $GLOBALS['cfg']['abs_root_url'];
 		$css = ($GLOBALS['cfg']['css_path']) ? $GLOBALS['cfg']['css_path'] : 'css/';
 
-		if (substr($params['href'], 0, 1) == '/') {
+		if (substr($href, 0, 1) == '/') {
 			$css = '';
+			$href = substr($href, 1);
 		}
 
-		$url = "{$root}{$css}{$params['href']}";
-		$path = dirname(__DIR__) . "/$css{$params['href']}";
+		$url = "{$root}{$css}{$href}";
+		$path = dirname(__DIR__) . "/$css{$href}";
 
 		if (file_exists($path)){
 			$mtime = filemtime($path);
