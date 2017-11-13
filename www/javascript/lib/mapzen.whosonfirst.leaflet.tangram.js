@@ -49,7 +49,9 @@ mapzen.whosonfirst.leaflet.tangram = (function(){
 				}
 
 				var map = self.map(id);
-				cb(map, prefs);
+				if (typeof cb == 'function'){
+					cb(map, prefs);
+				}
 
 			});
 		},
