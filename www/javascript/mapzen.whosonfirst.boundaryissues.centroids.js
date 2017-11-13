@@ -44,6 +44,14 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		}
 	};
 
+	// These have known meanings, don't allow them to be edited as centroids.
+	var custom_prefix_blacklist = [
+		'gn',
+		'mps',
+		'ne',
+		'wk'
+	];
+
 	var markers = [];
 
 	var self = {
@@ -116,6 +124,18 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				prefix = $('#centroids-select').val();
 				if (prefix == '') {
 					prefix = prompt('Please enter the centroid prefix.');
+					if (custom_prefix_blacklist.indexOf(prefix) != -1) {
+						alert('Sorry, the prefix "' + prefix + '" has an existing known meaning and cannot be edited as a centroid.');
+						prefix = null;
+					}
+					var known_prefixes = [];
+					var options = $('#centroids-select')[0].options;
+					for (var i = 0; i < options.length; i++) {
+						if (options[i].value == prefix) {
+							self.update_prefix(prefix);
+							return false;
+						}
+					}
 					if (! prefix) {
 						// Cancel button
 						var centroids = self.get_properties();
