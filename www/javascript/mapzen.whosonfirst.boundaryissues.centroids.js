@@ -173,7 +173,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			var lng = ll.lng.toFixed(6);
 			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':latitude', lat);
 			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':longitude', lng);
-			mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mapzen');
+			mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mz');
 			var centroids = self.get_properties();
 			centroids.prefix = prefix;
 			centroids[prefix] = {
@@ -209,7 +209,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			m.on('dragstart', function() {
 				$('.centroid-selected').removeClass('centroid-selected');
 				$('.' + prefix + '-centroid').addClass('centroid-selected');
-				mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mapzen');
+				mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mz');
 				self.update_prefix(prefix);
 			});
 			m.on('click', function() {
