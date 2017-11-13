@@ -21,7 +21,8 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		'lbl': {
 			name: 'label centroid',
 			type: 'common',
-			description: 'Where the label should be displayed.'
+			description: 'Where the label should be displayed.',
+			control_on_change: true
 		},
 		'local': {
 			type: 'optional',
@@ -216,7 +217,7 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				$('.' + prefix + '-centroid').addClass('centroid-selected');
 				self.update_prefix(prefix);
 			});
-			m.on('drag', function() {
+			m.on('dragend', function() {
 				var ll = m.getLatLng();
 				var lat = ll.lat.toFixed(6);
 				var lng = ll.lng.toFixed(6);
@@ -286,9 +287,34 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			}
 
 			return centroids;
+		},
+
+		centroid_changed: function(prefix) {
+			if (spec[prefix] && spec[prefix].control_on_change) {
+				var feature = mapzen.whosonfirst.boundaryissues.edit.generate_feature();
+				var props = feature.properties;
+				var controlled = props['wof:controlled'] || [];
+				if (controlled.indexOf(prefix + ':latitude') == -1) {
+					controlled.push(prefix + ':latitude');
+				}
+				if (controlled.indexOf(prefix + ':longitude') == -1) {
+					controlled.push(prefix + ':longitude');
+				}
+				mapzen.whosonfirst.boundaryissues.edit.set_property('wof:controlled', controlled);
+			}
 		}
 
 	};
+
+	$(document).ready(function() {
+		$('#edit-form').on('propertychanged', function(e, property, value) {
+			var match = property.match(/^properties.([^:]+):(latitude|longitude)$/);
+			if (match) {
+				var prefix = match[1];
+				self.centroid_changed(prefix);
+			}
+		});
+	});
 
 	return self;
 })();

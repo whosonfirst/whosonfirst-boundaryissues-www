@@ -499,7 +499,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			});
 
 			$('#edit-form').on('propertychanged', function(e, property, value) {
-				console.log('propertychanged', property, value);
 				if (property == 'properties.wof:name') {
 					var id = $('input[name="wof_id"]').val();
 					if (id){
