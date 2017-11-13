@@ -66,10 +66,19 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 		},
 
 		editor_init: function() {
+			var centroids = self.get_properties();
 			var options = '<option value="">Custom...</option>';
 			for (var prefix in spec) {
 				options += '<option>' + prefix + '</option>';
 			}
+
+			for (var i = 0; i < centroids.prefixes.length; i++) {
+				var prefix = centroids.prefixes[i];
+				if (! spec[prefix]) {
+					options += '<option>' + prefix + '</option>';
+				}
+			}
+
 			var html = '<div id="centroids-editor">' +
 			           '<select id="centroids-select">' + options + '</select> ' +
 			           '<strong id="centroids-coords"></strong> <a href="#" id="centroids-done">done</a>' +
@@ -83,11 +92,9 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 				self.editor_done();
 			});
 
-			var centroids = self.get_properties();
 			self.update_prefix(centroids.prefix);
 			mapzen.whosonfirst.boundaryissues.edit.hide_centroids();
 
-			var centroids = self.get_properties();
 			for (var i = 0; i < centroids.prefixes.length; i++) {
 				self.show_centroid(centroids, centroids.prefixes[i]);
 			}
@@ -259,10 +266,10 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			// properties
 			var feature = mapzen.whosonfirst.boundaryissues.edit.generate_feature();
 			for (var prop in feature.properties) {
-				var src_centroid = prop.match(/src:([^:]+):centroid/);
+				var src_centroid = prop.match(/^src:([^:]+):centroid$/);
 				if (src_centroid &&
 				    centroids.prefixes.indexOf(src_centroid[1]) == -1) {
-					add_prefix_centroid(prefix);
+					add_prefix_centroid(src_centroid[1]);
 				}
 			}
 
