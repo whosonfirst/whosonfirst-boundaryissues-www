@@ -1056,7 +1056,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			}
 		},
 
-		set_property: function(property, value) {
+		set_property: function(property, value, type) {
 			if (! self.user_can_edit()) {
 				return;
 			}
@@ -1076,7 +1076,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				} else {
 					mapzen.whosonfirst.log.error('Property ' + property + ' did not match the namespace:predicate regex.');
 				}
-				self.add_object_row($rel, property, value);
+				self.add_object_row($rel, property, value, type);
 			} else {
 				// Set the existing input's value
 				if (typeof value == 'object') {
@@ -1093,7 +1093,7 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			row.remove();
 		},
 
-		add_object_row: function($rel, key, value) {
+		add_object_row: function($rel, key, value, assign_type) {
 			var $addRow = $rel.find('> table > tbody > .add-row');
 			var context = $rel.data('context');
 			if ($('input[name="' + context + '.' + key + '"]').length > 0) {
@@ -1104,7 +1104,9 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			var remove = '<button class="btn btn-remove-item">-</button>';
 			var type = '';
 
-			if (self.property_schema) {
+			if (assign_type) {
+				type = ' data-type="' + htmlspecialchars(assign_type) + '"';
+			} else if (self.property_schema) {
 				var props = self.property_schema.allOf[1].properties.properties.properties;
 				if (props[key] && props[key].type) {
 					type = ' data-type="' + htmlspecialchars(props[key].type) + '"';

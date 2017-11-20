@@ -195,8 +195,8 @@ mapzen.whosonfirst.boundaryissues.centroids = (function() {
 			var ll = map.getCenter();
 			var lat = ll.lat.toFixed(6);
 			var lng = ll.lng.toFixed(6);
-			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':latitude', lat);
-			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':longitude', lng);
+			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':latitude', lat, 'number');
+			mapzen.whosonfirst.boundaryissues.edit.set_property(prefix + ':longitude', lng, 'number');
 			mapzen.whosonfirst.boundaryissues.edit.set_property('src:' + prefix + ':centroid', 'mz');
 			var centroids = self.get_properties();
 			centroids.prefix = prefix;
