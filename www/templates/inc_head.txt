@@ -26,7 +26,6 @@
 		{script src="htmlspecialchars.min.js"}
 		{script src="leaflet.min.js"}
 		{script src="leaflet.draw.min.js"}
-		{script src="leaflet.label.min.js"}
 		{script src="leaflet.hash.js"}
 		{script src="L.Control.Locate.min.js"}
 		{script src="tangram.min.js"}

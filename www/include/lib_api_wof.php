@@ -220,12 +220,20 @@
 
 	function api_wof_save() {
 
+		// THIS IS PART 2 (two) OF THE #datavoyage
+		// Search the codebase for #datavoyage to follow along at home.
+		// (20171121/dphiffer)
 		$geojson = post_str('geojson');
 		if (! $geojson) {
 			api_output_error(400, "Please include a 'geojson' parameter.");
 		}
 
-		$rsp = wof_save_feature($geojson);
+		$geometry = post_str('geometry');
+		$properties_list = post_str('properties_list');
+		$properties = explode(',', $properties_list);
+
+		// Our #datavoyage is heading to lib_wof_save.php next...
+		$rsp = wof_save_feature($geojson, $geometry, $changed_properties);
 
 		if (! $rsp['ok']) {
 			$error = 'Error saving WOF record';
@@ -239,6 +247,7 @@
 		$csv_row = post_int32('csv_row');
 		api_wof_utils_save_feature_csv($rsp['feature'], $csv_id, $csv_row);
 
+		// The #datavoyage return trip is nearing its end...
 		api_output_ok($rsp);
 	}
 

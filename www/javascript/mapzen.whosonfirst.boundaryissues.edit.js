@@ -18,7 +18,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 	    parent_layer,
 	    parent_hover,
 	    geometry_layer,
-	    centroid_layers;
+	    centroid_layers,
+	    pending_changes = [];
 
 	var esc_str = mapzen.whosonfirst.php.htmlspecialchars;
 	var esc_int = parseInt;
@@ -905,9 +906,14 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if ($edit_list.find('li[data-context="' + name + '"]').length == 0) {
 					$edit_list.append('<li data-context="' + name + '"><code>' + property + '</code></li>');
 				}
+				pending_changes.push(property);
 			} else {
 				target.removeClass('property-changed');
 				$edit_list.find('li[data-context="' + name + '"]').remove();
+				var index = pending_changes.indexOf(property);
+				if (index != -1) {
+					pending_changes.splice(index, 1);
+				}
 			}
 			if ($('#edit-status > ul > li').length == 0) {
 				$('#edit-summary').html('No pending changes');
@@ -1874,12 +1880,21 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 		save_to_server: function(geojson) {
 
+			// THIS IS PART 1 (one) OF THE #datavoyage
+			// Search the codebase for #datavoyage to follow along at home.
+			// (20171121/dphiffer)
 			var data = {
 				crumb: $('#edit-form').data('crumb-save'),
-				geojson: geojson
+				geojson: geojson, // GeoJSON string of the updated WOF record
+				geometry: $('input[name="geometry"]').val(), // JSON geometry, unmodified
+				properties: pending_changes.join(',') // comma-separated list of changed properties
 			};
 
 			var onsuccess = function(rsp) {
+				// THIS IS PART 8 (eight) OF THE #datavoyage
+				// Search the codebase for #datavoyage to follow along at home.
+				// (20171121/dphiffer)
+				console.log(rsp);
 				$('#edit-form .property-changed').removeClass('property-changed');
 				self.initial_wof_value = self.generate_feature();
 				if (! rsp['feature']) {
@@ -1903,6 +1918,8 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 
 			$status.html('Saving...');
 			self.disable_saving();
+
+			// Our #datavoyage is heading to lib_api_wof.php next...
 			mapzen.whosonfirst.boundaryissues.api.api_call("wof.save", data, onsuccess, onerror);
 		},
 

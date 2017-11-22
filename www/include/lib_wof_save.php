@@ -96,6 +96,9 @@
 
 	function wof_save_feature($geojson, $geometry = null, $properties = null, $collection_uuid = null, $user_id = null) {
 
+		// THIS IS PART 3 (three) OF THE #datavoyage
+		// Search the codebase for #datavoyage to follow along at home.
+		// (20171121/dphiffer)
 		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
 			return array(
@@ -138,6 +141,8 @@
 		}
 
 		if (is_array($properties)) {
+
+			// Our #datavoyage is heading down the file to wof_save_merged()...
 			$rsp = wof_save_merged($geojson, $geometry, $properties);
 			if (! $rsp['ok']) {
 				return $rsp;
@@ -209,13 +214,19 @@
 			}
 		}
 
+		// Our #datavoyage now takes a moment to acknowledge the hard working
+		// JSON encoders and decoders. Here in PHP-land we have made some
+		// adjustments to the record prior to sending data on to the GeoJSON
+		// pony. Arguably we should this logic *into* the GeoJSON pony.
+		// (20171121/dphiffer)
 		$geojson = json_encode($feature);
 
 		$user = users_get_by_id($user_id);
 		$branch = users_settings_get_single($user, 'branch');
 
 		// Validation happens on the GeoJSON service side of things
-		$rsp = wof_geojson_save($geojson, $branch);
+		// Our #datavoyage is heading to lib_wof_geojson.php next...
+		$rsp = wof_geojson_save($geojson, $branch, $properties);
 
 		if (! $rsp['ok']) {
 			$rsp['error'] = "Error saving via GeoJSON service: {$rsp['error']}";
@@ -223,6 +234,7 @@
 		}
 
 		$geojson = $rsp['geojson'];
+		$changed = $rsp['changed'];
 		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
 			return array(
@@ -238,6 +250,8 @@
 		}
 		$data_dir = wof_utils_pending_dir('data', $user_id);
 
+		// At this point in the #datajourney we are doing some boring accounting
+		// to ensure we can operate easily on the file later.
 		$pending_path = wof_utils_id2abspath($data_dir, $wof_id);
 
 		if (! file_exists($pending_path)) {
@@ -298,9 +312,11 @@
 			wof_events_publish($summary, $details, $wof_ids, $user_id);
 		}
 
+		// The return #datavoyage continues...
 		return array(
 			'ok' => 1,
-			'feature' => $feature
+			'feature' => $feature,
+			'changed' => $changed
 		);
 	}
 
@@ -356,6 +372,9 @@
 
 	function wof_save_merged($geojson, $geometry, $selected_properties) {
 
+		// THIS IS PART 4 (four) OF THE #datavoyage
+		// Search the codebase for #datavoyage to follow along at home.
+		// (20171121/dphiffer)
 		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
 			return array(
@@ -424,6 +443,7 @@
 			}
 		}
 
+		// Our #datavoyage is heading up the file to wof_save_feature() next...
 		return array(
 			'ok' => 1,
 			'geojson' => json_encode($existing_feature)

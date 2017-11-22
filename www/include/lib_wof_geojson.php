@@ -24,12 +24,20 @@
 
 	########################################################################
 
-	function wof_geojson_save($geojson, $branch = 'master') {
+	function wof_geojson_save($geojson, $branch = 'master', $properties = null) {
 
+		// THIS IS PART 5 (five) OF THE #datavoyage
+		// Search the codebase for #datavoyage to follow along at home.
+		// (20171121/dphiffer)
 		$data = array(
 			'geojson' => $geojson,
 			'branch' => $branch
 		);
+		if ($properties) {
+			$data['properties'] = implode(',', $properties);
+		}
+
+		// Our #datavoyage is heading to wof-geojson-server.py next...
 		return wof_geojson_request("/save", $data);
 	}
 

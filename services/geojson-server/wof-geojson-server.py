@@ -7,6 +7,7 @@ import os
 import re
 import flask
 from flask import Flask, request, jsonify
+from deepdiff import DeepDiff
 
 import geojson
 import requests
@@ -66,10 +67,16 @@ def geojson_encode():
 @app.route('/save', methods=['POST'])
 def geojson_save():
 
+	# THIS IS PART 6 (six) OF THE #datavoyage
+	# Search the codebase for #datavoyage to follow along at home.
+	# (20171121/dphiffer)
 	try:
 		g = request.form['geojson']
 		branch = request.form['branch']
+
+		# Another #datavoyage JSON parsing event! Exciting.
 		f = geojson.loads(g)
+
 	except Exception, e:
 		err = "failed to load geojson, because %s" % e
 		return jsonify(ok=0, error=err)
@@ -87,6 +94,8 @@ def geojson_save():
 		data_dir = "%s%s/data" % (flask.g.wof_pending_dir, branch)
 		if not os.path.exists(data_dir):
 			os.makedirs(data_dir, 0775)
+
+		# An exciting moment, #datavoyage friends, we are writing to disk!
 		ff = mapzen.whosonfirst.export.flatfile(data_dir, debug=False)
 		path = ff.export_feature(f)
 	except Exception, e:
@@ -101,12 +110,41 @@ def geojson_save():
 	try:
 		gf = open(path, 'r')
 		exported = gf.read()
+		f_exported = geojson.loads(exported)
 	except Exception, e:
 		error = "failed to read exported geojson, because %s" % e
 		logging.error(error)
 		return jsonify(ok=0, error=error)
 
-	return jsonify(ok=1, geojson=exported)
+	# Here in the #datavoyage we check which properties actually got updated...
+	ddiff = DeepDiff(f, f_exported)
+	props_changed = []
+	props_changed_details = {}
+	for changetype in ddiff:
+		for prop in ddiff[changetype]:
+			p = re.sub(r"^root\['properties'\]\['(.+?)'\].*$", r"\1", prop)
+			if not p in props_changed:
+				props_changed.append(p)
+			if not p in props_changed_details:
+				props_changed_details[p] = [changetype]
+			else:
+				props_changed_details[p].append(changetype)
+
+	props_changed.sort()
+	changed = []
+	for p in props_changed:
+		changed.append({
+			'property': p,
+			'details': props_changed_details[p],
+			'before': f['properties'][p],
+			'after': f_exported['properties'][p]
+		})
+
+	# THIS IS PART 7 (seven) OF THE #datavoyage
+	# Search the codebase for #datavoyage to follow along at home.
+	# And... we are headed back to the front-end!
+ 	# It's been quite a #datavoyage... (20171121/dphiffer)
+	return jsonify(ok=1, geojson=exported, changed=changed)
 
 @app.route('/pip', methods=['POST'])
 def geojson_pip():
