@@ -224,6 +224,9 @@
 		$user = users_get_by_id($user_id);
 		$branch = users_settings_get_single($user, 'branch');
 
+		$wof_id = $feature['properties']['wof:id'];
+		$orig_path = wof_utils_find_id($wof_id);
+
 		// Validation happens on the GeoJSON service side of things
 		// Our #datavoyage is heading to lib_wof_geojson.php next...
 		$rsp = wof_geojson_save($geojson, $branch, $properties);
@@ -234,7 +237,6 @@
 		}
 
 		$geojson = $rsp['geojson'];
-		$changed = $rsp['changed'];
 		$feature = json_decode($geojson, 'as hash');
 		if (! $feature) {
 			return array(
@@ -243,22 +245,40 @@
 			);
 		}
 
-		$wof_id = $feature['properties']['wof:id'];
-		$timestamp = time();
-		if (! $user_id) {
-			$user_id = $GLOBALS['cfg']['user']['id'];
-		}
-		$data_dir = wof_utils_pending_dir('data', $user_id);
-
-		// At this point in the #datajourney we are doing some boring accounting
-		// to ensure we can operate easily on the file later.
-		$pending_path = wof_utils_id2abspath($data_dir, $wof_id);
-
+		$pending_path = $rsp['path'];
 		if (! file_exists($pending_path)) {
 			return array(
 				'ok' => 0,
 				'error' => 'Couldn’t find the GeoJSON output from the GeoJSON service'
 			);
+		}
+
+		$changed_props = null;
+		if ($orig_path && file_exists($orig_path)) {
+
+			// Run a diff to see what changed in the pending GeoJSON.
+
+			$changed_props = array();
+			$output = array();
+			exec("diff $orig_path $pending_path", $output);
+			foreach ($output as $line) {
+				if (preg_match('/^[<>]\s+"([^"]+)"/', $line, $matches)) {
+					$prop = $matches[1];
+					if (! in_array($prop, $changed_props)) {
+						$changed_props[] = $prop;
+					}
+				}
+			}
+			sort($changed_props);
+
+		}
+
+		// At this point in the #datajourney we are doing some boring accounting
+		// to ensure we can operate easily on the file later.
+
+		$timestamp = time();
+		if (! $user_id) {
+			$user_id = $GLOBALS['cfg']['user']['id'];
 		}
 
 		// Look up the git hash of the pending save
@@ -316,7 +336,7 @@
 		return array(
 			'ok' => 1,
 			'feature' => $feature,
-			'changed' => $changed
+			'changed_props' => $changed_props
 		);
 	}
 
