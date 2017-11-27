@@ -233,7 +233,7 @@
 		$properties = explode(',', $properties_list);
 
 		// Our #datavoyage is heading to lib_wof_save.php next...
-		$rsp = wof_save_feature($geojson, $geometry, $changed_properties);
+		$rsp = wof_save_feature($geojson, $geometry, $properties);
 
 		if (! $rsp['ok']) {
 			$error = 'Error saving WOF record';
