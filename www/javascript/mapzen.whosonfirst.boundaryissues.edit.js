@@ -1894,19 +1894,55 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				// THIS IS PART 8 (eight) OF THE #datavoyage
 				// Search the codebase for #datavoyage to follow along at home.
 				// (20171121/dphiffer)
-				console.log(rsp);
 				$('#edit-form .property-changed').removeClass('property-changed');
 				self.initial_wof_value = self.generate_feature();
+
+				var save_warning = '';
+				if (rsp['changed_props']) {
+					var change_diff = [];
+					var prop, index;
+					for (var i = 0; i < rsp['changed_props'].length; i++) {
+						prop = rsp['changed_props'][i];
+						if (prop == 'wof:lastmodified') {
+							continue;
+						}
+						index = pending_changes.indexOf(prop);
+						if (index == -1) {
+							change_diff.push(prop);
+						} else {
+							pending_changes.splice(index, 1);
+						}
+					}
+					for (var i = 0; i < pending_changes.length; i++) {
+						change_diff.push(pending_changes[i]);
+					}
+					if (change_diff.length > 0) {
+						change_diff.sort();
+						save_warning = '<div class="alert alert-warning headroom">' +
+							'Saving GeoJSON modified more properties than expected. ' +
+							'<a href="#" id="save-warning-expand">See details</a>' +
+							'<ul id="save-warning-props" class="hidden headroom">' +
+							'<li>' + change_diff.join('</li><li>') + '</li>' +
+							'</ul>' +
+							'</div>';
+					}
+				}
+
+				pending_changes = [];
 				if (! rsp['feature']) {
 					$status.html('Error saving GeoJSON: Bad response from server.');
 				} else if ($('input[name="wof_id"]').length == 0) {
 					var wof_id = parseInt(rsp.feature.properties['wof:id']);
 
-				    var url = '/id/' + wof_id + '/';
-				    url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
+					var url = '/id/' + wof_id + '/';
+					url = mapzen.whosonfirst.boundaryissues.utils.abs_root_urlify(url);
 					location.href = url;
 				} else {
-					$status.html('Saved');
+					$status.html('Saved' + save_warning);
+					$('#save-warning-expand').click(function(e) {
+						e.preventDefault();
+						$('#save-warning-props').toggleClass('hidden');
+					});
 				}
 				self.enable_saving();
 			};
