@@ -453,13 +453,21 @@
 
 		// Update selected properties
 		if ($selected_properties) {
+
 			foreach ($selected_properties as $prop_source => $prop_target) {
+
+				if (is_numeric($prop_source)) {
+					$prop_source = $prop_target;
+				}
+
 				$value = $feature['properties'][$prop_source];
 
 				// Apply some type coersion to incoming values
 				$value = wof_save_schema_value($schema, $prop_target, $value);
 
-				$existing_feature['properties'][$prop_target] = $value;
+				if (! empty($prop_target)) {
+					$existing_feature['properties'][$prop_target] = $value;
+				}
 			}
 		}
 
