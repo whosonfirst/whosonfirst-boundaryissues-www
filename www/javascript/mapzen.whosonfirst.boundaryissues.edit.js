@@ -1901,28 +1901,43 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 				if (rsp['changed_props']) {
 					var change_diff = [];
 					var prop, index;
-					for (var i = 0; i < rsp['changed_props'].length; i++) {
-						prop = rsp['changed_props'][i];
+					for (var prop in rsp['changed_props']) {
 						if (prop == 'wof:lastmodified') {
 							continue;
 						}
 						index = pending_changes.indexOf(prop);
 						if (index == -1) {
-							change_diff.push(prop);
+							change_diff.push(rsp['changed_props'][prop]);
 						} else {
 							pending_changes.splice(index, 1);
 						}
 					}
 					for (var i = 0; i < pending_changes.length; i++) {
-						change_diff.push(pending_changes[i]);
+						change_diff.push({
+							property: pending_changes[i],
+							unchanged: true
+						});
 					}
 					if (change_diff.length > 0) {
-						change_diff.sort();
+						var change_descriptions = [];
+						for (var description, i = 0; i < change_diff.length; i++) {
+							description = '<code class="diff-property">' + change_diff[i].property + '</code>';
+							if (change_diff[i].before) {
+								description += ', before: <code>' + change_diff[i].before + '</code>';
+							}
+							if (change_diff[i].after) {
+								description += ', after: <code>' + change_diff[i].after + '</code>';
+							}
+							if (change_diff[i].unchanged) {
+								description += ', <i>unchanged</i>';
+							}
+							change_descriptions.push(description);
+						}
 						save_warning = '<div class="alert alert-warning headroom">' +
 							'Saving GeoJSON modified more properties than expected. ' +
 							'<a href="#" id="save-warning-expand">See details</a>' +
-							'<ul id="save-warning-props" class="hidden headroom">' +
-							'<li>' + change_diff.join('</li><li>') + '</li>' +
+							'<ul id="save-warning-props" class="hidden">' +
+							'<li>' + change_descriptions.join('</li><li>') + '</li>' +
 							'</ul>' +
 							'</div>';
 					}

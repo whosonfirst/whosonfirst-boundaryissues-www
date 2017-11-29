@@ -262,14 +262,23 @@
 			$output = array();
 			exec("diff $orig_path $pending_path", $output);
 			foreach ($output as $line) {
-				if (preg_match('/^[<>]\s+"([^"]+)"/', $line, $matches)) {
-					$prop = $matches[1];
-					if (! in_array($prop, $changed_props)) {
-						$changed_props[] = $prop;
+				if (preg_match('/^([<>])\s+"([^"]+)":(.+?),?$/', $line, $matches)) {
+					$diff = $matches[1];
+					$prop = $matches[2];
+					$value = $matches[3];
+					if (! isset($changed_props[$prop])) {
+						$changed_props[$prop] = array(
+							'property' => $prop
+						);
+					}
+					if ($diff == '<') {
+						$changed_props[$prop]['before'] = $value;
+					} else {
+						$changed_props[$prop]['after'] = $value;
 					}
 				}
 			}
-			sort($changed_props);
+			ksort($changed_props);
 
 		}
 
