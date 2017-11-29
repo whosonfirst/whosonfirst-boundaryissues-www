@@ -130,7 +130,7 @@ mapzen.whosonfirst.leaflet = (function(){
 				return false;
 			}
 
-			if ((bbox[1] == bbox[3]) && (bbox[2] == bbox[4])){
+			if ((bbox[0] == bbox[2]) && (bbox[1] == bbox[3])){
 				map.setView([bbox[1], bbox[0]], 14);
 				return;
 			}
