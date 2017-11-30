@@ -8,7 +8,7 @@
 
 	#################################################################
 
-	$GLOBALS['mapzen_api_endpoint'] = 'https://mapzen.com/developers/oauth_api/';
+	$GLOBALS['mapzen_api_endpoint'] = 'https://mapzen.com/api/';
 	$GLOBALS['mapzen_oauth_endpoint'] = 'https://mapzen.com/oauth/';
 
 	#################################################################

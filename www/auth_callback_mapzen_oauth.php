@@ -28,8 +28,8 @@
 	}
 
 	$code = get_str("code");
-
 	$state_base64 = get_str("state");
+
 	if ($state_base64){
 		$state_json = base64_decode($state_base64);
 		$state = json_decode($state_json, 'as hash');
@@ -96,7 +96,7 @@
 			'access_token' => $oauth_token,
 		);
 
-		$rsp = mapzen_api_call("current_developer", $args);
+		$rsp = mapzen_api_call("developer.json", $args);
 
 		if (! $rsp['ok']){
 			$GLOBALS['error']['mapzen_userinfo'] = 1;
