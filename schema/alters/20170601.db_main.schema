@@ -6,6 +6,3 @@ CREATE TABLE `boundaryissues_pipeline_log` (
   `details` text,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE boundaryissues_pipeline ADD COLUMN repo VARCHAR(255) AFTER meta;
-ALTER TABLE boundaryissues_pipeline ADD COLUMN url VARCHAR(255) AFTER repo;

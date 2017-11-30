@@ -6,6 +6,8 @@ CREATE TABLE `boundaryissues_pipeline` (
   `filename` varchar(255) DEFAULT NULL,
   `meta` text,
   `phase` varchar(255) DEFAULT 'pending',
+  `repo` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `updated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
