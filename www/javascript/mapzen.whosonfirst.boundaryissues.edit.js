@@ -398,12 +398,6 @@ mapzen.whosonfirst.boundaryissues.edit = (function() {
 			self.setup_geometry();
 
 			self.initial_wof_value = self.generate_feature();
-			if (! $('#edit-form').hasClass('add-new-wof')) {
-				var id = $('input[name="properties.wof:id"').val();
-				self.get_wof(id, function(wof) {
-					self.initial_wof_value = wof;
-				});
-			}
 		},
 
 		setup_array_row: function(row) {
