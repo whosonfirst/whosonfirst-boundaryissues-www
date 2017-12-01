@@ -229,7 +229,7 @@
 		}
 
 		$geometry = post_str('geometry');
-		$properties_list = post_str('properties_list');
+		$properties_list = post_str('properties');
 		$properties = explode(',', $properties_list);
 
 		// Our #datavoyage is heading to lib_wof_save.php next...
