@@ -17,7 +17,7 @@
 
 	function db_init(){
 
-		if (!function_exists('mysql_connect')){
+		if (!function_exists('mysqli_init')){
 			die("[lib_db] requires the mysql PHP extension\n");
 		}
 
@@ -110,16 +110,15 @@
 
 		$start = microtime_ms();
 
-		$GLOBALS['db_conns'][$cluster_key] = @mysql_connect($host, $user, $pass, 1);
+		$GLOBALS['db_conns'][$cluster_key] = @mysqli_connect($host, $user, $pass, $name);
 
 		if ($GLOBALS['db_conns'][$cluster_key]){
 
-			@mysql_select_db($name, $GLOBALS['db_conns'][$cluster_key]);
-			@mysql_query("SET character_set_results='utf8', character_set_client='utf8', character_set_connection='utf8', character_set_database='utf8', character_set_server='utf8'", $GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_select_db($name, $GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_query("SET character_set_results='utf8', character_set_client='utf8', character_set_connection='utf8', character_set_database='utf8', character_set_server='utf8'", $GLOBALS['db_conns'][$cluster_key]);
 		}
 
 		$end = microtime_ms();
-
 
 		#
 		# log
@@ -140,7 +139,7 @@
 		#
 
 		if ($GLOBALS['cfg']['db_profiling']){
-			@mysql_query("SET profiling = 1;", $GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_query("SET profiling = 1;", $GLOBALS['db_conns'][$cluster_key]);
 		}
 	}
 
@@ -158,7 +157,7 @@
 		$use_sql = _db_comment_query($sql, $trace);
 
 		$start = microtime_ms();
-		$result = @mysql_query($use_sql, $GLOBALS['db_conns'][$cluster_key]);
+		$result = @mysqli_query($GLOBALS['db_conns'][$cluster_key], $use_sql);
 		$end = microtime_ms();
 
 		$GLOBALS['timings']['db_queries_count']++;
@@ -175,8 +174,8 @@
 
 		if ($GLOBALS['cfg']['db_profiling']){
 			$profile = array();
-			$p_result = @mysql_query("SHOW PROFILE ALL", $GLOBALS['db_conns'][$cluster_key]);
-			while ($p_row = mysql_fetch_array($p_result, MYSQL_ASSOC)){
+			$p_result = @mysqli_query("SHOW PROFILE ALL", $GLOBALS['db_conns'][$cluster_key]);
+			while ($p_row = mysqli_fetch_array($p_result, MYSQLI_ASSOC)){
 				$profile[] = $p_row;
 			}
 		}
@@ -187,8 +186,9 @@
 		#
 
 		if (!$result){
-			$error_msg	= mysql_error($GLOBALS['db_conns'][$cluster_key]);
-			$error_code	= mysql_errno($GLOBALS['db_conns'][$cluster_key]);
+
+			$error_msg	= mysqli_error($GLOBALS['db_conns'][$cluster_key]);
+			$error_code	= mysqli_errno($GLOBALS['db_conns'][$cluster_key]);
 
 			log_error("DB-$cluster_key: $error_code ".HtmlSpecialChars($error_msg));
 
@@ -368,7 +368,7 @@
 
 		$start = microtime_ms();
 		$count = 0;
-		while ($row = mysql_fetch_array($ret['result'], MYSQL_ASSOC)){
+		while ($row = mysqli_fetch_array($ret['result'], MYSQLI_ASSOC)){
 			$out['rows'][] = $row;
 			$count++;
 		}
@@ -544,8 +544,8 @@
 
 		return array(
 			'ok'		=> 1,
-			'affected_rows'	=> mysql_affected_rows($GLOBALS['db_conns'][$cluster_key]),
-			'insert_id'	=> mysql_insert_id($GLOBALS['db_conns'][$cluster_key]),
+			'affected_rows'	=> mysqli_affected_rows($GLOBALS['db_conns'][$cluster_key]),
+			'insert_id'	=> mysqli_insert_id($GLOBALS['db_conns'][$cluster_key]),
 		);
 	}
 
@@ -616,7 +616,7 @@
 		$cluster_key = _db_cluster_key($cluster, $shard);
 
 		if (is_resource($GLOBALS['db_conns'][$cluster_key])){
-			@mysql_close($GLOBALS['db_conns'][$cluster_key]);
+			@mysqli_close($GLOBALS['db_conns'][$cluster_key]);
 		}
 
 		unset($GLOBALS['db_conns'][$cluster_key]);
@@ -628,7 +628,7 @@
 		foreach ($GLOBALS['db_conns'] as $cluster_key => $conn){
 
 			if (is_resource($conn)){
-				@mysql_close($conn);
+				@mysqli_close($conn);
 			}
 
 			unset($GLOBALS['db_conns'][$cluster_key]);
@@ -651,7 +651,7 @@
 		if (is_resource($GLOBALS['db_conns'][$cluster_key])){
 
 			$start = microtime_ms();
-			$ret = @mysql_ping($GLOBALS['db_conns'][$cluster_key]);
+			$ret = @mysqli_ping($GLOBALS['db_conns'][$cluster_key]);
 			$end = microtime_ms();
 
 			log_notice('db', "DB-$cluster_key: Ping", $end-$start);
