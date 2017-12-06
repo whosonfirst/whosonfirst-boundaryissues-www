@@ -141,3 +141,10 @@ sources:
 
 clone-repo:
 	sudo -u www-data php bin/clone_repo.php $(repo)
+
+defuse:
+	curl -v -L -o www/include/defuse-crypto/defuse-crypto.phar https://github.com/defuse/php-encryption/releases/download/v2.1.0/defuse-crypto.phar
+	curl -v -L -o www/include/defuse-crypto/defuse-crypto.phar.sig https://github.com/defuse/php-encryption/releases/download/v2.1.0/defuse-crypto.phar.sig
+	# curl -o www/include/defuse-crypto/signingkey.asc https://raw.githubusercontent.com/defuse/php-encryption/master/dist/signingkey.asc
+	# gpg --import www/include/defuse-crypto/signingkey.asc
+	# gpg --verify www/include/defuse-crypto/defuse-crypto.phar.sig www/include/defuse-crypto/defuse-crypto.phar
