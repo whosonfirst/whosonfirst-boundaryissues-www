@@ -1,6 +1,7 @@
 {assign var='page_title' value='Sign out' nav_tab='account'}
 {include file='inc_head.txt'}
 
+<div class="container">
 	<form action="{$cfg.abs_root_url}signout/" method="post" accept-encoding="UTF-8" class="form">
 		{$crumb_key|crumb_input}
 		<input type="hidden" name="done" value="1" />
@@ -8,5 +9,6 @@
 		<input type="submit" class="btn btn-primary" value="SIGN OUT" />
 		</div>
 	</form>
+</div>
 
 {include file='inc_foot.txt'}
