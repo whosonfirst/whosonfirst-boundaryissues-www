@@ -244,8 +244,10 @@
 	# These should be left as-is, unless you have an existing password database not using bcrypt and
 	# you need to do auto-promotion on login.
 
-	$GLOBALS['cfg']['passwords_use_bcrypt'] = true;
+	$GLOBALS['cfg']['passwords_use_module'] = 'bcrypt';
 	$GLOBALS['cfg']['passwords_allow_promotion'] = false;
+
+	$GLOBALS['cfg']['passwords_use_bcrypt'] = true;		# deprecated - please set $GLOBALS['cfg']['passwords_module'] instead
 
 	# Things you may need to tweak
 
@@ -372,6 +374,8 @@
 	# THINGS YOU SHOULD DEFINE IN YOUR secrets.php FILE WHICH IS NOT
 	# MEANT TO BE CHECKED IN EVER. DON'T DO IT. AND DON'T DEFINE THESE
 	# THINGS HERE. REALLY.
+
+	$GLOBALS['cfg']['crypto_use_module'] = 'defuse';
 
 	# $GLOBALS['cfg']['crypto_cookie_secret'] = '';
 	# $GLOBALS['cfg']['crypto_password_secret'] = '';
