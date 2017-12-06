@@ -144,7 +144,7 @@
 			return null;
 		}
 
-		if (! passwords_validate_password_for_user($password, $user)){
+		if (! passwords_utils_validate_password_for_user($password, $user)){
 			return null;
 		}
 

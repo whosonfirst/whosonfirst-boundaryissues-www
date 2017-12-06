@@ -71,7 +71,7 @@
 
 		if ($ok){
 
-			if (! passwords_validate_password_for_user($password, $user)){
+			if (! passwords_utils_validate_password_for_user($password, $user)){
 				$smarty->assign('error_password', 1);
 				$ok = 0;
 			}
