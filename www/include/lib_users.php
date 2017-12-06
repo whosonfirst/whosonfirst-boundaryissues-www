@@ -60,6 +60,7 @@
 	function users_update_user(&$user, $update){
 
 		$hash = array();
+
 		foreach ($update as $k => $v){
 			$hash[$k] = AddSlashes($v);
 		}
@@ -153,13 +154,6 @@
 
 	#################################################################
 
-	function users_get_gravatar($email) {
-		$md5 = md5($email);
-		return "https://s.gravatar.com/avatar/$md5?s=48&r=pg";
-	}
-
-	#################################################################
-
 	function users_is_email_taken($email){
 
 		$enc_email = AddSlashes($email);
@@ -191,6 +185,7 @@
 		$enc_code = AddSlashes($code);
 
 		$sql = "SELECT * FROM users_password_reset WHERE reset_code='{$enc_code}'";
+
 		$rsp = db_fetch_accounts($sql);
 		$row = db_single($rsp);
 
@@ -281,21 +276,4 @@
 		return 1;
 	}
 
-	########################################################################
-
-	function users_ensure_terms_accepted($redir = ''){
-
-		if ($GLOBALS['cfg']['user']['terms_accepted']){
-			return;
-		}
-
-		$url = "{$GLOBALS['cfg']['abs_root_url']}terms";
-		if ($redir) {
-			$url .= "?redir=$redir";
-		}
-
-		header("location: $url");
-		exit;
-	}
-
-	# the end
+	#################################################################
