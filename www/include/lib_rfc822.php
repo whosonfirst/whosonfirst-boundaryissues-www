@@ -29,7 +29,7 @@
 		$opts = array();
 		foreach ($defaults as $k => $v) $opts[$k] = isset($options[$k]) ? $options[$k] : $v;
 		$options = $opts;
-		
+
 
 
 		####################################################################################
@@ -185,7 +185,7 @@
 		# domain-literal  =       [CFWS] "[" *([FWS] dcontent) [FWS] "]" [CFWS]
 		# dcontent        =       dtext / quoted-pair
 		# dtext           =       NO-WS-CTL /     ; Non white space controls
-		# 
+		#
 		#                         %d33-90 /       ; The rest of the US-ASCII
 		#                         %d94-126        ;  characters not including "[",
 		#                                         ;  "]", or "\"
@@ -341,7 +341,7 @@
 
 					return 0;
 				}
-			}			
+			}
 		}else{
 
 			#
@@ -389,7 +389,7 @@
 
 	##################################################################################
 
-	function email_strip_comments($comment, $email, $replace=''){
+	function rfc822_email_strip_comments($comment, $email, $replace=''){
 
 		while (1){
 			$new = preg_replace("!$comment!", $replace, $email);
