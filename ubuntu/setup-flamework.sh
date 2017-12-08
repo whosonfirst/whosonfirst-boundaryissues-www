@@ -8,8 +8,8 @@ ROOT=`dirname $UBUNTU`
 sudo apt-get update
 sudo apt-get -y upgrade
 
-sudo apt-get -y install apache2 apache2-utils mysql-server memcache
-sudo apt-get -y install php5 php5-cli php5-curl php5-mcrypt php5-memcache php5-mysql libphp-predis
+sudo apt-get -y install apache2 apache2-utils mysql-server
+sudo apt-get -y install php-fpm php-mysql php-cli php-curl php-mcrypt libphp-predis
 
 for mod in proxy_wstunnel.load rewrite.load proxy.load proxy.conf proxy_http.load ssl.conf ssl.load socache_shmcb.load headers.load
 do
@@ -40,26 +40,26 @@ do
     fi
 done
 
-for ctx in apache2 cli
+for ctx in fpm cli
 do
 
     for mod in mcrypt.ini
     do
 
-        if [ -L /etc/php5/${ctx}/conf.d/${mod} ]
+        if [ -L /etc/php/7.0/${ctx}/conf.d/${mod} ]
         then
-            sudo rm /etc/php5/${ctx}/conf.d/${mod}
+            sudo rm /etc/php/7.0/${ctx}/conf.d/${mod}
         fi
 
-        if [ -f /etc/php5/${ctx}/conf.d/${mod} ]
+        if [ -f /etc/php/7.0/${ctx}/conf.d/${mod} ]
         then
-            sudo mv /etc/php5/${ctx}/conf.d/${mod} /etc/php5/${ctx}/conf.d/${mod}.bak
+            sudo mv /etc/php/7.0/${ctx}/conf.d/${mod} /etc/php/7.0/${ctx}/conf.d/${mod}.bak
         fi
 
-        sudo ln -s /etc/php5/mods-available/${mod} /etc/php5/${ctx}/conf.d/${mod}
+        sudo ln -s /etc/php/7.0/mods-available/${mod} /etc/php/7.0/${ctx}/conf.d/${mod}
     done
 
-    sudo perl -p -i -e "s/short_open_tag = Off/short_open_tag = On/" /etc/php5/${ctx}/php.ini;
+    sudo perl -p -i -e "s/short_open_tag = Off/short_open_tag = On/" /etc/php/7.0/${ctx}/php.ini;
 done
 
 if [ ! -d ${ROOT}/www/templates_c ]
@@ -71,3 +71,4 @@ sudo chgrp -R www-data ${ROOT}/www/templates_c
 sudo chmod -R g+ws ${ROOT}/www/templates_c
 
 sudo /etc/init.d/apache2 restart
+sudo /etc/init.d/php7.0-fpm restart
