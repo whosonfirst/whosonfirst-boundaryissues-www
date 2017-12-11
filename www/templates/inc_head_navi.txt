@@ -53,7 +53,7 @@
 					<a href="#" id="navi-account" class="dropdown-toggle navi-label" data-toggle="dropdown" role="button">You <b class="caret caret-ch"></b></a>
 
 					<ul class="dropdown-menu" aria-labelledby="account-navi" role="menu">
-						<li id="signin"><a href="{$signin_url}">Sign in with Mapzen</a></li>
+						<li id="signin"><a href="{$signin_url}">Sign in with GitHub</a></li>
 					</ul>
 
 				</li>
