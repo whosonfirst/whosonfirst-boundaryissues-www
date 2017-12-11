@@ -9,9 +9,9 @@ sudo apt-get update
 sudo apt-get -y upgrade
 
 sudo apt-get -y install apache2 apache2-utils mysql-server
-sudo apt-get -y install php-fpm php-mysql php-cli php-curl php-mcrypt libphp-predis
+sudo apt-get -y install libapache2-mod-php php-mysql php-cli php-curl php-mcrypt php-mbstring libphp-predis
 
-for mod in proxy_wstunnel.load rewrite.load proxy.load proxy.conf proxy_http.load ssl.conf ssl.load socache_shmcb.load headers.load
+for mod in proxy.load proxy.conf proxy_http.load proxy_wstunnel.load proxy_fcgi.load rewrite.load ssl.conf ssl.load socache_shmcb.load headers.load
 do
 
     if [ -L /etc/apache2/mods-enabled/${mod} ]
@@ -46,20 +46,21 @@ do
     for mod in mcrypt.ini
     do
 
-        if [ -L /etc/php/7.0/${ctx}/conf.d/${mod} ]
+        if [ -L /etc/php/7.0/${ctx}/conf.d/20-${mod} ]
         then
-            sudo rm /etc/php/7.0/${ctx}/conf.d/${mod}
+            sudo rm /etc/php/7.0/${ctx}/conf.d/20-${mod}
         fi
 
-        if [ -f /etc/php/7.0/${ctx}/conf.d/${mod} ]
+        if [ -f /etc/php/7.0/${ctx}/conf.d/20-${mod} ]
         then
-            sudo mv /etc/php/7.0/${ctx}/conf.d/${mod} /etc/php/7.0/${ctx}/conf.d/${mod}.bak
+            sudo mv /etc/php/7.0/${ctx}/conf.d/20-${mod} /etc/php/7.0/${ctx}/conf.d/20-${mod}.bak
         fi
 
-        sudo ln -s /etc/php/7.0/mods-available/${mod} /etc/php/7.0/${ctx}/conf.d/${mod}
+        sudo ln -s /etc/php/7.0/mods-available/${mod} /etc/php/7.0/${ctx}/conf.d/20-${mod}
     done
 
     sudo perl -p -i -e "s/short_open_tag = Off/short_open_tag = On/" /etc/php/7.0/${ctx}/php.ini;
+    sudo perl -p -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.0/${ctx}/php.ini;
 done
 
 if [ ! -d ${ROOT}/www/templates_c ]
