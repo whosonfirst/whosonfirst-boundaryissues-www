@@ -505,7 +505,7 @@
 	$GLOBALS['cfg']['github_oauth_key'] = 'READ-FROM-SECRETS';
 	$GLOBALS['cfg']['github_oauth_secret'] = 'READ-FROM-SECRETS';
 	$GLOBALS['cfg']['github_api_scope'] = 'repo';
-	$GLOBALS['cfg']['github_oauth_callback'] = 'github_auth/';
+	$GLOBALS['cfg']['github_oauth_callback'] = 'auth/';
 
 	// This one you should generate by visiting "(root url)/github_oauth/"
 	$GLOBALS['cfg']['github_token'] = 'READ-FROM-SECRETS';
