@@ -60,7 +60,6 @@ do
     done
 
     sudo perl -p -i -e "s/short_open_tag = Off/short_open_tag = On/" /etc/php/7.0/${ctx}/php.ini;
-    sudo perl -p -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.0/${ctx}/php.ini;
 done
 
 if [ ! -d ${ROOT}/www/templates_c ]
@@ -72,4 +71,3 @@ sudo chgrp -R www-data ${ROOT}/www/templates_c
 sudo chmod -R g+ws ${ROOT}/www/templates_c
 
 sudo /etc/init.d/apache2 restart
-sudo /etc/init.d/php7.0-fpm restart
