@@ -40,7 +40,7 @@ do
     fi
 done
 
-for ctx in fpm cli
+for ctx in apache2 cli
 do
 
     for mod in mcrypt.ini
