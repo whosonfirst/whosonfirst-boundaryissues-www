@@ -375,7 +375,7 @@
 	# MEANT TO BE CHECKED IN EVER. DON'T DO IT. AND DON'T DEFINE THESE
 	# THINGS HERE. REALLY.
 
-	$GLOBALS['cfg']['crypto_use_module'] = 'defuse';
+	$GLOBALS['cfg']['crypto_use_module'] = 'mcrypt';
 
 	# $GLOBALS['cfg']['crypto_cookie_secret'] = '';
 	# $GLOBALS['cfg']['crypto_password_secret'] = '';

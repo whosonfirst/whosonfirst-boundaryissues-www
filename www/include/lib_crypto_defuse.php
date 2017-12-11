@@ -15,6 +15,7 @@
 			$key = Key::loadFromAsciiSafeString($secret);
 			return Crypto::encrypt($data, $key);
 		} catch (Exception $e) {
+		  	error_log("crypto_encrypt: " . $e->getMessage());
 			return null;
 		}
 	}
