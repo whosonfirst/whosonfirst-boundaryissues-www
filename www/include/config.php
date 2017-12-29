@@ -73,6 +73,7 @@
 
 		*/
 		'admin' => array(
+			'can_edit_all_repos',
 			'can_invite_users',
 			'can_upload_pipelines',
 			'can_view_pipelines',
