@@ -489,7 +489,7 @@
 		wof_pipeline_log($pipeline['id'], "Push commit to origin master", $rsp);
 		if (! $rsp['ok']) {
 			wof_pipeline_finish($pipeline, 'error', "$repo_path pushing to origin master", $rsp);
-			continue;
+			return false;
 		}
 
 		$rsp = git_execute($repo_path, "branch -d $branch");

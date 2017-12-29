@@ -2,7 +2,7 @@
 
 	#################################################################
 
-	function api_auth_ensure_auth($method, $key_row=null){
+	function api_auth_ensure_auth(&$method, $key_row=null){
 
 		$type = $GLOBALS['cfg']['api_auth_type'];
 
@@ -21,7 +21,7 @@
 			return 0;
 		}
 
-		$rsp = call_user_func_array($auth_func, array($method, $key_row));
+		$rsp = call_user_func_array($auth_func, array(&$method, $key_row));
 
 		if (! $rsp['ok']){
 			api_output_error($rsp['error_code'], $rsp['error']);
