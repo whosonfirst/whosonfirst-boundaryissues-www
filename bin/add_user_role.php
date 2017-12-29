@@ -25,8 +25,6 @@
 
 	$confirm = readline("Add role '$role' to user '$email'? [Y] ");
 
-	export_var($confirm);
-
 	if (strtolower($confirm) != "y" &&
 	    $confirm != "") {
 		die("Cancelling.\n");
