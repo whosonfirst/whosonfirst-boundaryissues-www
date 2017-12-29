@@ -9,12 +9,13 @@ then
     touch ${SECRETS}
     echo "<?php" >> ${SECRETS}
     echo ""
-    
+
     echo "	\$GLOBALS['cfg']['crypto_cookie_secret'] = '';" >> ${SECRETS}
     echo "	\$GLOBALS['cfg']['crypto_password_secret'] = '';" >> ${SECRETS}
     echo "	\$GLOBALS['cfg']['crypto_crumb_secret'] = '';" >> ${SECRETS}
     echo "	\$GLOBALS['cfg']['db_main']['pass'] = '';" >> ${SECRETS}
     echo "	\$GLOBALS['cfg']['db_users']['pass'] = '';" >> ${SECRETS}
+    echo "	\$GLOBALS['cfg']['db_accounts']['pass'] = '';" >> ${SECRETS}
     echo "	\$GLOBALS['cfg']['db_poormans_slaves']['pass'] = '';" >> ${SECRETS}
 
     echo "" >> ${SECRETS}
