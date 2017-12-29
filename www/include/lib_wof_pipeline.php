@@ -404,7 +404,7 @@
 			$branch = 'master';
 		}
 
-		$rsp = git_push($repo_path);
+		$rsp = git_push($repo_path, 'origin', $branch);
 		wof_pipeline_log($pipeline['id'], "Push commit to origin $branch", $rsp);
 		if (! $rsp['ok']) {
 			wof_pipeline_finish($pipeline, 'error', "Error pushing $repo_path (branch $branch)", $rsp);
