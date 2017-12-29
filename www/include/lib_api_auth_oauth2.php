@@ -4,7 +4,7 @@
 
 	#################################################################
 
-	function api_auth_oauth2_get_access_token(&$method){
+	function api_auth_oauth2_get_access_token($method){
 
 		# https://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-20#section-2.1
 
@@ -35,7 +35,7 @@
 
 	#################################################################
 
-	function api_auth_oauth2_has_auth(&$method, $key_row=null){
+	function api_auth_oauth2_has_auth($method, $key_row=null){
 
 		$access_token = api_auth_oauth2_get_access_token($method);
 
