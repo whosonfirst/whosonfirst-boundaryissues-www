@@ -7,8 +7,8 @@ PROJECT=`dirname $UBUNTU`
 
 PROJECT_NAME=`basename ${PROJECT}`
 
-SUPERVISOR="${PROJECT}/supervisor"
-CONF="${SUPERVISOR}/${PROJECT_NAME}.conf"
+CONF_DIR="${PROJECT}/config"
+CONF="${CONF_DIR}/${PROJECT_NAME}-supervisor.conf"
 
 sudo apt-get update
 sudo apt-get install -y supervisor

@@ -6,8 +6,6 @@ then
 fi
 
 cd /usr/local/mapzen/flamework-gearman
-git pull origin master
-
 ./ubuntu/setup-gearmand.sh
 
 cd -
