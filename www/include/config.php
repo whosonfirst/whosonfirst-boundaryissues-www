@@ -113,8 +113,8 @@
 	# just make sure to include the __REPO__ placeholder in the wof_data_dir
 	# config. Ex: /usr/local/data/__REPO__/data/ (20161108/dphiffer)
 
-	$GLOBALS['cfg']['enable_feature_multi_repo'] = false;
-	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/mapzen/whosonfirst-data/data/';
+	$GLOBALS['cfg']['enable_feature_multi_repo'] = 1;
+	$GLOBALS['cfg']['wof_data_dir'] = '/usr/local/data/__REPO__/data/';
 	$GLOBALS['cfg']['wof_pending_dir'] = '/usr/local/mapzen/whosonfirst-www-boundaryissues/pending/';
 
 	$GLOBALS['cfg']['enable_feature_pipeline'] = false;
