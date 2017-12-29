@@ -17,15 +17,20 @@ setup:
 	bin/configure_secrets.sh .
 	ubuntu/setup-db.sh boundaryissues boundaryissues
 	ubuntu/setup-geojson-server.sh
-	ubuntu/setup-pubsocketd-server.sh
-	ubuntu/setup-mapshaper.sh
+	# ubuntu/setup-pubsocketd-server.sh
+	# ubuntu/setup-mapshaper.sh
 
 setup-nossl:
+	ubuntu/setup-ubuntu.sh
+	ubuntu/setup-git.sh
+	ubuntu/setup-git-lfs.sh
 	ubuntu/setup-flamework.sh
 	ubuntu/setup-apache.sh nossl
 	bin/configure_secrets.sh .
 	ubuntu/setup-db.sh boundaryissues boundaryissues
 	ubuntu/setup-geojson-server.sh
+	# ubuntu/setup-pubsocketd-server.sh
+	# ubuntu/setup-mapshaper.sh
 
 setup-offline:
 	ubuntu/setup-redis-server.sh
