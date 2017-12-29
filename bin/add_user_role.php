@@ -32,6 +32,10 @@
 		die("Cancelling.\n");
 	}
 
-	users_acl_grant_role($user, $role);
+	$rsp = users_acl_grant_role($user, $role);
 
-	echo "Done.\n";
+	if ($rsp['ok']) {
+		echo "Done.\n";
+	} else {
+		print_r($rsp);
+	}
