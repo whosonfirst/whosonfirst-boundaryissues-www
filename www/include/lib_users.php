@@ -276,4 +276,21 @@
 		return 1;
 	}
 
+	########################################################################
+
+	function users_ensure_terms_accepted($redir = ''){
+
+		if ($GLOBALS['cfg']['user']['terms_accepted']){
+			return;
+		}
+
+		$url = "{$GLOBALS['cfg']['abs_root_url']}terms";
+		if ($redir) {
+			$url .= "?redir=$redir";
+		}
+
+		header("location: $url");
+		exit;
+	}
+
 	#################################################################
