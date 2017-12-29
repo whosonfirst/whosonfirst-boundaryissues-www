@@ -20,6 +20,13 @@ setup:
 	ubuntu/setup-pubsocketd-server.sh
 	ubuntu/setup-mapshaper.sh
 
+setup-nossl:
+	ubuntu/setup-flamework.sh
+	ubuntu/setup-apache.sh nossl
+	bin/configure_secrets.sh .
+	ubuntu/setup-db.sh boundaryissues boundaryissues
+	ubuntu/setup-geojson-server.sh
+
 setup-offline:
 	ubuntu/setup-redis-server.sh
 	ubuntu/setup-gearmand.sh
