@@ -308,7 +308,7 @@
 		$_SERVER['SERVER_PORT'] = $_SERVER['HTTP_X_FORWARDED_PORT'];
 	}
 
-	if ($_SERVER['SERVER_PORT']) {
+	if (($_SERVER['SERVER_PORT']) && (! $GLOBALS['cfg']['server_ignore_port'])){
 		$server_port = null;
 
 		if ($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) {
@@ -318,6 +318,7 @@
 		if ($server_port) {
 			$server_url = "{$scheme}://{$_SERVER['SERVER_NAME']}:{$server_port}";
 		}
+
 		else {
 			$server_url = "{$scheme}://{$_SERVER['SERVER_NAME']}";
 		}
