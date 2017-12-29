@@ -2,7 +2,7 @@
 
 	#################################################################
 
-	function api_auth_ensure_auth(&$method, $key_row=null){
+	function api_auth_ensure_auth($method, $key_row=null){
 
 		$type = $GLOBALS['cfg']['api_auth_type'];
 
