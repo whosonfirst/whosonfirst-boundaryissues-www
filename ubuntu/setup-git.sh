@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# Ubuntu 16 installs git 2.7.x so we don't need to compile from source any more.
+# But we'll leave those steps in here below, for reference.
+# (20171228/dphiffer)
+
+sudo apt-get update
+sudo apt-get install -y git
+
+# All done! So much simpler...
+exit 0
+
 PYTHON=`which python`
 WHOAMI=`${PYTHON} -c 'import os, sys; print os.path.realpath(sys.argv[1])' $0`
 
